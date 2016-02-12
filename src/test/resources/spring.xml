@@ -1,0 +1,107 @@
+<beans  xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:int="http://www.springframework.org/schema/integration"
+        xmlns:jee="http://www.springframework.org/schema/jee"
+        xmlns:batch="http://www.springframework.org/schema/batch"
+        xmlns:batch-int="http://www.springframework.org/schema/batch-integration"
+        xmlns:jms="http://www.springframework.org/schema/jms"
+        xmlns:int-jms="http://www.springframework.org/schema/integration/jms"                
+        xsi:schemaLocation="
+            http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms.xsd              
+            http://www.springframework.org/schema/batch-integration http://www.springframework.org/schema/batch-integration/spring-batch-integration.xsd
+            http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch.xsd           
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd            
+            http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd
+            http://www.springframework.org/schema/integration/jms http://www.springframework.org/schema/integration/jms/spring-integration-jms.xsd            
+            http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd"
+    
+    
+>
+    
+    <bean id="stepExecutionRequestHandler"
+           class="org.springframework.batch.integration.partition.StepExecutionRequestHandler">
+        <property name="jobExplorer" ref="jobExplorer"/>
+        <property name="stepLocator" ref="stepLocator"/>
+    </bean>
+
+    <!-- master -->
+    <int:channel id="screening.requests.partitioning" />
+    <int-jms:outbound-channel-adapter connection-factory="JMSConnectionFactory" channel="screening.requests.partitioning"
+                                      destination-name="queue-screening-requests-partitioning" />
+
+
+    <!-- slave -->
+    <int-jms:message-driven-channel-adapter connection-factory="JMSConnectionFactory"
+                                            destination-name="queue-screening-requests-partitioning"
+                                            channel="screening.handler.in.partitioning"
+                                            concurrent-consumers="8"/>
+    <int:channel id="screening.handler.in.partitioning" />
+    <int:service-activator input-channel="screening.handler.in.partitioning" output-channel="screening.handler.out.partitioning"
+                           ref="stepExecutionRequestHandler" method="handle" />
+
+    <int:channel id="screening.handler.out.partitioning" />
+    <int-jms:outbound-channel-adapter connection-factory="JMSConnectionFactory"
+                                      destination-name="queue-screening-replies-partitioning"
+                                      channel="screening.handler.out.partitioning" />
+
+
+    <!-- master -->
+    <int-jms:message-driven-channel-adapter connection-factory="JMSConnectionFactory" channel="screening.staging.partitioning"
+                                            destination-name="queue-screening-replies-partitioning" />
+
+    <int:channel id="screening.staging.partitioning" />
+
+    <int:aggregator ref="partitionHandler" 
+                    input-channel="screening.staging.partitioning" output-channel="screening.replies.partitioning" /> <!-- 1h in [ms] -->
+
+    <int:channel id="screening.replies.partitioning">
+        <int:queue />
+    </int:channel>
+    
+    <bean id="partitionHandler"
+              class="org.springframework.batch.integration.partition.MessageChannelPartitionHandler">
+        <property name="stepName" value="gateSlaveStep"/>
+        <property name="gridSize" value="2"/>
+        <property name="replyChannel" ref="screening.replies.partitioning"/>
+        <property name="messagingOperations">
+            <bean class="org.springframework.integration.core.MessagingTemplate">
+                <property name="defaultChannel" ref="screening.requests.partitioning"/>
+                <property name="receiveTimeout" value="100000"/>
+            </bean>
+        </property>
+    </bean>
+    <bean id="dbLineFixerPartitionHandler"
+              class="org.springframework.batch.integration.partition.MessageChannelPartitionHandler">
+        <property name="stepName" value="dbLineFixerSlaveStep"/>
+        <property name="gridSize" value="2"/>
+        <property name="replyChannel" ref="screening.replies.partitioning"/>
+        <property name="messagingOperations">
+            <bean class="org.springframework.integration.core.MessagingTemplate">
+                <property name="defaultChannel" ref="screening.requests.partitioning"/>
+                <property name="receiveTimeout" value="100000"/>
+            </bean>
+        </property>
+    </bean>    
+    
+    <bean id="amqConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <!-- brokerURL, You may have different IP or port -->
+        <constructor-arg index="0" value="tcp://172.17.0.3:61616" />
+        <property name="userName">
+            <value>admin</value>
+        </property>    
+        <property name="password">
+            <value>your_password</value>
+        </property>        
+    </bean>
+ 
+    <!-- Pooled Spring connection factory -->
+    <bean id="JMSConnectionFactory"
+          class="org.springframework.jms.connection.CachingConnectionFactory">
+        <constructor-arg ref="amqConnectionFactory" />
+    </bean>    
+            
+
+    <bean id="stepLocator"
+          class="org.springframework.batch.integration.partition.BeanFactoryStepLocator" />
+    
+</beans>

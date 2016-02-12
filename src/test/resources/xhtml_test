@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta name="date" content="2015-11-02T16:59:00Z"/>
+<meta name="cp:revision" content="2"/>
+<meta name="extended-properties:AppVersion" content="15.0000"/>
+<meta name="meta:paragraph-count" content="1"/>
+<meta name="meta:word-count" content="46"/>
+<meta name="dc:creator" content="Rich"/>
+<meta name="extended-properties:Company" content=""/>
+<meta name="Word-Count" content="46"/>
+<meta name="dcterms:created" content="2015-11-02T16:59:00Z"/>
+<meta name="meta:line-count" content="2"/>
+<meta name="Last-Modified" content="2015-11-02T16:59:00Z"/>
+<meta name="dcterms:modified" content="2015-11-02T16:59:00Z"/>
+<meta name="Last-Save-Date" content="2015-11-02T16:59:00Z"/>
+<meta name="meta:character-count" content="264"/>
+<meta name="Template" content="Normal"/>
+<meta name="Line-Count" content="2"/>
+<meta name="Paragraph-Count" content="1"/>
+<meta name="meta:save-date" content="2015-11-02T16:59:00Z"/>
+<meta name="meta:character-count-with-spaces" content="309"/>
+<meta name="Application-Name" content="Microsoft Office Word"/>
+<meta name="modified" content="2015-11-02T16:59:00Z"/>
+<meta name="Content-Length" content="11725"/>
+<meta name="X-TIKA:digest:MD5" content="02ecba7dce4d4f8a262ae3634d7b136e"/>
+<meta name="Content-Type" content="application/vnd.openxmlformats-officedocument.wordprocessingml.document"/>
+<meta name="X-Parsed-By" content="org.apache.tika.parser.DefaultParser"/>
+<meta name="X-Parsed-By" content="org.apache.tika.parser.microsoft.ooxml.OOXMLParser"/>
+<meta name="creator" content="Rich"/>
+<meta name="meta:author" content="Rich"/>
+<meta name="meta:creation-date" content="2015-11-02T16:59:00Z"/>
+<meta name="extended-properties:Application" content="Microsoft Office Word"/>
+<meta name="meta:last-author" content="Rich"/>
+<meta name="X-TIKA:digest:SHA256" content="1e7546a374916547024a7ec1485e7ff232e5e9b3cfa588e3e9ec797df7fa5a71"/>
+<meta name="Creation-Date" content="2015-11-02T16:59:00Z"/>
+<meta name="xmpTPg:NPages" content="1"/>
+<meta name="resourceName" content="pat_id_1.docx"/>
+<meta name="Character-Count-With-Spaces" content="309"/>
+<meta name="Last-Author" content="Rich"/>
+<meta name="Character Count" content="264"/>
+<meta name="Page-Count" content="1"/>
+<meta name="Revision-Number" content="2"/>
+<meta name="Application-Version" content="15.0000"/>
+<meta name="extended-properties:Template" content="Normal"/>
+<meta name="Author" content="Rich"/>
+<meta name="publisher" content=""/>
+<meta name="meta:page-count" content="1"/>
+<meta name="dc:publisher" content=""/>
+<title/>
+</head>
+<body><p>This is an example of a clinical document</p>
+<p/>
+<p>The patient’s name is Bart Davidson.</p>
+<p>His carer’s Name Paul Wayne.</p>
+<p/>
+<p>His telephone number is 07754828992</p>
+<p/>
+<p>His Address is 61 Basildon Way, </p>
+<p>East Croyhurst, </p>
+<p>Angelton, </p>
+<p><a name="_GoBack"/>AL64 9HT</p>
+<p/>
+<p>His mother’s name is Pauline Smith.</p>
+<p/>
+<p>He is on 100mg Paracetamol, 20 milligrams clozapine</p>
+<p/>
+<p/>
+<p/>
+</body></html>
