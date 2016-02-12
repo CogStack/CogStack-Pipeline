@@ -44,9 +44,12 @@ import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourc
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.JdbcPagingItemReader;
 import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean;
+import org.springframework.batch.item.file.FlatFileItemReader;
+import org.springframework.batch.item.file.MultiResourceItemReader;
 import org.springframework.batch.sample.common.ColumnRangePartitioner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -93,25 +96,14 @@ public class TestJobConfiguration {
 
 
     @Bean
-    @Qualifier("slaveTaskExecutor")
-    public TaskExecutor slaveTaskExecutor() {
+    public TaskExecutor taskExecutor() {
         SimpleAsyncTaskExecutor exec = new SimpleAsyncTaskExecutor();
-        
-        //exec.setConcurrencyLimit(Integer.parseInt(env.getProperty("concurrencyLimit")));
+        exec.setConcurrencyLimit(Integer.parseInt(env.getProperty("concurrencyLimit")));
         return exec;
     }    
 
-//    @Bean
-//    @Qualifier("masterTaskExecutor")
-//    public TaskExecutor masterTaskExecutor() {
-//        
-//        SyncTaskExecutor exec = new SyncTaskExecutor();
-//        
-//        return exec;
-//    }
-    
     @Bean
-    Partitioner partitioner(@Qualifier("sourceDataSource") DataSource jdbcDocumentSource) {
+    public Partitioner partitioner(@Qualifier("sourceDataSource") DataSource jdbcDocumentSource) {
         ColumnRangePartitioner columnRangePartitioner = new ColumnRangePartitioner();
         columnRangePartitioner.setColumn(env.getProperty("columntoPartition"));
         columnRangePartitioner.setTable(env.getProperty("tableToPartition"));
@@ -157,6 +149,8 @@ public class TestJobConfiguration {
     @StepScope
     @Qualifier("gateItemReader")
     public ItemReader<BinaryDocument> reader(
+            @Value("#{stepExecutionContext[minValue]}") String minValue,
+            @Value("#{stepExecutionContext[maxValue]}") String maxValue,
             @Qualifier("documentRowMapper")RowMapper<BinaryDocument> documentRowmapper, 
             @Qualifier("sourceDataSource") DataSource jdbcDocumentSource) throws Exception {
         //swapped for threadsafety
@@ -167,6 +161,7 @@ public class TestJobConfiguration {
 //        reader.setDataSource(jdbcDocumentSource.getJdbcTemplate().getDataSource());
 //        reader.setSql(env.getProperty("source.Sql"));
 
+        
         JdbcPagingItemReader<BinaryDocument> reader = new JdbcPagingItemReader<>();
         reader.setDataSource(jdbcDocumentSource);
 
@@ -174,10 +169,12 @@ public class TestJobConfiguration {
         qp.setSelectClause(env.getProperty("source.selectClause"));
         qp.setFromClause(env.getProperty("source.fromClause"));
         qp.setSortKey(env.getProperty("source.sortKey"));
-        qp.setWhereClause(env.getProperty("source.whereClause"));
+        //qp.setWhereClause(env.getProperty("source.whereClause"));
+        qp.setWhereClause("WHERE " + env.getProperty("columntoPartition") + " BETWEEN " + minValue + " AND " + maxValue) ;
         qp.setDataSource(jdbcDocumentSource);
         reader.setFetchSize(Integer.parseInt(env.getProperty("source.pageSize")));
 
+        
         reader.setQueryProvider(qp.getObject());
         reader.setRowMapper(documentRowmapper);
 
@@ -231,7 +228,6 @@ public class TestJobConfiguration {
             Partitioner partitioner, 
             @Qualifier("partitionHandler") 
                     PartitionHandler gatePartitionHandler,
-            @Qualifier("slaveTaskExecutor")
                     TaskExecutor taskExecutor){
                 Job job = jobs.get("gateJob")
                         .incrementer(new RunIdIncrementer())

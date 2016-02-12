@@ -61,7 +61,7 @@
     <bean id="partitionHandler"
               class="org.springframework.batch.integration.partition.MessageChannelPartitionHandler">
         <property name="stepName" value="gateSlaveStep"/>
-        <property name="gridSize" value="2"/>
+        <property name="gridSize" value="20"/>
         <property name="replyChannel" ref="screening.replies.partitioning"/>
         <property name="messagingOperations">
             <bean class="org.springframework.integration.core.MessagingTemplate">
@@ -70,10 +70,10 @@
             </bean>
         </property>
     </bean>
-    <bean id="dbLineFixerPartitionHandler"
+<!--    <bean id="dbLineFixerPartitionHandler"
               class="org.springframework.batch.integration.partition.MessageChannelPartitionHandler">
         <property name="stepName" value="dbLineFixerSlaveStep"/>
-        <property name="gridSize" value="2"/>
+        <property name="gridSize" value="20"/>
         <property name="replyChannel" ref="screening.replies.partitioning"/>
         <property name="messagingOperations">
             <bean class="org.springframework.integration.core.MessagingTemplate">
@@ -81,7 +81,7 @@
                 <property name="receiveTimeout" value="100000"/>
             </bean>
         </property>
-    </bean>    
+    </bean>    -->
     
     <bean id="amqConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
         <!-- brokerURL, You may have different IP or port -->

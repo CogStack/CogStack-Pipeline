@@ -46,6 +46,7 @@ public class GateDocumentItemProcessor implements ItemProcessor<BinaryDocument, 
     public BinaryDocument process(final BinaryDocument doc) throws Exception {
         gate.Document gateDoc = Factory.newDocument(doc.getMetadata().get(env.getProperty("textFieldName")));
         try {
+
             gateService.processDoc(gateDoc);
             doc.getMetadata().put("gateJSON", gateService.convertDocToJSON(gateDoc));
             return doc;
