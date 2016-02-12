@@ -43,7 +43,7 @@ test {
 //  }
 }
 jar {
-    baseName = 'gate-spring'
+    baseName = 'turbo-laser'
     version =  '0.1.0'
 }
 
