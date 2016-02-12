@@ -26,8 +26,8 @@ test {
   //testLogging.showStandardStreams = true
 
   // set heap size for the test JVM(s)
-  minHeapSize = "2G"
-  maxHeapSize = "4G"
+  minHeapSize = "1G"
+  maxHeapSize = "1G"
 
   // set JVM arguments for the test JVM(s)
   //jvmArgs '-XX:MaxPermSize=256m'

@@ -30,7 +30,7 @@ public class GateDocumentItemProcessor implements ItemProcessor<BinaryDocument, 
 
     @Autowired
     private GateService gateService;
-    
+
     @Autowired
     private Environment env;
 
@@ -49,9 +49,9 @@ public class GateDocumentItemProcessor implements ItemProcessor<BinaryDocument, 
             gateService.processDoc(gateDoc);
             doc.getMetadata().put("gateJSON", gateService.convertDocToJSON(gateDoc));
             return doc;
-        } catch (Exception ex) {
-            doc.getMetadata().put("gateJSON", ex.getMessage());
-            return doc;
+//        } catch (Exception ex) {
+//            doc.getMetadata().put("gateJSON", ex.getMessage());
+//            return doc;
         }finally{
             Factory.deleteResource(gateDoc);
         }

@@ -15,10 +15,8 @@
  */
 package uk.ac.kcl.batch;
 
-import uk.ac.kcl.batch.BatchConfigurer;
-import uk.ac.kcl.batch.JobConfiguration;
+import gate.util.GateException;
 import uk.ac.kcl.ItemProcessors.GateDocumentItemProcessor;
-import uk.ac.kcl.exception.GateProcessingFailedException;
 //import io.bluecell.data.JDBCDocumentSource;
 //import io.bluecell.data.JDBCDocumentTarget;
 import uk.ac.kcl.model.BinaryDocument;
@@ -91,8 +89,7 @@ public class TestJobConfiguration {
 //    public JobCompleteNotificationListener jobDoneListener;    
     @Resource
     public Environment env;                    
-    @Autowired
-    public TaskExecutor taskExecutor;
+
 
     @Bean
     public TaskExecutor taskExecutor() {
@@ -119,7 +116,8 @@ public class TestJobConfiguration {
     @Bean
     Step masterStep(StepBuilderFactory stepBuilderFactory, 
             Partitioner partitioner, 
-            @Qualifier("partitionHandler") PartitionHandler gatePartitionHandler) {
+            @Qualifier("partitionHandler") PartitionHandler gatePartitionHandler,
+            TaskExecutor taskExecutor) {
         return stepBuilderFactory.get("masterStep")
                 .partitioner("masterStep", partitioner)
                 .partitionHandler(gatePartitionHandler)
@@ -238,7 +236,8 @@ public class TestJobConfiguration {
             @Qualifier("gateItemReader")ItemReader<BinaryDocument> reader,
             @Qualifier("gateItemWriter")  ItemWriter<BinaryDocument> writer,    
             @Qualifier("gateItemProcessor")   ItemProcessor<BinaryDocument, BinaryDocument> processor,
-            StepBuilderFactory stepBuilderFactory) {
+            StepBuilderFactory stepBuilderFactory,
+            TaskExecutor taskExecutor) {
         return stepBuilderFactory.get("gateSlaveStep")
                 .<BinaryDocument, BinaryDocument> chunk(Integer.parseInt(env.getProperty("chunkSize")))
                 .reader(reader)
@@ -246,7 +245,7 @@ public class TestJobConfiguration {
                 .writer(writer)
                 .faultTolerant()
                 .skipLimit(10)
-                .skip(GateProcessingFailedException.class)   
+                .skip(GateException.class)   
                 .taskExecutor(taskExecutor)
                 .build();
     }       
@@ -255,10 +254,14 @@ public class TestJobConfiguration {
     public Job gateJob(JobBuilderFactory jobs,  
             StepBuilderFactory stepBuilderFactory,
             Partitioner partitioner, 
-            @Qualifier("partitionHandler") PartitionHandler gatePartitionHandler) {
+            @Qualifier("partitionHandler") PartitionHandler gatePartitionHandler,
+            TaskExecutor taskExecutor) {
         return jobs.get("gateJob")
                 .incrementer(new RunIdIncrementer())
-                .flow(masterStep(stepBuilderFactory, partitioner,gatePartitionHandler))
+                .flow(masterStep(stepBuilderFactory, 
+                        partitioner,
+                        gatePartitionHandler, 
+                        taskExecutor))
                 .end()
                 .build();
     }
