@@ -56,6 +56,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.core.task.SyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.integration.config.EnableIntegration;
 import org.springframework.jdbc.core.RowMapper;
@@ -92,12 +93,22 @@ public class TestJobConfiguration {
 
 
     @Bean
-    public TaskExecutor taskExecutor() {
+    @Qualifier("slaveTaskExecutor")
+    public TaskExecutor slaveTaskExecutor() {
         SimpleAsyncTaskExecutor exec = new SimpleAsyncTaskExecutor();
-        //SyncTaskExecutor exec = new SyncTaskExecutor();
+        
         //exec.setConcurrencyLimit(Integer.parseInt(env.getProperty("concurrencyLimit")));
         return exec;
     }    
+
+//    @Bean
+//    @Qualifier("masterTaskExecutor")
+//    public TaskExecutor masterTaskExecutor() {
+//        
+//        SyncTaskExecutor exec = new SyncTaskExecutor();
+//        
+//        return exec;
+//    }
     
     @Bean
     Partitioner partitioner(@Qualifier("sourceDataSource") DataSource jdbcDocumentSource) {
@@ -113,17 +124,7 @@ public class TestJobConfiguration {
 //    @Autowired
 //    public Partitioner partitioner;
     
-    @Bean
-    Step masterStep(StepBuilderFactory stepBuilderFactory, 
-            Partitioner partitioner, 
-            @Qualifier("partitionHandler") PartitionHandler gatePartitionHandler,
-            TaskExecutor taskExecutor) {
-        return stepBuilderFactory.get("masterStep")
-                .partitioner("masterStep", partitioner)
-                .partitionHandler(gatePartitionHandler)
-                .taskExecutor(taskExecutor)
-                .build();
-    }
+
     
     @Bean
     @Qualifier("validationQueryRowMapper")
@@ -222,22 +223,59 @@ public class TestJobConfiguration {
 
 
 
-//    @Autowired
-//    RowMapper<BinaryDocument> documentRowMapper;
-//    @Autowired
-//    @Qualifier("targetDataSource")
-//    public DataSource jdbcDocumentTarget;
-//    @Autowired
-//    @Qualifier("sourceDataSource")    
-//    public DataSource jdbcDocumentSource;
-
+    
+    
+    @Bean
+    public Job gateJob(JobBuilderFactory jobs, 
+            StepBuilderFactory steps,
+            Partitioner partitioner, 
+            @Qualifier("partitionHandler") 
+                    PartitionHandler gatePartitionHandler,
+            @Qualifier("slaveTaskExecutor")
+                    TaskExecutor taskExecutor){
+                Job job = jobs.get("gateJob")
+                        .incrementer(new RunIdIncrementer())
+                        .flow(
+                                steps
+                                        .get("gateMasterStep")
+                                        .partitioner("gateSlaveStep", partitioner)
+                                        .partitionHandler(gatePartitionHandler)
+                                        .taskExecutor(taskExecutor)
+                                        .build()
+                                
+                        )
+                        .end()
+                        .build();
+                return job;
+                        
+    }
+    
+    
+//    @Bean
+//    public Job gateJob(JobBuilderFactory jobs,  
+//            StepBuilderFactory stepBuilderFactory,
+//            Partitioner partitioner, 
+//            @Qualifier("partitionHandler") PartitionHandler gatePartitionHandler,
+//            TaskExecutor taskExecutor) {
+//        return jobs.get("gateJob")
+//                
+//                .incrementer(new RunIdIncrementer())
+//                .flow(masterStep(stepBuilderFactory, 
+//                        partitioner,
+//                        gatePartitionHandler, 
+//                        taskExecutor))
+//                .end()
+//                .build();
+//    }
+    
     @Bean
     public Step gateSlaveStep(    
             @Qualifier("gateItemReader")ItemReader<BinaryDocument> reader,
             @Qualifier("gateItemWriter")  ItemWriter<BinaryDocument> writer,    
             @Qualifier("gateItemProcessor")   ItemProcessor<BinaryDocument, BinaryDocument> processor,
-            StepBuilderFactory stepBuilderFactory,
-            TaskExecutor taskExecutor) {
+            StepBuilderFactory stepBuilderFactory
+    //        @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor
+            ) {
         return stepBuilderFactory.get("gateSlaveStep")
                 .<BinaryDocument, BinaryDocument> chunk(Integer.parseInt(env.getProperty("chunkSize")))
                 .reader(reader)
@@ -246,25 +284,22 @@ public class TestJobConfiguration {
                 .faultTolerant()
                 .skipLimit(10)
                 .skip(GateException.class)   
-                .taskExecutor(taskExecutor)
+                //.taskExecutor(taskExecutor)
                 .build();
     }       
     
-    @Bean
-    public Job gateJob(JobBuilderFactory jobs,  
-            StepBuilderFactory stepBuilderFactory,
-            Partitioner partitioner, 
-            @Qualifier("partitionHandler") PartitionHandler gatePartitionHandler,
-            TaskExecutor taskExecutor) {
-        return jobs.get("gateJob")
-                .incrementer(new RunIdIncrementer())
-                .flow(masterStep(stepBuilderFactory, 
-                        partitioner,
-                        gatePartitionHandler, 
-                        taskExecutor))
-                .end()
-                .build();
-    }
+//    @Bean
+//    Step masterStep(StepBuilderFactory stepBuilderFactory, 
+//            Partitioner partitioner, 
+//            @Qualifier("partitionHandler") PartitionHandler gatePartitionHandler,
+//            TaskExecutor taskExecutor) {
+//        return stepBuilderFactory.get("masterStep")
+//                .partitioner("masterStep", partitioner)
+//                .partitionHandler(gatePartitionHandler)
+//                .taskExecutor(taskExecutor)
+//                .build();
+//    }    
+    
 
     
     

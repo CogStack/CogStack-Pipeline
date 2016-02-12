@@ -74,6 +74,8 @@ public class JobIntegrationTests {
 
     private static Server server1;
     private static Server server2;
+        JdbcTemplate sourceTemplate;
+        JdbcTemplate targetTemplate ;
 
     @BeforeClass
     public static void init() throws IOException, ServerAcl.AclFormatException {
@@ -112,8 +114,8 @@ public class JobIntegrationTests {
 
     @Before
     public void initDb() {                
-        JdbcTemplate sourceTemplate = new JdbcTemplate(jdbcSourceDocumentFinder);
-        JdbcTemplate targetTemplate = new JdbcTemplate(jdbcTargetDocumentFinder);
+        sourceTemplate = new JdbcTemplate(jdbcSourceDocumentFinder);
+        targetTemplate = new JdbcTemplate(jdbcTargetDocumentFinder);
         ResourceDatabasePopulator rdp = new ResourceDatabasePopulator();
         Resource dropTablesResource;
         Resource makeTablesResource;        
@@ -138,16 +140,16 @@ public class JobIntegrationTests {
 //                + ", xhtml VARCHAR(MAX) )");        
         
 ////        for postgres
-        sourceTemplate.execute("DROP TABLE tblInputDocs");
-        sourceTemplate.execute("CREATE TABLE tblInputDocs"
-                + "( ID  SERIAL PRIMARY KEY"
-                + ", srcColumnFieldName text "
-                + ", srcTableName text "
-                + ", primaryKeyFieldName text "
-                + ", primaryKeyFieldValue text "            
-                + ", binaryFieldName text "                            
-                + ", updateTime text "                 
-                + ", xhtml text )");
+        //sourceTemplate.execute("DROP TABLE tblInputDocs");
+//        sourceTemplate.execute("CREATE TABLE tblInputDocs"
+//                + "( ID  SERIAL PRIMARY KEY"
+//                + ", srcColumnFieldName text "
+//                + ", srcTableName text "
+//                + ", primaryKeyFieldName text "
+//                + ", primaryKeyFieldValue text "            
+//                + ", binaryFieldName text "                            
+//                + ", updateTime text "                 
+//                + ", xhtml text )");
 
         targetTemplate.execute("DROP TABLE tblOutputDocs");        
         targetTemplate.execute("CREATE TABLE tblOutputDocs "
@@ -194,14 +196,14 @@ public class JobIntegrationTests {
         rdp.execute(jdbcTargetDocumentFinder);
         
         
-        insertTestXHTML(jdbcSourceDocumentFinder, false);
+        //insertTestXHTML(jdbcSourceDocumentFinder, false);
 
     }
 
     @After
     public void dropDb() {
-//        jdbcSourceDocumentFinder.getJdbcTemplate().execute("DROP TABLE tblInputDocs");
-//        jdbcSourceDocumentFinder.getJdbcTemplate().execute("DROP TABLE tblOutputDocs");
+//        sourceTemplate.execute("DROP TABLE tblInputDocs");
+//        targetTemplate.execute("DROP TABLE tblOutputDocs");
     }
 
     //remove ignore annotation to show!
@@ -222,10 +224,10 @@ public class JobIntegrationTests {
     
     
     
-
+    
     private void insertTestXHTML(DataSource ds, boolean includeGateBreaker) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
-        int docCount = 10000;
+        int docCount = 100;
         byte[] bytes = null;
         try {
             bytes = IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream("xhtml_test"));
@@ -242,8 +244,9 @@ public class JobIntegrationTests {
                 + ", updateTime"
                 + ", xhtml"
                 + ") VALUES (?,?,?,?,?,?)";
-        for (int ii=0; ii<=docCount;ii++) {
-            jdbcTemplate.update(sql, "fictionalColumnFieldName","fictionalTableName","fictionalPrimaryKeyFieldName", ii,null, xhtmlString);
+        for (int ii=0; ii<docCount;ii++) {
+            //jdbcTemplate.update(sql, "fictionalColumnFieldName","fictionalTableName","fictionalPrimaryKeyFieldName", ii,null, xhtmlString);
+            jdbcTemplate.update(sql, "fictionalColumnFieldName","fictionalTableName","fictionalPrimaryKeyFieldName", ii,null, ii);
         }
         //see what happens with a really long document...
         if(includeGateBreaker){
@@ -255,7 +258,5 @@ public class JobIntegrationTests {
                 java.util.logging.Logger.getLogger(JobIntegrationTests.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
     }
-
 }
