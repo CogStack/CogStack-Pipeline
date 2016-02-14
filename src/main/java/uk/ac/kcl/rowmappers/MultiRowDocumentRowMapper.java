@@ -32,10 +32,10 @@ import org.springframework.jdbc.core.RowMapper;
 public class MultiRowDocumentRowMapper implements RowMapper<SimpleDocument> {
 
     private final DataSource ds;
-    String documentKeyName;
-    String lineKeyName;
-    String lineContents;
-    String tableName;
+    private String documentKeyName;
+    private String lineKeyName;
+    private String lineContents;
+    private String tableName;
 
     public MultiRowDocumentRowMapper(DataSource ds) {
         this.ds = ds;
@@ -82,6 +82,38 @@ public class MultiRowDocumentRowMapper implements RowMapper<SimpleDocument> {
 
         return doc;
 
+    }
+
+    public String getDocumentKeyName() {
+        return documentKeyName;
+    }
+
+    public void setDocumentKeyName(String documentKeyName) {
+        this.documentKeyName = documentKeyName;
+    }
+
+    public String getLineKeyName() {
+        return lineKeyName;
+    }
+
+    public void setLineKeyName(String lineKeyName) {
+        this.lineKeyName = lineKeyName;
+    }
+
+    public String getLineContents() {
+        return lineContents;
+    }
+
+    public void setLineContents(String lineContents) {
+        this.lineContents = lineContents;
+    }
+
+    public String getTableName() {
+        return tableName;
+    }
+
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
     }
 
 }

@@ -25,8 +25,8 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        ApplicationContext context = new AnnotationConfigApplicationContext(JobConfiguration.class);
-        MainJobConfig config = (MainJobConfig) context.getBean("mainJobConfig");
-        config.launchJob();        
+//        ApplicationContext context = new AnnotationConfigApplicationContext(JobConfiguration.class);
+//        MainJobConfig config = (MainJobConfig) context.getBean("mainJobConfig");
+//        config.launchJob();        
     }
 }

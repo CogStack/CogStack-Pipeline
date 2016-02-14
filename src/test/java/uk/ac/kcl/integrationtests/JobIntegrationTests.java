@@ -16,11 +16,8 @@
 package uk.ac.kcl.integrationtests;
 
 import uk.ac.kcl.batch.TestJobConfiguration;
-//import io.bluecell.data.JDBCDocumentSource;
-//import io.bluecell.data.JDBCDocumentTarget;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Properties;
 import java.util.logging.Level;
 import javax.sql.DataSource;
 import org.apache.commons.io.IOUtils;
@@ -32,6 +29,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.batch.core.JobParametersInvalidException;
@@ -58,7 +56,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 //@ContextConfiguration(locations = {"classpath:testApplicationContext.xml"})
-@ContextConfiguration(classes = TestJobConfiguration.class, 
+@ContextConfiguration(classes = TestJobConfiguration.class,
         loader = AnnotationConfigContextLoader.class)
 public class JobIntegrationTests {
 
@@ -66,16 +64,19 @@ public class JobIntegrationTests {
 
     @Autowired
     @Qualifier("sourceDataSource")
-    public DataSource jdbcSourceDocumentFinder;
+    public DataSource sourceDataSource;
 
     @Autowired
-    @Qualifier("targetDataSource") 
+    @Qualifier("targetDataSource")
     public DataSource jdbcTargetDocumentFinder;
 
     private static Server server1;
     private static Server server2;
-        JdbcTemplate sourceTemplate;
-        JdbcTemplate targetTemplate ;
+    private JdbcTemplate sourceTemplate;
+    private JdbcTemplate targetTemplate;
+    private ResourceDatabasePopulator rdp = new ResourceDatabasePopulator();
+    private Resource dropTablesResource;
+    private Resource makeTablesResource;
 
     @BeforeClass
     public static void init() throws IOException, ServerAcl.AclFormatException {
@@ -100,7 +101,7 @@ public class JobIntegrationTests {
         server2.setLogWriter(null);
         server2.setErrWriter(null);
         server2.start();
-        
+
         //yodieconfig
         //Properties prop = System.getProperties();
         //prop.setProperty("at.ofai.gate.modularpipelines.configFile", "/home/rich/gate-apps/yodie/yodie-pipeline/main-bio/main-bio.config.yaml");        
@@ -113,129 +114,200 @@ public class JobIntegrationTests {
     }
 
     @Before
-    public void initDb() {                
-        sourceTemplate = new JdbcTemplate(jdbcSourceDocumentFinder);
+    public void initTemplates() {
+        sourceTemplate = new JdbcTemplate(sourceDataSource);
         targetTemplate = new JdbcTemplate(jdbcTargetDocumentFinder);
-        ResourceDatabasePopulator rdp = new ResourceDatabasePopulator();
-        Resource dropTablesResource;
-        Resource makeTablesResource;        
-//        //for MS SQL SERVER
-//        jdbcSourceDocumentFinder.getJdbcTemplate().execute("CREATE TABLE tblInputDocs"
-//                + " (srcColumnFieldName VARCHAR(100) "
-//                + ", srcTableName VARCHAR(100) "
-//                + ", primaryKeyFieldName VARCHAR(100) "
-//                + ", primaryKeyFieldValue VARCHAR(100) "            
-//                + ", binaryFieldName VARCHAR(100) "                            
-//                + ", updateTime VARCHAR(100) "                 
-//                + ", body VARBINARY(MAX) )");
-//
-//        //forHsql
-//        jdbcTargetDocumentFinder.getJdbcTemplate().execute("CREATE TABLE tblOutputDocs "
-//                + "( srcColumnFieldName VARCHAR(100) "
-//                + ", srcTableName VARCHAR(100) "
-//                + ", primaryKeyFieldName VARCHAR(100) "
-//                + ", primaryKeyFieldValue VARCHAR(100) "            
-//                + ", binaryFieldName VARCHAR(100) "                            
-//                + ", updateTime VARCHAR(100) "                 
-//                + ", xhtml VARCHAR(MAX) )");        
-        
-////        for postgres
+    }
+
+    @After
+    public void dropDb() {
         //sourceTemplate.execute("DROP TABLE tblInputDocs");
-//        sourceTemplate.execute("CREATE TABLE tblInputDocs"
-//                + "( ID  SERIAL PRIMARY KEY"
-//                + ", srcColumnFieldName text "
-//                + ", srcTableName text "
-//                + ", primaryKeyFieldName text "
-//                + ", primaryKeyFieldValue text "            
-//                + ", binaryFieldName text "                            
-//                + ", updateTime text "                 
-//                + ", xhtml text )");
+        //targetTemplate.execute("DROP TABLE tblOutputDocs");
+    }
+
+    //remove ignore annotation to show!
+    //@Ignore
+    @Autowired
+    JobOperator jobOperator;
+
+    //@Ignore
+    @Test
+    public void postgresGatePipelineTest() {
+        initPostgresGateTable();
+        initPostGresJobRepository();
+        insertTestXHTMLForGate(sourceDataSource, false);
+
+        try {
+            jobOperator.startNextInstance("gateJob");
+        } catch (NoSuchJobException | JobParametersNotFoundException | JobRestartException | JobExecutionAlreadyRunningException | JobInstanceAlreadyCompleteException | UnexpectedJobExecutionException | JobParametersInvalidException ex) {
+            java.util.logging.Logger.getLogger(JobIntegrationTests.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Ignore
+    @Test
+    public void postgresDBLineFixerPipelineTest() {
+        initPostgresMultiLineTextTable();
+        initPostGresJobRepository();
+        initPostgresMultiLineTextTable();
+        insertTestLinesForDBLineFixer(sourceDataSource);
+
+        try {
+            jobOperator.startNextInstance("dbLineFixerJob");
+        } catch (NoSuchJobException | JobParametersNotFoundException | JobRestartException | JobExecutionAlreadyRunningException | JobInstanceAlreadyCompleteException | UnexpectedJobExecutionException | JobParametersInvalidException ex) {
+            java.util.logging.Logger.getLogger(JobIntegrationTests.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }    
+    
+    
+    private void initMsSqlServerGateTable() {
+        sourceTemplate.execute("DROP TABLE tblInputDocs");        
+        sourceTemplate.execute("CREATE TABLE tblInputDocs"
+                + " (ID INT IDENTITY(1,1) PRIMARY KEY"
+                + ", srcColumnFieldName VARCHAR(100) "
+                + ", srcTableName VARCHAR(100) "
+                + ", primaryKeyFieldName VARCHAR(100) "
+                + ", primaryKeyFieldValue VARCHAR(100) "
+                + ", binaryFieldName VARCHAR(100) "
+                + ", updateTime VARCHAR(100) "
+                + ", xhtml VARCHAR(max))");
 
         targetTemplate.execute("DROP TABLE tblOutputDocs");        
+        targetTemplate.execute("CREATE TABLE tblOutputDocs "
+                + " (ID INT IDENTITY(1,1) PRIMARY KEY"
+                + ", srcColumnFieldName VARCHAR(100) "
+                + ", srcTableName VARCHAR(100) "
+                + ", primaryKeyFieldName VARCHAR(100) "
+                + ", primaryKeyFieldValue VARCHAR(100) "
+                + ", binaryFieldName VARCHAR(100) "
+                + ", updateTime VARCHAR(100) "
+                + ", gateJSON VARCHAR(max) )");
+
+
+    }
+    
+    private void initSqlServerJobRepository(){
+        dropTablesResource = new ClassPathResource("org/springframework/batch/core/schema-drop-sqlserver.sql");
+        makeTablesResource = new ClassPathResource("org/springframework/batch/core/schema-sqlserver.sql");
+        rdp.addScript(dropTablesResource);
+        rdp.addScript(makeTablesResource);
+        rdp.execute(jdbcTargetDocumentFinder);     
+    }    
+
+    private void initHSQLGateTable() {
+////        //forhsql
+        sourceTemplate.execute("DROP TABLE IF EXISTS tblInputDocs");
+        sourceTemplate.execute("CREATE TABLE tblInputDocs"
+                + " (ID INTEGER GENERATED BY DEFAULT AS IDENTITY(START WITH 1, INCREMENT BY 1) PRIMARY KEY"
+                + ", srcColumnFieldName VARCHAR(100) "
+                + ", srcTableName VARCHAR(100) "
+                + ", primaryKeyFieldName VARCHAR(100) "
+                + ", primaryKeyFieldValue VARCHAR(100) "
+                + ", binaryFieldName VARCHAR(100) "
+                + ", updateTime VARCHAR(100) "
+                + ", xhtml VARCHAR(1500000))");
+
+        //forHsql
+        targetTemplate.execute("DROP TABLE IF EXISTS tblOutputDocs");
+        targetTemplate.execute("CREATE TABLE tblOutputDocs "
+                + " (ID INTEGER GENERATED BY DEFAULT AS IDENTITY(START WITH 1, INCREMENT BY 1) PRIMARY KEY"
+                + ", srcColumnFieldName VARCHAR(100) "
+                + ", srcTableName VARCHAR(100) "
+                + ", primaryKeyFieldName VARCHAR(100) "
+                + ", primaryKeyFieldValue VARCHAR(100) "
+                + ", binaryFieldName VARCHAR(100) "
+                + ", updateTime VARCHAR(100) "
+                + ", gateJSON VARCHAR(1500000) )");
+
+    }
+
+    private void initHSQLJobRepository(){
+        dropTablesResource = new ClassPathResource("org/springframework/batch/core/schema-drop-hsqldb.sql");
+        makeTablesResource = new ClassPathResource("org/springframework/batch/core/schema-hsqldb.sql");
+        rdp.addScript(dropTablesResource);
+        rdp.addScript(makeTablesResource);
+        rdp.execute(jdbcTargetDocumentFinder);        
+    }
+    
+    private void initPostgresGateTable() {
+////        for postgres
+        sourceTemplate.execute("DROP TABLE IF EXISTS tblInputDocs");
+        sourceTemplate.execute("CREATE TABLE tblInputDocs"
+                + "( ID  SERIAL PRIMARY KEY"
+                + ", srcColumnFieldName text "
+                + ", srcTableName text "
+                + ", primaryKeyFieldName text "
+                + ", primaryKeyFieldValue text "
+                + ", binaryFieldName text "
+                + ", updateTime text "
+                + ", xhtml text )");
+
+        targetTemplate.execute("DROP TABLE IF EXISTS tblOutputDocs");
         targetTemplate.execute("CREATE TABLE tblOutputDocs "
                 + "( ID  SERIAL PRIMARY KEY"
                 + ", srcColumnFieldName text "
                 + ", srcTableName text "
                 + ", primaryKeyFieldName text "
-                + ", primaryKeyFieldValue text "            
-                + ", binaryFieldName text "                            
-                + ", updateTime text "                 
-                + ", gatejson text )");        
+                + ", primaryKeyFieldValue text "
+                + ", binaryFieldName text "
+                + ", updateTime text "
+                + ", gatejson text )");
 
-        dropTablesResource = new ClassPathResource("org/springframework/batch/core/schema-drop-postgresql.sql") ;               
-        makeTablesResource = new ClassPathResource("org/springframework/batch/core/schema-postgresql.sql") ;       
-        
-////        //forhsql
-//        sourceTemplate.execute("CREATE TABLE tblInputDocs"
-//                + " (ID INTEGER GENERATED BY DEFAULT AS IDENTITY(START WITH 100, INCREMENT BY 1) PRIMARY KEY"
-//                + ", srcColumnFieldName VARCHAR(100) "
-//                + ", srcTableName VARCHAR(100) "
-//                + ", primaryKeyFieldName VARCHAR(100) "
-//                + ", primaryKeyFieldValue VARCHAR(100) "            
-//                + ", binaryFieldName VARCHAR(100) "                            
-//                + ", updateTime VARCHAR(100) "                 
-//                + ", xhtml VARCHAR(1500000))");
-//
-//        //forHsql
-//        targetTemplate.execute("CREATE TABLE tblOutputDocs "
-//                + " (ID INTEGER GENERATED BY DEFAULT AS IDENTITY(START WITH 100, INCREMENT BY 1) PRIMARY KEY"
-//                + ", srcColumnFieldName VARCHAR(100) "
-//                + ", srcTableName VARCHAR(100) "
-//                + ", primaryKeyFieldName VARCHAR(100) "
-//                + ", primaryKeyFieldValue VARCHAR(100) "            
-//                + ", binaryFieldName VARCHAR(100) "                            
-//                + ", updateTime VARCHAR(100) "                 
-//                + ", gateJSON VARCHAR(1500000) )");
-//
-//        dropTablesResource = new ClassPathResource("org/springframework/batch/core/schema-drop-hsqldb.sql") ;          
-//        makeTablesResource = new ClassPathResource("org/springframework/batch/core/schema-hsqldb.sql");
-        
-        
+
+    }
+    
+    private void initPostgresMultiLineTextTable(){
+        sourceTemplate.execute("DROP TABLE IF EXISTS tblInputDocs");
+        sourceTemplate.execute("CREATE TABLE tblInputDocs"
+                + "( ID  SERIAL PRIMARY KEY"
+                + ", DOC_ID integer "
+                + ", LINE_ID integer "
+                + ", LINE_TEXT text )"
+                );
+
+        targetTemplate.execute("DROP TABLE IF EXISTS  tblOutputDocs");
+        targetTemplate.execute("CREATE TABLE tblOutputDocs "
+                + "( ID  SERIAL PRIMARY KEY"
+                + ", DOC_ID integer )");
+    }
+    
+    private void initPostGresJobRepository(){
+        dropTablesResource = new ClassPathResource("org/springframework/batch/core/schema-drop-postgresql.sql");
+        makeTablesResource = new ClassPathResource("org/springframework/batch/core/schema-postgresql.sql");
         rdp.addScript(dropTablesResource);
-        rdp.addScript(makeTablesResource);        
-        rdp.execute(jdbcTargetDocumentFinder);
-        
-        
-        //insertTestXHTML(jdbcSourceDocumentFinder, false);
-
+        rdp.addScript(makeTablesResource);
+        rdp.execute(jdbcTargetDocumentFinder);        
     }
 
-    @After
-    public void dropDb() {
-//        sourceTemplate.execute("DROP TABLE tblInputDocs");
-//        targetTemplate.execute("DROP TABLE tblOutputDocs");
-    }
-
-    //remove ignore annotation to show!
-    //@Ignore
-
-
-    @Autowired
-    JobOperator jobOperator;
-
-    @Test
-    public void gatePipelineTest() {    
-        try {
-        jobOperator.startNextInstance("gateJob");        
-        } catch (NoSuchJobException | JobParametersNotFoundException | JobRestartException | JobExecutionAlreadyRunningException | JobInstanceAlreadyCompleteException | UnexpectedJobExecutionException | JobParametersInvalidException ex) {
-            java.util.logging.Logger.getLogger(JobIntegrationTests.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
     
-    
-    
-    
-    private void insertTestXHTML(DataSource ds, boolean includeGateBreaker) {
+    private void insertTestLinesForDBLineFixer(DataSource ds){
         JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
-        int docCount = 100;
+        int docCount = 50;
+        int lineCountIncrementer = 1;
+        String sql = "INSERT INTO tblInputDocs "
+                + "( DOC_ID"
+                + ", LINE_ID"
+                + ", LINE_TEXT"
+                + ") VALUES (?,?,?)";        
+        for (int i = 0; i < docCount; i++) {
+            for(int j = 0;j < lineCountIncrementer; j++){
+                String text = "This is DOC_ID:" + i + " and LINE_ID:" + j ;
+                jdbcTemplate.update(sql, i,j,text);
+            }
+            lineCountIncrementer++;
+        }                
+    }
+    private void insertTestXHTMLForGate(DataSource ds, boolean includeGateBreaker) {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
+        int docCount = 10;
         byte[] bytes = null;
         try {
             bytes = IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream("xhtml_test"));
         } catch (IOException ex) {
             java.util.logging.Logger.getLogger(JobIntegrationTests.class.getName()).log(Level.SEVERE, null, ex);
         }
-        String xhtmlString = new String(bytes,StandardCharsets.UTF_8);
-        
+        String xhtmlString = new String(bytes, StandardCharsets.UTF_8);
+
         String sql = "INSERT INTO tblInputDocs "
                 + "( srcColumnFieldName"
                 + ", srcTableName"
@@ -244,16 +316,16 @@ public class JobIntegrationTests {
                 + ", updateTime"
                 + ", xhtml"
                 + ") VALUES (?,?,?,?,?,?)";
-        for (int ii=0; ii<docCount;ii++) {
-            //jdbcTemplate.update(sql, "fictionalColumnFieldName","fictionalTableName","fictionalPrimaryKeyFieldName", ii,null, xhtmlString);
-            jdbcTemplate.update(sql, "fictionalColumnFieldName","fictionalTableName","fictionalPrimaryKeyFieldName", ii,null, ii);
+        for (int ii = 0; ii < docCount; ii++) {
+            jdbcTemplate.update(sql, "fictionalColumnFieldName","fictionalTableName","fictionalPrimaryKeyFieldName", ii,null,  xhtmlString);
+            
         }
         //see what happens with a really long document...
-        if(includeGateBreaker){
+        if (includeGateBreaker) {
             try {
                 bytes = IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream("gate_breaker.txt"));
-                xhtmlString = new String(bytes,StandardCharsets.UTF_8);
-                jdbcTemplate.update(sql, "fictionalColumnFieldName","fictionalTableName","fictionalPrimaryKeyFieldName", docCount,null, xhtmlString);                
+                xhtmlString = new String(bytes, StandardCharsets.UTF_8);
+                jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName", "fictionalPrimaryKeyFieldName", docCount, null, xhtmlString);
             } catch (IOException ex) {
                 java.util.logging.Logger.getLogger(JobIntegrationTests.class.getName()).log(Level.SEVERE, null, ex);
             }

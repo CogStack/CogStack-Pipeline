@@ -35,20 +35,20 @@ import org.springframework.stereotype.Component;
 public class MainJobConfig {
     
 
-    @Autowired
-    private Job job;
-    @Autowired
-    private JobLauncher jobLauncher;
-    
-    /**
-     * @param args the command line arguments
-     */
-    public void launchJob() {
-        
-        try {
-            jobLauncher.run(job, new JobParameters());
-        } catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException | JobParametersInvalidException ex) {
-            java.util.logging.Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        }  
-    }
+//    @Autowired
+//    private Job job;
+//    @Autowired
+//    private JobLauncher jobLauncher;
+//    
+//    /**
+//     * @param args the command line arguments
+//     */
+//    public void launchJob() {
+//        
+//        try {
+//            jobLauncher.run(job, new JobParameters());
+//        } catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException | JobParametersInvalidException ex) {
+//            java.util.logging.Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+//        }  
+//    }
 }

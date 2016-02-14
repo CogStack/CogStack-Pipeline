@@ -63,6 +63,8 @@ import org.springframework.core.task.SyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.integration.config.EnableIntegration;
 import org.springframework.jdbc.core.RowMapper;
+import uk.ac.kcl.model.SimpleDocument;
+import uk.ac.kcl.rowmappers.MultiRowDocumentRowMapper;
 
 /**
  *
@@ -151,16 +153,8 @@ public class TestJobConfiguration {
     public ItemReader<BinaryDocument> reader(
             @Value("#{stepExecutionContext[minValue]}") String minValue,
             @Value("#{stepExecutionContext[maxValue]}") String maxValue,
-            @Qualifier("documentRowMapper")RowMapper<BinaryDocument> documentRowmapper, 
+            @Qualifier("simpleDocumentRowMapper")RowMapper<BinaryDocument> documentRowmapper, 
             @Qualifier("sourceDataSource") DataSource jdbcDocumentSource) throws Exception {
-        //swapped for threadsafety
-        //SynchronizedItemStreamReader<BinaryDocument> reader2 = new SynchronizedItemStreamReader<>();
-//        JdbcCursorItemReader<BinaryDocument> reader = new JdbcCursorItemReader<>();
-//        reader.setFetchSize(Integer.parseInt(env.getProperty("fetchSize")));
-//        reader.setMaxRows(Integer.parseInt(env.getProperty("maxRows")));         
-//        reader.setDataSource(jdbcDocumentSource.getJdbcTemplate().getDataSource());
-//        reader.setSql(env.getProperty("source.Sql"));
-
         
         JdbcPagingItemReader<BinaryDocument> reader = new JdbcPagingItemReader<>();
         reader.setDataSource(jdbcDocumentSource);
@@ -209,8 +203,8 @@ public class TestJobConfiguration {
     }
 
     @Bean
-    @Qualifier("documentRowMapper")
-    public RowMapper documentRowMapper() {
+    @Qualifier("simpleDocumentRowMapper")
+    public RowMapper simpleDocumentRowMapper() {
         DocumentMetadataRowMapper<BinaryDocument> documentMetadataRowMapper = new DocumentMetadataRowMapper<>();
         List<String> otherFields = Arrays.asList(env.getProperty("otherFieldsList").split(","));
         documentMetadataRowMapper.setOtherFieldsList(otherFields);
@@ -246,23 +240,7 @@ public class TestJobConfiguration {
                         
     }
     
-    
-//    @Bean
-//    public Job gateJob(JobBuilderFactory jobs,  
-//            StepBuilderFactory stepBuilderFactory,
-//            Partitioner partitioner, 
-//            @Qualifier("partitionHandler") PartitionHandler gatePartitionHandler,
-//            TaskExecutor taskExecutor) {
-//        return jobs.get("gateJob")
-//                
-//                .incrementer(new RunIdIncrementer())
-//                .flow(masterStep(stepBuilderFactory, 
-//                        partitioner,
-//                        gatePartitionHandler, 
-//                        taskExecutor))
-//                .end()
-//                .build();
-//    }
+
     
     @Bean
     public Step gateSlaveStep(    
@@ -272,7 +250,7 @@ public class TestJobConfiguration {
             StepBuilderFactory stepBuilderFactory
     //        @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor
             ) {
-        return stepBuilderFactory.get("gateSlaveStep")
+         Step step = stepBuilderFactory.get("gateSlaveStep")
                 .<BinaryDocument, BinaryDocument> chunk(Integer.parseInt(env.getProperty("chunkSize")))
                 .reader(reader)
                 .processor(processor)
@@ -282,21 +260,10 @@ public class TestJobConfiguration {
                 .skip(GateException.class)   
                 //.taskExecutor(taskExecutor)
                 .build();
+         
+         return step;
     }       
     
-//    @Bean
-//    Step masterStep(StepBuilderFactory stepBuilderFactory, 
-//            Partitioner partitioner, 
-//            @Qualifier("partitionHandler") PartitionHandler gatePartitionHandler,
-//            TaskExecutor taskExecutor) {
-//        return stepBuilderFactory.get("masterStep")
-//                .partitioner("masterStep", partitioner)
-//                .partitionHandler(gatePartitionHandler)
-//                .taskExecutor(taskExecutor)
-//                .build();
-//    }    
-    
-
     
     
     @Bean(destroyMethod = "close")
@@ -331,11 +298,105 @@ public class TestJobConfiguration {
     
     */
         
+    @Bean
+    @StepScope
+    @Qualifier("dBLineFixerItemReader")
+    public ItemReader<SimpleDocument> dBLineFixerItemReader(       
+            @Value("#{stepExecutionContext[minValue]}") String minValue,
+            @Value("#{stepExecutionContext[maxValue]}") String maxValue,            
+            @Qualifier("multiRowDocumentRowmapper")RowMapper<SimpleDocument> multiRowDocumentRowmapper, 
+            @Qualifier("sourceDataSource") DataSource jdbcDocumentSource) throws Exception {
+        JdbcPagingItemReader<SimpleDocument> reader = new JdbcPagingItemReader<>();
+        reader.setDataSource(jdbcDocumentSource);
 
+        SqlPagingQueryProviderFactoryBean qp = new SqlPagingQueryProviderFactoryBean();
+        qp.setSelectClause(env.getProperty("source.selectClause"));
+        qp.setFromClause(env.getProperty("source.fromClause"));
+        qp.setSortKey(env.getProperty("source.sortKey"));
+        qp.setWhereClause("WHERE " + env.getProperty("columntoPartition") + " BETWEEN " + minValue + " AND " + maxValue) ;
+        qp.setDataSource(jdbcDocumentSource);
+        reader.setFetchSize(Integer.parseInt(env.getProperty("source.pageSize")));
+
+        
+        reader.setQueryProvider(qp.getObject());
+        reader.setRowMapper(multiRowDocumentRowmapper);
+
+        return reader;
+    }
 
      
+    @Bean
+    @Qualifier("dBLineFixerItemWriter")
+    public ItemWriter<SimpleDocument> dBLineFixerItemWriter(
+            @Qualifier("targetDataSource") DataSource jdbcDocumentTarget) 
+    {
+        JdbcBatchItemWriter<SimpleDocument> writer = new JdbcBatchItemWriter<>();
+        writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
+        writer.setSql(env.getProperty("target.Sql"));
+        writer.setDataSource(jdbcDocumentTarget);
+        return writer;
+    }
+    
+    @Bean
+    @Qualifier("multiLineDocumentRowMapper")
+    public RowMapper multiLineDocumentRowMapper(
+                @Qualifier("sourceDataSource") DataSource ds) {
+        MultiRowDocumentRowMapper mapper = new MultiRowDocumentRowMapper(ds);
+        mapper.setDocumentKeyName(env.getProperty("documentKeyName"));
+        mapper.setLineKeyName(env.getProperty("lineKeyName"));
+        mapper.setLineContents(env.getProperty("lineContents"));
+        mapper.setTableName(env.getProperty("tableName"));
+        
+        
+        
+        return mapper;
+    }    
 
     
+    @Bean
+    public Job dbLineFixerJob(JobBuilderFactory jobs, 
+            StepBuilderFactory steps,
+            Partitioner partitioner, 
+            @Qualifier("partitionHandler") 
+                    PartitionHandler gatePartitionHandler,
+                    TaskExecutor taskExecutor){
+                Job job = jobs.get("dbLineFixerJob")
+                        .incrementer(new RunIdIncrementer())
+                        .flow(
+                                steps
+                                        .get("dbLineFixerMasterStep")
+                                        .partitioner("dbLineFixerSlaveStep", partitioner)
+                                        .partitionHandler(gatePartitionHandler)
+                                        .taskExecutor(taskExecutor)
+                                        .build()
+                                
+                        )
+                        .end()
+                        .build();
+                return job;
+                        
+    }
     
 
+    
+    @Bean
+    public Step dbLineFixerSlaveStep(    
+            @Qualifier("dBLineFixerItemReader")ItemReader<BinaryDocument> reader,
+            @Qualifier("dBLineFixerItemWriter")  ItemWriter<BinaryDocument> writer,    
+            StepBuilderFactory stepBuilderFactory
+    //        @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor
+            ) {
+         Step step = stepBuilderFactory.get("dbLineFixerSlaveStep")
+                .<BinaryDocument, BinaryDocument> chunk(Integer.parseInt(env.getProperty("chunkSize")))
+                .reader(reader)
+                .writer(writer)
+                .faultTolerant()
+                .skipLimit(10)
+                .skip(GateException.class)   
+                //.taskExecutor(taskExecutor)
+                .build();
+         
+         return step;
+    }       
+    
 }
