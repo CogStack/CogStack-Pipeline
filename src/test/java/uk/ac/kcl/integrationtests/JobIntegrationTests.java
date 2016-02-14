@@ -125,7 +125,7 @@ public class JobIntegrationTests {
         //targetTemplate.execute("DROP TABLE tblOutputDocs");
     }
 
-    //remove ignore annotation to show!
+
     //@Ignore
     @Autowired
     JobOperator jobOperator;
@@ -147,7 +147,7 @@ public class JobIntegrationTests {
     //@Ignore
     @Test
     public void postgresDBLineFixerPipelineTest() {
-        initPostgresMultiLineTextTable();
+        
         initPostGresJobRepository();
         initPostgresMultiLineTextTable();
         insertTestLinesForDBLineFixer(sourceDataSource);
@@ -283,7 +283,7 @@ public class JobIntegrationTests {
     
     private void insertTestLinesForDBLineFixer(DataSource ds){
         JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
-        int docCount = 50;
+        int docCount = 50000;
         int lineCountIncrementer = 1;
         String sql = "INSERT INTO tblInputDocs "
                 + "( DOC_ID"
