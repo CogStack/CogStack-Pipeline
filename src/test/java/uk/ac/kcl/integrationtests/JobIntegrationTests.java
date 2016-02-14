@@ -130,7 +130,7 @@ public class JobIntegrationTests {
     @Autowired
     JobOperator jobOperator;
 
-    //@Ignore
+    @Ignore
     @Test
     public void postgresGatePipelineTest() {
         initPostgresGateTable();
@@ -144,7 +144,7 @@ public class JobIntegrationTests {
         }
     }
 
-    @Ignore
+    //@Ignore
     @Test
     public void postgresDBLineFixerPipelineTest() {
         initPostgresMultiLineTextTable();
@@ -268,7 +268,8 @@ public class JobIntegrationTests {
         targetTemplate.execute("DROP TABLE IF EXISTS  tblOutputDocs");
         targetTemplate.execute("CREATE TABLE tblOutputDocs "
                 + "( ID  SERIAL PRIMARY KEY"
-                + ", DOC_ID integer )");
+                + ", DOC_ID integer"
+                + ", LINE_TEXT_CONCAT text )");
     }
     
     private void initPostGresJobRepository(){
@@ -289,12 +290,15 @@ public class JobIntegrationTests {
                 + ", LINE_ID"
                 + ", LINE_TEXT"
                 + ") VALUES (?,?,?)";        
-        for (int i = 0; i < docCount; i++) {
+        for (int i = 0; i <= docCount; i++) {
             for(int j = 0;j < lineCountIncrementer; j++){
                 String text = "This is DOC_ID:" + i + " and LINE_ID:" + j ;
                 jdbcTemplate.update(sql, i,j,text);
             }
             lineCountIncrementer++;
+            if(lineCountIncrementer % 50 == 0){
+                lineCountIncrementer = 0;
+            }
         }                
     }
     private void insertTestXHTMLForGate(DataSource ds, boolean includeGateBreaker) {

@@ -48,9 +48,9 @@ public class MultiRowDocumentRowMapper implements RowMapper<SimpleDocument> {
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT ")
                 .append(documentKeyName)
-                .append(" ")
+                .append(", ")
                 .append(lineKeyName)
-                .append(" ")
+                .append(", ")
                 .append(lineContents)
                 .append(" FROM ")
                 .append(tableName)
@@ -61,20 +61,23 @@ public class MultiRowDocumentRowMapper implements RowMapper<SimpleDocument> {
                 .append(" ORDER BY ")
                 .append(lineKeyName)
                 .append(" DESC");
-
+        SingleLineDocumentRowMapper mapper = new SingleLineDocumentRowMapper();
+        mapper.setDocumentKeyName(documentKeyName);
+        mapper.setLineContents(lineContents);
+        mapper.setLineKeyName(lineKeyName);
         List<SimpleDocument> docs = template.query(sql.toString(),
-                new SingleLineDocumentRowMapper());
+                mapper);
 
-        TreeMap<String, String> map = new TreeMap<>();
+        TreeMap<Integer, String> map = new TreeMap<>();
         for (SimpleDocument doc : docs) {
-            map.put(doc.getLineKey(), doc.getLineContents());
+            map.put(Integer.valueOf(doc.getLineKey()), doc.getLineContents());
         }
 
         SimpleDocument doc = new SimpleDocument();
         doc.setDocumentKey(rs.getString(documentKeyName));
 
         StringBuilder sb2 = new StringBuilder();
-        for (Map.Entry<String, String> entry : map.entrySet()) {
+        for (Map.Entry<Integer, String> entry : map.entrySet()) {
             sb2.append(entry.getValue());
 
         }

@@ -338,8 +338,8 @@ public class TestJobConfiguration {
     }
     
     @Bean
-    @Qualifier("multiLineDocumentRowMapper")
-    public RowMapper multiLineDocumentRowMapper(
+    @Qualifier("multiRowDocumentRowmapper")
+    public RowMapper multiRowDocumentRowmapper(
                 @Qualifier("sourceDataSource") DataSource ds) {
         MultiRowDocumentRowMapper mapper = new MultiRowDocumentRowMapper(ds);
         mapper.setDocumentKeyName(env.getProperty("documentKeyName"));
@@ -381,13 +381,13 @@ public class TestJobConfiguration {
     
     @Bean
     public Step dbLineFixerSlaveStep(    
-            @Qualifier("dBLineFixerItemReader")ItemReader<BinaryDocument> reader,
-            @Qualifier("dBLineFixerItemWriter")  ItemWriter<BinaryDocument> writer,    
+            @Qualifier("dBLineFixerItemReader") ItemReader<SimpleDocument> reader,
+            @Qualifier("dBLineFixerItemWriter")  ItemWriter<SimpleDocument> writer,    
             StepBuilderFactory stepBuilderFactory
     //        @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor
             ) {
          Step step = stepBuilderFactory.get("dbLineFixerSlaveStep")
-                .<BinaryDocument, BinaryDocument> chunk(Integer.parseInt(env.getProperty("chunkSize")))
+                .<SimpleDocument, SimpleDocument> chunk(Integer.parseInt(env.getProperty("chunkSize")))
                 .reader(reader)
                 .writer(writer)
                 .faultTolerant()

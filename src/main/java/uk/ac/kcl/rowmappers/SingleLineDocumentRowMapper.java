@@ -26,9 +26,9 @@ import org.springframework.jdbc.core.RowMapper;
  */
 public class SingleLineDocumentRowMapper implements RowMapper<SimpleDocument>{
 
-    String documentKeyName;
-    String lineKeyName;
-    String lineContents;
+    private String documentKeyName;
+    private String lineKeyName;
+    private String lineContents;
     @Override
     public SimpleDocument mapRow(ResultSet rs, int i) throws SQLException {
         SimpleDocument doc = new SimpleDocument();
@@ -36,6 +36,30 @@ public class SingleLineDocumentRowMapper implements RowMapper<SimpleDocument>{
         doc.setLineKey(rs.getString(lineKeyName));        
         doc.setLineContents(rs.getString(lineContents));
         return doc;
+    }
+
+    public String getDocumentKeyName() {
+        return documentKeyName;
+    }
+
+    public void setDocumentKeyName(String documentKeyName) {
+        this.documentKeyName = documentKeyName;
+    }
+
+    public String getLineKeyName() {
+        return lineKeyName;
+    }
+
+    public void setLineKeyName(String lineKeyName) {
+        this.lineKeyName = lineKeyName;
+    }
+
+    public String getLineContents() {
+        return lineContents;
+    }
+
+    public void setLineContents(String lineContents) {
+        this.lineContents = lineContents;
     }
     
 }
