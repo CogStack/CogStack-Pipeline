@@ -15,13 +15,32 @@
  */
 package uk.ac.kcl.batch;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.sql.DataSource;
+import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.configuration.annotation.DefaultBatchConfigurer;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
+import org.springframework.batch.core.configuration.support.JobRegistryBeanPostProcessor;
+import org.springframework.batch.core.configuration.support.MapJobRegistry;
+import org.springframework.batch.core.explore.JobExplorer;
+import org.springframework.batch.core.explore.support.JobExplorerFactoryBean;
+import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.launch.JobOperator;
+import org.springframework.batch.core.launch.support.SimpleJobLauncher;
+import org.springframework.batch.core.launch.support.SimpleJobOperator;
+import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.repository.support.JobRepositoryFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
 
 /**
  *
@@ -29,42 +48,101 @@ import org.springframework.stereotype.Component;
  */
 @Configuration
 @EnableBatchProcessing
-@PropertySource("file:${gate_cog}")
+@PropertySource("file:${TURBO_LASER}")
+@ComponentScan(basePackages = {"uk.ac.kcl.batch"})
 public class BatchConfigurer extends DefaultBatchConfigurer{
 
+
+
+    public DataSource jdbcDocumentTarget;
+
+    @Override
+    protected JobRepository createJobRepository() throws Exception {
+        JobRepositoryFactoryBean factory = new JobRepositoryFactoryBean();
+        factory.setDataSource(jdbcDocumentTarget);
+        factory.setTransactionManager(getTransactionManager());
+        factory.afterPropertiesSet();
+        return factory.getObject();
+    }
     
-//	@Autowired
-//	private Environment env;
-// 
-//	@Bean
-//	public DataSource dataSource(){
-//		try {
-//			InitialContext initialContext = new InitialContext();
-//			return (DataSource) initialContext.lookup(env.getProperty("datasource.jndi"));
-//		} catch (NamingException e) {
-//			throw new RuntimeException("JNDI lookup failed.",e);
-//		}
-//	}
-// 
-//	public JobRepository getJobRepository() throws Exception {
-//		JobRepositoryFactoryBean factory = new JobRepositoryFactoryBean();
-//		factory.setDataSource(dataSource());
-//		factory.setTransactionManager(getTransactionManager());
-//		factory.afterPropertiesSet();
-//		return  (JobRepository) factory.getObject();
-//	}
-// 
-//	public PlatformTransactionManager getTransactionManager() throws Exception {
-//		return new WebSphereUowTransactionManager();
-//	}
-// 
-//	public JobLauncher getJobLauncher() throws Exception {
-//		SimpleJobLauncher jobLauncher = new SimpleJobLauncher();
-//		jobLauncher.setJobRepository(getJobRepository());
-//		jobLauncher.afterPropertiesSet();
-//		return jobLauncher;
-//	}    
-//    
+
+
+    @Override
+    @Autowired
+    public void setDataSource(@Qualifier("targetDataSource")DataSource dataSource) {
+        if (dataSource != null) {
+            super.setDataSource(dataSource);
+        }
+        this.jdbcDocumentTarget = dataSource;
+    }
+
+
+
+    @Autowired
+    public PlatformTransactionManager getTransactionManager(
+            @Qualifier("targetDataSource")
+            DataSource jdbcDocumentTarget) {
+        DataSourceTransactionManager tx = new DataSourceTransactionManager();
+        tx.setDataSource(jdbcDocumentTarget);
+        return tx;
+    }
+
     
+    @Bean
+    public JobRegistry jobregistry(){
+        return new MapJobRegistry();
+    }
+    
+    @Bean
+    @Autowired
+    public JobExplorer jobExplorer(@Qualifier("targetDataSource")DataSource dataSource) throws Exception{
+        JobExplorerFactoryBean factory = new JobExplorerFactoryBean();
+        factory.setDataSource(dataSource);
+        
+        factory.afterPropertiesSet();
+        return factory.getObject();
+    }
+    
+    @Bean
+    public JobLauncher getJobLauncher() {
+        SimpleJobLauncher jobLauncher = new SimpleJobLauncher();
+        jobLauncher.setJobRepository(getJobRepository());
+        try {
+            jobLauncher.afterPropertiesSet();
+        } catch (Exception ex) {
+            Logger.getLogger(BatchConfigurer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return jobLauncher;
+    }
+    
+    @Bean
+    public JobRegistryBeanPostProcessor jobRegistryBeanPostProcessor(JobRegistry jobRegistry) {
+        JobRegistryBeanPostProcessor jobRegistryBeanPostProcessor = new JobRegistryBeanPostProcessor();
+        jobRegistryBeanPostProcessor.setJobRegistry(jobRegistry);
+        return jobRegistryBeanPostProcessor;
+    }    
+    
+//    @Autowired
+//    JobExplorer jobExplorer;
+//    @Autowired
+//    JobLauncher jobLauncher;
+//    @Autowired
+//    JobRegistry jobRegistry;
+//    @Autowired
+//    JobRepository jobRepository;
+    
+    @Bean
+    public JobOperator jobOperator(
+            JobExplorer jobExplorer, 
+            JobLauncher jobLauncher, 
+            JobRegistry jobRegistry, 
+            JobRepository jobRepository) {
+        SimpleJobOperator jobOperator = new SimpleJobOperator();
+        jobOperator.setJobExplorer(jobExplorer);
+        jobOperator.setJobLauncher(jobLauncher);
+        jobOperator.setJobRegistry(jobRegistry);
+        jobOperator.setJobRepository(jobRepository);
+        return jobOperator;
+    }
 
 }

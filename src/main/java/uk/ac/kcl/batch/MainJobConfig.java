@@ -20,7 +20,11 @@ import java.util.logging.Level;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersInvalidException;
+import org.springframework.batch.core.UnexpectedJobExecutionException;
 import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.launch.JobOperator;
+import org.springframework.batch.core.launch.JobParametersNotFoundException;
+import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
@@ -35,20 +39,20 @@ import org.springframework.stereotype.Component;
 public class MainJobConfig {
     
 
-//    @Autowired
-//    private Job job;
-//    @Autowired
-//    private JobLauncher jobLauncher;
-//    
-//    /**
-//     * @param args the command line arguments
-//     */
-//    public void launchJob() {
-//        
-//        try {
-//            jobLauncher.run(job, new JobParameters());
-//        } catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException | JobParametersInvalidException ex) {
-//            java.util.logging.Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-//        }  
-//    }
+    @Autowired
+    private JobOperator jobOperator;
+
+    
+    /**
+     * @param args the command line arguments
+     */
+    public void launchJob() {
+        
+
+        try {
+            jobOperator.startNextInstance("dbLineFixerJob");
+        } catch (NoSuchJobException | JobParametersNotFoundException | JobRestartException | JobExecutionAlreadyRunningException | JobInstanceAlreadyCompleteException | UnexpectedJobExecutionException | JobParametersInvalidException ex) {
+            java.util.logging.Logger.getLogger(MainJobConfig.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

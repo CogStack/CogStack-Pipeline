@@ -283,7 +283,7 @@ public class JobIntegrationTests {
     
     private void insertTestLinesForDBLineFixer(DataSource ds){
         JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
-        int docCount = 50000;
+        int docCount = 10;
         int lineCountIncrementer = 1;
         String sql = "INSERT INTO tblInputDocs "
                 + "( DOC_ID"
