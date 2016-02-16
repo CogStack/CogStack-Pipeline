@@ -15,8 +15,6 @@
  */
 package uk.ac.kcl.batch;
 
-import uk.ac.kcl.batch.BatchConfigurer;
-import uk.ac.kcl.batch.JobConfiguration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sql.DataSource;
@@ -55,7 +53,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 @ComponentScan(basePackages = {"uk.ac.kcl.batch"},excludeFilters={
 @ComponentScan.Filter(type=FilterType.ASSIGNABLE_TYPE, value=JobConfiguration.class), 
 @ComponentScan.Filter(type=FilterType.ASSIGNABLE_TYPE, value=BatchConfigurer.class),
-@ComponentScan.Filter(type=FilterType.ASSIGNABLE_TYPE, value=TestJobs.class)}        )
+@ComponentScan.Filter(type=FilterType.ASSIGNABLE_TYPE, value=Jobs.class)}        )
 public class TestBatchConfigurer extends DefaultBatchConfigurer {
 
 

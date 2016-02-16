@@ -15,10 +15,8 @@
  */
 package uk.ac.kcl.batch;
 
-import gate.util.GateException;
+
 import uk.ac.kcl.ItemProcessors.GateDocumentItemProcessor;
-//import io.bluecell.data.JDBCDocumentSource;
-//import io.bluecell.data.JDBCDocumentTarget;
 import uk.ac.kcl.model.BinaryDocument;
 import uk.ac.kcl.rowmappers.DocumentMetadataRowMapper;
 import uk.ac.kcl.service.GateService;
@@ -29,15 +27,9 @@ import javax.annotation.Resource;
 import javax.sql.DataSource;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.commons.dbcp.BasicDataSource;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.core.partition.PartitionHandler;
 import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.integration.partition.BeanFactoryStepLocator;
 import org.springframework.batch.integration.partition.MessageChannelPartitionHandler;
@@ -49,10 +41,7 @@ import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourc
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.JdbcPagingItemReader;
 import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean;
-import org.springframework.batch.item.file.FlatFileItemReader;
-import org.springframework.batch.item.file.MultiResourceItemReader;
 import org.springframework.batch.sample.common.ColumnRangePartitioner;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -64,9 +53,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
-import org.springframework.core.task.SyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
-import org.springframework.integration.annotation.MessagingGateway;
 import org.springframework.integration.config.EnableIntegration;
 import org.springframework.integration.core.MessagingTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -88,6 +75,7 @@ import uk.ac.kcl.rowmappers.MultiRowDocumentRowMapper;
 @ImportResource("classpath:spring.xml")
 @ComponentScan(basePackages = {"uk.ac.kcl.batch"}, excludeFilters = {
     @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = JobConfiguration.class),
+    @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = Jobs.class),    
     @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = BatchConfigurer.class)})
 public class TestJobConfiguration {
     /* 

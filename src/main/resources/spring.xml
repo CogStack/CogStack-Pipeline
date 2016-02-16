@@ -22,8 +22,10 @@
 
     <!-- master -->
     <int:channel id="batch.requests.partitioning" />
-    <int-jms:outbound-channel-adapter connection-factory="JMSConnectionFactory" channel="batch.requests.partitioning"
-                                      destination-name="queue-batch-requests-partitioning" />
+    <int-jms:outbound-channel-adapter connection-factory="JMSConnectionFactory" 
+                                      channel="batch.requests.partitioning"
+                                      destination-name="queue-batch-requests-partitioning" 
+    />
 
 
     <!-- slave -->
@@ -32,8 +34,10 @@
                                             channel="batch.handler.in.partitioning"
                                             concurrent-consumers="8"/>
     <int:channel id="batch.handler.in.partitioning" />
-    <int:service-activator input-channel="batch.handler.in.partitioning" output-channel="batch.handler.out.partitioning"
-                           ref="stepExecutionRequestHandler" method="handle" />
+    <int:service-activator input-channel="batch.handler.in.partitioning" 
+                           output-channel="batch.handler.out.partitioning"
+                           ref="stepExecutionRequestHandler" 
+                           method="handle" />
 
     <int:channel id="batch.handler.out.partitioning" />
     <int-jms:outbound-channel-adapter connection-factory="JMSConnectionFactory"
@@ -42,56 +46,20 @@
 
 
     <!-- master -->
-    <int-jms:message-driven-channel-adapter connection-factory="JMSConnectionFactory" channel="batch.staging.partitioning"
-                                            destination-name="queue-batch-replies-partitioning" />
+    <int-jms:message-driven-channel-adapter connection-factory="JMSConnectionFactory" 
+                                            channel="batch.staging.partitioning"
+                                            destination-name="queue-batch-replies-partitioning" 
+    />
 
     <int:channel id="batch.staging.partitioning" />
 
     <int:aggregator ref="partitionHandler" 
-                    input-channel="batch.staging.partitioning" output-channel="batch.replies.partitioning" /> <!-- 1h in [ms] -->
+                    input-channel="batch.staging.partitioning" 
+                    output-channel="batch.replies.partitioning" 
+    />
 
     <int:channel id="batch.replies.partitioning">
         <int:queue />
     </int:channel>
     
-<!--    <bean id="partitionHandler"
-              class="org.springframework.batch.integration.partition.MessageChannelPartitionHandler">
-        <property name="stepName" value="dbLineFixerSlaveStep"/>
-        <property name="gridSize" value="20"/>
-        <property name="replyChannel" ref="batch.replies.partitioning"/>
-        <property name="messagingOperations">
-            <bean class="org.springframework.integration.core.MessagingTemplate">
-                <property name="defaultChannel" ref="batch.requests.partitioning"/>
-                <property name="receiveTimeout" value="100000"/>
-            </bean>
-        </property>
-    </bean>
-
-
-    
-    <bean id="amqConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-         brokerURL, You may have different IP or port 
-        <constructor-arg index="0" value="tcp://172.17.0.3:61616" />
-        <property name="userName">
-            <value>admin</value>
-        </property>    
-        <property name="password">
-            <value>your_password</value>
-        </property>        
-    </bean>
- 
-     Pooled Spring connection factory 
-    <bean id="JMSConnectionFactory"
-          class="org.springframework.jms.connection.CachingConnectionFactory">
-        <constructor-arg ref="amqConnectionFactory" />
-    </bean>    
-            
-
-    <bean id="stepLocator"
-          class="org.springframework.batch.integration.partition.BeanFactoryStepLocator" />
-    <bean id="stepExecutionRequestHandler"
-           class="org.springframework.batch.integration.partition.StepExecutionRequestHandler">
-        <property name="jobExplorer" ref="jobExplorer"/>
-        <property name="stepLocator" ref="stepLocator"/>
-    </bean>    -->
 </beans>

@@ -131,7 +131,8 @@ public class TestJobs {
     //        @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor
             ) {
          Step step = stepBuilderFactory.get("dbLineFixerSlaveStep")
-                .<SimpleDocument, SimpleDocument> chunk(Integer.parseInt(env.getProperty("chunkSize")))
+                .<SimpleDocument, SimpleDocument> chunk(
+                        Integer.parseInt(env.getProperty("chunkSize")))
                 .reader(reader)
                 .writer(writer)
                 .faultTolerant()

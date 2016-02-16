@@ -58,7 +58,10 @@ import uk.ac.kcl.batch.TestJobs;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 //@ContextConfiguration(locations = {"classpath:testApplicationContext.xml"})
-@ContextConfiguration(classes = {TestJobConfiguration.class,TestJobs.class, TestBatchConfigurer.class},
+@ContextConfiguration(classes = {
+    TestJobConfiguration.class,
+    TestJobs.class, 
+    TestBatchConfigurer.class},
         loader = AnnotationConfigContextLoader.class)
 public class JobIntegrationTests {
 
