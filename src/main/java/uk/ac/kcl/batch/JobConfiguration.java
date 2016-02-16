@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
+import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -28,9 +29,13 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.partition.PartitionHandler;
 import org.springframework.batch.core.partition.support.Partitioner;
+import org.springframework.batch.integration.partition.BeanFactoryStepLocator;
+import org.springframework.batch.integration.partition.MessageChannelPartitionHandler;
+import org.springframework.batch.integration.partition.StepExecutionRequestHandler;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
@@ -50,7 +55,11 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.integration.core.MessagingTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jms.connection.CachingConnectionFactory;
+import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.PollableChannel;
 import uk.ac.kcl.ItemProcessors.GateDocumentItemProcessor;
 import uk.ac.kcl.model.BinaryDocument;
 import uk.ac.kcl.model.SimpleDocument;
@@ -63,7 +72,7 @@ import uk.ac.kcl.service.GateService;
  * @author rich
  */
 @Configuration
-@PropertySource("file:${gate_cog}")
+@PropertySource("file:${TURBO_LASER}")
 @EnableBatchProcessing
 @ImportResource("classpath:spring.xml")
 @ComponentScan(basePackages = {"uk.ac.kcl.batch"})
@@ -72,11 +81,15 @@ public class JobConfiguration {
         
     
     *******************************************COMMON BEANS
-
-    @
+        
     
     */
-
+    
+//    
+//    @Autowired
+//    public StepBuilderFactory stepBuilderFactory;    
+//    @Autowired
+//    public JobCompleteNotificationListener jobDoneListener;    
     @Resource
     public Environment env;                    
 
@@ -99,6 +112,11 @@ public class JobConfiguration {
 
 
     
+//    @Autowired
+//    public Partitioner partitioner;
+    
+
+    
     @Bean
     @Qualifier("validationQueryRowMapper")
     public RowMapper<BinaryDocument> validationQueryRowMapper() {
@@ -108,7 +126,10 @@ public class JobConfiguration {
         return documentMetadataRowMapper;
     }
 
-  
+//    @Bean
+//    public JobCompleteNotificationListener listener() {
+//        return new JobCompleteNotificationListener();
+//    }    
  
     /* 
     
@@ -139,6 +160,7 @@ public class JobConfiguration {
         qp.setSelectClause(env.getProperty("source.selectClause"));
         qp.setFromClause(env.getProperty("source.fromClause"));
         qp.setSortKey(env.getProperty("source.sortKey"));
+        //qp.setWhereClause(env.getProperty("source.whereClause"));
         qp.setWhereClause("WHERE " + env.getProperty("columntoPartition") + " BETWEEN " + minValue + " AND " + maxValue) ;
         qp.setDataSource(jdbcDocumentSource);
         reader.setFetchSize(Integer.parseInt(env.getProperty("source.pageSize")));
@@ -147,6 +169,7 @@ public class JobConfiguration {
         reader.setQueryProvider(qp.getObject());
         reader.setRowMapper(documentRowmapper);
 
+        //reader2.setDelegate(reader);
         return reader;
     }
 
@@ -190,51 +213,7 @@ public class JobConfiguration {
 
     
     
-    @Bean
-    public Job gateJob(JobBuilderFactory jobs, 
-            StepBuilderFactory steps,
-            Partitioner partitioner, 
-            @Qualifier("partitionHandler") 
-                    PartitionHandler gatePartitionHandler,
-                    TaskExecutor taskExecutor){
-                Job job = jobs.get("gateJob")
-                        .incrementer(new RunIdIncrementer())
-                        .flow(
-                                steps
-                                        .get("gateMasterStep")
-                                        .partitioner("gateSlaveStep", partitioner)
-                                        .partitionHandler(gatePartitionHandler)
-                                        .taskExecutor(taskExecutor)
-                                        .build()
-                                
-                        )
-                        .end()
-                        .build();
-                return job;
-                        
-    }
-    
-
-    
-    @Bean
-    public Step gateSlaveStep(    
-            @Qualifier("gateItemReader")ItemReader<BinaryDocument> reader,
-            @Qualifier("gateItemWriter")  ItemWriter<BinaryDocument> writer,    
-            @Qualifier("gateItemProcessor")   ItemProcessor<BinaryDocument, BinaryDocument> processor,
-            StepBuilderFactory stepBuilderFactory
-            ) {
-         Step step = stepBuilderFactory.get("gateSlaveStep")
-                .<BinaryDocument, BinaryDocument> chunk(Integer.parseInt(env.getProperty("chunkSize")))
-                .reader(reader)
-                .processor(processor)
-                .writer(writer)
-                .faultTolerant()
-                .skipLimit(10)
-                .skip(GateException.class)   
-                .build();
-         
-         return step;
-    }       
+  
     
     
     
@@ -325,48 +304,54 @@ public class JobConfiguration {
     }    
 
     
+  
+    
     @Bean
-    public Job dbLineFixerJob(JobBuilderFactory jobs, 
-            StepBuilderFactory steps,
-            Partitioner partitioner, 
-            @Qualifier("partitionHandler") 
-                    PartitionHandler gatePartitionHandler,
-                    TaskExecutor taskExecutor){
-                Job job = jobs.get("dbLineFixerJob")
-                        .incrementer(new RunIdIncrementer())
-                        .flow(
-                                steps
-                                        .get("dbLineFixerMasterStep")
-                                        .partitioner("dbLineFixerSlaveStep", partitioner)
-                                        .partitionHandler(gatePartitionHandler)
-                                        .taskExecutor(taskExecutor)
-                                        .build()
-                                
-                        )
-                        .end()
-                        .build();
-                return job;
-                        
+    public MessageChannelPartitionHandler partitionHandler(
+            @Qualifier("batch.requests.partitioning") MessageChannel reqChannel,
+            @Qualifier("batch.replies.partitioning")  PollableChannel repChannel){
+        MessageChannelPartitionHandler handler = new MessageChannelPartitionHandler();
+        handler.setGridSize(Integer.parseInt(env.getProperty("gridSize")));
+        handler.setStepName(env.getProperty("stepName"));
+        handler.setReplyChannel(repChannel);
+        MessagingTemplate template = new MessagingTemplate();
+        template.setDefaultChannel(reqChannel);
+        template.setReceiveTimeout(Integer.parseInt(env.getProperty("partitionHandlerTimeout")));
+        handler.setMessagingOperations(template);
+        
+        return handler;
+    }         
+//    
+            
+    @Bean
+    public BeanFactoryStepLocator stepLocator(){
+        return new BeanFactoryStepLocator();
     }
     
+    @Bean 
+    public CachingConnectionFactory JMSConnectionFactory(ActiveMQConnectionFactory factory){
+        return new CachingConnectionFactory(factory);
+    }
 
+    @Bean
+    public ActiveMQConnectionFactory amqConnectionFactory(){
+        ActiveMQConnectionFactory factory = 
+                new ActiveMQConnectionFactory(env.getProperty("jmsIP"));
+        factory.setUserName(env.getProperty("jmsUsername"));
+        factory.setPassword(env.getProperty("jmsPassword"));
+        return factory;
+    }
+          
+   
     
     @Bean
-    public Step dbLineFixerSlaveStep(    
-            @Qualifier("dBLineFixerItemReader") ItemReader<SimpleDocument> reader,
-            @Qualifier("dBLineFixerItemWriter")  ItemWriter<SimpleDocument> writer,    
-            StepBuilderFactory stepBuilderFactory
-            ) {
-         Step step = stepBuilderFactory.get("dbLineFixerSlaveStep")
-                .<SimpleDocument, SimpleDocument> chunk(Integer.parseInt(env.getProperty("chunkSize")))
-                .reader(reader)
-                .writer(writer)
-                .faultTolerant()
-                .skipLimit(10)
-                .skip(GateException.class)   
-                .build();
-         
-         return step;
-    }       
+    public StepExecutionRequestHandler stepExecutionRequestHandler(
+    JobExplorer jobExplorer, BeanFactoryStepLocator stepLocator){
+        StepExecutionRequestHandler handler = new StepExecutionRequestHandler();
+        handler.setJobExplorer(jobExplorer);
+        handler.setStepLocator(stepLocator);
+        return handler;
+    }
+     
     
 }

@@ -226,53 +226,7 @@ public class TestJobConfiguration {
 
     
     
-    @Bean
-    public Job gateJob(JobBuilderFactory jobs, 
-            StepBuilderFactory steps,
-            Partitioner partitioner, 
-            @Qualifier("partitionHandler") 
-                    PartitionHandler gatePartitionHandler,
-                    TaskExecutor taskExecutor){
-                Job job = jobs.get("gateJob")
-                        .incrementer(new RunIdIncrementer())
-                        .flow(
-                                steps
-                                        .get("gateMasterStep")
-                                        .partitioner("gateSlaveStep", partitioner)
-                                        .partitionHandler(gatePartitionHandler)
-                                        .taskExecutor(taskExecutor)
-                                        .build()
-                                
-                        )
-                        .end()
-                        .build();
-                return job;
-                        
-    }
     
-
-    
-    @Bean
-    public Step gateSlaveStep(    
-            @Qualifier("gateItemReader")ItemReader<BinaryDocument> reader,
-            @Qualifier("gateItemWriter")  ItemWriter<BinaryDocument> writer,    
-            @Qualifier("gateItemProcessor")   ItemProcessor<BinaryDocument, BinaryDocument> processor,
-            StepBuilderFactory stepBuilderFactory
-    //        @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor
-            ) {
-         Step step = stepBuilderFactory.get("gateSlaveStep")
-                .<BinaryDocument, BinaryDocument> chunk(Integer.parseInt(env.getProperty("chunkSize")))
-                .reader(reader)
-                .processor(processor)
-                .writer(writer)
-                .faultTolerant()
-                .skipLimit(10)
-                .skip(GateException.class)   
-                //.taskExecutor(taskExecutor)
-                .build();
-         
-         return step;
-    }       
     
     
     
@@ -363,51 +317,7 @@ public class TestJobConfiguration {
     }    
 
     
-    @Bean
-    public Job dbLineFixerJob(JobBuilderFactory jobs, 
-            StepBuilderFactory steps,
-            Partitioner partitioner, 
-            @Qualifier("partitionHandler") 
-                    PartitionHandler gatePartitionHandler,
-                    TaskExecutor taskExecutor){
-                Job job = jobs.get("dbLineFixerJob")
-                        .incrementer(new RunIdIncrementer())
-                        .flow(
-                                steps
-                                        .get("dbLineFixerMasterStep")
-                                        .partitioner("dbLineFixerSlaveStep", partitioner)
-                                        .partitionHandler(gatePartitionHandler)
-                                        .taskExecutor(taskExecutor)
-                                        .build()
-                                
-                        )
-                        .end()
-                        .build();
-                return job;
-                        
-    }
-    
-
-    
-    @Bean
-    public Step dbLineFixerSlaveStep(    
-            @Qualifier("dBLineFixerItemReader") ItemReader<SimpleDocument> reader,
-            @Qualifier("dBLineFixerItemWriter")  ItemWriter<SimpleDocument> writer,    
-            StepBuilderFactory stepBuilderFactory
-    //        @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor
-            ) {
-         Step step = stepBuilderFactory.get("dbLineFixerSlaveStep")
-                .<SimpleDocument, SimpleDocument> chunk(Integer.parseInt(env.getProperty("chunkSize")))
-                .reader(reader)
-                .writer(writer)
-                .faultTolerant()
-                .skipLimit(10)
-                .skip(GateException.class)   
-                //.taskExecutor(taskExecutor)
-                .build();
-         
-         return step;
-    }       
+     
     
     @Bean
     public MessageChannelPartitionHandler partitionHandler(

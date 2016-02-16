@@ -49,6 +49,8 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import uk.ac.kcl.batch.TestBatchConfigurer;
+import uk.ac.kcl.batch.TestJobs;
 
 /**
  *
@@ -56,7 +58,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 //@ContextConfiguration(locations = {"classpath:testApplicationContext.xml"})
-@ContextConfiguration(classes = TestJobConfiguration.class,
+@ContextConfiguration(classes = {TestJobConfiguration.class,TestJobs.class, TestBatchConfigurer.class},
         loader = AnnotationConfigContextLoader.class)
 public class JobIntegrationTests {
 
