@@ -133,7 +133,7 @@ public class JobConfiguration {
     public Job dbLineFixerJob(JobBuilderFactory jobs, 
             StepBuilderFactory steps,
             Partitioner partitioner, 
-            @Qualifier("partitionHandler") 
+            @Qualifier("linePartitionHandler") 
                     PartitionHandler gatePartitionHandler,
                     TaskExecutor taskExecutor){
                 Job job = jobs.get("dbLineFixerJob")
@@ -403,6 +403,7 @@ public class JobConfiguration {
      
     
     @Bean
+    @Qualifier("linePartitionHandler")
     public MessageChannelPartitionHandler partitionHandler(
             @Qualifier("batch.requests.partitioning") MessageChannel reqChannel,
             @Qualifier("batch.replies.partitioning")  PollableChannel repChannel){
