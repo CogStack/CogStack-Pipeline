@@ -149,7 +149,7 @@ public class JobIntegrationTests {
         }
     }
 
-    //@Ignore
+    @Ignore
     @Test
     public void postgresDBLineFixerPipelineTest() {
         

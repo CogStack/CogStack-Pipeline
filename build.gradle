@@ -48,7 +48,7 @@ jar {
 }
 
 if (!hasProperty('mainClass')) {
-    ext.mainClass = 'uk.ac.kcl.Main'
+    ext.mainClass = 'org.springframework.batch.core.launch.support.CommandLineJobRunner'
 }
 repositories {
     mavenCentral()

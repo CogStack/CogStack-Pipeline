@@ -15,6 +15,7 @@
  */
 package uk.ac.kcl.batch;
 
+import gate.util.GateException;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
@@ -22,9 +23,15 @@ import javax.annotation.Resource;
 import javax.sql.DataSource;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.commons.dbcp.BasicDataSource;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
+import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.explore.JobExplorer;
+import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.partition.PartitionHandler;
 import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.integration.partition.BeanFactoryStepLocator;
 import org.springframework.batch.integration.partition.MessageChannelPartitionHandler;
@@ -48,6 +55,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.integration.config.EnableIntegration;
 import org.springframework.integration.core.MessagingTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jms.connection.CachingConnectionFactory;
@@ -65,11 +73,110 @@ import uk.ac.kcl.service.GateService;
  * @author rich
  */
 @Configuration
-@PropertySource("file:${TURBO_LASER}")
 @EnableBatchProcessing
+@EnableIntegration
+@PropertySource("file:${TURBO_LASER}")
 @ImportResource("classpath:spring.xml")
 @ComponentScan(basePackages = {"uk.ac.kcl.batch"})
 public class JobConfiguration {
+    
+    
+    @Bean
+    public Job gateJob(JobBuilderFactory jobs, 
+            StepBuilderFactory steps,
+            Partitioner partitioner, 
+            @Qualifier("partitionHandler") 
+                    PartitionHandler gatePartitionHandler,
+                    TaskExecutor taskExecutor){
+                Job job = jobs.get("gateJob")
+                        .incrementer(new RunIdIncrementer())
+                        .flow(
+                                steps
+                                        .get("gateMasterStep")
+                                        .partitioner("gateSlaveStep", partitioner)
+                                        .partitionHandler(gatePartitionHandler)
+                                        .taskExecutor(taskExecutor)
+                                        .build()
+                                
+                        )
+                        .end()
+                        .build();
+                return job;
+                        
+    }
+    
+
+    
+    @Bean
+    public Step gateSlaveStep(    
+            @Qualifier("gateItemReader")ItemReader<BinaryDocument> reader,
+            @Qualifier("gateItemWriter")  ItemWriter<BinaryDocument> writer,    
+            @Qualifier("gateItemProcessor")   ItemProcessor<BinaryDocument, BinaryDocument> processor,
+            StepBuilderFactory stepBuilderFactory
+    //        @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor
+            ) {
+         Step step = stepBuilderFactory.get("gateSlaveStep")
+                .<BinaryDocument, BinaryDocument> chunk(Integer.parseInt(env.getProperty("chunkSize")))
+                .reader(reader)
+                .processor(processor)
+                .writer(writer)
+                .faultTolerant()
+                .skipLimit(10)
+                .skip(GateException.class)   
+                //.taskExecutor(taskExecutor)
+                .build();
+         
+         return step;
+    }       
+    
+    @Bean
+    public Job dbLineFixerJob(JobBuilderFactory jobs, 
+            StepBuilderFactory steps,
+            Partitioner partitioner, 
+            @Qualifier("partitionHandler") 
+                    PartitionHandler gatePartitionHandler,
+                    TaskExecutor taskExecutor){
+                Job job = jobs.get("dbLineFixerJob")
+                        .incrementer(new RunIdIncrementer())
+                        .flow(
+                                steps
+                                        .get("dbLineFixerMasterStep")
+                                        .partitioner("dbLineFixerSlaveStep", partitioner)
+                                        .partitionHandler(gatePartitionHandler)
+                                        .taskExecutor(taskExecutor)
+                                        .build()
+                                
+                        )
+                        .end()
+                        .build();
+                return job;
+                        
+    }
+    
+
+    
+    @Bean
+    public Step dbLineFixerSlaveStep(    
+            @Qualifier("dBLineFixerItemReader") ItemReader<SimpleDocument> reader,
+            @Qualifier("dBLineFixerItemWriter")  ItemWriter<SimpleDocument> writer,    
+            StepBuilderFactory stepBuilderFactory
+    //        @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor
+            ) {
+         Step step = stepBuilderFactory.get("dbLineFixerSlaveStep")
+                .<SimpleDocument, SimpleDocument> chunk(
+                        Integer.parseInt(env.getProperty("chunkSize")))
+                .reader(reader)
+                .writer(writer)
+                .faultTolerant()
+                .skipLimit(10)
+                .skip(GateException.class)   
+                //.taskExecutor(taskExecutor)
+                .build();
+         
+         return step;
+    }         
+    
+    
     /* 
         
     
@@ -285,16 +392,12 @@ public class JobConfiguration {
     @Qualifier("multiRowDocumentRowmapper")
     public RowMapper multiRowDocumentRowmapper(
                 @Qualifier("sourceDataSource") DataSource ds) {
-        MultiRowDocumentRowMapper mapper = new MultiRowDocumentRowMapper(ds);
-        mapper.setDocumentKeyName(env.getProperty("documentKeyName"));
-        mapper.setLineKeyName(env.getProperty("lineKeyName"));
-        mapper.setLineContents(env.getProperty("lineContents"));
-        mapper.setTableName(env.getProperty("tableName"));
-        
-        
-        
+        MultiRowDocumentRowMapper mapper = new MultiRowDocumentRowMapper(ds, env.getProperty("documentKeyName"),
+        env.getProperty("lineKeyName"),
+        env.getProperty("lineContents"),
+        env.getProperty("tableName"));
         return mapper;
-    }    
+    }      
 
     
      

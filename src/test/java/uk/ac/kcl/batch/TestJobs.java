@@ -38,6 +38,7 @@ import uk.ac.kcl.model.SimpleDocument;
 @PropertySource("classpath:test_config.properties")
 @ComponentScan(basePackages = {"uk.ac.kcl.batch"}, excludeFilters = {
     @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = JobConfiguration.class),
+    //@ComponentScan.Filter(type=FilterType.ASSIGNABLE_TYPE, value=Jobs.class),         
     @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = BatchConfigurer.class)})
 public class TestJobs {
     

@@ -77,6 +77,7 @@ import uk.ac.kcl.rowmappers.MultiRowDocumentRowMapper;
 @Import(TestJobs.class)
 @ComponentScan(basePackages = {"uk.ac.kcl.batch"}, excludeFilters = {
     @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = JobConfiguration.class),  
+ //   @ComponentScan.Filter(type=FilterType.ASSIGNABLE_TYPE, value=Jobs.class),         
     @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = BatchConfigurer.class)})
 public class TestJobConfiguration {
     /* 
@@ -294,14 +295,10 @@ public class TestJobConfiguration {
     @Qualifier("multiRowDocumentRowmapper")
     public RowMapper multiRowDocumentRowmapper(
                 @Qualifier("sourceDataSource") DataSource ds) {
-        MultiRowDocumentRowMapper mapper = new MultiRowDocumentRowMapper(ds);
-        mapper.setDocumentKeyName(env.getProperty("documentKeyName"));
-        mapper.setLineKeyName(env.getProperty("lineKeyName"));
-        mapper.setLineContents(env.getProperty("lineContents"));
-        mapper.setTableName(env.getProperty("tableName"));
-        
-        
-        
+        MultiRowDocumentRowMapper mapper = new MultiRowDocumentRowMapper(ds, env.getProperty("documentKeyName"),
+        env.getProperty("lineKeyName"),
+        env.getProperty("lineContents"),
+        env.getProperty("tableName"));
         return mapper;
     }    
 

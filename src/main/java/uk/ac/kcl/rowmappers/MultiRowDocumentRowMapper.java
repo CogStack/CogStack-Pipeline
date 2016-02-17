@@ -36,9 +36,19 @@ public class MultiRowDocumentRowMapper implements RowMapper<SimpleDocument> {
     private String lineKeyName;
     private String lineContents;
     private String tableName;
+    private final SingleLineDocumentRowMapper mapper;
 
-    public MultiRowDocumentRowMapper(DataSource ds) {
+    public MultiRowDocumentRowMapper(DataSource ds, String documentKeyName, String lineKeyName, 
+            String lineContents, String tableName) {
         this.ds = ds;
+        this.mapper = new SingleLineDocumentRowMapper();
+        this.documentKeyName = documentKeyName;
+        this.lineKeyName = lineKeyName;
+        this.lineContents = lineContents;
+        this.tableName = tableName;
+        mapper.setDocumentKeyName(documentKeyName);
+        mapper.setLineContents(lineContents);
+        mapper.setLineKeyName(lineKeyName);        
     }
 
     @Override
@@ -61,10 +71,7 @@ public class MultiRowDocumentRowMapper implements RowMapper<SimpleDocument> {
                 .append(" ORDER BY ")
                 .append(lineKeyName)
                 .append(" DESC");
-        SingleLineDocumentRowMapper mapper = new SingleLineDocumentRowMapper();
-        mapper.setDocumentKeyName(documentKeyName);
-        mapper.setLineContents(lineContents);
-        mapper.setLineKeyName(lineKeyName);
+
         List<SimpleDocument> docs = template.query(sql.toString(),
                 mapper);
 

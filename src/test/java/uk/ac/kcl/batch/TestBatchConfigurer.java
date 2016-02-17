@@ -52,6 +52,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 @EnableBatchProcessing
 @ComponentScan(basePackages = {"uk.ac.kcl.batch"},excludeFilters={
 @ComponentScan.Filter(type=FilterType.ASSIGNABLE_TYPE, value=JobConfiguration.class), 
+//@ComponentScan.Filter(type=FilterType.ASSIGNABLE_TYPE, value=Jobs.class),     
 @ComponentScan.Filter(type=FilterType.ASSIGNABLE_TYPE, value=BatchConfigurer.class)}        )
 public class TestBatchConfigurer extends DefaultBatchConfigurer {
 
