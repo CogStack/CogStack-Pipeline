@@ -48,6 +48,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
@@ -73,9 +74,9 @@ import uk.ac.kcl.rowmappers.MultiRowDocumentRowMapper;
 @PropertySource("classpath:test_config.properties")
 @EnableBatchProcessing
 @ImportResource("classpath:spring.xml")
+@Import(TestJobs.class)
 @ComponentScan(basePackages = {"uk.ac.kcl.batch"}, excludeFilters = {
-    @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = JobConfiguration.class),
-    @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = Jobs.class),    
+    @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = JobConfiguration.class),  
     @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = BatchConfigurer.class)})
 public class TestJobConfiguration {
     /* 
