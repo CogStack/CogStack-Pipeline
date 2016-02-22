@@ -64,14 +64,14 @@ public class ColumnRangePartitioner implements Partitioner {
 	 */
 	@Override
 	public Map<String, ExecutionContext> partition(int gridSize) {
-		int min = jdbcTemplate.queryForObject("SELECT MIN(" + column + ") from " + table, Integer.class);
-		int max = jdbcTemplate.queryForObject("SELECT MAX(" + column + ") from " + table, Integer.class);
-		int targetSize = (max - min) / gridSize + 1;
+		long min = jdbcTemplate.queryForObject("SELECT MIN(" + column + ") from " + table, Long.class);
+		long max = jdbcTemplate.queryForObject("SELECT MAX(" + column + ") from " + table, Long.class);
+		long targetSize = (max - min) / gridSize + 1;
 
 		Map<String, ExecutionContext> result = new HashMap<String, ExecutionContext>();
-		int number = 0;
-		int start = min;
-		int end = start + targetSize - 1;
+		long number = 0;
+		long start = min;
+		long end = start + targetSize - 1;
 
 		while (start <= max) {
 			ExecutionContext value = new ExecutionContext();
@@ -80,8 +80,8 @@ public class ColumnRangePartitioner implements Partitioner {
 			if (end >= max) {
 				end = max;
 			}
-			value.putInt("minValue", start);
-			value.putInt("maxValue", end);
+			value.putLong("minValue", start);
+			value.putLong("maxValue", end);
 			start += targetSize;
 			end += targetSize;
 			number++;

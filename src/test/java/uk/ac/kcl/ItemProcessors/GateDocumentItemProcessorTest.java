@@ -26,6 +26,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -64,7 +65,8 @@ public class GateDocumentItemProcessorTest {
      */
     @Autowired
     GateDocumentItemProcessor instance ;
-            
+          
+    @Ignore
     @Test
     public void testProcess() throws Exception {
         System.out.println("process");        

@@ -37,7 +37,7 @@ public class MultiRowDocumentRowMapper implements RowMapper<SimpleDocument> {
     private String lineContents;
     private String tableName;
     private final SingleLineDocumentRowMapper mapper;
-
+    private JdbcTemplate template ;
     public MultiRowDocumentRowMapper(DataSource ds, String documentKeyName, String lineKeyName, 
             String lineContents, String tableName) {
         this.ds = ds;
@@ -49,12 +49,12 @@ public class MultiRowDocumentRowMapper implements RowMapper<SimpleDocument> {
         mapper.setDocumentKeyName(documentKeyName);
         mapper.setLineContents(lineContents);
         mapper.setLineKeyName(lineKeyName);        
+        this.template = new JdbcTemplate(ds);
     }
 
     @Override
     public SimpleDocument mapRow(ResultSet rs, int i) throws SQLException {
 
-        JdbcTemplate template = new JdbcTemplate(ds);
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT ")
                 .append(documentKeyName)
@@ -67,7 +67,7 @@ public class MultiRowDocumentRowMapper implements RowMapper<SimpleDocument> {
                 .append(" WHERE ")
                 .append(documentKeyName)
                 .append(" = ")
-                .append(rs.getString(documentKeyName))
+                .append(rs.getLong(documentKeyName))
                 .append(" ORDER BY ")
                 .append(lineKeyName)
                 .append(" DESC");

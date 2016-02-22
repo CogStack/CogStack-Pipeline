@@ -164,9 +164,23 @@ public class JobIntegrationTests {
         }
     }    
     
+    //@Ignore
+    @Test
+    public void sqlserverDBLineFixerPipelineTest() {
+        
+        //initSqlServerJobRepository();
+        //initSqlServerMultiLineTextTable();
+        //insertTestLinesForDBLineFixer(sourceDataSource);
+
+        try {
+            jobOperator.startNextInstance("dbLineFixerJob");
+        } catch (NoSuchJobException | JobParametersNotFoundException | JobRestartException | JobExecutionAlreadyRunningException | JobInstanceAlreadyCompleteException | UnexpectedJobExecutionException | JobParametersInvalidException ex) {
+            java.util.logging.Logger.getLogger(JobIntegrationTests.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }      
     
     private void initMsSqlServerGateTable() {
-        sourceTemplate.execute("DROP TABLE tblInputDocs");        
+        sourceTemplate.execute("IF OBJECT_ID('dbo.tblInputDocs', 'U') IS NOT NULL DROP TABLE dbo.tblInputDocs");        
         sourceTemplate.execute("CREATE TABLE tblInputDocs"
                 + " (ID INT IDENTITY(1,1) PRIMARY KEY"
                 + ", srcColumnFieldName VARCHAR(100) "
@@ -177,7 +191,7 @@ public class JobIntegrationTests {
                 + ", updateTime VARCHAR(100) "
                 + ", xhtml VARCHAR(max))");
 
-        targetTemplate.execute("DROP TABLE tblOutputDocs");        
+        targetTemplate.execute("IF OBJECT_ID('dbo.tblOutputDocs', 'U') IS NOT NULL DROP TABLE dbo.tblOutputDocs");        
         targetTemplate.execute("CREATE TABLE tblOutputDocs "
                 + " (ID INT IDENTITY(1,1) PRIMARY KEY"
                 + ", srcColumnFieldName VARCHAR(100) "
@@ -277,6 +291,22 @@ public class JobIntegrationTests {
                 + ", LINE_TEXT_CONCAT text )");
     }
     
+    private void initSqlServerMultiLineTextTable(){
+        sourceTemplate.execute("IF OBJECT_ID('dbo.tblInputDocs', 'U') IS NOT NULL DROP TABLE dbo.tblInputDocs");        
+        sourceTemplate.execute("CREATE TABLE dbo.tblInputDocs"
+                + "( ID  bigint IDENTITY(1,1) PRIMARY KEY"
+                + ", DOC_ID bigint "
+                + ", LINE_ID bigint "
+                + ", LINE_TEXT VARCHAR(MAX) )"
+                );
+
+        targetTemplate.execute("IF OBJECT_ID('dbo.tblOutputDocs', 'U') IS NOT NULL DROP TABLE dbo.tblOutputDocs");        
+        targetTemplate.execute("CREATE TABLE dbo.tblOutputDocs "
+                + "( ID bigint IDENTITY(1,1) PRIMARY KEY"
+                + ", DOC_ID bigint"
+                + ", LINE_TEXT_CONCAT VARCHAR(MAX) )");
+    }    
+    
     private void initPostGresJobRepository(){
         dropTablesResource = new ClassPathResource("org/springframework/batch/core/schema-drop-postgresql.sql");
         makeTablesResource = new ClassPathResource("org/springframework/batch/core/schema-postgresql.sql");
@@ -284,13 +314,14 @@ public class JobIntegrationTests {
         rdp.addScript(makeTablesResource);
         rdp.execute(jdbcTargetDocumentFinder);        
     }
+      
 
     
     private void insertTestLinesForDBLineFixer(DataSource ds){
         JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
         int docCount = 10;
         int lineCountIncrementer = 1;
-        String sql = "INSERT INTO tblInputDocs "
+        String sql = "INSERT INTO dbo.tblInputDocs "
                 + "( DOC_ID"
                 + ", LINE_ID"
                 + ", LINE_TEXT"
