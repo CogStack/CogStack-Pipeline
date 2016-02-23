@@ -55,7 +55,10 @@ public class GateService {
 
     public GateService() {
     }
-    public GateService(File gateHome, File gateApp, int poolSize, List<String> annotationSets) {
+    public GateService(File gateHome, 
+            File gateApp, 
+            int poolSize, 
+            List<String> annotationSets) {
         this.gateApp = gateApp;
         this.gateHome = gateHome;
         this.poolSize = poolSize;
@@ -63,19 +66,19 @@ public class GateService {
     }
 
     public void init() throws ResourceInstantiationException, GateException, PersistenceException, IOException {
-        Gate.setGateHome(gateHome);
-        Gate.init();
-        queue = new LinkedBlockingQueue<>();
-        Corpus corpus = gate.Factory.newCorpus("Corpus");
-        CorpusController pipeline = (CorpusController) PersistenceManager
-                .loadObjectFromFile(gateApp);
-        pipeline.setCorpus(corpus);
-        queue.add(pipeline);
-        
-        while(queue.size() != poolSize) {
-            queue.add((CorpusController) Factory.duplicate(pipeline));
+        if(gateHome !=null){ 
+            Gate.setGateHome(gateHome);
+            Gate.init();
+            queue = new LinkedBlockingQueue<>();
+            Corpus corpus = gate.Factory.newCorpus("Corpus");
+            CorpusController pipeline = (CorpusController) PersistenceManager
+                    .loadObjectFromFile(gateApp);
+            pipeline.setCorpus(corpus);
+            queue.add(pipeline);
+            while(queue.size() != poolSize) {
+                queue.add((CorpusController) Factory.duplicate(pipeline));
+            }
         }
-
     }
 
     public gate.Document processDoc(gate.Document doc) throws ExecutionException {
@@ -98,8 +101,7 @@ public class GateService {
 
     public String convertDocToJSON(gate.Document doc) throws IOException {
         Map<String, Collection<Annotation>> map = new HashMap<>();        
-//code to retrive specific annotation sets. revisit later        
-
+        //code to retrive specific annotation sets. revisit later        
         for (String ASName : annotationSets) {
             if (ASName != null) {
                 map.put(ASName, doc.getAnnotations(ASName));

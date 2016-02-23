@@ -15,37 +15,23 @@
  */
 package uk.ac.kcl.batch;
 
-import gate.util.GateException;
-import java.io.File;
+
+import uk.ac.kcl.model.BinaryDocument;
+import uk.ac.kcl.rowmappers.DocumentMetadataRowMapper;
 import java.util.Arrays;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.commons.dbcp.BasicDataSource;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.core.partition.PartitionHandler;
 import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.integration.partition.BeanFactoryStepLocator;
 import org.springframework.batch.integration.partition.MessageChannelPartitionHandler;
 import org.springframework.batch.integration.partition.StepExecutionRequestHandler;
-import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
-import org.springframework.batch.item.database.JdbcBatchItemWriter;
-import org.springframework.batch.item.database.JdbcPagingItemReader;
-import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean;
 import org.springframework.batch.sample.common.ColumnRangePartitioner;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -61,122 +47,20 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.PollableChannel;
-import uk.ac.kcl.ItemProcessors.GateDocumentItemProcessor;
-import uk.ac.kcl.model.BinaryDocument;
-import uk.ac.kcl.model.SimpleDocument;
-import uk.ac.kcl.rowmappers.DocumentMetadataRowMapper;
-import uk.ac.kcl.rowmappers.MultiRowDocumentRowMapper;
-import uk.ac.kcl.service.GateService;
 
 /**
  *
  * @author rich
  */
+
+@EnableIntegration
 @Configuration
 @EnableBatchProcessing
-@EnableIntegration
-@PropertySource("file:${TURBO_LASER}")
 @ImportResource("classpath:spring.xml")
+//needs proper configuration for production use
+//@PropertySource("file:${TURBO_LASER}")
 @ComponentScan(basePackages = {"uk.ac.kcl.batch"})
 public class JobConfiguration {
-    
-    
-    @Bean
-    public Job gateJob(JobBuilderFactory jobs, 
-            StepBuilderFactory steps,
-            Partitioner partitioner, 
-            @Qualifier("partitionHandler") 
-                    PartitionHandler gatePartitionHandler,
-                    TaskExecutor taskExecutor){
-                Job job = jobs.get("gateJob")
-                        .incrementer(new RunIdIncrementer())
-                        .flow(
-                                steps
-                                        .get("gateMasterStep")
-                                        .partitioner("gateSlaveStep", partitioner)
-                                        .partitionHandler(gatePartitionHandler)
-                                        .taskExecutor(taskExecutor)
-                                        .build()
-                                
-                        )
-                        .end()
-                        .build();
-                return job;
-                        
-    }
-    
-
-    
-    @Bean
-    public Step gateSlaveStep(    
-            @Qualifier("gateItemReader")ItemReader<BinaryDocument> reader,
-            @Qualifier("gateItemWriter")  ItemWriter<BinaryDocument> writer,    
-            @Qualifier("gateItemProcessor")   ItemProcessor<BinaryDocument, BinaryDocument> processor,
-            StepBuilderFactory stepBuilderFactory
-    //        @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor
-            ) {
-         Step step = stepBuilderFactory.get("gateSlaveStep")
-                .<BinaryDocument, BinaryDocument> chunk(Integer.parseInt(env.getProperty("chunkSize")))
-                .reader(reader)
-                .processor(processor)
-                .writer(writer)
-                .faultTolerant()
-                .skipLimit(10)
-                .skip(GateException.class)   
-                //.taskExecutor(taskExecutor)
-                .build();
-         
-         return step;
-    }       
-    
-    @Bean
-    public Job dbLineFixerJob(JobBuilderFactory jobs, 
-            StepBuilderFactory steps,
-            Partitioner partitioner, 
-            @Qualifier("linePartitionHandler") 
-                    PartitionHandler gatePartitionHandler,
-                    TaskExecutor taskExecutor){
-                Job job = jobs.get("dbLineFixerJob")
-                        .incrementer(new RunIdIncrementer())
-                        .flow(
-                                steps
-                                        .get("dbLineFixerMasterStep")
-                                        .partitioner("dbLineFixerSlaveStep", partitioner)
-                                        .partitionHandler(gatePartitionHandler)
-                                        .taskExecutor(taskExecutor)
-                                        .build()
-                                
-                        )
-                        .end()
-                        .build();
-                return job;
-                        
-    }
-    
-
-    
-    @Bean
-    public Step dbLineFixerSlaveStep(    
-            @Qualifier("dBLineFixerItemReader") ItemReader<SimpleDocument> reader,
-            @Qualifier("dBLineFixerItemWriter")  ItemWriter<SimpleDocument> writer,    
-            StepBuilderFactory stepBuilderFactory
-    //        @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor
-            ) {
-         Step step = stepBuilderFactory.get("dbLineFixerSlaveStep")
-                .<SimpleDocument, SimpleDocument> chunk(
-                        Integer.parseInt(env.getProperty("chunkSize")))
-                .reader(reader)
-                .writer(writer)
-                .faultTolerant()
-                .skipLimit(10)
-                .skip(GateException.class)   
-                //.taskExecutor(taskExecutor)
-                .build();
-         
-         return step;
-    }         
-    
-    
     /* 
         
     
@@ -184,12 +68,7 @@ public class JobConfiguration {
         
     
     */
-    
-//    
-//    @Autowired
-//    public StepBuilderFactory stepBuilderFactory;    
-//    @Autowired
-//    public JobCompleteNotificationListener jobDoneListener;    
+     
     @Resource
     public Environment env;                    
 
@@ -209,112 +88,6 @@ public class JobConfiguration {
         columnRangePartitioner.setDataSource(jdbcDocumentSource);
         return columnRangePartitioner;
     }
-
-
-    
-//    @Autowired
-//    public Partitioner partitioner;
-    
-
-    
-    @Bean
-    @Qualifier("validationQueryRowMapper")
-    public RowMapper<BinaryDocument> validationQueryRowMapper() {
-        DocumentMetadataRowMapper<BinaryDocument> documentMetadataRowMapper = new DocumentMetadataRowMapper<>();
-        List<String> otherFields = Arrays.asList(env.getProperty("target.validationQueryFields").split(","));
-        documentMetadataRowMapper.setOtherFieldsList(otherFields);
-        return documentMetadataRowMapper;
-    }
-
-//    @Bean
-//    public JobCompleteNotificationListener listener() {
-//        return new JobCompleteNotificationListener();
-//    }    
- 
-    /* 
-    
-    
-    
-    *******************************************GATE JOB
-    
-    
-    
-    */
-    
-    
-    
-    
-    @Bean
-    @StepScope
-    @Qualifier("gateItemReader")
-    public ItemReader<BinaryDocument> reader(
-            @Value("#{stepExecutionContext[minValue]}") String minValue,
-            @Value("#{stepExecutionContext[maxValue]}") String maxValue,
-            @Qualifier("simpleDocumentRowMapper")RowMapper<BinaryDocument> documentRowmapper, 
-            @Qualifier("sourceDataSource") DataSource jdbcDocumentSource) throws Exception {
-        
-        JdbcPagingItemReader<BinaryDocument> reader = new JdbcPagingItemReader<>();
-        reader.setDataSource(jdbcDocumentSource);
-
-        SqlPagingQueryProviderFactoryBean qp = new SqlPagingQueryProviderFactoryBean();
-        qp.setSelectClause(env.getProperty("source.selectClause"));
-        qp.setFromClause(env.getProperty("source.fromClause"));
-        qp.setSortKey(env.getProperty("source.sortKey"));
-        //qp.setWhereClause(env.getProperty("source.whereClause"));
-        qp.setWhereClause("WHERE " + env.getProperty("columntoPartition") + " BETWEEN " + minValue + " AND " + maxValue) ;
-        qp.setDataSource(jdbcDocumentSource);
-        reader.setFetchSize(Integer.parseInt(env.getProperty("source.pageSize")));
-
-        
-        reader.setQueryProvider(qp.getObject());
-        reader.setRowMapper(documentRowmapper);
-
-        //reader2.setDelegate(reader);
-        return reader;
-    }
-
-    @Bean
-    @Qualifier("gateItemProcessor")
-    public ItemProcessor<BinaryDocument, BinaryDocument> gateDocumentItemProcessor() {
-        return new GateDocumentItemProcessor();
-    }
-
-    @Bean(initMethod = "init")
-    public GateService gateService() {
-        return new GateService(
-                new File(env.getProperty("gateHome")), 
-                new File(env.getProperty("gateApp")), 
-                Integer.parseInt(env.getProperty("poolSize")), 
-                Arrays.asList(env.getProperty("gateAnnotationSets").split(",")));
-
-    }
-
-    @Bean
-    @Qualifier("gateItemWriter")
-    public ItemWriter<BinaryDocument> writer(@Qualifier("targetDataSource") DataSource jdbcDocumentTarget) {
-        JdbcBatchItemWriter<BinaryDocument> writer = new JdbcBatchItemWriter<>();
-        writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
-        writer.setSql(env.getProperty("target.Sql"));
-        writer.setDataSource(jdbcDocumentTarget);
-        return writer;
-    }
-
-    @Bean
-    @Qualifier("simpleDocumentRowMapper")
-    public RowMapper simpleDocumentRowMapper() {
-        DocumentMetadataRowMapper<BinaryDocument> documentMetadataRowMapper = new DocumentMetadataRowMapper<>();
-        List<String> otherFields = Arrays.asList(env.getProperty("otherFieldsList").split(","));
-        documentMetadataRowMapper.setOtherFieldsList(otherFields);
-        return documentMetadataRowMapper;
-    }
-
-
-
-
-    
-    
-    
-    
     
     
     @Bean(destroyMethod = "close")
@@ -339,71 +112,11 @@ public class JobConfiguration {
         ds.setPassword(env.getProperty("target.password"));                
         return ds;
     }    
-    /* 
-    
-    
-    
-    *******************************************Multiline JOB
-    
-    
-    
-    */
-        
-    @Bean
-    @StepScope
-    @Qualifier("dBLineFixerItemReader")
-    public ItemReader<SimpleDocument> dBLineFixerItemReader(       
-            @Value("#{stepExecutionContext[minValue]}") String minValue,
-            @Value("#{stepExecutionContext[maxValue]}") String maxValue,            
-            @Qualifier("multiRowDocumentRowmapper")RowMapper<SimpleDocument> multiRowDocumentRowmapper, 
-            @Qualifier("sourceDataSource") DataSource jdbcDocumentSource) throws Exception {
-        JdbcPagingItemReader<SimpleDocument> reader = new JdbcPagingItemReader<>();
-        reader.setDataSource(jdbcDocumentSource);
-
-        SqlPagingQueryProviderFactoryBean qp = new SqlPagingQueryProviderFactoryBean();
-        qp.setSelectClause(env.getProperty("source.selectClause"));
-        qp.setFromClause(env.getProperty("source.fromClause"));
-        qp.setSortKey(env.getProperty("source.sortKey"));
-        qp.setWhereClause("WHERE " + env.getProperty("columntoPartition") + " BETWEEN " + minValue + " AND " + maxValue) ;
-        qp.setDataSource(jdbcDocumentSource);
-        reader.setFetchSize(Integer.parseInt(env.getProperty("source.pageSize")));
-
-        
-        reader.setQueryProvider(qp.getObject());
-        reader.setRowMapper(multiRowDocumentRowmapper);
-
-        return reader;
-    }
-
-     
-    @Bean
-    @Qualifier("dBLineFixerItemWriter")
-    public ItemWriter<SimpleDocument> dBLineFixerItemWriter(
-            @Qualifier("targetDataSource") DataSource jdbcDocumentTarget) 
-    {
-        JdbcBatchItemWriter<SimpleDocument> writer = new JdbcBatchItemWriter<>();
-        writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
-        writer.setSql(env.getProperty("target.Sql"));
-        writer.setDataSource(jdbcDocumentTarget);
-        return writer;
-    }
-    
-    @Bean
-    @Qualifier("multiRowDocumentRowmapper")
-    public RowMapper multiRowDocumentRowmapper(
-                @Qualifier("sourceDataSource") DataSource ds) {
-        MultiRowDocumentRowMapper mapper = new MultiRowDocumentRowMapper(ds, env.getProperty("documentKeyName"),
-        env.getProperty("lineKeyName"),
-        env.getProperty("lineContents"),
-        env.getProperty("tableName"));
-        return mapper;
-    }      
 
     
      
     
     @Bean
-    @Qualifier("linePartitionHandler")
     public MessageChannelPartitionHandler partitionHandler(
             @Qualifier("batch.requests.partitioning") MessageChannel reqChannel,
             @Qualifier("batch.replies.partitioning")  PollableChannel repChannel){
@@ -449,7 +162,4 @@ public class JobConfiguration {
         handler.setStepLocator(stepLocator);
         return handler;
     }
-     
-    
-    
 }

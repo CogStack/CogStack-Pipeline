@@ -16,7 +16,7 @@
 package uk.ac.kcl.ItemProcessors;
 
 import uk.ac.kcl.ItemProcessors.GateDocumentItemProcessor;
-import uk.ac.kcl.batch.TestJobConfiguration;
+import uk.ac.kcl.batch.JobConfiguration;
 import uk.ac.kcl.model.BinaryDocument;
 import java.nio.charset.StandardCharsets;
 import org.apache.commons.io.IOUtils;
@@ -38,7 +38,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
  * @author rich
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes=TestJobConfiguration.class , loader=AnnotationConfigContextLoader.class)
+@ContextConfiguration(classes=JobConfiguration.class , loader=AnnotationConfigContextLoader.class)
 public class GateDocumentItemProcessorTest {
     
     public GateDocumentItemProcessorTest() {

@@ -15,7 +15,7 @@
  */
 package uk.ac.kcl.integrationtests;
 
-import uk.ac.kcl.batch.TestJobConfiguration;
+import uk.ac.kcl.batch.JobConfiguration;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
@@ -47,25 +47,25 @@ import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import uk.ac.kcl.batch.TestBatchConfigurer;
-import uk.ac.kcl.batch.TestJobs;
+import uk.ac.kcl.batch.BatchConfigurer;
 
 /**
  *
  * @author rich
  */
 @RunWith(SpringJUnit4ClassRunner.class)
+@TestPropertySource("classpath:postgres_test_config.properties")
 //@ContextConfiguration(locations = {"classpath:testApplicationContext.xml"})
 @ContextConfiguration(classes = {
-    TestJobConfiguration.class,
-    TestJobs.class, 
-    TestBatchConfigurer.class},
+    JobConfiguration.class,
+    BatchConfigurer.class},
         loader = AnnotationConfigContextLoader.class)
-public class JobIntegrationTests {
+public class PostGresIntegrationTestsLineFixer {
 
-    final static Logger logger = Logger.getLogger(JobIntegrationTests.class);
+    final static Logger logger = Logger.getLogger(PostGresIntegrationTestsLineFixer.class);
 
     @Autowired
     @Qualifier("sourceDataSource")
@@ -75,16 +75,17 @@ public class JobIntegrationTests {
     @Qualifier("targetDataSource")
     public DataSource jdbcTargetDocumentFinder;
 
-    private static Server server1;
-    private static Server server2;
+    private  Server server1;
+    private  Server server2;
     private JdbcTemplate sourceTemplate;
     private JdbcTemplate targetTemplate;
     private ResourceDatabasePopulator rdp = new ResourceDatabasePopulator();
     private Resource dropTablesResource;
     private Resource makeTablesResource;
 
-    @BeforeClass
-    public static void init() throws IOException, ServerAcl.AclFormatException {
+
+    public void initHSQLDBs() throws IOException, ServerAcl.AclFormatException {
+ 
         HsqlProperties p1 = new HsqlProperties();
         p1.setProperty("server.database.0", "mem:hsqldb");
         p1.setProperty("server.dbname.0", "test");
@@ -112,8 +113,7 @@ public class JobIntegrationTests {
         //prop.setProperty("at.ofai.gate.modularpipelines.configFile", "/home/rich/gate-apps/yodie/yodie-pipeline/main-bio/main-bio.config.yaml");        
     }
 
-    @AfterClass
-    public static void end() {
+    public void destroyHSQLDBs() {
         server1.stop();
         server2.stop();
     }
@@ -131,7 +131,6 @@ public class JobIntegrationTests {
     }
 
 
-    //@Ignore
     @Autowired
     JobOperator jobOperator;
 
@@ -145,7 +144,7 @@ public class JobIntegrationTests {
         try {
             jobOperator.startNextInstance("gateJob");
         } catch (NoSuchJobException | JobParametersNotFoundException | JobRestartException | JobExecutionAlreadyRunningException | JobInstanceAlreadyCompleteException | UnexpectedJobExecutionException | JobParametersInvalidException ex) {
-            java.util.logging.Logger.getLogger(JobIntegrationTests.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PostGresIntegrationTestsLineFixer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -160,24 +159,54 @@ public class JobIntegrationTests {
         try {
             jobOperator.startNextInstance("dbLineFixerJob");
         } catch (NoSuchJobException | JobParametersNotFoundException | JobRestartException | JobExecutionAlreadyRunningException | JobInstanceAlreadyCompleteException | UnexpectedJobExecutionException | JobParametersInvalidException ex) {
-            java.util.logging.Logger.getLogger(JobIntegrationTests.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PostGresIntegrationTestsLineFixer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }    
     
-    //@Ignore
+    @Ignore
     @Test
     public void sqlserverDBLineFixerPipelineTest() {
         
-        //initSqlServerJobRepository();
-        //initSqlServerMultiLineTextTable();
-        //insertTestLinesForDBLineFixer(sourceDataSource);
+        initSqlServerJobRepository();
+        initSqlServerMultiLineTextTable();
+        insertTestLinesForDBLineFixer(sourceDataSource);
 
         try {
             jobOperator.startNextInstance("dbLineFixerJob");
         } catch (NoSuchJobException | JobParametersNotFoundException | JobRestartException | JobExecutionAlreadyRunningException | JobInstanceAlreadyCompleteException | UnexpectedJobExecutionException | JobParametersInvalidException ex) {
-            java.util.logging.Logger.getLogger(JobIntegrationTests.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PostGresIntegrationTestsLineFixer.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }      
+    } 
+    
+    @Test
+    public void hsqlDBLineFixerPipelineTest() throws IOException, ServerAcl.AclFormatException{
+        initHSQLDBs();
+        initHSQLJobRepository();
+        initHsqlMultiLineTextTable();
+        insertTestLinesForDBLineFixer(sourceDataSource);
+
+        try {
+            jobOperator.startNextInstance("dbLineFixerJob");
+        } catch (NoSuchJobException | JobParametersNotFoundException | JobRestartException | JobExecutionAlreadyRunningException | JobInstanceAlreadyCompleteException | UnexpectedJobExecutionException | JobParametersInvalidException ex) {
+            java.util.logging.Logger.getLogger(PostGresIntegrationTestsLineFixer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        destroyHSQLDBs();
+    }            
+    
+    @Test
+    public void hsqlDBGatePipelineTest() throws IOException, ServerAcl.AclFormatException{
+        initHSQLDBs();
+        initHSQLJobRepository();
+        initHsqlMultiLineTextTable();
+        insertTestLinesForDBLineFixer(sourceDataSource);
+
+        try {
+            jobOperator.startNextInstance("dbLineFixerJob");
+        } catch (NoSuchJobException | JobParametersNotFoundException | JobRestartException | JobExecutionAlreadyRunningException | JobInstanceAlreadyCompleteException | UnexpectedJobExecutionException | JobParametersInvalidException ex) {
+            java.util.logging.Logger.getLogger(PostGresIntegrationTestsLineFixer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        destroyHSQLDBs();
+    }       
     
     private void initMsSqlServerGateTable() {
         sourceTemplate.execute("IF OBJECT_ID('dbo.tblInputDocs', 'U') IS NOT NULL DROP TABLE dbo.tblInputDocs");        
@@ -201,8 +230,6 @@ public class JobIntegrationTests {
                 + ", binaryFieldName VARCHAR(100) "
                 + ", updateTime VARCHAR(100) "
                 + ", gateJSON VARCHAR(max) )");
-
-
     }
     
     private void initSqlServerJobRepository(){
@@ -237,8 +264,24 @@ public class JobIntegrationTests {
                 + ", binaryFieldName VARCHAR(100) "
                 + ", updateTime VARCHAR(100) "
                 + ", gateJSON VARCHAR(1500000) )");
-
     }
+    
+    private void initHsqlMultiLineTextTable() {
+        sourceTemplate.execute("DROP TABLE tblInputDocs IF EXISTS");
+        sourceTemplate.execute("CREATE TABLE tblInputDocs"
+                + "( ID  BIGINT IDENTITY PRIMARY KEY"
+                + ", DOC_ID INTEGER "
+                + ", LINE_ID INTEGER "
+                + ", LINE_TEXT LONGVARCHAR )"
+                );
+
+        targetTemplate.execute("DROP TABLE   tblOutputDocs IF EXISTS");
+        targetTemplate.execute("CREATE TABLE tblOutputDocs "
+                + "( ID  BIGINT IDENTITY PRIMARY KEY"
+                + ", DOC_ID INTEGER"
+                + ", LINE_TEXT_CONCAT LONGVARCHAR )");
+
+    }    
 
     private void initHSQLJobRepository(){
         dropTablesResource = new ClassPathResource("org/springframework/batch/core/schema-drop-hsqldb.sql");
@@ -344,7 +387,7 @@ public class JobIntegrationTests {
         try {
             bytes = IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream("xhtml_test"));
         } catch (IOException ex) {
-            java.util.logging.Logger.getLogger(JobIntegrationTests.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PostGresIntegrationTestsLineFixer.class.getName()).log(Level.SEVERE, null, ex);
         }
         String xhtmlString = new String(bytes, StandardCharsets.UTF_8);
 
@@ -367,7 +410,7 @@ public class JobIntegrationTests {
                 xhtmlString = new String(bytes, StandardCharsets.UTF_8);
                 jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName", "fictionalPrimaryKeyFieldName", docCount, null, xhtmlString);
             } catch (IOException ex) {
-                java.util.logging.Logger.getLogger(JobIntegrationTests.class.getName()).log(Level.SEVERE, null, ex);
+                java.util.logging.Logger.getLogger(PostGresIntegrationTestsLineFixer.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
