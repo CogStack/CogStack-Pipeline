@@ -22,13 +22,8 @@ import java.util.logging.Level;
 import javax.sql.DataSource;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.hsqldb.Server;
-import org.hsqldb.persist.HsqlProperties;
-import org.hsqldb.server.ServerAcl;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -101,6 +96,7 @@ public class PostGresIntegrationTestsGATE {
     @Autowired
     JobOperator jobOperator;
 
+    @Ignore
     @Test
     public void postgresGatePipelineTest() {
         initPostgresGateTable();

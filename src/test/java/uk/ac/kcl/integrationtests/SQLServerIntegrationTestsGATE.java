@@ -53,7 +53,7 @@ import uk.ac.kcl.batch.BatchConfigurer;
  * @author rich
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@TestPropertySource("classpath:sqlserver_test_config.properties")
+@TestPropertySource("classpath:sqlserver_test_config_gate.properties")
 //@ContextConfiguration(locations = {"classpath:testApplicationContext.xml"})
 @ContextConfiguration(classes = {
     JobConfiguration.class,
@@ -97,18 +97,17 @@ public class SQLServerIntegrationTestsGATE {
 
     @Ignore
     @Test
-    public void sqlserverDBLineFixerPipelineTest() {
-        
-        initSqlServerJobRepository();
-        initSqlServerMultiLineTextTable();
-        insertTestLinesForDBLineFixer(sourceDataSource);
+    public void postgresGatePipelineTest() {
+        initMsSqlServerGateTable();
+        initMsSqlServerJobRepository();
+        insertTestXHTMLForGate(sourceDataSource, false);
 
         try {
-            jobOperator.startNextInstance("dbLineFixerJob");
+            jobOperator.startNextInstance("gateJob");
         } catch (NoSuchJobException | JobParametersNotFoundException | JobRestartException | JobExecutionAlreadyRunningException | JobInstanceAlreadyCompleteException | UnexpectedJobExecutionException | JobParametersInvalidException ex) {
-            java.util.logging.Logger.getLogger(SQLServerIntegrationTestsGATE.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PostGresIntegrationTestsGATE.class.getName()).log(Level.SEVERE, null, ex);
         }
-    } 
+    }
     
     
     private void initMsSqlServerGateTable() {
@@ -135,7 +134,7 @@ public class SQLServerIntegrationTestsGATE {
                 + ", gateJSON VARCHAR(max) )");
     }
     
-    private void initSqlServerJobRepository(){
+    private void initMsSqlServerJobRepository(){
         dropTablesResource = new ClassPathResource("org/springframework/batch/core/schema-drop-sqlserver.sql");
         makeTablesResource = new ClassPathResource("org/springframework/batch/core/schema-sqlserver.sql");
         rdp.addScript(dropTablesResource);
@@ -144,43 +143,6 @@ public class SQLServerIntegrationTestsGATE {
     }    
 
     
-    private void initSqlServerMultiLineTextTable(){
-        sourceTemplate.execute("IF OBJECT_ID('dbo.tblInputDocs', 'U') IS NOT NULL DROP TABLE dbo.tblInputDocs");        
-        sourceTemplate.execute("CREATE TABLE dbo.tblInputDocs"
-                + "( ID  bigint IDENTITY(1,1) PRIMARY KEY"
-                + ", DOC_ID bigint "
-                + ", LINE_ID bigint "
-                + ", LINE_TEXT VARCHAR(MAX) )"
-                );
-
-        targetTemplate.execute("IF OBJECT_ID('dbo.tblOutputDocs', 'U') IS NOT NULL DROP TABLE dbo.tblOutputDocs");        
-        targetTemplate.execute("CREATE TABLE dbo.tblOutputDocs "
-                + "( ID bigint IDENTITY(1,1) PRIMARY KEY"
-                + ", DOC_ID bigint"
-                + ", LINE_TEXT_CONCAT VARCHAR(MAX) )");
-    }    
-    
-    
-    private void insertTestLinesForDBLineFixer(DataSource ds){
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
-        int docCount = 10;
-        int lineCountIncrementer = 1;
-        String sql = "INSERT INTO dbo.tblInputDocs "
-                + "( DOC_ID"
-                + ", LINE_ID"
-                + ", LINE_TEXT"
-                + ") VALUES (?,?,?)";        
-        for (int i = 0; i <= docCount; i++) {
-            for(int j = 0;j < lineCountIncrementer; j++){
-                String text = "This is DOC_ID:" + i + " and LINE_ID:" + j ;
-                jdbcTemplate.update(sql, i,j,text);
-            }
-            lineCountIncrementer++;
-            if(lineCountIncrementer % 50 == 0){
-                lineCountIncrementer = 0;
-            }
-        }                
-    }
     private void insertTestXHTMLForGate(DataSource ds, boolean includeGateBreaker) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
         int docCount = 10;
@@ -192,7 +154,7 @@ public class SQLServerIntegrationTestsGATE {
         }
         String xhtmlString = new String(bytes, StandardCharsets.UTF_8);
 
-        String sql = "INSERT INTO tblInputDocs "
+        String sql = "INSERT INTO dbo.tblInputDocs "
                 + "( srcColumnFieldName"
                 + ", srcTableName"
                 + ", primaryKeyFieldName"
