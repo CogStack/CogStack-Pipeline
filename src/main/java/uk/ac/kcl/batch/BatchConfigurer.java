@@ -37,6 +37,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -48,8 +49,6 @@ import org.springframework.transaction.PlatformTransactionManager;
  * @author rich
  */
 @Configuration
-@EnableBatchProcessing
-@ComponentScan(basePackages = {"uk.ac.kcl.batch"}        )
 public class BatchConfigurer extends DefaultBatchConfigurer {
 
 
@@ -65,11 +64,6 @@ public class BatchConfigurer extends DefaultBatchConfigurer {
         return factory.getObject();
     }
     
-//    @Autowired
-//    public setDataSource(@Qualifier("targetDAtaSource") DataSource ds){
-//        retrun
-//    }
-
     @Override
     @Autowired
     public void setDataSource(@Qualifier("targetDataSource")DataSource dataSource) {
@@ -79,10 +73,6 @@ public class BatchConfigurer extends DefaultBatchConfigurer {
         this.jdbcDocumentTarget = dataSource;
     }
 
-//    @Bean
-//    public DataSource dataSource() {
-//        return jdbcDocumentTarget;
-//    }
 
     @Autowired
     public PlatformTransactionManager getTransactionManager(
@@ -95,7 +85,7 @@ public class BatchConfigurer extends DefaultBatchConfigurer {
 
     
     @Bean
-    public JobRegistry jobregistry(){
+    public JobRegistry jobRegistry(){
         return new MapJobRegistry();
     }
     
@@ -110,7 +100,7 @@ public class BatchConfigurer extends DefaultBatchConfigurer {
     }
     
     @Bean
-    public JobLauncher getJobLauncher() {
+    public JobLauncher jobLauncher() {
         SimpleJobLauncher jobLauncher = new SimpleJobLauncher();
         jobLauncher.setJobRepository(getJobRepository());
         try {
@@ -127,16 +117,7 @@ public class BatchConfigurer extends DefaultBatchConfigurer {
         jobRegistryBeanPostProcessor.setJobRegistry(jobRegistry);
         return jobRegistryBeanPostProcessor;
     }    
-    
-//    @Autowired
-//    JobExplorer jobExplorer;
-//    @Autowired
-//    JobLauncher jobLauncher;
-//    @Autowired
-//    JobRegistry jobRegistry;
-//    @Autowired
-//    JobRepository jobRepository;
-    
+        
     @Bean
     public JobOperator jobOperator(
             JobExplorer jobExplorer, 

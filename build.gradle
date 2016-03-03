@@ -42,6 +42,15 @@ test {
 //     logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message )
 //  }
 }
+
+task(debug, dependsOn: 'classes', type: JavaExec) {
+    main = 'org.springframework.batch.core.launch.support.CommandLineJobRunner'
+    classpath = sourceSets.main.runtimeClasspath
+    systemProperty "spring.profiles.active", 'prod,dBLineFixer'
+    args 'uk.ac.kcl.batch.JobConfiguration', 'dBLineFixerJob' , 'date=testing' 
+    debug true
+}
+
 jar {
     baseName = 'turbo-laser'
     version =  '0.1.0'

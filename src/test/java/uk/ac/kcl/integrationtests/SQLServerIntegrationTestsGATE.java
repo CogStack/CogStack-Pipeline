@@ -59,7 +59,7 @@ import uk.ac.kcl.batch.BatchConfigurer;
     JobConfiguration.class,
     BatchConfigurer.class},
         loader = AnnotationConfigContextLoader.class)
-public class SQLServerIntegrationTestsGATE {
+public class SQLServerIntegrationTestsGATE  {
 
     final static Logger logger = Logger.getLogger(SQLServerIntegrationTestsGATE.class);
 

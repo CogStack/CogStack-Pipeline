@@ -16,10 +16,6 @@
 package uk.ac.kcl.batch;
 
 
-import uk.ac.kcl.model.BinaryDocument;
-import uk.ac.kcl.rowmappers.DocumentMetadataRowMapper;
-import java.util.Arrays;
-import java.util.List;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 import org.apache.activemq.ActiveMQConnectionFactory;
@@ -31,10 +27,12 @@ import org.springframework.batch.integration.partition.BeanFactoryStepLocator;
 import org.springframework.batch.integration.partition.MessageChannelPartitionHandler;
 import org.springframework.batch.integration.partition.StepExecutionRequestHandler;
 import org.springframework.batch.sample.common.ColumnRangePartitioner;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
@@ -43,7 +41,6 @@ import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.integration.config.EnableIntegration;
 import org.springframework.integration.core.MessagingTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.PollableChannel;
@@ -57,9 +54,12 @@ import org.springframework.messaging.PollableChannel;
 @Configuration
 @EnableBatchProcessing
 @ImportResource("classpath:spring.xml")
-//needs proper configuration for production use
-//@PropertySource("file:${TURBO_LASER}")
-@ComponentScan(basePackages = {"uk.ac.kcl.batch"})
+@Import({   
+            Config.class,        
+            DbLineFixerConfiguration.class, 
+            GateConfiguration.class,
+            BatchConfigurer.class
+            })
 public class JobConfiguration {
     /* 
         
@@ -69,7 +69,7 @@ public class JobConfiguration {
     
     */
      
-    @Resource
+    @Autowired
     public Environment env;                    
 
 

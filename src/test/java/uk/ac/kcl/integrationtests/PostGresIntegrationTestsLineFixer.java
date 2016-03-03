@@ -63,7 +63,7 @@ import uk.ac.kcl.batch.BatchConfigurer;
     JobConfiguration.class,
     BatchConfigurer.class},
         loader = AnnotationConfigContextLoader.class)
-public class PostGresIntegrationTestsLineFixer {
+public class PostGresIntegrationTestsLineFixer  {
 
     final static Logger logger = Logger.getLogger(PostGresIntegrationTestsLineFixer.class);
 

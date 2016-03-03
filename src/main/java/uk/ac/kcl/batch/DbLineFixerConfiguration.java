@@ -33,7 +33,6 @@ import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourc
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.JdbcPagingItemReader;
 import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -50,7 +49,7 @@ import uk.ac.kcl.rowmappers.MultiRowDocumentRowMapper;
  * @author King's College London, Richard Jackson <richgjackson@gmail.com>
  */
 @Configuration
-@Profile("dbLineFixer")
+@Profile("dBLineFixer")
 public class DbLineFixerConfiguration {
     @Resource
     Environment env;
@@ -74,7 +73,6 @@ public class DbLineFixerConfiguration {
             @Qualifier("sourceDataSource") DataSource jdbcDocumentSource) throws Exception {
         JdbcPagingItemReader<SimpleDocument> reader = new JdbcPagingItemReader<>();
         reader.setDataSource(jdbcDocumentSource);
-
         SqlPagingQueryProviderFactoryBean qp = new SqlPagingQueryProviderFactoryBean();
         qp.setSelectClause(env.getProperty("source.selectClause"));
         qp.setFromClause(env.getProperty("source.fromClause"));
@@ -114,7 +112,7 @@ public class DbLineFixerConfiguration {
     }    
     
     @Bean
-    public Job dbLineFixerJob(JobBuilderFactory jobs, 
+    public Job dBLineFixerJob(JobBuilderFactory jobs, 
             StepBuilderFactory steps,
             Partitioner partitioner, 
             @Qualifier("partitionHandler") 

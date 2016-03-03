@@ -36,6 +36,7 @@ import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteExcep
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -52,11 +53,8 @@ import uk.ac.kcl.batch.BatchConfigurer;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @TestPropertySource("classpath:hsql_test_config_line_fixer.properties")
-@ContextConfiguration(classes = {
-    JobConfiguration.class,
-    BatchConfigurer.class},
-        loader = AnnotationConfigContextLoader.class)
-public class HSQLIntegrationTestsLineFixer {
+@ContextConfiguration(classes = JobConfiguration.class)
+public class HSQLIntegrationTestsLineFixer  {
 
     final static Logger logger = Logger.getLogger(HSQLIntegrationTestsLineFixer.class);
 
