@@ -16,3 +16,30 @@ The entire process is configured via a single config file, which, in order for S
 An example of a config file is in the test packages
 
 > test_config.properties
+
+Here, you will need to configure input and output database connection details, the activeMQ server and other particulars specific to the job you want to run (for example, the GATE home directory, and the GATE application .xgapp)
+
+Turbo-laser is run with the standard Spring Batch CommandLineJobRunner, specifying the job type and appropriate Spring profiles, and key/value pairs that uniquely identify a job (which can be more or less anything - see Spring Batch documentation for details)
+
+For example
+```
+java  -Dspring.profiles.active=prod,dBLineFixer -jar turbo-laser-0.1.0.jar uk.ac.kcl.batch.JobConfiguration dBLineFixerJob date=test1
+```
+
+Turbo-laser assumes the job repository schema is already in place in the DB implementation of your choice (see spring batch docs for more details)
+
+
+The following types of job/profiles are currently available
+
+dBLineFixerJob/dBLineFixer = fixes a bizarre but somehow frequent occurance in databases where strings of text from a single document are spread across multiple rows
+
+gateJob/gate = run a generic GATE app. Specify which annotationSets to keep in the config file, or none to keep them all.
+
+Coming soon:
+
+Cognition text de-identification
+Tika and OCR
+
+
+
+
