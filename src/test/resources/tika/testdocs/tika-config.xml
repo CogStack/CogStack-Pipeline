@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+  <parsers>
+    <!-- Default Parser for most things, except for 2 mime types, and never
+         use the Executable Parser -->
+    <parser class="org.apache.tika.parser.DefaultParser">
+      <mime-exclude>application/pdf</mime-exclude>
+    </parser>
+    <!-- Use a different parser for PDF -->
+    <parser class="uk.ac.kcl.tika.parsers.PDFPreprocessorParser">
+      <mime>application/pdf</mime>
+    </parser>
+  </parsers>
+</properties>

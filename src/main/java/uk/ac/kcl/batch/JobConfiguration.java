@@ -26,7 +26,7 @@ import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.integration.partition.BeanFactoryStepLocator;
 import org.springframework.batch.integration.partition.MessageChannelPartitionHandler;
 import org.springframework.batch.integration.partition.StepExecutionRequestHandler;
-import org.springframework.batch.sample.common.ColumnRangePartitioner;
+import uk.ac.kcl.partitioners.ColumnRangePartitioner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
