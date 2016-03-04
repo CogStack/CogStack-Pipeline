@@ -16,42 +16,13 @@
 
 package uk.ac.kcl.batch;
 
-import gate.util.GateException;
-import java.io.File;
-import java.util.Arrays;
-import java.util.List;
-import javax.annotation.Resource;
-import javax.sql.DataSource;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepScope;
-import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.core.partition.PartitionHandler;
-import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
-import org.springframework.batch.item.database.JdbcBatchItemWriter;
-import org.springframework.batch.item.database.JdbcPagingItemReader;
-import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.core.env.Environment;
-import org.springframework.core.task.TaskExecutor;
-import org.springframework.jdbc.core.RowMapper;
-import uk.ac.kcl.ItemProcessors.GateDocumentItemProcessor;
 import uk.ac.kcl.ItemProcessors.TikaDocumentItemProcessor;
 import uk.ac.kcl.model.BinaryDocument;
-import uk.ac.kcl.rowmappers.BinaryDocumentRowMapper;
-import uk.ac.kcl.rowmappers.DocumentMetadataRowMapper;
-import uk.ac.kcl.service.GateService;
 
 /**
  *

@@ -48,6 +48,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.batch.BatchConfigurer;
 import uk.ac.kcl.batch.io.DbLineFixerIOConfiguration;
 import uk.ac.kcl.batch.GateConfiguration;
+import uk.ac.kcl.batch.io.GateIOConfiguration;
 
 /**
  *
@@ -59,7 +60,7 @@ import uk.ac.kcl.batch.GateConfiguration;
     JobConfiguration.class,
     BatchConfigurer.class,
     GateConfiguration.class,
-    DbLineFixerIOConfiguration.class},
+    GateIOConfiguration.class},
         loader = AnnotationConfigContextLoader.class)
 public class PostGresIntegrationTestsGATE {
 

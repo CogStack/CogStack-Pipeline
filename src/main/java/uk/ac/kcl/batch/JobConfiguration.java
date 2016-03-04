@@ -16,7 +16,6 @@
 package uk.ac.kcl.batch;
 
 
-import javax.annotation.Resource;
 import javax.sql.DataSource;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.commons.dbcp.BasicDataSource;
@@ -30,12 +29,10 @@ import uk.ac.kcl.partitioners.ColumnRangePartitioner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
@@ -45,6 +42,8 @@ import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.PollableChannel;
 import uk.ac.kcl.batch.io.DbLineFixerIOConfiguration;
+import uk.ac.kcl.batch.io.GateIOConfiguration;
+import uk.ac.kcl.batch.io.TikaIOConfiguration;
 
 /**
  *
@@ -59,6 +58,9 @@ import uk.ac.kcl.batch.io.DbLineFixerIOConfiguration;
             Config.class,        
             DbLineFixerIOConfiguration.class, 
             GateConfiguration.class,
+            GateIOConfiguration.class,
+            TikaConfiguration.class,
+            TikaIOConfiguration.class,            
             BatchConfigurer.class
             })
 public class JobConfiguration {

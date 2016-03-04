@@ -19,6 +19,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.batch.JobConfiguration;
+import uk.ac.kcl.batch.TikaConfiguration;
 import uk.ac.kcl.model.BinaryDocument;
 
 /**
@@ -26,7 +27,8 @@ import uk.ac.kcl.model.BinaryDocument;
  * @author kcladmin
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes=JobConfiguration.class , loader=AnnotationConfigContextLoader.class)
+@ContextConfiguration(classes=TikaConfiguration.class 
+        , loader=AnnotationConfigContextLoader.class)
 
 public class TikaDocumentItemProcessorTest {
    

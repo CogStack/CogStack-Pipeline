@@ -51,6 +51,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.batch.BatchConfigurer;
+import uk.ac.kcl.batch.io.DbLineFixerIOConfiguration;
 
 /**
  *
@@ -61,7 +62,9 @@ import uk.ac.kcl.batch.BatchConfigurer;
 //@ContextConfiguration(locations = {"classpath:testApplicationContext.xml"})
 @ContextConfiguration(classes = {
     JobConfiguration.class,
-    BatchConfigurer.class},
+    BatchConfigurer.class,
+    DbLineFixerIOConfiguration.class
+    },
         loader = AnnotationConfigContextLoader.class)
 public class SQLServerIntegrationTestsLineFixer  {
 

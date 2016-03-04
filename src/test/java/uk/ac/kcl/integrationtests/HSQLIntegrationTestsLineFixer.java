@@ -46,6 +46,9 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.batch.BatchConfigurer;
+import uk.ac.kcl.batch.GateConfiguration;
+import uk.ac.kcl.batch.io.DbLineFixerIOConfiguration;
+import uk.ac.kcl.batch.io.GateIOConfiguration;
 
 /**
  *
@@ -53,7 +56,12 @@ import uk.ac.kcl.batch.BatchConfigurer;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @TestPropertySource("classpath:hsql_test_config_line_fixer.properties")
-@ContextConfiguration(classes = JobConfiguration.class)
+@ContextConfiguration(classes = {
+    JobConfiguration.class,
+    BatchConfigurer.class,
+    DbLineFixerIOConfiguration.class
+    },
+        loader = AnnotationConfigContextLoader.class)
 public class HSQLIntegrationTestsLineFixer  {
 
     final static Logger logger = Logger.getLogger(HSQLIntegrationTestsLineFixer.class);

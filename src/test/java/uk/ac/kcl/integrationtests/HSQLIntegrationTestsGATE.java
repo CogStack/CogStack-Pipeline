@@ -48,6 +48,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.kcl.batch.BatchConfigurer;
 import uk.ac.kcl.batch.GateConfiguration;
 import uk.ac.kcl.batch.io.DbLineFixerIOConfiguration;
+import uk.ac.kcl.batch.io.GateIOConfiguration;
 
 
 /**
@@ -60,7 +61,7 @@ import uk.ac.kcl.batch.io.DbLineFixerIOConfiguration;
     JobConfiguration.class,
     BatchConfigurer.class,
     GateConfiguration.class,
-    DbLineFixerIOConfiguration.class})
+    GateIOConfiguration.class})
 public class HSQLIntegrationTestsGATE {
 
     final static Logger logger = Logger.getLogger(HSQLIntegrationTestsGATE.class);
