@@ -15,58 +15,43 @@
  */
 package uk.ac.kcl.ItemProcessors;
 
-import uk.ac.kcl.ItemProcessors.GateDocumentItemProcessor;
-import uk.ac.kcl.batch.JobConfiguration;
 import uk.ac.kcl.model.BinaryDocument;
 import java.nio.charset.StandardCharsets;
 import org.apache.commons.io.IOUtils;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.junit.Ignore;
 import org.junit.runner.RunWith;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import uk.ac.kcl.batch.GateConfiguration;
+import uk.ac.kcl.batch.JobConfiguration;
 
 /**
  *
  * @author rich
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes=JobConfiguration.class , loader=AnnotationConfigContextLoader.class)
+@TestPropertySource("classpath:unit_test_config_gate.properties")
+@ContextConfiguration(classes = {
+    GateConfiguration.class},
+        loader = AnnotationConfigContextLoader.class)
 public class GateDocumentItemProcessorTest {
-    
-    public GateDocumentItemProcessorTest() {
-    }
-    
-    @BeforeClass
-    public static void setUpClass() {
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
-    
-    @Before
-    public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
-    }
+   
 
     /**
      * Test of process method, of class GateDocumentItemProcessor.
      */
+    
     @Autowired
-    GateDocumentItemProcessor instance ;
-          
-    @Ignore
+    @Qualifier("gateItemProcessor")
+    public GateDocumentItemProcessor instance;
+    
     @Test
     public void testProcess() throws Exception {
         System.out.println("process");        

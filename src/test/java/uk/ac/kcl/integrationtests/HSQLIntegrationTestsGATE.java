@@ -38,7 +38,6 @@ import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteExcep
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -46,10 +45,9 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.batch.BatchConfigurer;
-import uk.ac.kcl.batch.DbLineFixerConfiguration;
 import uk.ac.kcl.batch.GateConfiguration;
+import uk.ac.kcl.batch.io.DbLineFixerIOConfiguration;
 
 
 /**
@@ -62,7 +60,7 @@ import uk.ac.kcl.batch.GateConfiguration;
     JobConfiguration.class,
     BatchConfigurer.class,
     GateConfiguration.class,
-    DbLineFixerConfiguration.class})
+    DbLineFixerIOConfiguration.class})
 public class HSQLIntegrationTestsGATE {
 
     final static Logger logger = Logger.getLogger(HSQLIntegrationTestsGATE.class);

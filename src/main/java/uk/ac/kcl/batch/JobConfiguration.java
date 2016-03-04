@@ -44,6 +44,7 @@ import org.springframework.integration.core.MessagingTemplate;
 import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.PollableChannel;
+import uk.ac.kcl.batch.io.DbLineFixerIOConfiguration;
 
 /**
  *
@@ -56,7 +57,7 @@ import org.springframework.messaging.PollableChannel;
 @ImportResource("classpath:spring.xml")
 @Import({   
             Config.class,        
-            DbLineFixerConfiguration.class, 
+            DbLineFixerIOConfiguration.class, 
             GateConfiguration.class,
             BatchConfigurer.class
             })

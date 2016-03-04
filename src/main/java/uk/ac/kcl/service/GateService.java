@@ -31,12 +31,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 
 /**
  *
@@ -45,7 +42,6 @@ import org.springframework.core.env.Environment;
 public class GateService {
 
     final static Logger logger = Logger.getLogger(GateService.class);
-
 
     File gateHome;
     File gateApp;
@@ -66,8 +62,13 @@ public class GateService {
     }
 
     public void init() throws ResourceInstantiationException, GateException, PersistenceException, IOException {
-        if(gateHome !=null){ 
+        if(gateHome !=null){
+            Gate.runInSandbox(true);            
+        }else{
             Gate.setGateHome(gateHome);
+        }
+        
+        
             Gate.init();
             queue = new LinkedBlockingQueue<>();
             Corpus corpus = gate.Factory.newCorpus("Corpus");
@@ -77,7 +78,7 @@ public class GateService {
             queue.add(pipeline);
             while(queue.size() != poolSize) {
                 queue.add((CorpusController) Factory.duplicate(pipeline));
-            }
+            
         }
     }
 

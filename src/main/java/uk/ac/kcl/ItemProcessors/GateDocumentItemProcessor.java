@@ -31,9 +31,8 @@ public class GateDocumentItemProcessor implements ItemProcessor<BinaryDocument, 
     @Autowired
     private GateService gateService;
 
-    @Autowired
-    private Environment env;
-
+    private String textFieldName;
+    
     public void setGateService(GateService gateService) {
         this.gateService = gateService;
     }
@@ -44,9 +43,8 @@ public class GateDocumentItemProcessor implements ItemProcessor<BinaryDocument, 
 
     @Override
     public BinaryDocument process(final BinaryDocument doc) throws Exception {
-        gate.Document gateDoc = Factory.newDocument(doc.getMetadata().get(env.getProperty("textFieldName")));
+        gate.Document gateDoc = Factory.newDocument(doc.getMetadata().get(textFieldName));
         try {
-
             gateService.processDoc(gateDoc);
             doc.getMetadata().put("gateJSON", gateService.convertDocToJSON(gateDoc));
             return doc;
@@ -54,4 +52,12 @@ public class GateDocumentItemProcessor implements ItemProcessor<BinaryDocument, 
             Factory.deleteResource(gateDoc);
         }
     }
+    
+    public String getTextFieldName() {
+        return textFieldName;
+    }
+
+    public void setTextFieldName(String textFieldName) {
+        this.textFieldName = textFieldName;
+    }    
 }

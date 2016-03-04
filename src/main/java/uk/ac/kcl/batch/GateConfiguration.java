@@ -71,42 +71,13 @@ public class GateConfiguration {
     
     */
     
-    
-    
-    
-    @Bean
-    @StepScope
-    @Qualifier("gateItemReader")
-    public ItemReader<BinaryDocument> reader(
-            @Value("#{stepExecutionContext[minValue]}") String minValue,
-            @Value("#{stepExecutionContext[maxValue]}") String maxValue,
-            @Qualifier("simpleDocumentRowMapper")RowMapper<BinaryDocument> documentRowmapper, 
-            @Qualifier("sourceDataSource") DataSource jdbcDocumentSource) throws Exception {
-        
-        JdbcPagingItemReader<BinaryDocument> reader = new JdbcPagingItemReader<>();
-        reader.setDataSource(jdbcDocumentSource);
-
-        SqlPagingQueryProviderFactoryBean qp = new SqlPagingQueryProviderFactoryBean();
-        qp.setSelectClause(env.getProperty("source.selectClause"));
-        qp.setFromClause(env.getProperty("source.fromClause"));
-        qp.setSortKey(env.getProperty("source.sortKey"));
-        //qp.setWhereClause(env.getProperty("source.whereClause"));
-        qp.setWhereClause("WHERE " + env.getProperty("columntoPartition") + " BETWEEN " + minValue + " AND " + maxValue) ;
-        qp.setDataSource(jdbcDocumentSource);
-        reader.setFetchSize(Integer.parseInt(env.getProperty("source.pageSize")));
-
-        
-        reader.setQueryProvider(qp.getObject());
-        reader.setRowMapper(documentRowmapper);
-
-        //reader2.setDelegate(reader);
-        return reader;
-    }
-
+   
     @Bean
     @Qualifier("gateItemProcessor")
     public ItemProcessor<BinaryDocument, BinaryDocument> gateDocumentItemProcessor() {
-        return new GateDocumentItemProcessor();
+        GateDocumentItemProcessor processor = new GateDocumentItemProcessor();
+        processor.setTextFieldName(env.getProperty("textFieldName"));
+        return processor;
     }
 
     @Bean(initMethod = "init")
@@ -123,80 +94,6 @@ public class GateConfiguration {
         }
     }
 
-    @Bean
-    @Qualifier("gateItemWriter")
-    public ItemWriter<BinaryDocument> writer(@Qualifier("targetDataSource") DataSource jdbcDocumentTarget) {
-        JdbcBatchItemWriter<BinaryDocument> writer = new JdbcBatchItemWriter<>();
-        writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
-        writer.setSql(env.getProperty("target.Sql"));
-        writer.setDataSource(jdbcDocumentTarget);
-        return writer;
-    }
-
-    @Bean
-    @Qualifier("simpleDocumentRowMapper")
-    public RowMapper simpleDocumentRowMapper() {
-        DocumentMetadataRowMapper<BinaryDocument> documentMetadataRowMapper = new DocumentMetadataRowMapper<>();
-        List<String> otherFields = Arrays.asList(env.getProperty("otherFieldsList").split(","));
-        documentMetadataRowMapper.setOtherFieldsList(otherFields);
-        return documentMetadataRowMapper;
-    }
-
-    @Bean
-    public Job gateJob(JobBuilderFactory jobs, 
-            StepBuilderFactory steps,
-            Partitioner partitioner, 
-            @Qualifier("partitionHandler") 
-                    PartitionHandler gatePartitionHandler,
-                    TaskExecutor taskExecutor){
-                Job job = jobs.get("gateJob")
-                        .incrementer(new RunIdIncrementer())
-                        .flow(
-                                steps
-                                        .get("gateMasterStep")
-                                        .partitioner("gateSlaveStep", partitioner)
-                                        .partitionHandler(gatePartitionHandler)
-                                        .taskExecutor(taskExecutor)
-                                        .build()
-                                
-                        )
-                        .end()
-                        .build();
-                return job;
-                        
-    }
-    
-
-    
-    @Bean
-    public Step gateSlaveStep(    
-            @Qualifier("gateItemReader")ItemReader<BinaryDocument> reader,
-            @Qualifier("gateItemWriter")  ItemWriter<BinaryDocument> writer,    
-            @Qualifier("gateItemProcessor")   ItemProcessor<BinaryDocument, BinaryDocument> processor,
-            StepBuilderFactory stepBuilderFactory
-    //        @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor
-            ) {
-         Step step = stepBuilderFactory.get("gateSlaveStep")
-                .<BinaryDocument, BinaryDocument> chunk(Integer.parseInt(env.getProperty("chunkSize")))
-                .reader(reader)
-                .processor(processor)
-                .writer(writer)
-                .faultTolerant()
-                .skipLimit(10)
-                .skip(GateException.class)   
-                //.taskExecutor(taskExecutor)
-                .build();
-         
-         return step;
-    }           
-    
-    @Bean
-    @Qualifier("validationQueryRowMapper")
-    public RowMapper<BinaryDocument> validationQueryRowMapper() {
-        DocumentMetadataRowMapper<BinaryDocument> documentMetadataRowMapper = new DocumentMetadataRowMapper<>();
-        List<String> otherFields = Arrays.asList(env.getProperty("target.validationQueryFields").split(","));
-        documentMetadataRowMapper.setOtherFieldsList(otherFields);
-        return documentMetadataRowMapper;
-    }
+ 
     
 }
