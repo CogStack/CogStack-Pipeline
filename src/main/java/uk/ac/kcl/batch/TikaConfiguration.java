@@ -16,8 +16,6 @@
 
 package uk.ac.kcl.batch;
 
-import gate.util.GateException;
-import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import javax.annotation.Resource;
@@ -37,7 +35,6 @@ import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourc
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.JdbcPagingItemReader;
 import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -47,11 +44,10 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jdbc.core.RowMapper;
-import uk.ac.kcl.ItemProcessors.GateDocumentItemProcessor;
+import uk.ac.kcl.ItemProcessors.TikaDocumentItemProcessor;
 import uk.ac.kcl.model.BinaryDocument;
 import uk.ac.kcl.rowmappers.BinaryDocumentRowMapper;
 import uk.ac.kcl.rowmappers.DocumentMetadataRowMapper;
-import uk.ac.kcl.service.GateService;
 
 /**
  *
@@ -68,7 +64,7 @@ public class TikaConfiguration {
     
     
     
-    *******************************************GATE JOB
+    *******************************************Tika JOB
     
     
     
@@ -83,7 +79,7 @@ public class TikaConfiguration {
     public ItemReader<BinaryDocument> reader(
             @Value("#{stepExecutionContext[minValue]}") String minValue,
             @Value("#{stepExecutionContext[maxValue]}") String maxValue,
-            @Qualifier("simpleDocumentRowMapper")RowMapper<BinaryDocument> documentRowmapper, 
+            @Qualifier("binaryDocumentRowMapper")RowMapper<BinaryDocument> documentRowmapper, 
             @Qualifier("sourceDataSource") DataSource jdbcDocumentSource) throws Exception {
         
         JdbcPagingItemReader<BinaryDocument> reader = new JdbcPagingItemReader<>();
@@ -102,29 +98,27 @@ public class TikaConfiguration {
         reader.setQueryProvider(qp.getObject());
         reader.setRowMapper(documentRowmapper);
 
-        //reader2.setDelegate(reader);
         return reader;
     }
 
     @Bean
+    @Qualifier("binaryDocumentRowMapper")
+    public RowMapper binaryDocumentRowMapper() {
+        BinaryDocumentRowMapper binaryDocumentRowMapper = new BinaryDocumentRowMapper();
+        List<String> otherFields = Arrays.asList(env.getProperty("otherFieldsList").split(","));
+        binaryDocumentRowMapper.setOtherFieldsList(otherFields);
+        binaryDocumentRowMapper.setBinaryFieldName(env.getProperty("binaryFieldName"));
+        return binaryDocumentRowMapper;
+    }    
+    
+    @Bean
     @Qualifier("tikaItemProcessor")
-    public ItemProcessor<BinaryDocument, BinaryDocument> gateDocumentItemProcessor() {
-        return new GateDocumentItemProcessor();
-    }
-
-    @Bean(initMethod = "init")
-    public GateService gateService() {
-        //if GateHome not set, assume running another type of job and return an empty pojo
-        return new GateService(
-                new File(env.getProperty("gateHome")), 
-                new File(env.getProperty("gateApp")), 
-                Integer.parseInt(env.getProperty("poolSize")), 
-                Arrays.asList(env.getProperty("gateAnnotationSets").split(",")));
-
+    public ItemProcessor<BinaryDocument, BinaryDocument> tikaDocumentItemProcessor() {
+        return new TikaDocumentItemProcessor();
     }
 
     @Bean
-    @Qualifier("gateItemWriter")
+    @Qualifier("tikaItemWriter")
     public ItemWriter<BinaryDocument> writer(@Qualifier("targetDataSource") DataSource jdbcDocumentTarget) {
         JdbcBatchItemWriter<BinaryDocument> writer = new JdbcBatchItemWriter<>();
         writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
@@ -133,30 +127,14 @@ public class TikaConfiguration {
         return writer;
     }
     
-    @Bean
-    @Qualifier("tikaRowMapper")    
-    public RowMapper documentRowMapper(){
-        BinaryDocumentRowMapper rowMapper = new BinaryDocumentRowMapper();
-        rowMapper.setBinaryFieldName(env.getProperty("binaryFieldName"));
-        List<String> otherFields = Arrays.asList(env.getProperty("otherFieldsList").split(","));
-        rowMapper.setOtherFieldsList(otherFields);
-        return rowMapper;
-    }        
-    
-    @Bean
-    public DocumentMetadataRowMapper documentMetadataRowMapper(){
-        DocumentMetadataRowMapper<BinaryDocument> documentMetadataRowMapper = new DocumentMetadataRowMapper<>();
-        List<String> otherFields = Arrays.asList(env.getProperty("otherFieldsList").split(","));
-        documentMetadataRowMapper.setOtherFieldsList(otherFields);
-        return documentMetadataRowMapper;
-    }    
+     
 
     @Bean
     public Job tikaJob(JobBuilderFactory jobs, 
             StepBuilderFactory steps,
             Partitioner partitioner, 
             @Qualifier("partitionHandler") 
-                    PartitionHandler gatePartitionHandler,
+                    PartitionHandler partitionHandler,
                     TaskExecutor taskExecutor){
                 Job job = jobs.get("tikaJob")
                         .incrementer(new RunIdIncrementer())
@@ -164,7 +142,7 @@ public class TikaConfiguration {
                                 steps
                                         .get("tikaMasterStep")
                                         .partitioner("tikaSlaveStep", partitioner)
-                                        .partitionHandler(gatePartitionHandler)
+                                        .partitionHandler(partitionHandler)
                                         .taskExecutor(taskExecutor)
                                         .build()
                                 
@@ -183,7 +161,6 @@ public class TikaConfiguration {
             @Qualifier("tikaItemWriter")  ItemWriter<BinaryDocument> writer,    
             @Qualifier("tikaItemProcessor")   ItemProcessor<BinaryDocument, BinaryDocument> processor,
             StepBuilderFactory stepBuilderFactory
-    //        @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor
             ) {
          Step step = stepBuilderFactory.get("tikaSlaveStep")
                 .<BinaryDocument, BinaryDocument> chunk(Integer.parseInt(env.getProperty("chunkSize")))
@@ -193,7 +170,6 @@ public class TikaConfiguration {
                 .faultTolerant()
                 .skipLimit(10)
                 .skip(Exception.class)   
-                //.taskExecutor(taskExecutor)
                 .build();
          
          return step;

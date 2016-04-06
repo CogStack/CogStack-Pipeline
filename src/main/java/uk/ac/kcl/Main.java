@@ -3,10 +3,7 @@ package uk.ac.kcl;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.batch.core.launch.support.CommandLineJobRunner;
-import org.springframework.boot.SpringApplication;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.core.env.CommandLinePropertySource;
 import org.springframework.core.env.SimpleCommandLinePropertySource;
 import uk.ac.kcl.batch.ScheduledJobConfiguration;
 

@@ -46,24 +46,22 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.batch.BatchConfigurer;
-import uk.ac.kcl.batch.DbLineFixerConfiguration;
-import uk.ac.kcl.batch.GateConfiguration;
+import uk.ac.kcl.batch.TikaConfiguration;
 
 /**
  *
  * @author rich
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@TestPropertySource("classpath:postgres_test_config_gate.properties")
+@TestPropertySource("classpath:postgres_test_config_tika.properties")
 @ContextConfiguration(classes = {
     JobConfiguration.class,
     BatchConfigurer.class,
-    GateConfiguration.class,
-    DbLineFixerConfiguration.class},
+    TikaConfiguration.class},
         loader = AnnotationConfigContextLoader.class)
-public class PostGresIntegrationTestsGATE {
+public class PostGresIntegrationTestsTika {
 
-    final static Logger logger = Logger.getLogger(PostGresIntegrationTestsGATE.class);
+    final static Logger logger = Logger.getLogger(PostGresIntegrationTestsTika.class);
 
     @Autowired
     @Qualifier("sourceDataSource")
@@ -98,20 +96,20 @@ public class PostGresIntegrationTestsGATE {
 
     //@Ignore
     @Test
-    public void postgresGatePipelineTest() {
-        initPostgresGateTable();
+    public void postgresTikaPipelineTest() {
+        initPostgresTikaTable();
         initPostGresJobRepository();
-        insertTestXHTMLForGate(sourceDataSource, false);
+        insertTestBinariesForTika(sourceDataSource);
 
         try {
-            jobOperator.startNextInstance("gateJob");
+            jobOperator.startNextInstance("tikaJob");
         } catch (NoSuchJobException | JobParametersNotFoundException | JobRestartException | JobExecutionAlreadyRunningException | JobInstanceAlreadyCompleteException | UnexpectedJobExecutionException | JobParametersInvalidException ex) {
-            java.util.logging.Logger.getLogger(PostGresIntegrationTestsGATE.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PostGresIntegrationTestsTika.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     
-    private void initPostgresGateTable() {
+    private void initPostgresTikaTable() {
 ////        for postgres
         sourceTemplate.execute("DROP TABLE IF EXISTS tblInputDocs");
         sourceTemplate.execute("CREATE TABLE tblInputDocs"
@@ -122,7 +120,7 @@ public class PostGresIntegrationTestsGATE {
                 + ", primaryKeyFieldValue text "
                 + ", binaryFieldName text "
                 + ", updateTime text "
-                + ", xhtml text )");
+                + ", body bytea )");
 
         targetTemplate.execute("DROP TABLE IF EXISTS tblOutputDocs");
         targetTemplate.execute("CREATE TABLE tblOutputDocs "
@@ -133,9 +131,7 @@ public class PostGresIntegrationTestsGATE {
                 + ", primaryKeyFieldValue text "
                 + ", binaryFieldName text "
                 + ", updateTime text "
-                + ", gatejson text )");
-
-
+                + ", xhtml text )");
     }
     
     
@@ -150,16 +146,15 @@ public class PostGresIntegrationTestsGATE {
       
 
     
-    private void insertTestXHTMLForGate(DataSource ds, boolean includeGateBreaker) {
+    private void insertTestBinariesForTika(DataSource ds) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
         int docCount = 10;
         byte[] bytes = null;
         try {
-            bytes = IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream("xhtml_test"));
+            bytes = IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream("tika/testdocs/docexample.doc"));
         } catch (IOException ex) {
-            java.util.logging.Logger.getLogger(PostGresIntegrationTestsGATE.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PostGresIntegrationTestsTika.class.getName()).log(Level.SEVERE, null, ex);
         }
-        String xhtmlString = new String(bytes, StandardCharsets.UTF_8);
 
         String sql = "INSERT INTO tblInputDocs "
                 + "( srcColumnFieldName"
@@ -167,21 +162,11 @@ public class PostGresIntegrationTestsGATE {
                 + ", primaryKeyFieldName"
                 + ", primaryKeyFieldValue"
                 + ", updateTime"
-                + ", xhtml"
+                + ", body"
                 + ") VALUES (?,?,?,?,?,?)";
         for (int ii = 0; ii < docCount; ii++) {
-            jdbcTemplate.update(sql, "fictionalColumnFieldName","fictionalTableName","fictionalPrimaryKeyFieldName", ii,null,  xhtmlString);
+            jdbcTemplate.update(sql, "fictionalColumnFieldName","fictionalTableName","fictionalPrimaryKeyFieldName", ii,null,  bytes);
             
-        }
-        //see what happens with a really long document...
-        if (includeGateBreaker) {
-            try {
-                bytes = IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream("gate_breaker.txt"));
-                xhtmlString = new String(bytes, StandardCharsets.UTF_8);
-                jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName", "fictionalPrimaryKeyFieldName", docCount, null, xhtmlString);
-            } catch (IOException ex) {
-                java.util.logging.Logger.getLogger(PostGresIntegrationTestsGATE.class.getName()).log(Level.SEVERE, null, ex);
-            }
         }
     }
 }

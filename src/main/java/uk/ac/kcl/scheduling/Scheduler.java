@@ -14,6 +14,8 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Scheduled;
 import uk.ac.kcl.batch.ScheduledJobConfiguration;
@@ -38,7 +40,7 @@ public class Scheduler {
     final static Logger logger = Logger.getLogger(ScheduledJobConfiguration.class);
 
    
-    @Scheduled(fixedRate = 1000)
+    @Scheduled(cron = "${scheduler.rate}")
     public void doTask() {
 
         JobParameters param = new JobParametersBuilder().addString("startTime", new Date().toString()).toJobParameters();

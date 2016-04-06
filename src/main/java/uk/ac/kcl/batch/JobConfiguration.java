@@ -16,6 +16,8 @@
 package uk.ac.kcl.batch;
 
 
+import java.util.Arrays;
+import java.util.List;
 import javax.sql.DataSource;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.commons.dbcp.BasicDataSource;
@@ -38,9 +40,12 @@ import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.integration.config.EnableIntegration;
 import org.springframework.integration.core.MessagingTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.PollableChannel;
+import uk.ac.kcl.model.BinaryDocument;
+import uk.ac.kcl.rowmappers.DocumentMetadataRowMapper;
 
 /**
  *
@@ -67,8 +72,10 @@ public class JobConfiguration {
     */
      
     @Autowired
-    public Environment env;                    
-
+    public Environment env;      
+    
+    
+    
 
     @Bean
     public TaskExecutor taskExecutor() {
