@@ -51,7 +51,6 @@ import uk.ac.kcl.batch.BatchConfigurer;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @TestPropertySource("classpath:postgres_test_config_line_fixer.properties")
-//@ContextConfiguration(locations = {"classpath:testApplicationContext.xml"})
 @ContextConfiguration(classes = {
     JobConfiguration.class,
     BatchConfigurer.class},
@@ -95,7 +94,7 @@ public class PostGresIntegrationTestsLineFixer  {
     JobOperator jobOperator;
 
     
-
+    @Ignore
     @Test
     public void postgresDBLineFixerPipelineTest() {
         

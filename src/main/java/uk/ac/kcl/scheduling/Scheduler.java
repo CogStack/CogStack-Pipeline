@@ -1,6 +1,5 @@
-package uk.ac.kcl.batch;
+package uk.ac.kcl.scheduling;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
 import org.apache.log4j.Logger;
@@ -11,30 +10,44 @@ import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.JobOperator;
-import org.springframework.batch.core.launch.support.CommandLineJobRunner;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
-import uk.ac.kcl.scheduling.Scheduler;
+import uk.ac.kcl.batch.ScheduledJobConfiguration;
 
 /**
  *
  * @author King's College London, Richard Jackson <richgjackson@gmail.com>
  */
-@Configuration
-@Import(JobConfiguration.class)
-@EnableScheduling
-public class ScheduledJobConfiguration {
+public class Scheduler {
+    @Autowired
+    Environment env;
 
-    @Bean
-    public Scheduler scheduler(){
-        return new Scheduler();
-    }
+    @Autowired
+    JobOperator jobOperator;
+
+    @Autowired
+    JobLauncher jobLauncher;
+
+    @Autowired
+    Job job;
+
+    final static Logger logger = Logger.getLogger(ScheduledJobConfiguration.class);
+
+   
+    @Scheduled(fixedRate = 1000)
+    public void doTask() {
+
+        JobParameters param = new JobParametersBuilder().addString("startTime", new Date().toString()).toJobParameters();
+        try {
+            JobExecution execution = jobLauncher.run(job, param);
+            System.out.println(execution.getStatus().toString());
+        } catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException | JobParametersInvalidException ex) {
+            java.util.logging.Logger.getLogger(ScheduledJobConfiguration.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }    
 }

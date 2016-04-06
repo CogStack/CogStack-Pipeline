@@ -16,7 +16,6 @@
 package uk.ac.kcl.batch;
 
 
-import javax.annotation.Resource;
 import javax.sql.DataSource;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.commons.dbcp.BasicDataSource;
@@ -30,12 +29,10 @@ import uk.ac.kcl.partitioners.ColumnRangePartitioner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
@@ -54,11 +51,11 @@ import org.springframework.messaging.PollableChannel;
 @Configuration
 @EnableBatchProcessing
 @ImportResource("classpath:spring.xml")
-@Import({   
-            Config.class,        
+@Import({          
             DbLineFixerConfiguration.class, 
             GateConfiguration.class,
-            BatchConfigurer.class
+            BatchConfigurer.class,
+            TikaConfiguration.class
             })
 public class JobConfiguration {
     /* 

@@ -38,6 +38,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jdbc.core.RowMapper;
@@ -50,6 +51,7 @@ import uk.ac.kcl.rowmappers.MultiRowDocumentRowMapper;
  */
 @Configuration
 @Profile("dBLineFixer")
+@PropertySource("file:${TURBO_LASER}/dBLineFixer.conf")
 public class DbLineFixerConfiguration {
     @Resource
     Environment env;

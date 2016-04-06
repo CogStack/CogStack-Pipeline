@@ -26,6 +26,7 @@ import org.hsqldb.server.ServerAcl;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.batch.core.JobParametersInvalidException;
@@ -104,6 +105,7 @@ public class HSQLIntegrationTestsGATE {
         HsqlTestUtils.destroyHSQLDBs();        
     }
     
+    @Ignore
     @Test
     public void hsqlDBGatePipelineTest() {
         
