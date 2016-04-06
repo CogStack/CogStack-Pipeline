@@ -16,19 +16,12 @@
 package uk.ac.kcl.integrationtests;
 
 import uk.ac.kcl.batch.JobConfiguration;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 import javax.sql.DataSource;
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.hsqldb.Server;
-import org.hsqldb.persist.HsqlProperties;
-import org.hsqldb.server.ServerAcl;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,7 +50,7 @@ import uk.ac.kcl.batch.BatchConfigurer;
  * @author rich
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@TestPropertySource("classpath:postgres_test_config.properties")
+@TestPropertySource("classpath:postgres_test_config_line_fixer.properties")
 //@ContextConfiguration(locations = {"classpath:testApplicationContext.xml"})
 @ContextConfiguration(classes = {
     JobConfiguration.class,
@@ -102,7 +95,7 @@ public class PostGresIntegrationTestsLineFixer  {
     JobOperator jobOperator;
 
     
-    @Ignore
+
     @Test
     public void postgresDBLineFixerPipelineTest() {
         

@@ -31,12 +31,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 
 /**
  *
@@ -94,7 +91,7 @@ public class GateService {
         try {
             queue.put(controller);
         } catch (InterruptedException ex) {
-            java.util.logging.Logger.getLogger(GateService.class.getName()).log(Level.SEVERE, null, ex);
+            logger.info("Interrupted", ex);
         }
         return doc;
     }
