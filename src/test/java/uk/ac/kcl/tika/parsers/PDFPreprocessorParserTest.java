@@ -33,9 +33,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.Ignore;
 import org.springframework.test.context.TestPropertySource;
-import uk.ac.kcl.batch.TikaConfiguration;
+import uk.ac.kcl.batch.TikaMasterConfiguration;
 import uk.ac.kcl.tika.config.ImageMagickConfig;
 import static uk.ac.kcl.tika.parsers.PDFPreprocessorParser.getImageMagickProg;
+import static org.junit.Assume.assumeTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  *
@@ -43,7 +47,7 @@ import static uk.ac.kcl.tika.parsers.PDFPreprocessorParser.getImageMagickProg;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @TestPropertySource("classpath:tika/testdocs/tika_config.properties")
-@ContextConfiguration(classes = TikaConfiguration.class, loader = AnnotationConfigContextLoader.class)
+@ContextConfiguration(classes = TikaMasterConfiguration.class, loader = AnnotationConfigContextLoader.class)
 public class PDFPreprocessorParserTest {
 
     TikaConfig config;

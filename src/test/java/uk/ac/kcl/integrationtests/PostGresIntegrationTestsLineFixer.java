@@ -94,7 +94,7 @@ public class PostGresIntegrationTestsLineFixer  {
     JobOperator jobOperator;
 
     
-    @Ignore
+    //@Ignore
     @Test
     public void postgresDBLineFixerPipelineTest() {
         

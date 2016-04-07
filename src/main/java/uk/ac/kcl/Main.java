@@ -12,21 +12,17 @@ import uk.ac.kcl.batch.ScheduledJobConfiguration;
  * @author King's College London, Richard Jackson <richgjackson@gmail.com>
  */
 public class Main {
-
+    
     public static void main(String[] args) {
-        if (args[args.length-1].equals("scheduled")) {
-            SimpleCommandLinePropertySource ps = new SimpleCommandLinePropertySource(args);
+        SimpleCommandLinePropertySource ps = new SimpleCommandLinePropertySource(args);        
+        if (ps.getProperty("nonOptionArgs").contains("scheduled")) {
+            
             @SuppressWarnings("resource")
             AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
             ctx.getEnvironment().getPropertySources().addFirst(ps);
             ctx.register(ScheduledJobConfiguration.class);
-            ctx.refresh();
-
+            ctx.refresh();            
             ScheduledJobConfiguration job = ctx.getBean(ScheduledJobConfiguration.class);
-            //job.doTask();
-
-//            ApplicationContext context = SpringApplication
-//                    .run(ScheduledJobConfiguration.class);
         } else {
             try {
                 CommandLineJobRunner.main(args);
@@ -34,6 +30,6 @@ public class Main {
                 Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-
+        
     }
 }

@@ -60,7 +60,7 @@ import uk.ac.kcl.rowmappers.DocumentMetadataRowMapper;
             DbLineFixerConfiguration.class, 
             GateConfiguration.class,
             BatchConfigurer.class,
-            TikaConfiguration.class
+            TikaMasterConfiguration.class
             })
 public class JobConfiguration {
     /* 

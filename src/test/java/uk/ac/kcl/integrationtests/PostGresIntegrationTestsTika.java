@@ -46,7 +46,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.batch.BatchConfigurer;
-import uk.ac.kcl.batch.TikaConfiguration;
+import uk.ac.kcl.batch.TikaMasterConfiguration;
 
 /**
  *
@@ -57,7 +57,7 @@ import uk.ac.kcl.batch.TikaConfiguration;
 @ContextConfiguration(classes = {
     JobConfiguration.class,
     BatchConfigurer.class,
-    TikaConfiguration.class},
+    TikaMasterConfiguration.class},
         loader = AnnotationConfigContextLoader.class)
 public class PostGresIntegrationTestsTika {
 
@@ -94,13 +94,12 @@ public class PostGresIntegrationTestsTika {
     @Autowired
     JobOperator jobOperator;
 
-    @Ignore
+    //@Ignore
     @Test
     public void postgresTikaPipelineTest() {
         initPostgresTikaTable();
         initPostGresJobRepository();
         insertTestBinariesForTika(sourceDataSource);
-
         try {
             jobOperator.startNextInstance("tikaJob");
         } catch (NoSuchJobException | JobParametersNotFoundException | JobRestartException | JobExecutionAlreadyRunningException | JobInstanceAlreadyCompleteException | UnexpectedJobExecutionException | JobParametersInvalidException ex) {
@@ -148,7 +147,7 @@ public class PostGresIntegrationTestsTika {
     
     private void insertTestBinariesForTika(DataSource ds) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
-        int docCount = 10;
+        int docCount = 100;
         byte[] bytes = null;
         try {
             bytes = IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream("tika/testdocs/docexample.doc"));

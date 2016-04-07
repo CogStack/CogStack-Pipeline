@@ -56,7 +56,7 @@ import uk.ac.kcl.rowmappers.DocumentMetadataRowMapper;
 @Configuration
 @Profile("tika")
 @PropertySource("file:${TURBO_LASER}/tika.conf")
-public class TikaConfiguration {
+public class TikaMasterConfiguration {
     @Resource
     Environment env;
 
