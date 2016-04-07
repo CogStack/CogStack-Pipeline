@@ -94,7 +94,7 @@ public class PostGresIntegrationTestsTika {
     @Autowired
     JobOperator jobOperator;
 
-    //@Ignore
+    @Ignore
     @Test
     public void postgresTikaPipelineTest() {
         initPostgresTikaTable();
