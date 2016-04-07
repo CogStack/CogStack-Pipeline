@@ -114,6 +114,8 @@ public class TikaConfiguration {
     @Bean
     @Qualifier("tikaItemProcessor")
     public ItemProcessor<BinaryDocument, BinaryDocument> tikaDocumentItemProcessor() {
+        TikaDocumentItemProcessor proc = new TikaDocumentItemProcessor();
+        proc.setKeepTags(Boolean.valueOf(env.getProperty("keepTags")));
         return new TikaDocumentItemProcessor();
     }
 
