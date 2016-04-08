@@ -46,7 +46,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.batch.BatchConfigurer;
-import uk.ac.kcl.batch.TikaMasterConfiguration;
+import uk.ac.kcl.batch.TikaConfiguration;
 
 /**
  *
@@ -57,7 +57,7 @@ import uk.ac.kcl.batch.TikaMasterConfiguration;
 @ContextConfiguration(classes = {
     JobConfiguration.class,
     BatchConfigurer.class,
-    TikaMasterConfiguration.class},
+    TikaConfiguration.class},
         loader = AnnotationConfigContextLoader.class)
 public class PostGresIntegrationTestsTika {
 

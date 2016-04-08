@@ -139,27 +139,7 @@ public class GateConfiguration {
         return writer;
     }
 
-    @Bean
-    public Job gateJob(JobBuilderFactory jobs,
-            StepBuilderFactory steps,
-            Partitioner partitioner,
-            @Qualifier("partitionHandler") PartitionHandler gatePartitionHandler,
-            TaskExecutor taskExecutor) {
-        Job job = jobs.get("gateJob")
-                .incrementer(new RunIdIncrementer())
-                .flow(
-                        steps
-                        .get("gateMasterStep")
-                        .partitioner("gateSlaveStep", partitioner)
-                        .partitionHandler(gatePartitionHandler)
-                        .taskExecutor(taskExecutor)
-                        .build()
-                )
-                .end()
-                .build();
-        return job;
 
-    }
 
     @Bean
     public Step gateSlaveStep(
@@ -190,6 +170,7 @@ public class GateConfiguration {
         List<String> otherFields = Arrays.asList(env.getProperty("target.validationQueryFields").split(","));
         documentMetadataRowMapper.setOtherFieldsList(otherFields);
         return documentMetadataRowMapper;
-    }
+    }        
+
 
 }

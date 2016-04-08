@@ -37,7 +37,17 @@ Alternatively, Turbo-laser can be run using cron type scheduling. Just set the f
 scheduler.rate = "*/5 * * * * *"
 ```
 
+To Run in Scheduling mode: For example
+```
+java  -Dspring.profiles.active=tika,master,slave -jar turbo-laser-0.1.0.jar scheduled
+```
 
+To add additional JVM processes, via the wonders of Spring Integration, just launch an instance as follows
+```
+java  -Dspring.profiles.active=tika,slave -jar turbo-laser-0.1.0.jar scheduled
+```
+
+(Obviously replacing the spring profile as appropriate)
 
 
 Turbo-laser assumes the job repository schema is already in place in the DB implementation of your choice (see spring batch docs for more details)

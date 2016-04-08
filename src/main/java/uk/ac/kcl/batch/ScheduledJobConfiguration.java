@@ -27,23 +27,4 @@ public class ScheduledJobConfiguration {
         return new PropertySourcesPlaceholderConfigurer();
     }
 
-    @Autowired
-    Environment env;
-
-    @Bean
-    public Scheduler scheduler() {
-
-        Scheduler sched ;
-        String[] nonOptionArgs = env.getProperty("nonOptionArgs", String[].class);
-        ArrayList<String> arr = new ArrayList(Arrays.asList(nonOptionArgs));
-
-        if (arr.contains("existing")) {
-            System.out.println("HEEEEEEEEEEEEERRE" + nonOptionArgs[1]);
-            System.out.println("SET EXISTING IS NOW TRUE OR ");
-            sched = new Scheduler(true);
-        }else{
-            sched = new Scheduler(false);
-        }
-        return sched;
-    }
 }

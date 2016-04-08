@@ -37,9 +37,8 @@ public class TikaDocumentItemProcessor implements ItemProcessor<BinaryDocument, 
     @Override
     public BinaryDocument process(final BinaryDocument doc) throws Exception {
         ContentHandler handler;
-        System.out.println("Waiting for 1s");
-        Thread.sleep(1000);
-        System.out.println("Continuing");
+        System.out.println("Processing Doc");
+
         if (keepTags) {
             handler = new ToXMLContentHandler();
         } else {

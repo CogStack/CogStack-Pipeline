@@ -96,7 +96,7 @@ public class PostGresIntegrationTestsGATE {
     @Autowired
     JobOperator jobOperator;
 
-    @Ignore
+    //@Ignore
     @Test
     public void postgresGatePipelineTest() {
         initPostgresGateTable();

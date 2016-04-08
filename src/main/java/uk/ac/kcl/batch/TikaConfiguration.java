@@ -56,7 +56,7 @@ import uk.ac.kcl.rowmappers.DocumentMetadataRowMapper;
 @Configuration
 @Profile("tika")
 @PropertySource("file:${TURBO_LASER}/tika.conf")
-public class TikaMasterConfiguration {
+public class TikaConfiguration {
     @Resource
     Environment env;
 
@@ -130,30 +130,6 @@ public class TikaMasterConfiguration {
     }
     
      
-
-    @Bean
-    public Job tikaJob(JobBuilderFactory jobs, 
-            StepBuilderFactory steps,
-            Partitioner partitioner, 
-            @Qualifier("partitionHandler") 
-                    PartitionHandler partitionHandler,
-                    TaskExecutor taskExecutor){
-                Job job = jobs.get("tikaJob")
-                        .incrementer(new RunIdIncrementer())
-                        .flow(
-                                steps
-                                        .get("tikaMasterStep")
-                                        .partitioner("tikaSlaveStep", partitioner)
-                                        .partitionHandler(partitionHandler)
-                                        .taskExecutor(taskExecutor)
-                                        .build()
-                                
-                        )
-                        .end()
-                        .build();
-                return job;
-                        
-    }
     
 
     
@@ -176,7 +152,6 @@ public class TikaMasterConfiguration {
          
          return step;
     }           
-    
     @Bean
     @Qualifier("validationQueryRowMapper")
     public RowMapper<BinaryDocument> validationQueryRowMapper() {
@@ -184,6 +159,5 @@ public class TikaMasterConfiguration {
         List<String> otherFields = Arrays.asList(env.getProperty("target.validationQueryFields").split(","));
         documentMetadataRowMapper.setOtherFieldsList(otherFields);
         return documentMetadataRowMapper;
-    }
-    
+    }     
 }

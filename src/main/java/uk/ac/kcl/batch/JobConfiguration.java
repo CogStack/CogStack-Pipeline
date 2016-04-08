@@ -16,8 +16,6 @@
 package uk.ac.kcl.batch;
 
 
-import java.util.Arrays;
-import java.util.List;
 import javax.sql.DataSource;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.commons.dbcp.BasicDataSource;
@@ -40,12 +38,9 @@ import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.integration.config.EnableIntegration;
 import org.springframework.integration.core.MessagingTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.PollableChannel;
-import uk.ac.kcl.model.BinaryDocument;
-import uk.ac.kcl.rowmappers.DocumentMetadataRowMapper;
 
 /**
  *
@@ -55,12 +50,13 @@ import uk.ac.kcl.rowmappers.DocumentMetadataRowMapper;
 @EnableIntegration
 @Configuration
 @EnableBatchProcessing
-@ImportResource("classpath:spring.xml")
 @Import({          
             DbLineFixerConfiguration.class, 
             GateConfiguration.class,
             BatchConfigurer.class,
-            TikaMasterConfiguration.class
+            TikaConfiguration.class,
+            SlaveIntegrationConfiguration.class,
+            MasterIntegrationConfiguration.class
             })
 public class JobConfiguration {
     /* 
@@ -120,21 +116,7 @@ public class JobConfiguration {
     
      
     
-    @Bean
-    public MessageChannelPartitionHandler partitionHandler(
-            @Qualifier("batch.requests.partitioning") MessageChannel reqChannel,
-            @Qualifier("batch.replies.partitioning")  PollableChannel repChannel){
-        MessageChannelPartitionHandler handler = new MessageChannelPartitionHandler();
-        handler.setGridSize(Integer.parseInt(env.getProperty("gridSize")));
-        handler.setStepName(env.getProperty("stepName"));
-        handler.setReplyChannel(repChannel);
-        MessagingTemplate template = new MessagingTemplate();
-        template.setDefaultChannel(reqChannel);
-        template.setReceiveTimeout(Integer.parseInt(env.getProperty("partitionHandlerTimeout")));
-        handler.setMessagingOperations(template);
-        
-        return handler;
-    }         
+  
 //    
             
     @Bean
@@ -143,7 +125,7 @@ public class JobConfiguration {
     }
     
     @Bean 
-    public CachingConnectionFactory JMSConnectionFactory(ActiveMQConnectionFactory factory){
+    public CachingConnectionFactory connectionFactory(ActiveMQConnectionFactory factory){
         return new CachingConnectionFactory(factory);
     }
 
