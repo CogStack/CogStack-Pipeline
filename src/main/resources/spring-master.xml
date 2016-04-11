@@ -30,7 +30,7 @@
       	<int:aggregator ref="partitionHandler"
 					input-channel="replyChannel"
 					output-channel="aggregatedReplyChannel"
-					send-timeout="3600000"/>        
+					send-timeout="${jobTimeout}"/>        
 
 <!--        slave only-->
 
