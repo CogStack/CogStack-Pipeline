@@ -19,14 +19,9 @@ package uk.ac.kcl.batch;
 import gate.util.GateException;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
-import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
-import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.core.partition.PartitionHandler;
-import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
@@ -40,7 +35,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.jdbc.core.RowMapper;
 import uk.ac.kcl.model.SimpleDocument;
 import uk.ac.kcl.rowmappers.MultiRowDocumentRowMapper;
@@ -113,31 +107,6 @@ public class DbLineFixerConfiguration {
         return mapper;
     }    
     
-    @Bean
-    public Job dBLineFixerJob(JobBuilderFactory jobs, 
-            StepBuilderFactory steps,
-            Partitioner partitioner, 
-            @Qualifier("partitionHandler") 
-                    PartitionHandler gatePartitionHandler,
-                    TaskExecutor taskExecutor){
-                Job job = jobs.get("dbLineFixerJob")
-                        .incrementer(new RunIdIncrementer())
-                        .flow(
-                                steps
-                                        .get("dbLineFixerMasterStep")
-                                        .partitioner("dbLineFixerSlaveStep", partitioner)
-                                        .partitionHandler(gatePartitionHandler)
-                                        .taskExecutor(taskExecutor)
-                                        .build()
-                                
-                        )
-                        .end()
-                        .build();
-                return job;
-                        
-    }
-    
-
     
     @Bean
     public Step dbLineFixerSlaveStep(    
