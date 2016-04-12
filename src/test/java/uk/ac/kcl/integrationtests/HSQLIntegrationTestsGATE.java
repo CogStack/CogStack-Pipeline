@@ -59,17 +59,18 @@ import uk.ac.kcl.batch.GateConfiguration;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @TestPropertySource({
-    "classpath:hsql_test_config_tika.properties",
-    "classpath:jms.properties",
-    "classpath:tika.properties",
-    "classpath:concurrency.properties",
-    "classpath:postgres_db.properties",
-    "classpath:step.properties"})
+		"classpath:hsql_test_config_gate.properties",
+                "classpath:jms.properties",
+                "classpath:gate.properties",
+                "classpath:concurrency.properties",
+                "classpath:hsql_db.properties",                                                
+                "classpath:step.properties"})
 @ContextConfiguration(classes = {
     JobConfiguration.class,
     BatchConfigurer.class,
     GateConfiguration.class,
-    DbLineFixerConfiguration.class})
+    DbLineFixerConfiguration.class},
+        loader = AnnotationConfigContextLoader.class)
 public class HSQLIntegrationTestsGATE {
 
     final static Logger logger = Logger.getLogger(HSQLIntegrationTestsGATE.class);
@@ -111,7 +112,7 @@ public class HSQLIntegrationTestsGATE {
         HsqlTestUtils.destroyHSQLDBs();        
     }
     
-    @Ignore
+    //@Ignore
     @Test
     public void hsqlDBGatePipelineTest() {
         
@@ -140,7 +141,7 @@ public class HSQLIntegrationTestsGATE {
                 + ", primaryKeyFieldValue VARCHAR(100) "
                 + ", binaryFieldName VARCHAR(100) "
                 + ", updateTime VARCHAR(100) "
-                + ", xhtml VARCHAR(1500000))");
+                + ", xhtml LONGVARCHAR)");
 
         //forHsql
         targetTemplate.execute("DROP TABLE IF EXISTS tblOutputDocs");
@@ -152,7 +153,7 @@ public class HSQLIntegrationTestsGATE {
                 + ", primaryKeyFieldValue VARCHAR(100) "
                 + ", binaryFieldName VARCHAR(100) "
                 + ", updateTime VARCHAR(100) "
-                + ", gateJSON VARCHAR(1500000) )");
+                + ", gateJSON LONGVARCHAR )");
     }
      
 

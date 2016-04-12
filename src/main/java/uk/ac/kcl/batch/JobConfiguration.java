@@ -23,25 +23,21 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.integration.partition.BeanFactoryStepLocator;
-import org.springframework.batch.integration.partition.MessageChannelPartitionHandler;
 import org.springframework.batch.integration.partition.StepExecutionRequestHandler;
 import uk.ac.kcl.partitioners.ColumnRangePartitioner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.integration.config.EnableIntegration;
-import org.springframework.integration.core.MessagingTemplate;
 import org.springframework.jms.connection.CachingConnectionFactory;
-import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.PollableChannel;
 
 /**
  *
@@ -71,9 +67,10 @@ public class JobConfiguration {
     @Bean
     public static PropertySourcesPlaceholderConfigurer placeHolderConfigurer() {
         PropertySourcesPlaceholderConfigurer props = new PropertySourcesPlaceholderConfigurer();
-        props.setNullValue("null");
-        return new PropertySourcesPlaceholderConfigurer();
-    }     
+        props.setNullValue("");
+        return props;
+    }
+    
     @Autowired
     public Environment env;      
     
@@ -97,6 +94,10 @@ public class JobConfiguration {
         return columnRangePartitioner;
     }
     
+    @Value("${source.username}")
+    String sourceUserName;
+    @Value("${source.password}")
+    String sourcePassword;
     
     @Bean(destroyMethod = "close")
     @Primary
@@ -105,19 +106,24 @@ public class JobConfiguration {
         BasicDataSource ds = new BasicDataSource();
         ds.setDriverClassName(env.getProperty("source.Driver"));
         ds.setUrl(env.getProperty("source.JdbcPath"));
-        ds.setUsername(env.getProperty("source.username"));
-        ds.setPassword(env.getProperty("source.password"));        
+        ds.setUsername(sourceUserName);
+        ds.setPassword(sourcePassword);        
         return ds;
     }
 
+    @Value("${target.username}")
+    String targetUserName;
+    @Value("${target.password}")
+    String targetPassword;    
+    
     @Bean(destroyMethod = "close")
     @Qualifier("targetDataSource")
     public DataSource targetDataSource() {
         BasicDataSource ds = new BasicDataSource();
         ds.setDriverClassName(env.getProperty("target.Driver"));
         ds.setUrl(env.getProperty("target.JdbcPath"));
-        ds.setUsername(env.getProperty("target.username"));
-        ds.setPassword(env.getProperty("target.password"));                
+        ds.setUsername(targetUserName);
+        ds.setPassword(targetPassword);                
         return ds;
     }    
 
