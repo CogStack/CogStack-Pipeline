@@ -33,6 +33,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
@@ -66,7 +67,13 @@ public class JobConfiguration {
         
     
     */
-     
+    //required to process placeholder values in annotations, e.g. scheduler cron
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer placeHolderConfigurer() {
+        PropertySourcesPlaceholderConfigurer props = new PropertySourcesPlaceholderConfigurer();
+        props.setNullValue("null");
+        return new PropertySourcesPlaceholderConfigurer();
+    }     
     @Autowired
     public Environment env;      
     
@@ -74,6 +81,7 @@ public class JobConfiguration {
     
 
     @Bean
+    @Qualifier("slaveTaskExecutor")
     public TaskExecutor taskExecutor() {
         SimpleAsyncTaskExecutor exec = new SimpleAsyncTaskExecutor();
         exec.setConcurrencyLimit(Integer.parseInt(env.getProperty("concurrencyLimit")));

@@ -50,7 +50,13 @@ import uk.ac.kcl.batch.BatchConfigurer;
  * @author rich
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@TestPropertySource("classpath:postgres_test_config_line_fixer.properties")
+@TestPropertySource({
+		"classpath:postgres_test_config_line_fixer.properties",
+                "classpath:jms.properties",
+                "classpath:concurrency.properties",
+                "classpath:dBLineFixer.properties",  
+                "classpath:postgres_db.properties",                                                
+                "classpath:step.properties"})
 @ContextConfiguration(classes = {
     JobConfiguration.class,
     BatchConfigurer.class},
@@ -67,8 +73,6 @@ public class PostGresIntegrationTestsLineFixer  {
     @Qualifier("targetDataSource")
     public DataSource jdbcTargetDocumentFinder;
 
-    private  Server server1;
-    private  Server server2;
     private JdbcTemplate sourceTemplate;
     private JdbcTemplate targetTemplate;
     private ResourceDatabasePopulator rdp = new ResourceDatabasePopulator();
@@ -103,7 +107,7 @@ public class PostGresIntegrationTestsLineFixer  {
         insertTestLinesForDBLineFixer(sourceDataSource);
 
         try {
-            jobOperator.startNextInstance("dbLineFixerJob");
+            jobOperator.startNextInstance("dBLineFixerJob");
         } catch (NoSuchJobException | JobParametersNotFoundException | JobRestartException | JobExecutionAlreadyRunningException | JobInstanceAlreadyCompleteException | UnexpectedJobExecutionException | JobParametersInvalidException ex) {
             java.util.logging.Logger.getLogger(PostGresIntegrationTestsLineFixer.class.getName()).log(Level.SEVERE, null, ex);
         }

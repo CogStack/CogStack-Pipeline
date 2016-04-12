@@ -58,8 +58,8 @@ public class BinaryDocument {
         return metadata.get("updateTime");
     }        
     
-    public String getGateJson(){
-        return metadata.get("gateJSON");
+    public String getGateData(){
+        return metadata.get("gateData");
     }   
             
     public BinaryDocument(byte[] body) {

@@ -32,7 +32,7 @@ public class HsqlTestUtils {
  
         HsqlProperties p1 = new HsqlProperties();
         p1.setProperty("server.database.0", "mem:hsqldb");
-        p1.setProperty("server.dbname.0", "test");
+        p1.setProperty("server.dbname.0", "minicogs");
         p1.setProperty("server.port", "9001");
         p1.setProperty("server.remote_open", "true");
         server1 = new Server();
@@ -43,7 +43,7 @@ public class HsqlTestUtils {
 
         HsqlProperties p2 = new HsqlProperties();
         p2.setProperty("server.database.0", "mem:hsqldb");
-        p2.setProperty("server.dbname.0", "test2");
+        p2.setProperty("server.dbname.0", "minicogs");
         p2.setProperty("server.port", "9002");
         p2.setProperty("server.remote_open", "true");
         server2 = new Server();

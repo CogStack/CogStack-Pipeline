@@ -41,6 +41,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -53,7 +55,13 @@ import uk.ac.kcl.batch.TikaConfiguration;
  * @author rich
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@TestPropertySource("classpath:postgres_test_config_tika.properties")
+@TestPropertySource({
+    "classpath:postgres_test_config_tika.properties",
+    "classpath:jms.properties",
+    "classpath:tika.properties",
+    "classpath:concurrency.properties",
+    "classpath:postgres_db.properties",
+    "classpath:step.properties"})
 @ContextConfiguration(classes = {
     JobConfiguration.class,
     BatchConfigurer.class,
@@ -77,7 +85,6 @@ public class PostGresIntegrationTestsTika {
     private Resource dropTablesResource;
     private Resource makeTablesResource;
 
-
     @Before
     public void initTemplates() {
         sourceTemplate = new JdbcTemplate(sourceDataSource);
@@ -89,7 +96,6 @@ public class PostGresIntegrationTestsTika {
         //sourceTemplate.execute("DROP TABLE tblInputDocs");
         //targetTemplate.execute("DROP TABLE tblOutputDocs");
     }
-
 
     @Autowired
     JobOperator jobOperator;
@@ -107,7 +113,6 @@ public class PostGresIntegrationTestsTika {
         }
     }
 
-    
     private void initPostgresTikaTable() {
 ////        for postgres
         sourceTemplate.execute("DROP TABLE IF EXISTS tblInputDocs");
@@ -132,22 +137,18 @@ public class PostGresIntegrationTestsTika {
                 + ", updateTime text "
                 + ", xhtml text )");
     }
-    
-    
-    
-    private void initPostGresJobRepository(){
+
+    private void initPostGresJobRepository() {
         dropTablesResource = new ClassPathResource("org/springframework/batch/core/schema-drop-postgresql.sql");
         makeTablesResource = new ClassPathResource("org/springframework/batch/core/schema-postgresql.sql");
         rdp.addScript(dropTablesResource);
         rdp.addScript(makeTablesResource);
-        rdp.execute(jdbcTargetDocumentFinder);        
+        rdp.execute(jdbcTargetDocumentFinder);
     }
-      
 
-    
     private void insertTestBinariesForTika(DataSource ds) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
-        int docCount = 100;
+        int docCount = 10;
         byte[] bytes = null;
         try {
             bytes = IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream("tika/testdocs/docexample.doc"));
@@ -164,8 +165,8 @@ public class PostGresIntegrationTestsTika {
                 + ", body"
                 + ") VALUES (?,?,?,?,?,?)";
         for (int ii = 0; ii < docCount; ii++) {
-            jdbcTemplate.update(sql, "fictionalColumnFieldName","fictionalTableName","fictionalPrimaryKeyFieldName", ii,null,  bytes);
-            
+            jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName", "fictionalPrimaryKeyFieldName", ii, null, bytes);
+
         }
     }
 }

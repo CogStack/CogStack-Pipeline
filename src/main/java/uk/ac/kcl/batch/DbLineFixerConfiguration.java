@@ -35,6 +35,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.jdbc.core.RowMapper;
 import uk.ac.kcl.model.SimpleDocument;
 import uk.ac.kcl.rowmappers.MultiRowDocumentRowMapper;
@@ -109,13 +110,13 @@ public class DbLineFixerConfiguration {
     
     
     @Bean
-    public Step dbLineFixerSlaveStep(    
+    public Step dBLineFixerSlaveStep(    
             @Qualifier("dBLineFixerItemReader") ItemReader<SimpleDocument> reader,
             @Qualifier("dBLineFixerItemWriter")  ItemWriter<SimpleDocument> writer,    
+            @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor,            
             StepBuilderFactory stepBuilderFactory
-    //        @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor
             ) {
-         Step step = stepBuilderFactory.get("dbLineFixerSlaveStep")
+         Step step = stepBuilderFactory.get("dBLineFixerSlaveStep")
                 .<SimpleDocument, SimpleDocument> chunk(
                         Integer.parseInt(env.getProperty("chunkSize")))
                 .reader(reader)
@@ -123,7 +124,7 @@ public class DbLineFixerConfiguration {
                 .faultTolerant()
                 .skipLimit(10)
                 .skip(GateException.class)   
-                //.taskExecutor(taskExecutor)
+                .taskExecutor(taskExecutor)
                 .build();
          
          return step;

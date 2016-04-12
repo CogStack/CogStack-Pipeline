@@ -54,7 +54,13 @@ import uk.ac.kcl.batch.GateConfiguration;
  * @author rich
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@TestPropertySource("classpath:postgres_test_config_gate.properties")
+@TestPropertySource({
+		"classpath:postgres_test_config_gate.properties",
+                "classpath:jms.properties",
+                "classpath:gate.properties",
+                "classpath:concurrency.properties",
+                "classpath:postgres_db.properties",                                                
+                "classpath:step.properties"})
 @ContextConfiguration(classes = {
     JobConfiguration.class,
     BatchConfigurer.class,

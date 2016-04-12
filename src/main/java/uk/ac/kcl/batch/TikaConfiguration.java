@@ -19,14 +19,9 @@ import java.util.Arrays;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
-import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
-import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.core.partition.PartitionHandler;
-import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
@@ -88,7 +83,6 @@ public class TikaConfiguration {
         qp.setSelectClause(env.getProperty("source.selectClause"));
         qp.setFromClause(env.getProperty("source.fromClause"));
         qp.setSortKey(env.getProperty("source.sortKey"));
-        //qp.setWhereClause(env.getProperty("source.whereClause"));
         qp.setWhereClause("WHERE " + env.getProperty("columntoPartition") + " BETWEEN " + minValue + " AND " + maxValue) ;
         qp.setDataSource(jdbcDocumentSource);
         reader.setFetchSize(Integer.parseInt(env.getProperty("source.pageSize")));
@@ -137,16 +131,18 @@ public class TikaConfiguration {
             @Qualifier("tikaItemReader")ItemReader<BinaryDocument> reader,
             @Qualifier("tikaItemWriter")  ItemWriter<BinaryDocument> writer,    
             @Qualifier("tikaItemProcessor")   ItemProcessor<BinaryDocument, BinaryDocument> processor,
+            @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor,
             StepBuilderFactory stepBuilderFactory
             ) {
          Step step = stepBuilderFactory.get("tikaSlaveStep")
                 .<BinaryDocument, BinaryDocument> chunk(Integer.parseInt(env.getProperty("chunkSize")))
                 .reader(reader)
-                .processor(processor)
+                .processor(processor)                 
                 .writer(writer)
                 .faultTolerant()
                 .skipLimit(10)
-                .skip(Exception.class)   
+                .skip(Exception.class)
+                .taskExecutor(taskExecutor)                 
                 .build();
          
          return step;

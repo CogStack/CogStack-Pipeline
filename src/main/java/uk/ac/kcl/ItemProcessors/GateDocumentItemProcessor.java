@@ -49,9 +49,9 @@ public class GateDocumentItemProcessor implements ItemProcessor<BinaryDocument, 
 
             gateService.processDoc(gateDoc);
             if(env.getProperty("gateJSON", "true").equalsIgnoreCase("true")){
-                doc.getMetadata().put("gateJSON", gateService.convertDocToJSON(gateDoc));
+                doc.getMetadata().put("gateData", gateService.convertDocToJSON(gateDoc));
             }else{
-                doc.getMetadata().put("gateJSON", gateDoc.toXml());                
+                doc.getMetadata().put("gateData", gateDoc.toXml());                
             }
             return doc;
         }finally{

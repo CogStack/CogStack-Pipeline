@@ -47,8 +47,7 @@ public class TikaDocumentItemProcessor implements ItemProcessor<BinaryDocument, 
     @Override
     public BinaryDocument process(final BinaryDocument doc) throws Exception {
         ContentHandler handler;
-        System.out.println("Processing Doc");
-
+        logJdbcPath.debug("processing doc ID: " + doc.getId());
         if (keepTags) {
             handler = new ToXMLContentHandler();
         } else {

@@ -97,7 +97,6 @@ public class GateConfiguration {
         qp.setSelectClause(env.getProperty("source.selectClause"));
         qp.setFromClause(env.getProperty("source.fromClause"));
         qp.setSortKey(env.getProperty("source.sortKey"));
-        //qp.setWhereClause(env.getProperty("source.whereClause"));
         qp.setWhereClause("WHERE " + env.getProperty("columntoPartition") + " BETWEEN " + minValue + " AND " + maxValue);
         qp.setDataSource(jdbcDocumentSource);
         reader.setFetchSize(Integer.parseInt(env.getProperty("source.pageSize")));
@@ -105,7 +104,6 @@ public class GateConfiguration {
         reader.setQueryProvider(qp.getObject());
         reader.setRowMapper(documentRowmapper);
 
-        //reader2.setDelegate(reader);
         return reader;
     }
 
@@ -146,8 +144,8 @@ public class GateConfiguration {
             @Qualifier("gateItemReader") ItemReader<BinaryDocument> reader,
             @Qualifier("gateItemWriter") ItemWriter<BinaryDocument> writer,
             @Qualifier("gateItemProcessor") ItemProcessor<BinaryDocument, BinaryDocument> processor,
-            StepBuilderFactory stepBuilderFactory
-    //        @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor
+            StepBuilderFactory stepBuilderFactory,
+            @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor
     ) {
         Step step = stepBuilderFactory.get("gateSlaveStep")
                 .<BinaryDocument, BinaryDocument>chunk(Integer.parseInt(env.getProperty("chunkSize")))
@@ -157,7 +155,7 @@ public class GateConfiguration {
                 .faultTolerant()
                 .skipLimit(10)
                 .skip(GateException.class)
-                //.taskExecutor(taskExecutor)
+                .taskExecutor(taskExecutor)
                 .build();
 
         return step;

@@ -37,7 +37,6 @@ import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteExcep
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -47,14 +46,26 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.batch.BatchConfigurer;
+import uk.ac.kcl.batch.DbLineFixerConfiguration;
+import uk.ac.kcl.batch.GateConfiguration;
 
 /**
  *
  * @author rich
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@TestPropertySource("classpath:hsql_test_config_line_fixer.properties")
-@ContextConfiguration(classes = JobConfiguration.class)
+@TestPropertySource({
+    "classpath:hsql_test_config_line_fixer.properties",
+    "classpath:jms.properties",
+    "classpath:concurrency.properties",
+    "classpath:hsql_db.properties",
+    "classpath:dBLineFixer.properties",      
+    "classpath:step.properties"})
+@ContextConfiguration(classes = {
+    JobConfiguration.class,
+    BatchConfigurer.class,
+    DbLineFixerConfiguration.class},
+        loader = AnnotationConfigContextLoader.class)
 public class HSQLIntegrationTestsLineFixer  {
 
     final static Logger logger = Logger.getLogger(HSQLIntegrationTestsLineFixer.class);
@@ -93,7 +104,7 @@ public class HSQLIntegrationTestsLineFixer  {
     @Autowired
     JobOperator jobOperator;
 
-    @Ignore
+    //@Ignore
     @Test
     public void hsqlDBLineFixerPipelineTest() throws IOException, ServerAcl.AclFormatException{
         initHSQLJobRepository();
@@ -101,7 +112,7 @@ public class HSQLIntegrationTestsLineFixer  {
         insertTestLinesForDBLineFixer(sourceDataSource);
 
         try {
-            jobOperator.startNextInstance("dbLineFixerJob");
+            jobOperator.startNextInstance("dBLineFixerJob");
         } catch (NoSuchJobException | JobParametersNotFoundException | JobRestartException | JobExecutionAlreadyRunningException | JobInstanceAlreadyCompleteException | UnexpectedJobExecutionException | JobParametersInvalidException ex) {
             java.util.logging.Logger.getLogger(HSQLIntegrationTestsLineFixer.class.getName()).log(Level.SEVERE, null, ex);
         }
