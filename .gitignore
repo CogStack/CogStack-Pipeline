@@ -4,3 +4,4 @@ build/*
 private/*
 nbproject/*
 .nb-gradle-properties
+.idea/*
