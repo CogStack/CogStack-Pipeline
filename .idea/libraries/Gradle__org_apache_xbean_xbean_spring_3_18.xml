@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.apache.xbean:xbean-spring:3.18">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.xbean/xbean-spring/3.18/63a35cfc4c0a786f86ebb9df0279b9e3b412c60/xbean-spring-3.18.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.xbean/xbean-spring/3.18/d8f4f5d5a7291a74e1e1852de666350b94dc3f7e/xbean-spring-3.18-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.apache.sis.storage:sis-storage:0.5">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.sis.storage/sis-storage/0.5/29d1ea6422b68fbfe1f1702f122019ae376ee2c8/sis-storage-0.5.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.sis.storage/sis-storage/0.5/359913e858aba6b28e3a9d03906e58904562c62a/sis-storage-0.5-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

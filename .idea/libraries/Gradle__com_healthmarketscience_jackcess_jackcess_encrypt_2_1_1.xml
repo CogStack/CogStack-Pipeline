@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: com.healthmarketscience.jackcess:jackcess-encrypt:2.1.1">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.healthmarketscience.jackcess/jackcess-encrypt/2.1.1/effacd7133ab76ee54c0488dd952b177bfeb85a3/jackcess-encrypt-2.1.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.healthmarketscience.jackcess/jackcess-encrypt/2.1.1/555958b9ecf65524341c08b7fab98cc79416ca60/jackcess-encrypt-2.1.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

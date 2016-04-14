@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.apache.sis.core:sis-referencing:0.5">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.sis.core/sis-referencing/0.5/377246c70fd858346fab8a0e554bed3b3cfcde70/sis-referencing-0.5.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.sis.core/sis-referencing/0.5/34edbf5e352a3a769f603aa240904e78b0a7ca43/sis-referencing-0.5-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.apache.commons:commons-csv:1.0">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-csv/1.0/8a0796ad6541a144eb1c00b93e06fbac03a9f313/commons-csv-1.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-csv/1.0/8f6d4b9b4c9b04b1e91cc4b05f4a7064978c81c9/commons-csv-1.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

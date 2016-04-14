@@ -32,6 +32,7 @@ import org.springframework.jdbc.core.RowMapper;
 public class MultiRowDocumentRowMapper implements RowMapper<SimpleDocument> {
 
     private final DataSource ds;
+    private final String timeStampName;
     private String documentKeyName;
     private String lineKeyName;
     private String lineContents;
@@ -39,13 +40,14 @@ public class MultiRowDocumentRowMapper implements RowMapper<SimpleDocument> {
     private final SingleLineDocumentRowMapper mapper;
     private JdbcTemplate template ;
     public MultiRowDocumentRowMapper(DataSource ds, String documentKeyName, String lineKeyName, 
-            String lineContents, String tableName) {
+            String lineContents, String timeStampName, String tableName) {
         this.ds = ds;
         this.mapper = new SingleLineDocumentRowMapper();
         this.documentKeyName = documentKeyName;
         this.lineKeyName = lineKeyName;
         this.lineContents = lineContents;
         this.tableName = tableName;
+        this.timeStampName = timeStampName;
         mapper.setDocumentKeyName(documentKeyName);
         mapper.setLineContents(lineContents);
         mapper.setLineKeyName(lineKeyName);        
@@ -82,7 +84,7 @@ public class MultiRowDocumentRowMapper implements RowMapper<SimpleDocument> {
 
         SimpleDocument doc = new SimpleDocument();
         doc.setDocumentKey(rs.getString(documentKeyName));
-
+        doc.setTimeStamp(rs.getString(timeStampName));
         StringBuilder sb2 = new StringBuilder();
         for (Map.Entry<Integer, String> entry : map.entrySet()) {
             sb2.append(entry.getValue());

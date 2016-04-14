@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.fusesource.hawtdispatch:hawtdispatch:1.11">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.fusesource.hawtdispatch/hawtdispatch/1.11/1fefb873b3046944dd8af2fb2be6dab4ef76057/hawtdispatch-1.11.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.fusesource.hawtdispatch/hawtdispatch/1.11/276b4680c71fe9447dae2fc69c58faccd68089f/hawtdispatch-1.11-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

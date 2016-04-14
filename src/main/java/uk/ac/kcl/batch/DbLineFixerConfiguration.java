@@ -59,14 +59,14 @@ public class DbLineFixerConfiguration {
     
     
     */
-        
+
     @Bean
     @StepScope
     @Qualifier("dBLineFixerItemReader")
-    public ItemReader<SimpleDocument> dBLineFixerItemReader(       
+    public ItemReader<SimpleDocument> dBLineFixerItemReader(
             @Value("#{stepExecutionContext[minValue]}") String minValue,
-            @Value("#{stepExecutionContext[maxValue]}") String maxValue,            
-            @Qualifier("multiRowDocumentRowmapper")RowMapper<SimpleDocument> multiRowDocumentRowmapper, 
+            @Value("#{stepExecutionContext[maxValue]}") String maxValue,
+            @Qualifier("multiRowDocumentRowmapper")RowMapper<SimpleDocument> multiRowDocumentRowmapper,
             @Qualifier("sourceDataSource") DataSource jdbcDocumentSource) throws Exception {
         JdbcPagingItemReader<SimpleDocument> reader = new JdbcPagingItemReader<>();
         reader.setDataSource(jdbcDocumentSource);
@@ -78,14 +78,14 @@ public class DbLineFixerConfiguration {
         qp.setDataSource(jdbcDocumentSource);
         reader.setFetchSize(Integer.parseInt(env.getProperty("source.pageSize")));
 
-        
+
         reader.setQueryProvider(qp.getObject());
         reader.setRowMapper(multiRowDocumentRowmapper);
 
         return reader;
     }
 
-     
+
     @Bean
     @Qualifier("dBLineFixerItemWriter")
     public ItemWriter<SimpleDocument> dBLineFixerItemWriter(
@@ -96,37 +96,39 @@ public class DbLineFixerConfiguration {
         writer.setDataSource(jdbcDocumentTarget);
         return writer;
     }
-    
+
     @Bean
     @Qualifier("multiRowDocumentRowmapper")
     public RowMapper multiRowDocumentRowmapper(
-                @Qualifier("sourceDataSource") DataSource ds) {
+            @Qualifier("sourceDataSource") DataSource ds) {
         MultiRowDocumentRowMapper mapper = new MultiRowDocumentRowMapper(ds, env.getProperty("documentKeyName"),
-        env.getProperty("lineKeyName"),
-        env.getProperty("lineContents"),
-        env.getProperty("tableName"));
+                env.getProperty("lineKeyName"),
+                env.getProperty("lineContents"),
+                env.getProperty("timeStampName"),
+                env.getProperty("tableName")
+);
         return mapper;
-    }    
-    
-    
+    }
+
+
     @Bean
-    public Step dBLineFixerSlaveStep(    
+    public Step dBLineFixerSlaveStep(
             @Qualifier("dBLineFixerItemReader") ItemReader<SimpleDocument> reader,
-            @Qualifier("dBLineFixerItemWriter")  ItemWriter<SimpleDocument> writer,    
-            @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor,            
+            @Qualifier("dBLineFixerItemWriter")  ItemWriter<SimpleDocument> writer,
+            @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor,
             StepBuilderFactory stepBuilderFactory
-            ) {
-         Step step = stepBuilderFactory.get("dBLineFixerSlaveStep")
+    ) {
+        Step step = stepBuilderFactory.get("dBLineFixerSlaveStep")
                 .<SimpleDocument, SimpleDocument> chunk(
                         Integer.parseInt(env.getProperty("chunkSize")))
                 .reader(reader)
                 .writer(writer)
                 .faultTolerant()
                 .skipLimit(10)
-                .skip(GateException.class)   
+                .skip(GateException.class)
                 .taskExecutor(taskExecutor)
                 .build();
-         
-         return step;
-    }          
+
+        return step;
+    }
 }

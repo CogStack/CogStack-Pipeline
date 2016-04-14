@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.apache.poi:poi:3.13">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.poi/poi/3.13/f59f504ba8c521e61e25f417ec652fd485010f3/poi-3.13.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.poi/poi/3.13/a400503268b807b06ce712bb99ae47710c21fb55/poi-3.13-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

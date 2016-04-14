@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: uk.ac.gate:gate-compiler-jdt:4.3.2-P20140317-1600">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/uk.ac.gate/gate-compiler-jdt/4.3.2-P20140317-1600/8b9e5f0f8f3d10a0857f5053fade30250d9686a4/gate-compiler-jdt-4.3.2-P20140317-1600.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/uk.ac.gate/gate-compiler-jdt/4.3.2-P20140317-1600/a8147cfba297b5a91032c0cd5ee38bf1300a6b87/gate-compiler-jdt-4.3.2-P20140317-1600-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

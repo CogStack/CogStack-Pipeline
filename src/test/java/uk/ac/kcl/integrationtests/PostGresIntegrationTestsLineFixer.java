@@ -118,6 +118,7 @@ public class PostGresIntegrationTestsLineFixer  {
         sourceTemplate.execute("DROP TABLE IF EXISTS tblInputDocs");
         sourceTemplate.execute("CREATE TABLE tblInputDocs"
                 + "( ID  SERIAL PRIMARY KEY"
+                + ", TIMESTAMP text "
                 + ", DOC_ID integer "
                 + ", LINE_ID integer "
                 + ", LINE_TEXT text )"
@@ -126,6 +127,7 @@ public class PostGresIntegrationTestsLineFixer  {
         targetTemplate.execute("DROP TABLE IF EXISTS  tblOutputDocs");
         targetTemplate.execute("CREATE TABLE tblOutputDocs "
                 + "( ID  SERIAL PRIMARY KEY"
+                + ", TIMESTAMP text"
                 + ", DOC_ID integer"
                 + ", LINE_TEXT_CONCAT text )");
     }
@@ -147,13 +149,14 @@ public class PostGresIntegrationTestsLineFixer  {
         int lineCountIncrementer = 1;
         String sql = "INSERT INTO tblInputDocs "
                 + "( DOC_ID"
+                + ", TIMESTAMP "
                 + ", LINE_ID"
                 + ", LINE_TEXT"
-                + ") VALUES (?,?,?)";        
+                + ") VALUES (?,?,?,?)";
         for (int i = 0; i <= docCount; i++) {
             for(int j = 0;j < lineCountIncrementer; j++){
                 String text = "This is DOC_ID:" + i + " and LINE_ID:" + j ;
-                jdbcTemplate.update(sql, i,j,text);
+                jdbcTemplate.update(sql, i,"17-JAN-82",j,text);
             }
             lineCountIncrementer++;
             if(lineCountIncrementer % 50 == 0){

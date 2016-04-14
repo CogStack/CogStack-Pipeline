@@ -82,7 +82,7 @@ public class MasterIntegrationConfiguration {
                     .flow(
                             steps
                             .get("gateMasterStep")
-                            .partitioner("gateSlaveStep.master", partitioner)
+                            .partitioner("gateSlaveStep", partitioner)
                             .partitionHandler(gatePartitionHandler)
                             .build()
                     )
@@ -107,7 +107,7 @@ public class MasterIntegrationConfiguration {
                     .flow(
                             steps
                             .get("tikaMasterStep")
-                            .partitioner("tikaSlaveStep.master", partitioner)
+                            .partitioner("tikaSlaveStep", partitioner)
                             .partitionHandler(partitionHandler)
                             .build()
                     )

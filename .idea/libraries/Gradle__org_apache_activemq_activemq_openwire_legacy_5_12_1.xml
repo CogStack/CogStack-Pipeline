@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.apache.activemq:activemq-openwire-legacy:5.12.1">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.activemq/activemq-openwire-legacy/5.12.1/61a8671bbedd0aeaf529253e54d8982f0c3e3f8f/activemq-openwire-legacy-5.12.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.activemq/activemq-openwire-legacy/5.12.1/15e1ca87a1297945e32a3181fb8c5702a560f598/activemq-openwire-legacy-5.12.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

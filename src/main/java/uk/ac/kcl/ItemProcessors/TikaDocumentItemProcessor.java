@@ -61,6 +61,12 @@ public class TikaDocumentItemProcessor implements ItemProcessor<BinaryDocument, 
         } catch (Exception ex) {
             doc.getMetadata().put("xhtml", ex.getMessage());
         }
+//        try (InputStream stream = new ByteArrayInputStream(doc.getBody())) {
+//            parser.parse(stream, handler, metadata);
+//            doc.setXhtml(handler.toString());
+//        } catch (Exception ex) {
+//            doc.setXhtml(ex.getMessage());
+//        }
         return doc;
     }
 

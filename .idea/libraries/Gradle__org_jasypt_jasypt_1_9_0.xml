@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.jasypt:jasypt:1.9.0">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jasypt/jasypt/1.9.0/857a1a55a81641c31b2a9b4b292120c1d4432bd/jasypt-1.9.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jasypt/jasypt/1.9.0/7345fb69a07951acddfd3e0a0989aac52f9f655/jasypt-1.9.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

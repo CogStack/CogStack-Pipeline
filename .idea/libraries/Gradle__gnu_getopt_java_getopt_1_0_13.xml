@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: gnu.getopt:java-getopt:1.0.13">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/gnu.getopt/java-getopt/1.0.13/bb29ac2c2ab8b92945f01706de4b56c97989c6a9/java-getopt-1.0.13.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/gnu.getopt/java-getopt/1.0.13/c8c53ae8939b634494b371e114ab5e24db246b8d/java-getopt-1.0.13-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

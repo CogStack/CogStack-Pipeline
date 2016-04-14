@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.quartz-scheduler:quartz:2.2.0">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.quartz-scheduler/quartz/2.2.0/2eb16fce055d5f3c9d65420f6fc4efd3a079a3d8/quartz-2.2.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.quartz-scheduler/quartz/2.2.0/326762c463fd642d2e99f513c830a7bed17723e7/quartz-2.2.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

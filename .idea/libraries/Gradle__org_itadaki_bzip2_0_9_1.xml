@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.itadaki:bzip2:0.9.1">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.itadaki/bzip2/0.9.1/47ca95f71e3ccae756c4a24354d48069c58f475c/bzip2-0.9.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.itadaki/bzip2/0.9.1/655282fbaee3bcd3b79d9383b0abff561bb496f0/bzip2-0.9.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

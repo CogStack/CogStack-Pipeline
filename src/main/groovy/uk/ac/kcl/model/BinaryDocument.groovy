@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2016 King's College London, Richard Jackson <richgjackson@gmail.com>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,44 +24,44 @@ import java.util.HashMap;
 public class BinaryDocument {
     private final HashMap<String, String> metadata;
     private final byte[] body;
-    
-    
+
+
     public String getXhtml(){
         return metadata.get("xhtml");
-    }    
-    
+    }
+
     public String getId(){
         return metadata.get("id");
-    }    
-    
+    }
+
     public String getSrcColumnFieldName(){
         return metadata.get("srcColumnFieldName");
-    }      
-    
+    }
+
     public String getSrcTableName(){
         return metadata.get("srcTableName");
-    }      
-    
+    }
+
     public String getPrimaryKeyFieldName(){
         return metadata.get("primaryKeyFieldName");
-    }        
-    
+    }
+
     public String getPrimaryKeyFieldValue(){
         return metadata.get("primaryKeyFieldValue");
-    }     
-    
+    }
+
     public String getBinaryFieldName(){
         return metadata.get("binaryFieldName");
-    }      
-    
+    }
+
     public String getUpdateTime(){
         return metadata.get("updateTime");
-    }        
-    
+    }
+
     public String getGateData(){
         return metadata.get("gateData");
-    }   
-            
+    }
+
     public BinaryDocument(byte[] body) {
         this.metadata = new HashMap<>();
         this.body = body;
@@ -69,7 +69,7 @@ public class BinaryDocument {
     public BinaryDocument(String body) {
         this.metadata = new HashMap<>();
         this.body = body.getBytes();
-    }    
+    }
 
     public BinaryDocument() {
         this.metadata = new HashMap<>();
@@ -83,5 +83,37 @@ public class BinaryDocument {
     public byte[] getBody() {
         return body;
     }
-    
+
 }
+//package uk.ac.kcl.model
+//
+///**
+// * Created by rich on 14/04/16.
+// */
+//class BinaryDocument {
+//    BinaryDocument(byte[] body) {
+//        this.metadata = new HashMap<>();
+//        this.body = body;
+//    }
+//    BinaryDocument(String body) {
+//        this.metadata = new HashMap<>();
+//        this.body = body.getBytes();
+//    }
+//    BinaryDocument() {
+//        this.metadata = new HashMap<>();
+//        this.body = null;
+//    }
+//    HashMap<String,String> metadata
+//    byte[] body
+//    String bodyString
+//    String xhtml
+//    String id
+//    String srcColumnFieldName
+//    String srcTableName
+//    String primaryKeyFieldName
+//    String primaryKeyFieldValue
+//    String binaryFieldName
+//    String updateTime
+//    String outputData
+//
+//}

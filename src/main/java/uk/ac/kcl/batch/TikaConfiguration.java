@@ -19,6 +19,8 @@ import java.util.Arrays;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
+
+import org.apache.tika.exception.TikaException;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -141,7 +143,7 @@ public class TikaConfiguration {
                 .writer(writer)
                 .faultTolerant()
                 .skipLimit(10)
-                .skip(Exception.class)
+                .skip(TikaException.class)
                 .taskExecutor(taskExecutor)                 
                 .build();
          

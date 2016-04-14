@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2016 King's College London, Richard Jackson <richgjackson@gmail.com>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,6 +24,17 @@ public class SimpleDocument {
     private String lineContents;
     private String lineKey;
     private String documentKey;
+    private String timeStamp;
+
+    String getTimeStamp() {
+        return timeStamp
+    }
+
+    void setTimeStamp(String timeStamp) {
+        this.timeStamp = timeStamp
+    }
+
+
 
     public String getLineContents() {
         return lineContents;
@@ -48,5 +59,18 @@ public class SimpleDocument {
     public void setDocumentKey(String DocumentKey) {
         this.documentKey = DocumentKey;
     }
-    
+
 }
+
+//package uk.ac.kcl.model
+//
+///**
+// *
+// * @author King's College London, Richard Jackson <richgjackson@gmail.com>
+// */
+//public class SimpleDocument {
+//    String lineContents;
+//    String lineKey;
+//    String documentKey;
+//}
+//

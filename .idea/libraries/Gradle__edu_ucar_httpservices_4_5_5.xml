@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: edu.ucar:httpservices:4.5.5">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/edu.ucar/httpservices/4.5.5/ee5f217be599e5e03f7f0e55e03f9e721a154f62/httpservices-4.5.5.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/edu.ucar/httpservices/4.5.5/e02932eec7c1fa530dea643a8bfe22971e1b96c8/httpservices-4.5.5-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: com.ibm.jbatch:com.ibm.jbatch-tck-spi:1.0">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.ibm.jbatch/com.ibm.jbatch-tck-spi/1.0/8ac869b0a60bff1a15eba0fb6398942410396938/com.ibm.jbatch-tck-spi-1.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.ibm.jbatch/com.ibm.jbatch-tck-spi/1.0/d0d9dfa266ccf85d8384267b078881b8c4567626/com.ibm.jbatch-tck-spi-1.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: uk.ac.gate:gate-core:8.0">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/uk.ac.gate/gate-core/8.0/b4239df96a992b21e43f9d53762940d45402ecde/gate-core-8.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/uk.ac.gate/gate-core/8.0/1c660a23e1ac252a024cd18d9a97bcfecfab3c3b/gate-core-8.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
