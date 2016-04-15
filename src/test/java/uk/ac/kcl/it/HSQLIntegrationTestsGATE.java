@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.kcl.integrationtests;
+package uk.ac.kcl.it;
 
 import uk.ac.kcl.batch.JobConfiguration;
 import java.io.IOException;
@@ -22,9 +22,10 @@ import java.util.logging.Level;
 import javax.sql.DataSource;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.hsqldb.Server;
-import org.junit.After;
+import org.hsqldb.server.ServerAcl;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,6 +39,7 @@ import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteExcep
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -47,21 +49,31 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.batch.BatchConfigurer;
+import uk.ac.kcl.batch.DbLineFixerConfiguration;
+import uk.ac.kcl.batch.GateConfiguration;
+
 
 /**
  *
  * @author rich
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@TestPropertySource("classpath:sqlserver_test_config_gate.properties")
-//@ContextConfiguration(locations = {"classpath:testApplicationContext.xml"})
+@TestPropertySource({
+		"classpath:hsql_test_config_gate.properties",
+                "classpath:jms.properties",
+                "classpath:gate.properties",
+                "classpath:concurrency.properties",
+                "classpath:hsql_db.properties",                                                
+                "classpath:step.properties"})
 @ContextConfiguration(classes = {
     JobConfiguration.class,
-    BatchConfigurer.class},
+    BatchConfigurer.class,
+    GateConfiguration.class,
+    DbLineFixerConfiguration.class},
         loader = AnnotationConfigContextLoader.class)
-public class SQLServerIntegrationTestsGATE  {
+public class HSQLIntegrationTestsGATE {
 
-    final static Logger logger = Logger.getLogger(SQLServerIntegrationTestsGATE.class);
+    final static Logger logger = Logger.getLogger(HSQLIntegrationTestsGATE.class);
 
     @Autowired
     @Qualifier("sourceDataSource")
@@ -69,7 +81,8 @@ public class SQLServerIntegrationTestsGATE  {
 
     @Autowired
     @Qualifier("targetDataSource")
-    public DataSource jdbcTargetDocumentFinder;
+    public DataSource targetDocumentFinder;
+
 
     private JdbcTemplate sourceTemplate;
     private JdbcTemplate targetTemplate;
@@ -78,70 +91,80 @@ public class SQLServerIntegrationTestsGATE  {
     private Resource makeTablesResource;
 
 
-
     @Before
     public void initTemplates() {
         sourceTemplate = new JdbcTemplate(sourceDataSource);
-        targetTemplate = new JdbcTemplate(jdbcTargetDocumentFinder);
+        targetTemplate = new JdbcTemplate(targetDocumentFinder);
     }
 
-    @After
-    public void dropDb() {
-        //sourceTemplate.execute("DROP TABLE tblInputDocs");
-        //targetTemplate.execute("DROP TABLE tblOutputDocs");
-    }
+
 
 
     @Autowired
     JobOperator jobOperator;
 
+    @BeforeClass
+    public static void init() throws IOException, ServerAcl.AclFormatException{
+        HsqlTestUtils.initHSQLDBs();
+    }
+    @AfterClass
+    public static void destroy(){
+        HsqlTestUtils.destroyHSQLDBs();
+    }
+    
     @Ignore
     @Test
-    public void postgresGatePipelineTest() {
-        initMsSqlServerGateTable();
-        initMsSqlServerJobRepository();
-        insertTestXHTMLForGate(sourceDataSource, false);
+    public void hsqlDBGatePipelineTest() {
+        
+        initHSQLJobRepository();
+        initHSQLGateTable();
+        insertTestXHTMLForGate(sourceDataSource,false);
 
         try {
             jobOperator.startNextInstance("gateJob");
         } catch (NoSuchJobException | JobParametersNotFoundException | JobRestartException | JobExecutionAlreadyRunningException | JobInstanceAlreadyCompleteException | UnexpectedJobExecutionException | JobParametersInvalidException ex) {
-            java.util.logging.Logger.getLogger(PostGresIntegrationTestsGATE.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(HSQLIntegrationTestsGATE.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-    
-    
-    private void initMsSqlServerGateTable() {
-        sourceTemplate.execute("IF OBJECT_ID('dbo.tblInputDocs', 'U') IS NOT NULL DROP TABLE dbo.tblInputDocs");        
-        sourceTemplate.execute("CREATE TABLE tblInputDocs"
-                + " (ID INT IDENTITY(1,1) PRIMARY KEY"
-                + ", srcColumnFieldName VARCHAR(100) "
-                + ", srcTableName VARCHAR(100) "
-                + ", primaryKeyFieldName VARCHAR(100) "
-                + ", primaryKeyFieldValue VARCHAR(100) "
-                + ", binaryFieldName VARCHAR(100) "
-                + ", updateTime VARCHAR(100) "
-                + ", xhtml VARCHAR(max))");
 
-        targetTemplate.execute("IF OBJECT_ID('dbo.tblOutputDocs', 'U') IS NOT NULL DROP TABLE dbo.tblOutputDocs");        
-        targetTemplate.execute("CREATE TABLE tblOutputDocs "
-                + " (ID INT IDENTITY(1,1) PRIMARY KEY"
+    }       
+   
+    
+
+    private void initHSQLGateTable() {
+////        //forhsql
+        sourceTemplate.execute("DROP TABLE IF EXISTS tblInputDocs");
+        sourceTemplate.execute("CREATE TABLE tblInputDocs"
+                + " (ID INTEGER GENERATED BY DEFAULT AS IDENTITY(START WITH 1, INCREMENT BY 1) PRIMARY KEY"
                 + ", srcColumnFieldName VARCHAR(100) "
                 + ", srcTableName VARCHAR(100) "
                 + ", primaryKeyFieldName VARCHAR(100) "
                 + ", primaryKeyFieldValue VARCHAR(100) "
                 + ", binaryFieldName VARCHAR(100) "
                 + ", updateTime VARCHAR(100) "
-                + ", gateJSON VARCHAR(max) )");
+                + ", xhtml LONGVARCHAR)");
+
+        //forHsql
+        targetTemplate.execute("DROP TABLE IF EXISTS tblOutputDocs");
+        targetTemplate.execute("CREATE TABLE tblOutputDocs "
+                + " (ID INTEGER GENERATED BY DEFAULT AS IDENTITY(START WITH 1, INCREMENT BY 1) PRIMARY KEY"
+                + ", srcColumnFieldName VARCHAR(100) "
+                + ", srcTableName VARCHAR(100) "
+                + ", primaryKeyFieldName VARCHAR(100) "
+                + ", primaryKeyFieldValue VARCHAR(100) "
+                + ", binaryFieldName VARCHAR(100) "
+                + ", updateTime VARCHAR(100) "
+                + ", gateJSON LONGVARCHAR )");
     }
-    
-    private void initMsSqlServerJobRepository(){
-        dropTablesResource = new ClassPathResource("org/springframework/batch/core/schema-drop-sqlserver.sql");
-        makeTablesResource = new ClassPathResource("org/springframework/batch/core/schema-sqlserver.sql");
+     
+
+    private void initHSQLJobRepository(){
+        dropTablesResource = new ClassPathResource("org/springframework/batch/core/schema-drop-hsqldb.sql");
+        makeTablesResource = new ClassPathResource("org/springframework/batch/core/schema-hsqldb.sql");
         rdp.addScript(dropTablesResource);
         rdp.addScript(makeTablesResource);
-        rdp.execute(jdbcTargetDocumentFinder);     
-    }    
-
+        rdp.execute(targetDocumentFinder);        
+    }
+    
     
     private void insertTestXHTMLForGate(DataSource ds, boolean includeGateBreaker) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
@@ -150,11 +173,11 @@ public class SQLServerIntegrationTestsGATE  {
         try {
             bytes = IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream("xhtml_test"));
         } catch (IOException ex) {
-            java.util.logging.Logger.getLogger(SQLServerIntegrationTestsGATE.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(HSQLIntegrationTestsGATE.class.getName()).log(Level.SEVERE, null, ex);
         }
         String xhtmlString = new String(bytes, StandardCharsets.UTF_8);
 
-        String sql = "INSERT INTO dbo.tblInputDocs "
+        String sql = "INSERT INTO tblInputDocs "
                 + "( srcColumnFieldName"
                 + ", srcTableName"
                 + ", primaryKeyFieldName"
@@ -173,7 +196,7 @@ public class SQLServerIntegrationTestsGATE  {
                 xhtmlString = new String(bytes, StandardCharsets.UTF_8);
                 jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName", "fictionalPrimaryKeyFieldName", docCount, null, xhtmlString);
             } catch (IOException ex) {
-                java.util.logging.Logger.getLogger(SQLServerIntegrationTestsGATE.class.getName()).log(Level.SEVERE, null, ex);
+                java.util.logging.Logger.getLogger(HSQLIntegrationTestsGATE.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }

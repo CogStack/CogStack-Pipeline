@@ -18,13 +18,13 @@ sourceSets {
     }
     test {
         java { srcDirs = [] }
-        groovy { exclude '**/integration-test/***' }
+        groovy { exclude '**/it/***' }
     }
     integTest {
         java { srcDirs = [] }
         groovy {
             srcDir 'src/test/java'
-            include '**/integration-test/**'
+            include '**/it/**'
         }
         resources {
             srcDir 'src/test/resources'

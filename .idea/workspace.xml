@@ -2,16 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8fa4ce33-e860-41c6-a6d6-4cf8986d4df1" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/integrationtests/HSQLIntegrationTestsGATE.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/integrationtests/HSQLIntegrationTestsLineFixer.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/integrationtests/HsqlTestUtils.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/integrationtests/PostGresIntegrationTestsGATE.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/integrationtests/PostGresIntegrationTestsLineFixer.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/integrationtests/PostGresIntegrationTestsTika.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/integrationtests/SQLServerIntegrationTestsGATE.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/integrationtests/SQLServerIntegrationTestsLineFixer.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/test/java/uk/ac/kcl/integration-test/java/uk/ac/kcl/integrationtests/HSQLIntegrationTestsGATE.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/test/java/uk/ac/kcl/integration-test/java/uk/ac/kcl/integrationtests/HSQLIntegrationTestsLineFixer.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/test/java/uk/ac/kcl/integration-test/java/uk/ac/kcl/integrationtests/HsqlTestUtils.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/test/java/uk/ac/kcl/integration-test/java/uk/ac/kcl/integrationtests/PostGresIntegrationTestsGATE.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/test/java/uk/ac/kcl/integration-test/java/uk/ac/kcl/integrationtests/PostGresIntegrationTestsLineFixer.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/test/java/uk/ac/kcl/integration-test/java/uk/ac/kcl/integrationtests/PostGresIntegrationTestsTika.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/test/java/uk/ac/kcl/integration-test/java/uk/ac/kcl/integrationtests/SQLServerIntegrationTestsGATE.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/test/java/uk/ac/kcl/integration-test/java/uk/ac/kcl/integrationtests/SQLServerIntegrationTestsLineFixer.java" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build.gradle" afterPath="$PROJECT_DIR$/build.gradle" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/java/uk/ac/kcl/partitioners/ColumnValuePartitionerTest.java" afterPath="$PROJECT_DIR$/src/test/java/uk/ac/kcl/partitioners/ColumnValuePartitionerTest.java" />
     </list>
     <ignored path="turbo-laser.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -52,135 +51,120 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="DbLineFixerConfiguration.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/DbLineFixerConfiguration.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1173">
-              <caret line="49" column="13" selection-start-line="49" selection-start-column="13" selection-end-line="49" selection-end-column="13" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ColumnValuePartitionerTest.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/kcl/partitioners/ColumnValuePartitionerTest.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="18">
-              <caret line="5" column="0" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="build.gradle" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/build.gradle">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="18">
-              <caret line="62" column="1" selection-start-line="62" selection-start-column="1" selection-end-line="62" selection-end-column="1" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="HSQLIntegrationTestsGATE.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/kcl/integration-test/java/uk/ac/kcl/integrationtests/HSQLIntegrationTestsGATE.java">
+        <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/kcl/it/HSQLIntegrationTestsGATE.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="243">
-              <caret line="114" column="4" selection-start-line="114" selection-start-column="4" selection-end-line="114" selection-end-column="4" />
+            <state relative-caret-position="631">
+              <caret line="148" column="4" selection-start-line="148" selection-start-column="4" selection-end-line="148" selection-end-column="4" />
               <folding>
-                <marker date="1460744653387" expanded="true" signature="4943:4976" placeholder="DROP TABLE I... " />
-                <marker date="1460744653387" expanded="true" signature="5012:5502" placeholder="CREATE TABLE... tblInputDocs" />
-                <marker date="1460744653387" expanded="true" signature="5557:5591" placeholder="DROP TABLE I... " />
-                <marker date="1460744653387" expanded="true" signature="5627:6123" placeholder="CREATE TABLE... tblOutputDocs" />
-                <marker date="1460744653387" expanded="true" signature="7123:7413" placeholder="INSERT INTO tblInputDocs... " />
+                <marker date="1460745369327" expanded="true" signature="4913:4946" placeholder="DROP TABLE I... " />
+                <marker date="1460745369327" expanded="true" signature="4982:5472" placeholder="CREATE TABLE... tblInputDocs" />
+                <marker date="1460745369327" expanded="true" signature="5527:5561" placeholder="DROP TABLE I... " />
+                <marker date="1460745369327" expanded="true" signature="5597:6093" placeholder="CREATE TABLE... tblOutputDocs" />
+                <marker date="1460745369327" expanded="true" signature="7093:7383" placeholder="INSERT INTO tblInputDocs... " />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="HSQLIntegrationTestsLineFixer.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/kcl/integration-test/java/uk/ac/kcl/integrationtests/HSQLIntegrationTestsLineFixer.java">
+      <file leaf-file-name="HSQLIntegrationTestsLineFixer.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/kcl/it/HSQLIntegrationTestsLineFixer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="423">
-              <caret line="106" column="4" selection-start-line="106" selection-start-column="4" selection-end-line="106" selection-end-column="4" />
+            <state relative-caret-position="288">
+              <caret line="90" column="5" selection-start-line="90" selection-start-column="5" selection-end-line="90" selection-end-column="5" />
               <folding>
-                <marker date="1460744661831" expanded="true" signature="4770:4803" placeholder="DROP TABLE t... " />
-                <marker date="1460744661831" expanded="true" signature="4839:5041" placeholder="CREATE TABLE... tblInputDocs" />
-                <marker date="1460744661831" expanded="true" signature="5095:5131" placeholder="DROP TABLE t... " />
-                <marker date="1460744661831" expanded="true" signature="5167:5338" placeholder="CREATE TABLE... tblOutputDocs" />
-                <marker date="1460744661831" expanded="true" signature="5974:6127" placeholder="INSERT INTO tblInputDocs... " />
+                <element signature="imports" expanded="true" />
+                <marker date="1460745382943" expanded="true" signature="4748:4781" placeholder="DROP TABLE t... " />
+                <marker date="1460745382943" expanded="true" signature="4817:5019" placeholder="CREATE TABLE... tblInputDocs" />
+                <marker date="1460745382943" expanded="true" signature="5073:5109" placeholder="DROP TABLE t... " />
+                <marker date="1460745382943" expanded="true" signature="5145:5316" placeholder="CREATE TABLE... tblOutputDocs" />
+                <marker date="1460745382943" expanded="true" signature="5952:6105" placeholder="INSERT INTO tblInputDocs... " />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="HsqlTestUtils.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/kcl/integration-test/java/uk/ac/kcl/integrationtests/HsqlTestUtils.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="459">
-              <caret line="64" column="0" selection-start-line="64" selection-start-column="0" selection-end-line="64" selection-end-column="0" />
-              <folding />
             </state>
           </provider>
         </entry>
       </file>
       <file leaf-file-name="PostGresIntegrationTestsGATE.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/kcl/integration-test/java/uk/ac/kcl/integrationtests/PostGresIntegrationTestsGATE.java">
+        <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/kcl/it/PostGresIntegrationTestsGATE.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="369">
-              <caret line="104" column="13" selection-start-line="104" selection-start-column="13" selection-end-line="104" selection-end-column="13" />
+            <state relative-caret-position="18">
+              <caret line="15" column="20" selection-start-line="15" selection-start-column="20" selection-end-line="15" selection-end-column="20" />
               <folding>
-                <marker date="1460667245403" expanded="true" signature="4744:4777" placeholder="DROP TABLE I... " />
-                <marker date="1460667245403" expanded="true" signature="4813:5186" placeholder="CREATE TABLE... tblInputDocs" />
-                <marker date="1460667245403" expanded="true" signature="5223:5257" placeholder="DROP TABLE I... " />
-                <marker date="1460667245403" expanded="true" signature="5293:5671" placeholder="CREATE TABLE... tblOutputDocs" />
-                <marker date="1460667245403" expanded="true" signature="6704:6994" placeholder="INSERT INTO tblInputDocs... " />
+                <marker date="1460745326579" expanded="true" signature="4730:4763" placeholder="DROP TABLE I... " />
+                <marker date="1460745326579" expanded="true" signature="4799:5172" placeholder="CREATE TABLE... tblInputDocs" />
+                <marker date="1460745326579" expanded="true" signature="5209:5243" placeholder="DROP TABLE I... " />
+                <marker date="1460745326579" expanded="true" signature="5279:5657" placeholder="CREATE TABLE... tblOutputDocs" />
+                <marker date="1460745326579" expanded="true" signature="6690:6980" placeholder="INSERT INTO tblInputDocs... " />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file leaf-file-name="PostGresIntegrationTestsLineFixer.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/kcl/integration-test/java/uk/ac/kcl/integrationtests/PostGresIntegrationTestsLineFixer.java">
+        <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/kcl/it/PostGresIntegrationTestsLineFixer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="459">
-              <caret line="105" column="13" selection-start-line="105" selection-start-column="13" selection-end-line="105" selection-end-column="13" />
+            <state relative-caret-position="18">
+              <caret line="15" column="20" selection-start-line="15" selection-start-column="20" selection-end-line="15" selection-end-column="20" />
               <folding>
-                <marker date="1460648135077" expanded="true" signature="4571:4604" placeholder="DROP TABLE I... " />
-                <marker date="1460648135077" expanded="true" signature="4640:4864" placeholder="CREATE TABLE... tblInputDocs" />
-                <marker date="1460648135077" expanded="true" signature="4918:4953" placeholder="DROP TABLE I... " />
-                <marker date="1460648135077" expanded="true" signature="4989:5181" placeholder="CREATE TABLE... tblOutputDocs" />
-                <marker date="1460648135077" expanded="true" signature="5836:6024" placeholder="INSERT INTO tblInputDocs... " />
+                <marker date="1460745369315" expanded="true" signature="4557:4590" placeholder="DROP TABLE I... " />
+                <marker date="1460745369315" expanded="true" signature="4626:4850" placeholder="CREATE TABLE... tblInputDocs" />
+                <marker date="1460745369315" expanded="true" signature="4904:4939" placeholder="DROP TABLE I... " />
+                <marker date="1460745369315" expanded="true" signature="4975:5167" placeholder="CREATE TABLE... tblOutputDocs" />
+                <marker date="1460745369315" expanded="true" signature="5822:6010" placeholder="INSERT INTO tblInputDocs... " />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PostGresIntegrationTestsTika.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/kcl/integration-test/java/uk/ac/kcl/integrationtests/PostGresIntegrationTestsTika.java">
+      <file leaf-file-name="PostGresIntegrationTestsTika.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/kcl/it/PostGresIntegrationTestsTika.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="459">
-              <caret line="109" column="13" selection-start-line="109" selection-start-column="13" selection-end-line="109" selection-end-column="13" />
+            <state relative-caret-position="18">
+              <caret line="15" column="20" selection-start-line="15" selection-start-column="20" selection-end-line="15" selection-end-column="20" />
               <folding>
-                <marker date="1460495166330" expanded="true" signature="4670:4703" placeholder="DROP TABLE I... " />
-                <marker date="1460495166330" expanded="true" signature="4739:5112" placeholder="CREATE TABLE... tblInputDocs" />
-                <marker date="1460495166330" expanded="true" signature="5149:5183" placeholder="DROP TABLE I... " />
-                <marker date="1460495166330" expanded="true" signature="5219:5594" placeholder="CREATE TABLE... tblOutputDocs" />
-                <marker date="1460495166330" expanded="true" signature="6513:6802" placeholder="INSERT INTO tblInputDocs... " />
+                <marker date="1460745369339" expanded="true" signature="4656:4689" placeholder="DROP TABLE I... " />
+                <marker date="1460745369339" expanded="true" signature="4725:5098" placeholder="CREATE TABLE... tblInputDocs" />
+                <marker date="1460745369339" expanded="true" signature="5135:5169" placeholder="DROP TABLE I... " />
+                <marker date="1460745369339" expanded="true" signature="5205:5580" placeholder="CREATE TABLE... tblOutputDocs" />
+                <marker date="1460745369339" expanded="true" signature="6499:6788" placeholder="INSERT INTO tblInputDocs... " />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MasterIntegrationConfiguration.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/MasterIntegrationConfiguration.java">
+      <file leaf-file-name="SQLServerIntegrationTestsGATE.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/kcl/it/SQLServerIntegrationTestsGATE.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-445">
-              <caret line="44" column="13" selection-start-line="44" selection-start-column="13" selection-end-line="44" selection-end-column="13" />
+            <state relative-caret-position="18">
+              <caret line="15" column="20" selection-start-line="15" selection-start-column="20" selection-end-line="15" selection-end-column="20" />
+              <folding>
+                <marker date="1460745369303" expanded="true" signature="4500:4938" placeholder="CREATE TABLE... tblInputDocs" />
+                <marker date="1460745369303" expanded="true" signature="5098:5542" placeholder="CREATE TABLE... tblOutputDocs" />
+                <marker date="1460745369303" expanded="true" signature="6559:6853" placeholder="INSERT INTO dbo.tblInputDocs... " />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SQLServerIntegrationTestsLineFixer.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/kcl/it/SQLServerIntegrationTestsLineFixer.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="18">
+              <caret line="15" column="20" selection-start-line="15" selection-start-column="20" selection-end-line="15" selection-end-column="20" />
+              <folding>
+                <marker date="1460745369283" expanded="true" signature="5177:5387" placeholder="CREATE TABLE... tblInputDocs" />
+                <marker date="1460745369283" expanded="true" signature="5564:5743" placeholder="CREATE TABLE... tblOutputDocs" />
+                <marker date="1460745369283" expanded="true" signature="5976:6133" placeholder="INSERT INTO dbo.tblInputDocs... " />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="HsqlTestUtils.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/kcl/it/HsqlTestUtils.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="20" selection-start-line="0" selection-start-column="20" selection-end-line="0" selection-end-column="20" />
               <folding />
             </state>
           </provider>
@@ -578,9 +562,18 @@
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/GateConfiguration.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/itemHandlers/ItemHandlers.java" />
         <option value="$PROJECT_DIR$/src/test/java/uk/ac/kcl/partitioners/ColumnValuePartitionerTest.java" />
-        <option value="$PROJECT_DIR$/build.gradle" />
-        <option value="$PROJECT_DIR$/src/test/java/uk/ac/kcl/integration-test/java/uk/ac/kcl/integrationtests/HSQLIntegrationTestsGATE.java" />
         <option value="$PROJECT_DIR$/src/test/java/uk/ac/kcl/integration-test/java/uk/ac/kcl/integrationtests/HSQLIntegrationTestsLineFixer.java" />
+        <option value="$PROJECT_DIR$/src/test/java/uk/ac/kcl/integration-test/java/uk/ac/kcl/integrationtests/HSQLIntegrationTestsGATE.java" />
+        <option value="$PROJECT_DIR$/src/test/java/uk/ac/kcl/integration-test/integrationtests/HSQLIntegrationTestsGATE.java" />
+        <option value="$PROJECT_DIR$/build.gradle" />
+        <option value="$PROJECT_DIR$/src/test/java/uk/ac/kcl/it/HsqlTestUtils.java" />
+        <option value="$PROJECT_DIR$/src/test/java/uk/ac/kcl/it/PostGresIntegrationTestsGATE.java" />
+        <option value="$PROJECT_DIR$/src/test/java/uk/ac/kcl/it/PostGresIntegrationTestsLineFixer.java" />
+        <option value="$PROJECT_DIR$/src/test/java/uk/ac/kcl/it/PostGresIntegrationTestsTika.java" />
+        <option value="$PROJECT_DIR$/src/test/java/uk/ac/kcl/it/SQLServerIntegrationTestsGATE.java" />
+        <option value="$PROJECT_DIR$/src/test/java/uk/ac/kcl/it/SQLServerIntegrationTestsLineFixer.java" />
+        <option value="$PROJECT_DIR$/src/test/java/uk/ac/kcl/it/HSQLIntegrationTestsGATE.java" />
+        <option value="$PROJECT_DIR$/src/test/java/uk/ac/kcl/it/HSQLIntegrationTestsLineFixer.java" />
       </list>
     </option>
   </component>
@@ -613,7 +606,7 @@
     <ConfirmationsSetting value="0" id="Remove" />
   </component>
   <component name="ProjectView">
-    <navigator currentView="Scope" currentSubView="Project Files" proportions="" version="1">
+    <navigator currentView="ProjectPane" proportions="" version="1">
       <flattenPackages />
       <showMembers />
       <showModules />
@@ -643,10 +636,6 @@
               <option name="myItemId" value="" />
               <option name="myItemType" value="" />
             </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="turbo-laser">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT USER_OBJECT="Root">
@@ -654,118 +643,6 @@
               <option name="myItemType" value="" />
             </PATH_ELEMENT>
             <PATH_ELEMENT USER_OBJECT="turbo-laser">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="turbo-laser_test">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="src/test">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="turbo-laser">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="turbo-laser_test">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="src/test">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="java">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="uk/ac/kcl">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="turbo-laser">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="turbo-laser_test">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="src/test">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="java">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="uk/ac/kcl">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="integration-test">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="java/uk/ac/kcl/integrationtests">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="turbo-laser">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="turbo-laser_main">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="src/main">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="turbo-laser">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="turbo-laser_main">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="src/main">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="java">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="uk/ac/kcl">
               <option name="myItemId" value="" />
               <option name="myItemType" value="" />
             </PATH_ELEMENT>
@@ -849,7 +726,112 @@
         </subPane>
       </pane>
       <pane id="ProjectPane">
-        <subPane />
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="org.jetbrains.plugins.gradle.projectView.GradleTreeStructureProvider$GradleSourceSetDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="org.jetbrains.plugins.gradle.projectView.GradleTreeStructureProvider$GradleSourceSetDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="kcl" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="org.jetbrains.plugins.gradle.projectView.GradleTreeStructureProvider$GradleSourceSetDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="kcl" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="it" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
       </pane>
     </panes>
   </component>
@@ -1514,7 +1496,7 @@
       <workItem from="1460712640941" duration="10031000" />
       <workItem from="1460735015022" duration="6151000" />
       <workItem from="1460742083920" duration="200000" />
-      <workItem from="1460742305358" duration="2384000" />
+      <workItem from="1460742305358" duration="3078000" />
     </task>
     <servers />
   </component>
@@ -1551,7 +1533,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="32691000" />
+    <option name="totallyTimeSpent" value="33385000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="65" y="24" width="1301" height="744" extended-state="6" />
@@ -1564,7 +1546,7 @@
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32935917" sideWeight="0.50269026" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24677187" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24677187" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32855093" sideWeight="0.727133" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Spring" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -1627,82 +1609,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/kcl/partitioners/ColumnValuePartitionerTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/partitioners/ColumnValuePartitioner.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="810">
-          <caret line="72" column="0" selection-start-line="72" selection-start-column="0" selection-end-line="72" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/resources/postgres_test_config_line_fixer.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" column="152" selection-start-line="7" selection-start-column="152" selection-end-line="7" selection-end-column="152" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/DbLineFixerConfiguration.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="66" column="30" selection-start-line="66" selection-start-column="30" selection-end-line="66" selection-end-column="30" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/kcl/integrationtests/PostGresIntegrationTestsLineFixer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1305">
-          <caret line="129" column="35" selection-start-line="129" selection-start-column="35" selection-end-line="129" selection-end-column="35" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/kcl/integrationtests/PostGresIntegrationTestsGATE.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/TikaConfiguration.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1545">
-          <caret line="145" column="26" selection-start-line="145" selection-start-column="26" selection-end-line="145" selection-end-column="26" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/kcl/integrationtests/PostGresIntegrationTestsTika.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/rowmappers/MultiRowDocumentRowMapper.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="54">
@@ -1930,67 +1836,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/MasterIntegrationConfiguration.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-445">
-          <caret line="44" column="13" selection-start-line="44" selection-start-column="13" selection-end-line="44" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/DbLineFixerConfiguration.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1173">
-          <caret line="49" column="13" selection-start-line="49" selection-start-column="13" selection-end-line="49" selection-end-column="13" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/kcl/partitioners/ColumnValuePartitionerTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="18">
-          <caret line="5" column="0" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="18">
-          <caret line="62" column="1" selection-start-line="62" selection-start-column="1" selection-end-line="62" selection-end-column="1" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/kcl/integration-test/java/uk/ac/kcl/integrationtests/HSQLIntegrationTestsGATE.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="243">
-          <caret line="114" column="4" selection-start-line="114" selection-start-column="4" selection-end-line="114" selection-end-column="4" />
-          <folding>
-            <marker date="1460744653387" expanded="true" signature="4943:4976" placeholder="DROP TABLE I... " />
-            <marker date="1460744653387" expanded="true" signature="5012:5502" placeholder="CREATE TABLE... tblInputDocs" />
-            <marker date="1460744653387" expanded="true" signature="5557:5591" placeholder="DROP TABLE I... " />
-            <marker date="1460744653387" expanded="true" signature="5627:6123" placeholder="CREATE TABLE... tblOutputDocs" />
-            <marker date="1460744653387" expanded="true" signature="7123:7413" placeholder="INSERT INTO tblInputDocs... " />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/kcl/integration-test/java/uk/ac/kcl/integrationtests/HSQLIntegrationTestsLineFixer.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="423">
           <caret line="106" column="4" selection-start-line="106" selection-start-column="4" selection-end-line="106" selection-end-column="4" />
-          <folding>
-            <marker date="1460744661831" expanded="true" signature="4770:4803" placeholder="DROP TABLE t... " />
-            <marker date="1460744661831" expanded="true" signature="4839:5041" placeholder="CREATE TABLE... tblInputDocs" />
-            <marker date="1460744661831" expanded="true" signature="5095:5131" placeholder="DROP TABLE t... " />
-            <marker date="1460744661831" expanded="true" signature="5167:5338" placeholder="CREATE TABLE... tblOutputDocs" />
-            <marker date="1460744661831" expanded="true" signature="5974:6127" placeholder="INSERT INTO tblInputDocs... " />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -2006,13 +1856,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="369">
           <caret line="104" column="13" selection-start-line="104" selection-start-column="13" selection-end-line="104" selection-end-column="13" />
-          <folding>
-            <marker date="1460667245403" expanded="true" signature="4744:4777" placeholder="DROP TABLE I... " />
-            <marker date="1460667245403" expanded="true" signature="4813:5186" placeholder="CREATE TABLE... tblInputDocs" />
-            <marker date="1460667245403" expanded="true" signature="5223:5257" placeholder="DROP TABLE I... " />
-            <marker date="1460667245403" expanded="true" signature="5293:5671" placeholder="CREATE TABLE... tblOutputDocs" />
-            <marker date="1460667245403" expanded="true" signature="6704:6994" placeholder="INSERT INTO tblInputDocs... " />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -2020,13 +1864,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="459">
           <caret line="105" column="13" selection-start-line="105" selection-start-column="13" selection-end-line="105" selection-end-column="13" />
-          <folding>
-            <marker date="1460648135077" expanded="true" signature="4571:4604" placeholder="DROP TABLE I... " />
-            <marker date="1460648135077" expanded="true" signature="4640:4864" placeholder="CREATE TABLE... tblInputDocs" />
-            <marker date="1460648135077" expanded="true" signature="4918:4953" placeholder="DROP TABLE I... " />
-            <marker date="1460648135077" expanded="true" signature="4989:5181" placeholder="CREATE TABLE... tblOutputDocs" />
-            <marker date="1460648135077" expanded="true" signature="5836:6024" placeholder="INSERT INTO tblInputDocs... " />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -2034,12 +1872,161 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="459">
           <caret line="109" column="13" selection-start-line="109" selection-start-column="13" selection-end-line="109" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/kcl/integration-test/java/uk/ac/kcl/integrationtests/HSQLIntegrationTestsGATE.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="576">
+          <caret line="46" column="0" selection-start-line="46" selection-start-column="0" selection-end-line="46" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/kcl/integration-test/integrationtests/HSQLIntegrationTestsGATE.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="18">
+          <caret line="15" column="26" selection-start-line="15" selection-start-column="26" selection-end-line="15" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="631">
+          <caret line="137" column="0" selection-start-line="137" selection-start-column="0" selection-end-line="137" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/kcl/partitioners/ColumnValuePartitionerTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="18">
+          <caret line="5" column="0" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
           <folding>
-            <marker date="1460495166330" expanded="true" signature="4670:4703" placeholder="DROP TABLE I... " />
-            <marker date="1460495166330" expanded="true" signature="4739:5112" placeholder="CREATE TABLE... tblInputDocs" />
-            <marker date="1460495166330" expanded="true" signature="5149:5183" placeholder="DROP TABLE I... " />
-            <marker date="1460495166330" expanded="true" signature="5219:5594" placeholder="CREATE TABLE... tblOutputDocs" />
-            <marker date="1460495166330" expanded="true" signature="6513:6802" placeholder="INSERT INTO tblInputDocs... " />
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/DbLineFixerConfiguration.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1001">
+          <caret line="49" column="13" selection-start-line="49" selection-start-column="13" selection-end-line="49" selection-end-column="13" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/MasterIntegrationConfiguration.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-445">
+          <caret line="44" column="13" selection-start-line="44" selection-start-column="13" selection-end-line="44" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/kcl/it/HsqlTestUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="20" selection-start-line="0" selection-start-column="20" selection-end-line="0" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/kcl/it/PostGresIntegrationTestsGATE.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="18">
+          <caret line="15" column="20" selection-start-line="15" selection-start-column="20" selection-end-line="15" selection-end-column="20" />
+          <folding>
+            <marker date="1460745326579" expanded="true" signature="4730:4763" placeholder="DROP TABLE I... " />
+            <marker date="1460745326579" expanded="true" signature="4799:5172" placeholder="CREATE TABLE... tblInputDocs" />
+            <marker date="1460745326579" expanded="true" signature="5209:5243" placeholder="DROP TABLE I... " />
+            <marker date="1460745326579" expanded="true" signature="5279:5657" placeholder="CREATE TABLE... tblOutputDocs" />
+            <marker date="1460745326579" expanded="true" signature="6690:6980" placeholder="INSERT INTO tblInputDocs... " />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/kcl/it/PostGresIntegrationTestsLineFixer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="18">
+          <caret line="15" column="20" selection-start-line="15" selection-start-column="20" selection-end-line="15" selection-end-column="20" />
+          <folding>
+            <marker date="1460745369315" expanded="true" signature="4557:4590" placeholder="DROP TABLE I... " />
+            <marker date="1460745369315" expanded="true" signature="4626:4850" placeholder="CREATE TABLE... tblInputDocs" />
+            <marker date="1460745369315" expanded="true" signature="4904:4939" placeholder="DROP TABLE I... " />
+            <marker date="1460745369315" expanded="true" signature="4975:5167" placeholder="CREATE TABLE... tblOutputDocs" />
+            <marker date="1460745369315" expanded="true" signature="5822:6010" placeholder="INSERT INTO tblInputDocs... " />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/kcl/it/PostGresIntegrationTestsTika.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="18">
+          <caret line="15" column="20" selection-start-line="15" selection-start-column="20" selection-end-line="15" selection-end-column="20" />
+          <folding>
+            <marker date="1460745369339" expanded="true" signature="4656:4689" placeholder="DROP TABLE I... " />
+            <marker date="1460745369339" expanded="true" signature="4725:5098" placeholder="CREATE TABLE... tblInputDocs" />
+            <marker date="1460745369339" expanded="true" signature="5135:5169" placeholder="DROP TABLE I... " />
+            <marker date="1460745369339" expanded="true" signature="5205:5580" placeholder="CREATE TABLE... tblOutputDocs" />
+            <marker date="1460745369339" expanded="true" signature="6499:6788" placeholder="INSERT INTO tblInputDocs... " />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/kcl/it/SQLServerIntegrationTestsGATE.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="18">
+          <caret line="15" column="20" selection-start-line="15" selection-start-column="20" selection-end-line="15" selection-end-column="20" />
+          <folding>
+            <marker date="1460745369303" expanded="true" signature="4500:4938" placeholder="CREATE TABLE... tblInputDocs" />
+            <marker date="1460745369303" expanded="true" signature="5098:5542" placeholder="CREATE TABLE... tblOutputDocs" />
+            <marker date="1460745369303" expanded="true" signature="6559:6853" placeholder="INSERT INTO dbo.tblInputDocs... " />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/kcl/it/SQLServerIntegrationTestsLineFixer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="18">
+          <caret line="15" column="20" selection-start-line="15" selection-start-column="20" selection-end-line="15" selection-end-column="20" />
+          <folding>
+            <marker date="1460745369283" expanded="true" signature="5177:5387" placeholder="CREATE TABLE... tblInputDocs" />
+            <marker date="1460745369283" expanded="true" signature="5564:5743" placeholder="CREATE TABLE... tblOutputDocs" />
+            <marker date="1460745369283" expanded="true" signature="5976:6133" placeholder="INSERT INTO dbo.tblInputDocs... " />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/kcl/it/HSQLIntegrationTestsGATE.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="631">
+          <caret line="148" column="4" selection-start-line="148" selection-start-column="4" selection-end-line="148" selection-end-column="4" />
+          <folding>
+            <marker date="1460745369327" expanded="true" signature="4913:4946" placeholder="DROP TABLE I... " />
+            <marker date="1460745369327" expanded="true" signature="4982:5472" placeholder="CREATE TABLE... tblInputDocs" />
+            <marker date="1460745369327" expanded="true" signature="5527:5561" placeholder="DROP TABLE I... " />
+            <marker date="1460745369327" expanded="true" signature="5597:6093" placeholder="CREATE TABLE... tblOutputDocs" />
+            <marker date="1460745369327" expanded="true" signature="7093:7383" placeholder="INSERT INTO tblInputDocs... " />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/kcl/it/HSQLIntegrationTestsLineFixer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="288">
+          <caret line="90" column="5" selection-start-line="90" selection-start-column="5" selection-end-line="90" selection-end-column="5" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <marker date="1460745382943" expanded="true" signature="4748:4781" placeholder="DROP TABLE t... " />
+            <marker date="1460745382943" expanded="true" signature="4817:5019" placeholder="CREATE TABLE... tblInputDocs" />
+            <marker date="1460745382943" expanded="true" signature="5073:5109" placeholder="DROP TABLE t... " />
+            <marker date="1460745382943" expanded="true" signature="5145:5316" placeholder="CREATE TABLE... tblOutputDocs" />
+            <marker date="1460745382943" expanded="true" signature="5952:6105" placeholder="INSERT INTO tblInputDocs... " />
           </folding>
         </state>
       </provider>

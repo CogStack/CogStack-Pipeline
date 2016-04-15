@@ -1,4 +1,4 @@
-package uk.ac.kcl.integrationtests;
+package uk.ac.kcl.it;
 
 import java.io.IOException;
 import org.hsqldb.Server;

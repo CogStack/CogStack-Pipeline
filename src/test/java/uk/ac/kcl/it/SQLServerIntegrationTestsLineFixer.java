@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.kcl.integrationtests;
+package uk.ac.kcl.it;
 
 import uk.ac.kcl.batch.JobConfiguration;
 import java.io.IOException;
@@ -22,8 +22,13 @@ import java.util.logging.Level;
 import javax.sql.DataSource;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.hsqldb.Server;
+import org.hsqldb.persist.HsqlProperties;
+import org.hsqldb.server.ServerAcl;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,35 +46,26 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.batch.BatchConfigurer;
-import uk.ac.kcl.batch.TikaConfiguration;
 
 /**
  *
  * @author rich
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@TestPropertySource({
-    "classpath:postgres_test_config_tika.properties",
-    "classpath:jms.properties",
-    "classpath:tika.properties",
-    "classpath:concurrency.properties",
-    "classpath:postgres_db.properties",
-    "classpath:step.properties"})
+@TestPropertySource("classpath:sqlserver_test_config_line_fixer.properties")
+//@ContextConfiguration(locations = {"classpath:testApplicationContext.xml"})
 @ContextConfiguration(classes = {
     JobConfiguration.class,
-    BatchConfigurer.class,
-    TikaConfiguration.class},
+    BatchConfigurer.class},
         loader = AnnotationConfigContextLoader.class)
-public class PostGresIntegrationTestsTika {
+public class SQLServerIntegrationTestsLineFixer  {
 
-    final static Logger logger = Logger.getLogger(PostGresIntegrationTestsTika.class);
+    final static Logger logger = Logger.getLogger(SQLServerIntegrationTestsLineFixer.class);
 
     @Autowired
     @Qualifier("sourceDataSource")
@@ -79,12 +75,16 @@ public class PostGresIntegrationTestsTika {
     @Qualifier("targetDataSource")
     public DataSource jdbcTargetDocumentFinder;
 
+    private  Server server1;
+    private  Server server2;
     private JdbcTemplate sourceTemplate;
     private JdbcTemplate targetTemplate;
     private ResourceDatabasePopulator rdp = new ResourceDatabasePopulator();
     private Resource dropTablesResource;
     private Resource makeTablesResource;
 
+
+    
     @Before
     public void initTemplates() {
         sourceTemplate = new JdbcTemplate(sourceDataSource);
@@ -97,76 +97,71 @@ public class PostGresIntegrationTestsTika {
         //targetTemplate.execute("DROP TABLE tblOutputDocs");
     }
 
+
     @Autowired
     JobOperator jobOperator;
 
-    //@Ignore
+    
+    @Ignore
     @Test
-    public void postgresTikaPipelineTest() {
-        initPostgresTikaTable();
-        initPostGresJobRepository();
-        insertTestBinariesForTika(sourceDataSource);
+    public void sqlserverDBLineFixerPipelineTest() {
+        
+        initSqlServerJobRepository();
+        initSqlServerMultiLineTextTable();
+        insertTestLinesForDBLineFixer(sourceDataSource);
+
         try {
-            jobOperator.startNextInstance("tikaJob");
+            jobOperator.startNextInstance("dbLineFixerJob");
         } catch (NoSuchJobException | JobParametersNotFoundException | JobRestartException | JobExecutionAlreadyRunningException | JobInstanceAlreadyCompleteException | UnexpectedJobExecutionException | JobParametersInvalidException ex) {
-            java.util.logging.Logger.getLogger(PostGresIntegrationTestsTika.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SQLServerIntegrationTestsLineFixer.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-
-    private void initPostgresTikaTable() {
-////        for postgres
-        sourceTemplate.execute("DROP TABLE IF EXISTS tblInputDocs");
-        sourceTemplate.execute("CREATE TABLE tblInputDocs"
-                + "( ID  SERIAL PRIMARY KEY"
-                + ", srcColumnFieldName text "
-                + ", srcTableName text "
-                + ", primaryKeyFieldName text "
-                + ", primaryKeyFieldValue text "
-                + ", binaryFieldName text "
-                + ", updateTime text "
-                + ", body bytea )");
-
-        targetTemplate.execute("DROP TABLE IF EXISTS tblOutputDocs");
-        targetTemplate.execute("CREATE TABLE tblOutputDocs "
-                + "( ID  SERIAL PRIMARY KEY"
-                + ", srcColumnFieldName text "
-                + ", srcTableName text "
-                + ", primaryKeyFieldName text "
-                + ", primaryKeyFieldValue text "
-                + ", binaryFieldName text "
-                + ", updateTime text "
-                + ", xhtml text )");
-    }
-
-    private void initPostGresJobRepository() {
-        dropTablesResource = new ClassPathResource("org/springframework/batch/core/schema-drop-postgresql.sql");
-        makeTablesResource = new ClassPathResource("org/springframework/batch/core/schema-postgresql.sql");
+    } 
+    
+    private void initSqlServerJobRepository(){
+        dropTablesResource = new ClassPathResource("org/springframework/batch/core/schema-drop-sqlserver.sql");
+        makeTablesResource = new ClassPathResource("org/springframework/batch/core/schema-sqlserver.sql");
         rdp.addScript(dropTablesResource);
         rdp.addScript(makeTablesResource);
-        rdp.execute(jdbcTargetDocumentFinder);
-    }
+        rdp.execute(jdbcTargetDocumentFinder);     
+    }    
 
-    private void insertTestBinariesForTika(DataSource ds) {
+    
+    private void initSqlServerMultiLineTextTable(){
+        sourceTemplate.execute("IF OBJECT_ID('dbo.tblInputDocs', 'U') IS NOT NULL DROP TABLE dbo.tblInputDocs");        
+        sourceTemplate.execute("CREATE TABLE dbo.tblInputDocs"
+                + "( ID  bigint IDENTITY(1,1) PRIMARY KEY"
+                + ", DOC_ID bigint "
+                + ", LINE_ID bigint "
+                + ", LINE_TEXT VARCHAR(MAX) )"
+                );
+
+        targetTemplate.execute("IF OBJECT_ID('dbo.tblOutputDocs', 'U') IS NOT NULL DROP TABLE dbo.tblOutputDocs");        
+        targetTemplate.execute("CREATE TABLE dbo.tblOutputDocs "
+                + "( ID bigint IDENTITY(1,1) PRIMARY KEY"
+                + ", DOC_ID bigint"
+                + ", LINE_TEXT_CONCAT VARCHAR(MAX) )");
+    }    
+    
+
+    
+    private void insertTestLinesForDBLineFixer(DataSource ds){
         JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
         int docCount = 10;
-        byte[] bytes = null;
-        try {
-            bytes = IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream("tika/testdocs/docexample.doc"));
-        } catch (IOException ex) {
-            java.util.logging.Logger.getLogger(PostGresIntegrationTestsTika.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        String sql = "INSERT INTO tblInputDocs "
-                + "( srcColumnFieldName"
-                + ", srcTableName"
-                + ", primaryKeyFieldName"
-                + ", primaryKeyFieldValue"
-                + ", updateTime"
-                + ", body"
-                + ") VALUES (?,?,?,?,?,?)";
-        for (int ii = 0; ii < docCount; ii++) {
-            jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName", "fictionalPrimaryKeyFieldName", ii, null, bytes);
-
-        }
+        int lineCountIncrementer = 1;
+        String sql = "INSERT INTO dbo.tblInputDocs "
+                + "( DOC_ID"
+                + ", LINE_ID"
+                + ", LINE_TEXT"
+                + ") VALUES (?,?,?)";        
+        for (int i = 0; i <= docCount; i++) {
+            for(int j = 0;j < lineCountIncrementer; j++){
+                String text = "This is DOC_ID:" + i + " and LINE_ID:" + j ;
+                jdbcTemplate.update(sql, i,j,text);
+            }
+            lineCountIncrementer++;
+            if(lineCountIncrementer % 50 == 0){
+                lineCountIncrementer = 0;
+            }
+        }                
     }
 }

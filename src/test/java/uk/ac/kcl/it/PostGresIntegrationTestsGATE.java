@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.kcl.integrationtests;
+package uk.ac.kcl.it;
 
 import uk.ac.kcl.batch.JobConfiguration;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 import javax.sql.DataSource;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.hsqldb.Server;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -44,6 +46,8 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.batch.BatchConfigurer;
+import uk.ac.kcl.batch.DbLineFixerConfiguration;
+import uk.ac.kcl.batch.GateConfiguration;
 
 /**
  *
@@ -51,19 +55,21 @@ import uk.ac.kcl.batch.BatchConfigurer;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @TestPropertySource({
-		"classpath:postgres_test_config_line_fixer.properties",
+		"classpath:postgres_test_config_gate.properties",
                 "classpath:jms.properties",
+                "classpath:gate.properties",
                 "classpath:concurrency.properties",
-                "classpath:dBLineFixer.properties",  
                 "classpath:postgres_db.properties",                                                
                 "classpath:step.properties"})
 @ContextConfiguration(classes = {
     JobConfiguration.class,
-    BatchConfigurer.class},
+    BatchConfigurer.class,
+    GateConfiguration.class,
+    DbLineFixerConfiguration.class},
         loader = AnnotationConfigContextLoader.class)
-public class PostGresIntegrationTestsLineFixer  {
+public class PostGresIntegrationTestsGATE {
 
-    final static Logger logger = Logger.getLogger(PostGresIntegrationTestsLineFixer.class);
+    final static Logger logger = Logger.getLogger(PostGresIntegrationTestsGATE.class);
 
     @Autowired
     @Qualifier("sourceDataSource")
@@ -78,7 +84,6 @@ public class PostGresIntegrationTestsLineFixer  {
     private ResourceDatabasePopulator rdp = new ResourceDatabasePopulator();
     private Resource dropTablesResource;
     private Resource makeTablesResource;
-
 
 
     @Before
@@ -97,40 +102,47 @@ public class PostGresIntegrationTestsLineFixer  {
     @Autowired
     JobOperator jobOperator;
 
-    
     //@Ignore
     @Test
-    public void postgresDBLineFixerPipelineTest() {
-        
+    public void postgresGatePipelineTest() {
+        initPostgresGateTable();
         initPostGresJobRepository();
-        initPostgresMultiLineTextTable();
-        insertTestLinesForDBLineFixer(sourceDataSource);
-
+        insertTestXHTMLForGate(sourceDataSource, false);
         try {
-            jobOperator.startNextInstance("dBLineFixerJob");
+            jobOperator.startNextInstance("gateJob");
         } catch (NoSuchJobException | JobParametersNotFoundException | JobRestartException | JobExecutionAlreadyRunningException | JobInstanceAlreadyCompleteException | UnexpectedJobExecutionException | JobParametersInvalidException ex) {
-            java.util.logging.Logger.getLogger(PostGresIntegrationTestsLineFixer.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PostGresIntegrationTestsGATE.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }    
-        
+    }
+
     
-    private void initPostgresMultiLineTextTable(){
+    private void initPostgresGateTable() {
+////        for postgres
         sourceTemplate.execute("DROP TABLE IF EXISTS tblInputDocs");
         sourceTemplate.execute("CREATE TABLE tblInputDocs"
                 + "( ID  SERIAL PRIMARY KEY"
-                + ", TIMESTAMP text "
-                + ", DOC_ID integer "
-                + ", LINE_ID integer "
-                + ", LINE_TEXT text )"
-                );
+                + ", srcColumnFieldName text "
+                + ", srcTableName text "
+                + ", primaryKeyFieldName text "
+                + ", primaryKeyFieldValue text "
+                + ", binaryFieldName text "
+                + ", updateTime text "
+                + ", xhtml text )");
 
-        targetTemplate.execute("DROP TABLE IF EXISTS  tblOutputDocs");
+        targetTemplate.execute("DROP TABLE IF EXISTS tblOutputDocs");
         targetTemplate.execute("CREATE TABLE tblOutputDocs "
                 + "( ID  SERIAL PRIMARY KEY"
-                + ", TIMESTAMP text"
-                + ", DOC_ID integer"
-                + ", LINE_TEXT_CONCAT text )");
+                + ", srcColumnFieldName text "
+                + ", srcTableName text "
+                + ", primaryKeyFieldName text "
+                + ", primaryKeyFieldValue text "
+                + ", binaryFieldName text "
+                + ", updateTime text "
+                + ", gatejson text )");
+
+
     }
+    
     
     
     private void initPostGresJobRepository(){
@@ -143,26 +155,38 @@ public class PostGresIntegrationTestsLineFixer  {
       
 
     
-    private void insertTestLinesForDBLineFixer(DataSource ds){
+    private void insertTestXHTMLForGate(DataSource ds, boolean includeGateBreaker) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
         int docCount = 10;
-        int lineCountIncrementer = 1;
+        byte[] bytes = null;
+        try {
+            bytes = IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream("xhtml_test"));
+        } catch (IOException ex) {
+            java.util.logging.Logger.getLogger(PostGresIntegrationTestsGATE.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        String xhtmlString = new String(bytes, StandardCharsets.UTF_8);
+
         String sql = "INSERT INTO tblInputDocs "
-                + "( DOC_ID"
-                + ", TIMESTAMP "
-                + ", LINE_ID"
-                + ", LINE_TEXT"
-                + ") VALUES (?,?,?,?)";
-        for (int i = 0; i <= docCount; i++) {
-            for(int j = 0;j < lineCountIncrementer; j++){
-                String text = "This is DOC_ID:" + i + " and LINE_ID:" + j ;
-                jdbcTemplate.update(sql, i,"17-JAN-82",j,text);
+                + "( srcColumnFieldName"
+                + ", srcTableName"
+                + ", primaryKeyFieldName"
+                + ", primaryKeyFieldValue"
+                + ", updateTime"
+                + ", xhtml"
+                + ") VALUES (?,?,?,?,?,?)";
+        for (int ii = 0; ii < docCount; ii++) {
+            jdbcTemplate.update(sql, "fictionalColumnFieldName","fictionalTableName","fictionalPrimaryKeyFieldName", ii,null,  xhtmlString);
+            
+        }
+        //see what happens with a really long document...
+        if (includeGateBreaker) {
+            try {
+                bytes = IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream("gate_breaker.txt"));
+                xhtmlString = new String(bytes, StandardCharsets.UTF_8);
+                jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName", "fictionalPrimaryKeyFieldName", docCount, null, xhtmlString);
+            } catch (IOException ex) {
+                java.util.logging.Logger.getLogger(PostGresIntegrationTestsGATE.class.getName()).log(Level.SEVERE, null, ex);
             }
-            lineCountIncrementer++;
-            if(lineCountIncrementer % 50 == 0){
-                lineCountIncrementer = 0;
-            }
-        }                
+        }
     }
-    
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.kcl.integrationtests;
+package uk.ac.kcl.it;
 
 import uk.ac.kcl.batch.JobConfiguration;
 import java.io.IOException;
@@ -87,7 +87,7 @@ public class HSQLIntegrationTestsLineFixer  {
     
     @BeforeClass
     public static void init() throws IOException, ServerAcl.AclFormatException{
-        HsqlTestUtils.initHSQLDBs();        
+        HsqlTestUtils.initHSQLDBs();
     }
     @AfterClass
     public static void destroy(){
