@@ -1,8 +1,6 @@
 package uk.ac.kcl.partitioners;
 
 import org.junit.Test;
-
-
 import java.util.*;
 
 
@@ -14,8 +12,6 @@ public class ColumnValuePartitionerTest {
 
     @Test
     public void partition() throws Exception {
-
-
     }
     @Test
     public void testSimpleInt() {
@@ -31,7 +27,6 @@ public class ColumnValuePartitionerTest {
         long targetSize = keyCount / gridSize +1;
         System.out.println("keys per Partition = " + targetSize);
 
-
         int ii = 1;
         while(keysIter.hasNext()){
             System.out.println("new partition " + ii);
@@ -41,7 +36,6 @@ public class ColumnValuePartitionerTest {
                 if (!keysIter.hasNext()) {
                     break;
                 }
-
             }
             ii++;
             System.out.println("partition contains " + Arrays.deepToString(arr.toArray()));

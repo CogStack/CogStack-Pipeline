@@ -1,7 +1,7 @@
 buildscript {
     repositories {
         mavenCentral()
-    } 
+    }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:1.3.0.RELEASE")
     }
@@ -16,58 +16,64 @@ sourceSets {
         java { srcDirs = [] }    // no source dirs for the java compiler
         groovy { srcDir "src" }  // compile everything in src/ with groovy
     }
-    integrationTest {
+    test {
+        java { srcDirs = [] }
+        groovy { exclude '**/integration-test/***' }
+    }
+    integTest {
+        java { srcDirs = [] }
         groovy {
-            compileClasspath += main.output + test.output
-            runtimeClasspath += main.output + test.output
-            srcDir file('src/integration-test/java')
+            srcDir 'src/test/java'
+            include '**/integration-test/**'
         }
-        resources.srcDir file('src/integration-test/resources')
+        resources {
+            srcDir 'src/test/resources'
+        }
+        compileClasspath += sourceSets.main.output + sourceSets.test.output + configurations.testRuntime
+        runtimeClasspath += sourceSets.main.output + sourceSets.test.output + configurations.testRuntime
     }
 }
 
 
 
-
 test {
-  // enable TestNG support (default is JUnit)
-  //useTestNG()
+    // enable TestNG support (default is JUnit)
+    //useTestNG()
 
-  // set a system property for the test JVM(s)
-  //systemProperty 'some.prop', 'value'
+    // set a system property for the test JVM(s)
+    //systemProperty 'some.prop', 'value'
 
-  // explicitly include or exclude tests
-  //include 'org/foo/**'
-  //exclude 'org/boo/**'
+    // explicitly include or exclude tests
+    //include 'org/foo/**'
+    //exclude 'org/boo/**'
 
-  // show standard out and standard error of the test JVM(s) on the console
-  //testLogging.showStandardStreams = true
+    // show standard out and standard error of the test JVM(s) on the console
+    //testLogging.showStandardStreams = true
 
-  // set heap size for the test JVM(s)
-  minHeapSize = "1G"
-  maxHeapSize = "1G"
+    // set heap size for the test JVM(s)
+    minHeapSize = "1G"
+    maxHeapSize = "1G"
 
-  // set JVM arguments for the test JVM(s)
-  //jvmArgs '-XX:MaxPermSize=256m'
+    // set JVM arguments for the test JVM(s)
+    //jvmArgs '-XX:MaxPermSize=256m'
 
-  // listen to events in the test execution lifecycle
-  beforeTest { descriptor ->
-     logger.lifecycle("Running test: " + descriptor)
-  }
+    // listen to events in the test execution lifecycle
+    beforeTest { descriptor ->
+        logger.lifecycle("Running test: " + descriptor)
+    }
 
-  // listen to standard out and standard error of the test JVM(s)
+    // listen to standard out and standard error of the test JVM(s)
 //  onOutput { descriptor, event ->
 //     logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message )
 //  }
 }
 
-task(debug, dependsOn: 'classes', type: JavaExec) {
-    main = 'org.springframework.batch.core.launch.support.CommandLineJobRunner'
-    classpath = sourceSets.main.runtimeClasspath
-    systemProperty "spring.profiles.active", 'prod,dBLineFixer'
-    args 'uk.ac.kcl.batch.JobConfiguration', 'dBLineFixerJob' , 'date=testing' 
-    debug true
+task integTest(type: Test) {
+    testClassesDir = sourceSets.integTest.output.classesDir
+    classpath = sourceSets.integTest.runtimeClasspath
 }
+
+
 
 jar {
     baseName = 'turbo-laser'
@@ -91,14 +97,14 @@ dependencies {
     compile 'org.hsqldb:hsqldb:2.3.3'
     compile 'net.sourceforge.jtds:jtds:1.3.1'
     compile 'org.springframework.batch:spring-batch-core:3.0.6.RELEASE'
-    compile 'org.springframework.batch:spring-batch-integration:3.0.6.RELEASE'      
+    compile 'org.springframework.batch:spring-batch-integration:3.0.6.RELEASE'
     compile 'org.springframework:spring-core:4.2.3.RELEASE'
     compile 'org.springframework:spring-test:4.2.3.RELEASE'
     compile 'org.springframework:spring-jdbc:4.2.3.RELEASE'
     compile 'org.springframework:spring-context:4.2.3.RELEASE'
     compile 'org.springframework:spring-jms:4.2.3.RELEASE'
     compile 'org.springframework.integration:spring-integration-core:4.2.3.RELEASE'
-    compile 'org.springframework.integration:spring-integration-jms:4.2.3.RELEASE'    
+    compile 'org.springframework.integration:spring-integration-jms:4.2.3.RELEASE'
     compile 'commons-dbcp:commons-dbcp:1.4'
     compile 'commons-io:commons-io:2.4'
     compile 'org.postgresql:postgresql:9.4-1205-jdbc42'
@@ -109,10 +115,10 @@ dependencies {
     compile 'org.apache.tika:tika-core:1.11'
     compile ('org.apache.tika:tika-parsers:1.11'){
         exclude group: 'commons-logging', module: 'commons-logging' //by both name and group
-    }            
-    compile 'org.codehaus.groovy:groovy-all:2.4.4'    
+    }
+    compile 'org.codehaus.groovy:groovy-all:2.4.4'
     compile 'log4j:log4j:1.2.17'
-    compile 'uk.ac.gate:gate-core:8.0'    
+    compile 'uk.ac.gate:gate-core:8.0'
     compile 'xml-apis:xml-apis:1.4.01'
     testCompile("junit:junit")
     testCompile('org.mockito:mockito-all:1.10.19');
