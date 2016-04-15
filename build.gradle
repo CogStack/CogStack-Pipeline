@@ -16,7 +16,18 @@ sourceSets {
         java { srcDirs = [] }    // no source dirs for the java compiler
         groovy { srcDir "src" }  // compile everything in src/ with groovy
     }
+    integrationTest {
+        groovy {
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+            srcDir file('src/integration-test/java')
+        }
+        resources.srcDir file('src/integration-test/resources')
+    }
 }
+
+
+
 
 test {
   // enable TestNG support (default is JUnit)
@@ -103,8 +114,6 @@ dependencies {
     compile 'log4j:log4j:1.2.17'
     compile 'uk.ac.gate:gate-core:8.0'    
     compile 'xml-apis:xml-apis:1.4.01'
-    testCompile("junit:junit")    
-    
     testCompile("junit:junit")
     testCompile('org.mockito:mockito-all:1.10.19');
 }

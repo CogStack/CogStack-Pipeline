@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.kcl.ItemProcessors;
+package uk.ac.kcl.itemProcessors;
 
-import uk.ac.kcl.ItemProcessors.GateDocumentItemProcessor;
 import uk.ac.kcl.batch.JobConfiguration;
 import uk.ac.kcl.model.BinaryDocument;
 import java.nio.charset.StandardCharsets;

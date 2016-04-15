@@ -123,9 +123,9 @@ public class DbLineFixerConfiguration {
                         Integer.parseInt(env.getProperty("chunkSize")))
                 .reader(reader)
                 .writer(writer)
-                .faultTolerant()
-                .skipLimit(10)
-                .skip(GateException.class)
+//                .faultTolerant()
+//                .skipLimit(10)
+//                .skip(GateException.class)
                 .taskExecutor(taskExecutor)
                 .build();
 

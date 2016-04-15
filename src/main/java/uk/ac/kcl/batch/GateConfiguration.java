@@ -21,14 +21,10 @@ import java.util.Arrays;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
-import org.springframework.batch.core.Job;
+
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
-import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.core.partition.PartitionHandler;
-import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
@@ -36,17 +32,14 @@ import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourc
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.JdbcPagingItemReader;
 import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jdbc.core.RowMapper;
-import uk.ac.kcl.ItemProcessors.GateDocumentItemProcessor;
+import uk.ac.kcl.itemHandlers.ItemHandlers;
+import uk.ac.kcl.itemProcessors.GateDocumentItemProcessor;
 import uk.ac.kcl.model.BinaryDocument;
 import uk.ac.kcl.rowmappers.DocumentMetadataRowMapper;
 import uk.ac.kcl.service.GateService;
@@ -55,6 +48,7 @@ import uk.ac.kcl.service.GateService;
  *
  * @author King's College London, Richard Jackson <richgjackson@gmail.com>
  */
+@Import(ItemHandlers.class)
 @Configuration
 @Profile("gate")
 @PropertySource("file:${TURBO_LASER}/gate.conf")
@@ -81,31 +75,7 @@ public class GateConfiguration {
         return documentMetadataRowMapper;
     }
 
-    @Bean
-    @StepScope
-    @Qualifier("gateItemReader")
-    public ItemReader<BinaryDocument> reader(
-            @Value("#{stepExecutionContext[minValue]}") String minValue,
-            @Value("#{stepExecutionContext[maxValue]}") String maxValue,
-            @Qualifier("simpleDocumentRowMapper") RowMapper<BinaryDocument> documentRowmapper,
-            @Qualifier("sourceDataSource") DataSource jdbcDocumentSource) throws Exception {
 
-        JdbcPagingItemReader<BinaryDocument> reader = new JdbcPagingItemReader<>();
-        reader.setDataSource(jdbcDocumentSource);
-
-        SqlPagingQueryProviderFactoryBean qp = new SqlPagingQueryProviderFactoryBean();
-        qp.setSelectClause(env.getProperty("source.selectClause"));
-        qp.setFromClause(env.getProperty("source.fromClause"));
-        qp.setSortKey(env.getProperty("source.sortKey"));
-        qp.setWhereClause("WHERE " + env.getProperty("columntoPartition") + " BETWEEN " + minValue + " AND " + maxValue);
-        qp.setDataSource(jdbcDocumentSource);
-        reader.setFetchSize(Integer.parseInt(env.getProperty("source.pageSize")));
-
-        reader.setQueryProvider(qp.getObject());
-        reader.setRowMapper(documentRowmapper);
-
-        return reader;
-    }
 
     @Bean
     @Qualifier("gateItemProcessor")
@@ -127,22 +97,12 @@ public class GateConfiguration {
         }
     }
 
-    @Bean
-    @Qualifier("gateItemWriter")
-    public ItemWriter<BinaryDocument> writer(@Qualifier("targetDataSource") DataSource jdbcDocumentTarget) {
-        JdbcBatchItemWriter<BinaryDocument> writer = new JdbcBatchItemWriter<>();
-        writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
-        writer.setSql(env.getProperty("target.Sql"));
-        writer.setDataSource(jdbcDocumentTarget);
-        return writer;
-    }
-
 
 
     @Bean
     public Step gateSlaveStep(
-            @Qualifier("gateItemReader") ItemReader<BinaryDocument> reader,
-            @Qualifier("gateItemWriter") ItemWriter<BinaryDocument> writer,
+            @Qualifier("simpleItemReader") ItemReader<BinaryDocument> reader,
+            @Qualifier("simpleItemWriter") ItemWriter<BinaryDocument> writer,
             @Qualifier("gateItemProcessor") ItemProcessor<BinaryDocument, BinaryDocument> processor,
             StepBuilderFactory stepBuilderFactory,
             @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor

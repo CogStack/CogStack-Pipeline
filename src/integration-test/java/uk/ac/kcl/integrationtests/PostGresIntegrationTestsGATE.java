@@ -108,7 +108,6 @@ public class PostGresIntegrationTestsGATE {
         initPostgresGateTable();
         initPostGresJobRepository();
         insertTestXHTMLForGate(sourceDataSource, false);
-
         try {
             jobOperator.startNextInstance("gateJob");
         } catch (NoSuchJobException | JobParametersNotFoundException | JobRestartException | JobExecutionAlreadyRunningException | JobInstanceAlreadyCompleteException | UnexpectedJobExecutionException | JobParametersInvalidException ex) {

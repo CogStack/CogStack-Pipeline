@@ -20,27 +20,22 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 
-import org.apache.tika.exception.TikaException;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
-import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.JdbcPagingItemReader;
 import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jdbc.core.RowMapper;
-import uk.ac.kcl.ItemProcessors.TikaDocumentItemProcessor;
+import uk.ac.kcl.itemHandlers.ItemHandlers;
+import uk.ac.kcl.itemProcessors.TikaDocumentItemProcessor;
 import uk.ac.kcl.model.BinaryDocument;
 import uk.ac.kcl.rowmappers.BinaryDocumentRowMapper;
 import uk.ac.kcl.rowmappers.DocumentMetadataRowMapper;
@@ -49,6 +44,7 @@ import uk.ac.kcl.rowmappers.DocumentMetadataRowMapper;
  *
  * @author King's College London, Richard Jackson <richgjackson@gmail.com>
  */
+@Import(ItemHandlers.class)
 @Configuration
 @Profile("tika")
 @PropertySource("file:${TURBO_LASER}/tika.conf")
@@ -66,35 +62,6 @@ public class TikaConfiguration {
     
     */
     
-    
-    
-    
-    @Bean
-    @StepScope
-    @Qualifier("tikaItemReader")
-    public ItemReader<BinaryDocument> reader(
-            @Value("#{stepExecutionContext[minValue]}") String minValue,
-            @Value("#{stepExecutionContext[maxValue]}") String maxValue,
-            @Qualifier("binaryDocumentRowMapper")RowMapper<BinaryDocument> documentRowmapper, 
-            @Qualifier("sourceDataSource") DataSource jdbcDocumentSource) throws Exception {
-        
-        JdbcPagingItemReader<BinaryDocument> reader = new JdbcPagingItemReader<>();
-        reader.setDataSource(jdbcDocumentSource);
-
-        SqlPagingQueryProviderFactoryBean qp = new SqlPagingQueryProviderFactoryBean();
-        qp.setSelectClause(env.getProperty("source.selectClause"));
-        qp.setFromClause(env.getProperty("source.fromClause"));
-        qp.setSortKey(env.getProperty("source.sortKey"));
-        qp.setWhereClause("WHERE " + env.getProperty("columntoPartition") + " BETWEEN " + minValue + " AND " + maxValue) ;
-        qp.setDataSource(jdbcDocumentSource);
-        reader.setFetchSize(Integer.parseInt(env.getProperty("source.pageSize")));
-
-        
-        reader.setQueryProvider(qp.getObject());
-        reader.setRowMapper(documentRowmapper);
-
-        return reader;
-    }
 
     @Bean
     @Qualifier("binaryDocumentRowMapper")
@@ -114,15 +81,7 @@ public class TikaConfiguration {
         return new TikaDocumentItemProcessor();
     }
 
-    @Bean
-    @Qualifier("tikaItemWriter")
-    public ItemWriter<BinaryDocument> writer(@Qualifier("targetDataSource") DataSource jdbcDocumentTarget) {
-        JdbcBatchItemWriter<BinaryDocument> writer = new JdbcBatchItemWriter<>();
-        writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
-        writer.setSql(env.getProperty("target.Sql"));
-        writer.setDataSource(jdbcDocumentTarget);
-        return writer;
-    }
+
     
      
     
@@ -130,8 +89,8 @@ public class TikaConfiguration {
     
     @Bean
     public Step tikaSlaveStep(    
-            @Qualifier("tikaItemReader")ItemReader<BinaryDocument> reader,
-            @Qualifier("tikaItemWriter")  ItemWriter<BinaryDocument> writer,    
+            @Qualifier("simpleItemReader")ItemReader<BinaryDocument> reader,
+            @Qualifier("simpleItemWriter")  ItemWriter<BinaryDocument> writer,
             @Qualifier("tikaItemProcessor")   ItemProcessor<BinaryDocument, BinaryDocument> processor,
             @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor,
             StepBuilderFactory stepBuilderFactory
@@ -143,7 +102,7 @@ public class TikaConfiguration {
                 .writer(writer)
                 .faultTolerant()
                 .skipLimit(10)
-                .skip(TikaException.class)
+                .skip(Exception.class)
                 .taskExecutor(taskExecutor)                 
                 .build();
          
