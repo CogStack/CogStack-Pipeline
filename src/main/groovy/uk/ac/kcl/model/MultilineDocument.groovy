@@ -13,15 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.ac.kcl.model
 
 /**
- * Created by rich on 14/04/16.
+ *
+ * @author King's College London, Richard Jackson <richgjackson@gmail.com>
  */
-class BinaryDocument extends Document{
-    byte[] body
-    BinaryDocument(byte[] body) {
-        this.body = body;
-    }
-
+public class MultilineDocument extends Document {
+    String documentKey
+    String lineContents;
+    String lineKey;
 }
+

@@ -16,7 +16,7 @@
 package uk.ac.kcl.itemProcessors;
 
 import gate.Factory;
-import uk.ac.kcl.model.BinaryDocument;
+import uk.ac.kcl.model.TextDocument;
 import uk.ac.kcl.service.GateService;
 import org.apache.log4j.Logger;
 import org.springframework.batch.item.ItemProcessor;
@@ -24,7 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 
 
-public class GateDocumentItemProcessor implements ItemProcessor<BinaryDocument, BinaryDocument> {
+public class GateDocumentItemProcessor implements ItemProcessor<TextDocument, TextDocument> {
 
     private static final Logger logJdbcPath = Logger.getLogger(GateDocumentItemProcessor.class);
 
@@ -43,15 +43,15 @@ public class GateDocumentItemProcessor implements ItemProcessor<BinaryDocument, 
     }
 
     @Override
-    public BinaryDocument process(final BinaryDocument doc) throws Exception {
-        gate.Document gateDoc = Factory.newDocument(doc.getMetadata().get(env.getProperty("textFieldName")));
+    public TextDocument process(final TextDocument doc) throws Exception {
+        gate.Document gateDoc = Factory.newDocument(doc.getBody());
         try {
 
             gateService.processDoc(gateDoc);
             if(env.getProperty("gateJSON", "true").equalsIgnoreCase("true")){
-                doc.getMetadata().put("gateData", gateService.convertDocToJSON(gateDoc));
+                doc.setOutputData(gateService.convertDocToJSON(gateDoc));
             }else{
-                doc.getMetadata().put("gateData", gateDoc.toXml());                
+                doc.setOutputData(gateDoc.toXml());
             }
             return doc;
         }finally{

@@ -37,7 +37,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jdbc.core.RowMapper;
-import uk.ac.kcl.model.SimpleDocument;
+import uk.ac.kcl.model.MultilineDocument;
 import uk.ac.kcl.rowmappers.MultiRowDocumentRowMapper;
 
 /**
@@ -63,12 +63,12 @@ public class DbLineFixerConfiguration {
     @Bean
     @StepScope
     @Qualifier("dBLineFixerItemReader")
-    public ItemReader<SimpleDocument> dBLineFixerItemReader(
+    public ItemReader<MultilineDocument> dBLineFixerItemReader(
             @Value("#{stepExecutionContext[minValue]}") String minValue,
             @Value("#{stepExecutionContext[maxValue]}") String maxValue,
-            @Qualifier("multiRowDocumentRowmapper")RowMapper<SimpleDocument> multiRowDocumentRowmapper,
+            @Qualifier("multiRowDocumentRowmapper")RowMapper<MultilineDocument> multiRowDocumentRowmapper,
             @Qualifier("sourceDataSource") DataSource jdbcDocumentSource) throws Exception {
-        JdbcPagingItemReader<SimpleDocument> reader = new JdbcPagingItemReader<>();
+        JdbcPagingItemReader<MultilineDocument> reader = new JdbcPagingItemReader<>();
         reader.setDataSource(jdbcDocumentSource);
         SqlPagingQueryProviderFactoryBean qp = new SqlPagingQueryProviderFactoryBean();
         qp.setSelectClause(env.getProperty("source.selectClause"));
@@ -88,9 +88,9 @@ public class DbLineFixerConfiguration {
 
     @Bean
     @Qualifier("dBLineFixerItemWriter")
-    public ItemWriter<SimpleDocument> dBLineFixerItemWriter(
+    public ItemWriter<MultilineDocument> dBLineFixerItemWriter(
             @Qualifier("targetDataSource") DataSource jdbcDocumentTarget) {
-        JdbcBatchItemWriter<SimpleDocument> writer = new JdbcBatchItemWriter<>();
+        JdbcBatchItemWriter<MultilineDocument> writer = new JdbcBatchItemWriter<>();
         writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
         writer.setSql(env.getProperty("target.Sql"));
         writer.setDataSource(jdbcDocumentTarget);
@@ -101,31 +101,26 @@ public class DbLineFixerConfiguration {
     @Qualifier("multiRowDocumentRowmapper")
     public RowMapper multiRowDocumentRowmapper(
             @Qualifier("sourceDataSource") DataSource ds) {
-        MultiRowDocumentRowMapper mapper = new MultiRowDocumentRowMapper(ds, env.getProperty("documentKeyName"),
-                env.getProperty("lineKeyName"),
-                env.getProperty("lineContents"),
-                env.getProperty("timeStampName"),
-                env.getProperty("tableName")
-);
+        MultiRowDocumentRowMapper mapper = new MultiRowDocumentRowMapper(ds);
         return mapper;
     }
 
 
     @Bean
     public Step dBLineFixerSlaveStep(
-            @Qualifier("dBLineFixerItemReader") ItemReader<SimpleDocument> reader,
-            @Qualifier("dBLineFixerItemWriter")  ItemWriter<SimpleDocument> writer,
+            @Qualifier("dBLineFixerItemReader") ItemReader<MultilineDocument> reader,
+            @Qualifier("dBLineFixerItemWriter")  ItemWriter<MultilineDocument> writer,
             @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor,
             StepBuilderFactory stepBuilderFactory
     ) {
         Step step = stepBuilderFactory.get("dBLineFixerSlaveStep")
-                .<SimpleDocument, SimpleDocument> chunk(
+                .<MultilineDocument, MultilineDocument> chunk(
                         Integer.parseInt(env.getProperty("chunkSize")))
                 .reader(reader)
                 .writer(writer)
-//                .faultTolerant()
-//                .skipLimit(10)
-//                .skip(GateException.class)
+                .faultTolerant()
+                .skipLimit(Integer.parseInt(env.getProperty("skipLimit")))
+                .skip(Exception.class)
                 .taskExecutor(taskExecutor)
                 .build();
 

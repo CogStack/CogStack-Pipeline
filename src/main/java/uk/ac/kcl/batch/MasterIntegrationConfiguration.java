@@ -64,7 +64,6 @@ public class MasterIntegrationConfiguration {
         template.setDefaultChannel(reqChannel);
         template.setReceiveTimeout(Integer.parseInt(env.getProperty("partitionHandlerTimeout")));
         handler.setMessagingOperations(template);
-
         return handler;
     }
 
@@ -96,7 +95,6 @@ public class MasterIntegrationConfiguration {
     @Configuration
     @Profile("tika")
     public static class TikaJobMaster {
-
         @Bean
         public Job tikaJob(JobBuilderFactory jobs,
                 StepBuilderFactory steps,
@@ -122,7 +120,6 @@ public class MasterIntegrationConfiguration {
     @Configuration
     @Profile("dBLineFixer")
     public static class DBLineFixerMaster {
-
         @Bean
         public Job dBLineFixerJob(JobBuilderFactory jobs,
                 StepBuilderFactory steps,
@@ -140,9 +137,6 @@ public class MasterIntegrationConfiguration {
                     .end()
                     .build();
             return job;
-
         }
-
     }
-
 }

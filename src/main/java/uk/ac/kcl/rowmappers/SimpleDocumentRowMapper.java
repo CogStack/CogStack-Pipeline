@@ -15,7 +15,7 @@
  */
 package uk.ac.kcl.rowmappers;
 
-import uk.ac.kcl.model.SimpleDocument;
+import uk.ac.kcl.model.MultilineDocument;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.springframework.jdbc.core.RowMapper;
@@ -24,14 +24,14 @@ import org.springframework.jdbc.core.RowMapper;
  *
  * @author rich
  */
-public class SingleLineDocumentRowMapper implements RowMapper<SimpleDocument>{
+public class SimpleDocumentRowMapper implements RowMapper<MultilineDocument>{
 
     private String documentKeyName;
     private String lineKeyName;
     private String lineContents;
     @Override
-    public SimpleDocument mapRow(ResultSet rs, int i) throws SQLException {
-        SimpleDocument doc = new SimpleDocument();
+    public MultilineDocument mapRow(ResultSet rs, int i) throws SQLException {
+        MultilineDocument doc = new MultilineDocument();
         doc.setDocumentKey(rs.getString(documentKeyName));
         doc.setLineKey(rs.getString(lineKeyName));        
         doc.setLineContents(rs.getString(lineContents));

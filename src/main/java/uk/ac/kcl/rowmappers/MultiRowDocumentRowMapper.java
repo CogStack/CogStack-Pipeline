@@ -1,131 +1,72 @@
-/* 
- * Copyright 2016 King's College London, Richard Jackson <richgjackson@gmail.com>.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package uk.ac.kcl.rowmappers;
 
-import uk.ac.kcl.model.SimpleDocument;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import uk.ac.kcl.model.MultilineDocument;
+
+import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import javax.sql.DataSource;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 
-/**
- *
- * @author rich
- */
-public class MultiRowDocumentRowMapper implements RowMapper<SimpleDocument> {
-
+public class MultiRowDocumentRowMapper implements RowMapper<MultilineDocument> {
     private final DataSource ds;
-    private final String timeStampName;
-    private String documentKeyName;
-    private String lineKeyName;
-    private String lineContents;
-    private String tableName;
-    private final SingleLineDocumentRowMapper mapper;
-    private JdbcTemplate template ;
-    public MultiRowDocumentRowMapper(DataSource ds, String documentKeyName, String lineKeyName, 
-            String lineContents, String timeStampName, String tableName) {
+    private final SimpleDocumentRowMapper mapper;
+    private final JdbcTemplate template;
+
+
+    @Autowired
+    Environment env;
+
+    public MultiRowDocumentRowMapper(DataSource ds){
         this.ds = ds;
-        this.mapper = new SingleLineDocumentRowMapper();
-        this.documentKeyName = documentKeyName;
-        this.lineKeyName = lineKeyName;
-        this.lineContents = lineContents;
-        this.tableName = tableName;
-        this.timeStampName = timeStampName;
-        mapper.setDocumentKeyName(documentKeyName);
-        mapper.setLineContents(lineContents);
-        mapper.setLineKeyName(lineKeyName);        
+        this.mapper = new SimpleDocumentRowMapper();
         this.template = new JdbcTemplate(ds);
+
+        mapper.setDocumentKeyName(env.getProperty("documentKeyName"));
+        mapper.setLineContents(env.getProperty("lineContents"));
+        mapper.setLineKeyName(env.getProperty("lineKeyName"));
     }
 
     @Override
-    public SimpleDocument mapRow(ResultSet rs, int i) throws SQLException {
+    public MultilineDocument mapRow(ResultSet rs, int i) throws SQLException {
 
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT ")
-                .append(documentKeyName)
+                .append(env.getProperty("lf.documentKeyName"))
                 .append(", ")
-                .append(lineKeyName)
+                .append(env.getProperty("lf.lineKeyName"))
                 .append(", ")
-                .append(lineContents)
+                .append(env.getProperty("lf.lineContents"))
                 .append(" FROM ")
-                .append(tableName)
+                .append(env.getProperty("lf.srcTableName"))
                 .append(" WHERE ")
-                .append(documentKeyName)
+                .append(env.getProperty("lf.documentKeyName"))
                 .append(" = ")
-                .append(rs.getLong(documentKeyName))
+                .append(rs.getLong(env.getProperty("lf.documentKeyName")))
                 .append(" ORDER BY ")
-                .append(lineKeyName)
+                .append(env.getProperty("lf.lineKeyName"))
                 .append(" DESC");
 
-        List<SimpleDocument> docs = template.query(sql.toString(),
-                mapper);
+        List<MultilineDocument> docs = template.query(sql.toString(), mapper);
 
         TreeMap<Integer, String> map = new TreeMap<>();
-        for (SimpleDocument doc : docs) {
+        for (MultilineDocument doc : docs) {
             map.put(Integer.valueOf(doc.getLineKey()), doc.getLineContents());
         }
+        MultilineDocument doc = new MultilineDocument();
+        doc.setDocumentKey(rs.getString(env.getProperty("lf.documentKeyName")));
+        doc.setTimeStamp(rs.getString(env.getProperty("lf.timeStamp")));
 
-        SimpleDocument doc = new SimpleDocument();
-        doc.setDocumentKey(rs.getString(documentKeyName));
-        doc.setTimeStamp(rs.getString(timeStampName));
         StringBuilder sb2 = new StringBuilder();
         for (Map.Entry<Integer, String> entry : map.entrySet()) {
             sb2.append(entry.getValue());
-
         }
         doc.setLineContents(sb2.toString());
-
         return doc;
-
     }
-
-    public String getDocumentKeyName() {
-        return documentKeyName;
-    }
-
-    public void setDocumentKeyName(String documentKeyName) {
-        this.documentKeyName = documentKeyName;
-    }
-
-    public String getLineKeyName() {
-        return lineKeyName;
-    }
-
-    public void setLineKeyName(String lineKeyName) {
-        this.lineKeyName = lineKeyName;
-    }
-
-    public String getLineContents() {
-        return lineContents;
-    }
-
-    public void setLineContents(String lineContents) {
-        this.lineContents = lineContents;
-    }
-
-    public String getTableName() {
-        return tableName;
-    }
-
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
-    }
-
 }

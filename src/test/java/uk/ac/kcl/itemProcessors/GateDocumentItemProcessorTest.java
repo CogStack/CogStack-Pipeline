@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import uk.ac.kcl.model.TextDocument;
 
 /**
  *
@@ -71,11 +72,10 @@ public class GateDocumentItemProcessorTest {
         System.out.println("process");        
         byte[] bytes = IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream("xhtml_test"));
         String xhtmlString = new String(bytes,StandardCharsets.UTF_8);
-        BinaryDocument doc = new BinaryDocument();
-        doc.getMetadata().put("xhtml", xhtmlString);
-        BinaryDocument result = instance.process(doc);
-        System.out.println(result.getMetadata().get("gateJSON"));
-        assertNotNull(result.getMetadata().get("gateJSON"));
+        TextDocument doc = new TextDocument(xhtmlString);
+        TextDocument result = instance.process(doc);
+        System.out.println(result.getOutputData());
+        assertNotNull(result.getOutputData());
         // TODO review the generated test code and remove the default call to fail.
         //fail("The test case is a prototype.");
     }

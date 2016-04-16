@@ -38,7 +38,6 @@ import uk.ac.kcl.itemHandlers.ItemHandlers;
 import uk.ac.kcl.itemProcessors.TikaDocumentItemProcessor;
 import uk.ac.kcl.model.BinaryDocument;
 import uk.ac.kcl.rowmappers.BinaryDocumentRowMapper;
-import uk.ac.kcl.rowmappers.DocumentMetadataRowMapper;
 
 /**
  *
@@ -63,15 +62,7 @@ public class TikaConfiguration {
     */
     
 
-    @Bean
-    @Qualifier("binaryDocumentRowMapper")
-    public RowMapper binaryDocumentRowMapper() {
-        BinaryDocumentRowMapper binaryDocumentRowMapper = new BinaryDocumentRowMapper();
-        List<String> otherFields = Arrays.asList(env.getProperty("otherFieldsList").split(","));
-        binaryDocumentRowMapper.setOtherFieldsList(otherFields);
-        binaryDocumentRowMapper.setBinaryFieldName(env.getProperty("binaryFieldName"));
-        return binaryDocumentRowMapper;
-    }    
+
     
     @Bean
     @Qualifier("tikaItemProcessor")
@@ -81,12 +72,6 @@ public class TikaConfiguration {
         return new TikaDocumentItemProcessor();
     }
 
-
-    
-     
-    
-
-    
     @Bean
     public Step tikaSlaveStep(    
             @Qualifier("simpleItemReader")ItemReader<BinaryDocument> reader,
@@ -101,19 +86,11 @@ public class TikaConfiguration {
                 .processor(processor)                 
                 .writer(writer)
                 .faultTolerant()
-                .skipLimit(10)
+                .skipLimit(Integer.valueOf(env.getProperty("skipLimit")))
                 .skip(Exception.class)
                 .taskExecutor(taskExecutor)                 
                 .build();
          
          return step;
-    }           
-    @Bean
-    @Qualifier("validationQueryRowMapper")
-    public RowMapper<BinaryDocument> validationQueryRowMapper() {
-        DocumentMetadataRowMapper<BinaryDocument> documentMetadataRowMapper = new DocumentMetadataRowMapper<>();
-        List<String> otherFields = Arrays.asList(env.getProperty("target.validationQueryFields").split(","));
-        documentMetadataRowMapper.setOtherFieldsList(otherFields);
-        return documentMetadataRowMapper;
-    }     
+    }
 }

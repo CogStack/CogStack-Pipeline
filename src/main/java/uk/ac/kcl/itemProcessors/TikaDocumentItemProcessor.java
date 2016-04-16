@@ -47,7 +47,7 @@ public class TikaDocumentItemProcessor implements ItemProcessor<BinaryDocument, 
     @Override
     public BinaryDocument process(final BinaryDocument doc) throws Exception {
         ContentHandler handler;
-        logJdbcPath.debug("processing doc ID: " + doc.getId());
+        logJdbcPath.debug("processing doc ID: " + doc.getPrimaryKeyFieldValue());
         if (keepTags) {
             handler = new ToXMLContentHandler();
         } else {
@@ -57,16 +57,10 @@ public class TikaDocumentItemProcessor implements ItemProcessor<BinaryDocument, 
         Metadata metadata = new Metadata();
         try (InputStream stream = new ByteArrayInputStream(doc.getBody())) {
             parser.parse(stream, handler, metadata);
-            doc.getMetadata().put("xhtml", handler.toString());
+            doc.setOutputData(handler.toString());
         } catch (Exception ex) {
-            doc.getMetadata().put("xhtml", ex.getMessage());
+            doc.setOutputData(ex.getMessage());
         }
-//        try (InputStream stream = new ByteArrayInputStream(doc.getBody())) {
-//            parser.parse(stream, handler, metadata);
-//            doc.setXhtml(handler.toString());
-//        } catch (Exception ex) {
-//            doc.setXhtml(ex.getMessage());
-//        }
         return doc;
     }
 

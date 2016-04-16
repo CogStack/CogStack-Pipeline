@@ -41,7 +41,10 @@ import org.springframework.jdbc.core.RowMapper;
 import uk.ac.kcl.itemHandlers.ItemHandlers;
 import uk.ac.kcl.itemProcessors.GateDocumentItemProcessor;
 import uk.ac.kcl.model.BinaryDocument;
-import uk.ac.kcl.rowmappers.DocumentMetadataRowMapper;
+import uk.ac.kcl.model.Document;
+import uk.ac.kcl.model.TextDocument;
+import uk.ac.kcl.rowmappers.BinaryDocumentRowMapper;
+import uk.ac.kcl.rowmappers.TextDocumentRowMapper;
 import uk.ac.kcl.service.GateService;
 
 /**
@@ -57,35 +60,21 @@ public class GateConfiguration {
     @Resource
     Environment env;
 
-    /* 
-    
-    
-    
+    /*
     *******************************************GATE JOB
-    
-    
-    
      */
-    @Bean
-    @Qualifier("simpleDocumentRowMapper")
-    public RowMapper simpleDocumentRowMapper() {
-        DocumentMetadataRowMapper<BinaryDocument> documentMetadataRowMapper = new DocumentMetadataRowMapper<>();
-        List<String> otherFields = Arrays.asList(env.getProperty("otherFieldsList").split(","));
-        documentMetadataRowMapper.setOtherFieldsList(otherFields);
-        return documentMetadataRowMapper;
-    }
+
 
 
 
     @Bean
     @Qualifier("gateItemProcessor")
-    public ItemProcessor<BinaryDocument, BinaryDocument> gateDocumentItemProcessor() {
+    public ItemProcessor<TextDocument, TextDocument> gateDocumentItemProcessor() {
         return new GateDocumentItemProcessor();
     }
 
     @Bean(initMethod = "init")
     public GateService gateService() {
-        //if GateHome not set, assume running another type of job and return an empty pojo
         if (env.getProperty("gateHome") != null) {
             return new GateService(
                     new File(env.getProperty("gateHome")),
@@ -101,34 +90,23 @@ public class GateConfiguration {
 
     @Bean
     public Step gateSlaveStep(
-            @Qualifier("simpleItemReader") ItemReader<BinaryDocument> reader,
-            @Qualifier("simpleItemWriter") ItemWriter<BinaryDocument> writer,
-            @Qualifier("gateItemProcessor") ItemProcessor<BinaryDocument, BinaryDocument> processor,
+            @Qualifier("textDocumentItemReader") ItemReader<TextDocument> reader,
+            @Qualifier("simpleItemWriter") ItemWriter<Document> writer,
+            @Qualifier("gateItemProcessor") ItemProcessor<TextDocument, TextDocument> processor,
             StepBuilderFactory stepBuilderFactory,
             @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor
     ) {
         Step step = stepBuilderFactory.get("gateSlaveStep")
-                .<BinaryDocument, BinaryDocument>chunk(Integer.parseInt(env.getProperty("chunkSize")))
+                .<TextDocument, TextDocument>chunk(Integer.parseInt(env.getProperty("chunkSize")))
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)
                 .faultTolerant()
-                .skipLimit(10)
-                .skip(GateException.class)
+                .skipLimit(Integer.valueOf(env.getProperty("skipLimit")))
+                .skip(Exception.class)
                 .taskExecutor(taskExecutor)
                 .build();
 
         return step;
     }
-
-    @Bean
-    @Qualifier("validationQueryRowMapper")
-    public RowMapper<BinaryDocument> validationQueryRowMapper() {
-        DocumentMetadataRowMapper<BinaryDocument> documentMetadataRowMapper = new DocumentMetadataRowMapper<>();
-        List<String> otherFields = Arrays.asList(env.getProperty("target.validationQueryFields").split(","));
-        documentMetadataRowMapper.setOtherFieldsList(otherFields);
-        return documentMetadataRowMapper;
-    }        
-
-
 }

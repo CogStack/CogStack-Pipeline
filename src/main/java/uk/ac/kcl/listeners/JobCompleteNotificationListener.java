@@ -18,7 +18,6 @@ package uk.ac.kcl.listeners;
 //import io.bluecell.data.JDBCDocumentSource;
 //import io.bluecell.data.JDBCDocumentTarget;
 import uk.ac.kcl.model.BinaryDocument;
-import uk.ac.kcl.rowmappers.DocumentMetadataRowMapper;
 import java.util.List;
 import javax.sql.DataSource;
 
@@ -70,7 +69,7 @@ public class JobCompleteNotificationListener extends JobExecutionListenerSupport
                                 .query(env.getProperty("target.validationQuery"), rowmapper);
 
 			for (BinaryDocument doc : results) {
-				log.info("Found <" + doc.getMetadata().toString() + "> in the database.");
+				log.info("Found <" + doc.getPrimaryKeyFieldValue() + "> in the database.");
 			}
 
 		}
