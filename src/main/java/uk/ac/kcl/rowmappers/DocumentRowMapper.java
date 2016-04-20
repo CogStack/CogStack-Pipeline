@@ -20,6 +20,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import uk.ac.kcl.model.BinaryDocument;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.List;
 import org.springframework.jdbc.core.RowMapper;
@@ -48,6 +49,21 @@ public abstract class DocumentRowMapper implements RowMapper<Document>{
         doc.setPrimaryKeyFieldName(rs.getString(env.getProperty("primaryKeyFieldName")));
         doc.setPrimaryKeyFieldValue(rs.getString(env.getProperty("primaryKeyFieldValue")));
         doc.setTimeStamp(rs.getString(env.getProperty("timeStamp")));
+
+        //add additional query fields for ES export
+        ResultSetMetaData meta = rs.getMetaData();
+        int colCount = meta.getColumnCount();
+
+            for (int col=1; col <= colCount; col++)
+            {
+                byte[] value = rs.getBytes(col);
+                if (value != null)
+                {
+                    doc.getAdditionalFields().put(meta.getColumnName(col),value);
+                }
+            }
+
+
     }
 
 }
