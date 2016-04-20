@@ -13,35 +13,36 @@ apply plugin: 'spring-boot'
 
 sourceSets {
     main {
-        java { srcDirs = [] }
+        java { srcDirs = [] }    // no source dirs for the java compiler
         groovy {
-            srcDirs = ['src/main/java','src/main/groovy']
-        }
+		// compile everything in src/ with groovy 
+		srcDirs ['src/main/java','src/main/groovy'] 
+	}
         resources {
             srcDir 'src/main/resources'
         }
-
+  
     }
     test {
         java { srcDirs = [] }
-        groovy {
-            srcDirs = ["src/test/java"]
-        }
+        groovy { 
+		// compile everything in src/ with groovy 
+		srcDirs ["src/test","src/main/java","src/main/groovy"] 
+	}
         resources {
-           srcDirs = ['src/test/resources']
-       }
+            srcDirs ['src/main/resources','src/test/resources']
+        }
 
     }
     integTest {
         java { srcDirs = [] }
         groovy {
-            srcDirs = ["src/integration-test/java"]
+		// compile everything in src/ with groovy 
+		srcDirs ["src/integration-test","src/main","src/main/groovy"] 
         }
         resources {
-            srcDirs = ['src/integration-test/resources']
+            srcDirs ['src/main/resources','src/integration-test/resources']
         }
-        compileClasspath += sourceSets.main.output + sourceSets.test.output + configurations.testRuntime
-        runtimeClasspath += sourceSets.main.output + sourceSets.test.output + configurations.testRuntime
     }
 }
 

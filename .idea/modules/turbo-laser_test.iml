@@ -4,13 +4,13 @@
     <output-test url="file://$MODULE_DIR$/../../build/classes/test" />
     <exclude-output />
     <content url="file://$MODULE_DIR$/../../src/test">
-      <sourceFolder url="file://$MODULE_DIR$/../../src/test/groovy" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/../../src/test/java" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/../../src/test/resources" type="java-test-resource" />
     </content>
     <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="turbo-laser_main" />
+    <orderEntry type="library" name="Gradle: org.elasticsearch:elasticsearch:2.3.1" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-starter-batch:1.3.0.RELEASE" level="project" />
     <orderEntry type="library" name="Gradle: org.hsqldb:hsqldb:2.3.3" level="project" />
     <orderEntry type="library" name="Gradle: net.sourceforge.jtds:jtds:1.3.1" level="project" />
@@ -37,6 +37,31 @@
     <orderEntry type="library" name="Gradle: xml-apis:xml-apis:1.4.01" level="project" />
     <orderEntry type="library" name="Gradle: junit:junit:4.12" level="project" />
     <orderEntry type="library" name="Gradle: org.mockito:mockito-all:1.10.19" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.lucene:lucene-core:5.5.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.lucene:lucene-backward-codecs:5.5.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.lucene:lucene-analyzers-common:5.5.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.lucene:lucene-queries:5.5.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.lucene:lucene-memory:5.5.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.lucene:lucene-highlighter:5.5.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.lucene:lucene-queryparser:5.5.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.lucene:lucene-suggest:5.5.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.lucene:lucene-join:5.5.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.lucene:lucene-spatial:5.5.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.guava:guava:18.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.elasticsearch:securesm:1.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.carrotsearch:hppc:0.7.1" level="project" />
+    <orderEntry type="library" name="Gradle: joda-time:joda-time:2.8.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.joda:joda-convert:1.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.core:jackson-core:2.6.3" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.dataformat:jackson-dataformat-smile:2.6.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.6.3" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.6.2" level="project" />
+    <orderEntry type="library" name="Gradle: io.netty:netty:3.10.5.Final" level="project" />
+    <orderEntry type="library" name="Gradle: com.ning:compress-lzf:1.0.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.tdunning:t-digest:3.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.hdrhistogram:HdrHistogram:2.1.6" level="project" />
+    <orderEntry type="library" name="Gradle: commons-cli:commons-cli:1.3.1" level="project" />
+    <orderEntry type="library" name="Gradle: com.twitter:jsr166e:1.1.0" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-starter:1.3.0.RELEASE" level="project" />
     <orderEntry type="library" name="Gradle: com.ibm.jbatch:com.ibm.jbatch-tck-spi:1.0" level="project" />
     <orderEntry type="library" name="Gradle: com.thoughtworks.xstream:xstream:1.4.7" level="project" />
@@ -119,10 +144,15 @@
     <orderEntry type="library" name="Gradle: org.xhtmlrenderer:flying-saucer-core:9.0.4" level="project" />
     <orderEntry type="library" name="Gradle: xmlunit:xmlunit:1.5" level="project" />
     <orderEntry type="library" name="Gradle: org.hamcrest:hamcrest-core:1.3" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.lucene:lucene-sandbox:5.5.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.lucene:lucene-misc:5.5.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.lucene:lucene-grouping:5.5.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.lucene:lucene-spatial3d:5.5.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.spatial4j:spatial4j:0.5" level="project" />
+    <orderEntry type="library" name="Gradle: org.yaml:snakeyaml:1.16" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot:1.3.0.RELEASE" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-autoconfigure:1.3.0.RELEASE" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-starter-logging:1.3.0.RELEASE" level="project" />
-    <orderEntry type="library" name="Gradle: org.yaml:snakeyaml:1.16" level="project" />
     <orderEntry type="library" name="Gradle: javax.batch:javax.batch-api:1.0" level="project" />
     <orderEntry type="library" name="Gradle: xmlpull:xmlpull:1.1.3.1" level="project" />
     <orderEntry type="library" name="Gradle: xpp3:xpp3_min:1.1.4c" level="project" />
@@ -154,10 +184,8 @@
     <orderEntry type="library" name="Gradle: org.itadaki:bzip2:0.9.1" level="project" />
     <orderEntry type="library" name="Gradle: edu.ucar:udunits:4.5.5" level="project" />
     <orderEntry type="library" name="Gradle: org.apache.httpcomponents:httpcore:4.4.4" level="project" />
-    <orderEntry type="library" name="Gradle: joda-time:joda-time:2.8.2" level="project" />
     <orderEntry type="library" name="Gradle: org.quartz-scheduler:quartz:2.2.0" level="project" />
     <orderEntry type="library" name="Gradle: net.sf.ehcache:ehcache-core:2.6.2" level="project" />
-    <orderEntry type="library" name="Gradle: com.google.guava:guava:17.0" level="project" />
     <orderEntry type="library" name="Gradle: com.beust:jcommander:1.35" level="project" />
     <orderEntry type="library" name="Gradle: org.slf4j:jcl-over-slf4j:1.7.13" level="project" />
     <orderEntry type="library" name="Gradle: org.apache.httpcomponents:httpclient:4.5.1" level="project" />
@@ -168,7 +196,6 @@
     <orderEntry type="library" name="Gradle: xerces:xercesImpl:2.11.0" level="project" />
     <orderEntry type="library" name="Gradle: org.apache.ant:ant-launcher:1.9.3" level="project" />
     <orderEntry type="library" name="Gradle: com.fasterxml.jackson.core:jackson-annotations:2.6.3" level="project" />
-    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.core:jackson-core:2.6.3" level="project" />
     <orderEntry type="library" name="Gradle: ch.qos.logback:logback-classic:1.1.3" level="project" />
     <orderEntry type="library" name="Gradle: org.slf4j:jul-to-slf4j:1.7.13" level="project" />
     <orderEntry type="library" name="Gradle: org.slf4j:log4j-over-slf4j:1.7.13" level="project" />

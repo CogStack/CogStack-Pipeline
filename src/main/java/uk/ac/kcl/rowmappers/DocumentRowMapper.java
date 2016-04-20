@@ -59,7 +59,7 @@ public abstract class DocumentRowMapper implements RowMapper<Document>{
                 byte[] value = rs.getBytes(col);
                 if (value != null)
                 {
-                    doc.getAdditionalFields().put(meta.getColumnName(col),value);
+                    doc.getAdditionalFields().put(meta.getColumnLabel(col),value);
                 }
             }
 

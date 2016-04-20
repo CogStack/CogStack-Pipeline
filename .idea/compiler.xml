@@ -19,6 +19,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="turbo-laser_integTest" target="1.8" />
       <module name="turbo-laser_main" target="1.8" />
       <module name="turbo-laser_test" target="1.8" />
     </bytecodeTargetLevel>
