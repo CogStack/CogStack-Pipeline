@@ -43,7 +43,7 @@ import org.springframework.jms.connection.CachingConnectionFactory;
 
 @EnableIntegration
 @Configuration
-@ComponentScan("uk.ac.kcl")
+@ComponentScan("uk.ac.kcl.rowmappers")
 @EnableBatchProcessing
 @Import({          
             DbLineFixerConfiguration.class, 

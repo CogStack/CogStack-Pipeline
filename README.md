@@ -11,18 +11,23 @@ When processing very large natural corpora (10s - 100s of millions of documents)
 
 ## Example useage
 
-The entire process is configured via a single config file, which, in order for Spring Batch to pick up correctly, is determined by the environment variable TURBO_LASER. This should point to a directory, containing the following files (depending on which job you want to run)
+The entire process is configured via a single config file, which, in order for Spring Batch to pick up correctly, is determined by the java environment variable TURBO_LASER. This should point to a directory, containing the following files (note: not all are necessary, only the ones for the jobs you want to run)
+
+Here, you will need to configure input and output database connection details, the activeMQ server and other particulars specific to the job you want to run (for example, the GATE home directory, and the GATE application .xgapp)
 
 > tika.conf
 > gate.conf
 > dBLineFixer.conf
 
 
-Examples of config file are in the test packages, e.g.
+Examples of config file are in the src/test/resourcespackages. Note, these test configurations are split into multiple configs, to ease integration testing, but they could just as easily all be places into one of the above named files in production. Required properties for all jobs are
 
-> postgres_test_config_gate
+> concurrency.properties - set the thread pool size for vertical scaling
+> <db_type>DB.properties - set various JDBC connection settings
+> step.properties - set the chunk (commit) interval for each job 'step' and the skipLimit = number of exceptions before the step fails
 
-Here, you will need to configure input and output database connection details, the activeMQ server and other particulars specific to the job you want to run (for example, the GATE home directory, and the GATE application .xgapp)
+
+The parameters of other configuration files are Job specific (e.g. tika.properties has keepTags for specifying whether to output in XHTML or plaintext). The details of each are described in the comments of the respective example files
 
 Turbo-laser is run with the standard Spring Batch CommandLineJobRunner, specifying the job type and appropriate Spring profiles, and key/value pairs that uniquely identify a job (which can be more or less anything - see Spring Batch documentation for details)
 
@@ -55,15 +60,11 @@ Turbo-laser assumes the job repository schema is already in place in the DB impl
 
 The following types of job/profiles are currently available
 
-dBLineFixerJob/dBLineFixer = fixes a bizarre but somehow frequent occurance in databases where strings of text from a single document are spread across multiple rows
+dBLineFixer = fixes a bizarre but somehow frequent occurance in databases where strings of text from a single document are spread across multiple rows
 
-gateJob/gate = run a generic GATE app. Specify which annotationSets to keep in the config file, or none to keep them all.
+gate = run a generic GATE app. Specify which annotationSets to keep in the config file, or none to keep them all.
 
-tikaJob/Tika
-
-To do:
-Cognition text de-identification
-
+tika = the excellent 'can opener' apache project for all types of files. Extracts text. I've included a custom PDFPreprocessor class, which allows scanned PDF's to undergo Object Character Recognition. This requires ImageMagick and Tesseract to be installed and available on the system path
 
 
 
