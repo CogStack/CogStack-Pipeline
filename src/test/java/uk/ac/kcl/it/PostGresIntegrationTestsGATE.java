@@ -136,11 +136,9 @@ public class PostGresIntegrationTestsGATE {
                 + ", srcTableName text "
                 + ", primaryKeyFieldName text "
                 + ", primaryKeyFieldValue text "
-                + ", binaryFieldName text "
+               // + ", binaryFieldName text "
                 + ", updateTime text "
                 + ", gatejson text )");
-
-
     }
     
     
@@ -175,7 +173,7 @@ public class PostGresIntegrationTestsGATE {
                 + ", xhtml"
                 + ") VALUES (?,?,?,?,?,?)";
         for (int ii = 0; ii < docCount; ii++) {
-            jdbcTemplate.update(sql, "fictionalColumnFieldName","fictionalTableName","fictionalPrimaryKeyFieldName", ii,null,  xhtmlString);
+            jdbcTemplate.update(sql, "fictionalColumnFieldName","fictionalTableName","fictionalPrimaryKeyFieldName", ii,"11-OCT-17",  xhtmlString);
             
         }
         //see what happens with a really long document...

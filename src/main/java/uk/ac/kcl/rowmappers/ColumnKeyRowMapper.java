@@ -16,6 +16,7 @@
 package uk.ac.kcl.rowmappers;
 
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
 
 
 import java.sql.ResultSet;
@@ -26,9 +27,10 @@ import java.sql.SQLException;
  * @author rich
  * @param <T>
  */
+@Component
 public class ColumnKeyRowMapper implements RowMapper{
 
-
+    public ColumnKeyRowMapper(){};
     @Override
     public Long mapRow(ResultSet rs, int i) throws SQLException {
 

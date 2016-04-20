@@ -15,51 +15,43 @@
  */
 package uk.ac.kcl.rowmappers;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 import uk.ac.kcl.model.MultilineDocument;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.springframework.jdbc.core.RowMapper;
 
+import javax.annotation.PostConstruct;
+
 /**
  *
  * @author rich
  */
+@Component
 public class SimpleDocumentRowMapper implements RowMapper<MultilineDocument>{
 
+    public SimpleDocumentRowMapper(){};
     private String documentKeyName;
     private String lineKeyName;
     private String lineContents;
+    @Autowired
+    Environment env;
+
+
+
     @Override
     public MultilineDocument mapRow(ResultSet rs, int i) throws SQLException {
         MultilineDocument doc = new MultilineDocument();
-        doc.setDocumentKey(rs.getString(documentKeyName));
-        doc.setLineKey(rs.getString(lineKeyName));        
-        doc.setLineContents(rs.getString(lineContents));
+        doc.setDocumentKey(rs.getString(env.getProperty("lf.documentKeyName")));
+        doc.setLineKey(rs.getString(env.getProperty("lf.lineKeyName")));
+        doc.setLineContents(rs.getString(env.getProperty("lf.lineContents")));
         return doc;
     }
 
     public String getDocumentKeyName() {
         return documentKeyName;
-    }
-
-    public void setDocumentKeyName(String documentKeyName) {
-        this.documentKeyName = documentKeyName;
-    }
-
-    public String getLineKeyName() {
-        return lineKeyName;
-    }
-
-    public void setLineKeyName(String lineKeyName) {
-        this.lineKeyName = lineKeyName;
-    }
-
-    public String getLineContents() {
-        return lineContents;
-    }
-
-    public void setLineContents(String lineContents) {
-        this.lineContents = lineContents;
     }
     
 }

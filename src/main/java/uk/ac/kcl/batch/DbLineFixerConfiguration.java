@@ -97,13 +97,13 @@ public class DbLineFixerConfiguration {
         return writer;
     }
 
-    @Bean
-    @Qualifier("multiRowDocumentRowmapper")
-    public RowMapper multiRowDocumentRowmapper(
-            @Qualifier("sourceDataSource") DataSource ds) {
-        MultiRowDocumentRowMapper mapper = new MultiRowDocumentRowMapper(ds);
-        return mapper;
-    }
+//    @Bean
+//    @Qualifier("multiRowDocumentRowmapper")
+//    public RowMapper multiRowDocumentRowmapper(
+//            @Qualifier("sourceDataSource") DataSource ds) {
+//        MultiRowDocumentRowMapper simpleMapper = new MultiRowDocumentRowMapper(ds);
+//        return simpleMapper;
+//    }
 
 
     @Bean

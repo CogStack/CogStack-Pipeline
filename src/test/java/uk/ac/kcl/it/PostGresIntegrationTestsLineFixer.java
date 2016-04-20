@@ -15,6 +15,7 @@
  */
 package uk.ac.kcl.it;
 
+import org.springframework.core.env.Environment;
 import uk.ac.kcl.batch.JobConfiguration;
 import java.util.logging.Level;
 import javax.sql.DataSource;
@@ -24,6 +25,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
 import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.UnexpectedJobExecutionException;
@@ -97,11 +99,14 @@ public class PostGresIntegrationTestsLineFixer  {
     @Autowired
     JobOperator jobOperator;
 
-    
+    @Autowired
+    Environment env;
     //@Ignore
     @Test
     public void postgresDBLineFixerPipelineTest() {
-        
+
+        assertNotNull(env.getProperty("lf.documentKeyName"));
+
         initPostGresJobRepository();
         initPostgresMultiLineTextTable();
         insertTestLinesForDBLineFixer(sourceDataSource);

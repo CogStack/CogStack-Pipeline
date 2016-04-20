@@ -24,14 +24,11 @@ import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.integration.partition.BeanFactoryStepLocator;
 import org.springframework.batch.integration.partition.StepExecutionRequestHandler;
+import org.springframework.context.annotation.*;
 import uk.ac.kcl.partitioners.ColumnRangePartitioner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
@@ -46,6 +43,7 @@ import org.springframework.jms.connection.CachingConnectionFactory;
 
 @EnableIntegration
 @Configuration
+@ComponentScan("uk.ac.kcl")
 @EnableBatchProcessing
 @Import({          
             DbLineFixerConfiguration.class, 

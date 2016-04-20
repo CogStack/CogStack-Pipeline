@@ -60,22 +60,15 @@ public class ItemHandlers {
 
 
     @Bean
-    @Qualifier("textDocumentRowMapper")
-    public RowMapper textDocumentRowMapper() {
-        TextDocumentRowMapper documentMetadataRowMapper = new TextDocumentRowMapper();
-        return documentMetadataRowMapper;
-    }
-
-    @Bean
     @StepScope
     @Qualifier("binaryDocumentItemReader")
-    public ItemReader<Document> binaryDocumentItemReader(
+    public ItemReader<BinaryDocument> binaryDocumentItemReader(
             @Value("#{stepExecutionContext[minValue]}") String minValue,
             @Value("#{stepExecutionContext[maxValue]}") String maxValue,
-            @Qualifier("binaryDocumentRowMapper")RowMapper<Document> documentRowmapper,
+            @Qualifier("binaryDocumentRowMapper")RowMapper<BinaryDocument> documentRowmapper,
             @Qualifier("sourceDataSource") DataSource jdbcDocumentSource) throws Exception {
 
-        JdbcPagingItemReader<Document> reader = new JdbcPagingItemReader<>();
+        JdbcPagingItemReader<BinaryDocument> reader = new JdbcPagingItemReader<>();
         reader.setDataSource(jdbcDocumentSource);
         SqlPagingQueryProviderFactoryBean qp = new SqlPagingQueryProviderFactoryBean();
         qp.setSelectClause(env.getProperty("source.selectClause"));
@@ -90,12 +83,6 @@ public class ItemHandlers {
         return reader;
     }
 
-    @Bean
-    @Qualifier("binaryDocumentRowMapper")
-    public RowMapper binaryDocumentRowMapper() {
-        BinaryDocumentRowMapper binaryDocumentRowMapper = new BinaryDocumentRowMapper();
-        return binaryDocumentRowMapper;
-    }
     @Bean
     @Qualifier("simpleItemWriter")
     public ItemWriter<Document> simpleItemWriter(@Qualifier("targetDataSource") DataSource jdbcDocumentTarget) {

@@ -1,11 +1,15 @@
 package uk.ac.kcl.rowmappers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Service;
 import uk.ac.kcl.model.MultilineDocument;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,24 +17,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+@Service("multiRowDocumentRowmapper")
 public class MultiRowDocumentRowMapper implements RowMapper<MultilineDocument> {
-    private final DataSource ds;
-    private final SimpleDocumentRowMapper mapper;
-    private final JdbcTemplate template;
-
-
+    public MultiRowDocumentRowMapper(){}
     @Autowired
+    @Qualifier("sourceDataSource")
+    private DataSource ds;
+    @Autowired
+    public SimpleDocumentRowMapper simpleMapper;
+
+    private JdbcTemplate template;
+
+    @Resource
     Environment env;
 
-    public MultiRowDocumentRowMapper(DataSource ds){
-        this.ds = ds;
-        this.mapper = new SimpleDocumentRowMapper();
-        this.template = new JdbcTemplate(ds);
 
-        mapper.setDocumentKeyName(env.getProperty("documentKeyName"));
-        mapper.setLineContents(env.getProperty("lineContents"));
-        mapper.setLineKeyName(env.getProperty("lineKeyName"));
+
+    @PostConstruct
+    public void init(){
+        this.template = new JdbcTemplate(ds);
     }
+
 
     @Override
     public MultilineDocument mapRow(ResultSet rs, int i) throws SQLException {
@@ -52,7 +59,7 @@ public class MultiRowDocumentRowMapper implements RowMapper<MultilineDocument> {
                 .append(env.getProperty("lf.lineKeyName"))
                 .append(" DESC");
 
-        List<MultilineDocument> docs = template.query(sql.toString(), mapper);
+        List<MultilineDocument> docs = template.query(sql.toString(), simpleMapper);
 
         TreeMap<Integer, String> map = new TreeMap<>();
         for (MultilineDocument doc : docs) {

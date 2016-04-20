@@ -133,7 +133,7 @@ public class PostGresIntegrationTestsTika {
                 + ", srcTableName text "
                 + ", primaryKeyFieldName text "
                 + ", primaryKeyFieldValue text "
-                + ", binaryFieldName text "
+               // + ", binaryFieldName text "
                 + ", updateTime text "
                 + ", xhtml text )");
     }
