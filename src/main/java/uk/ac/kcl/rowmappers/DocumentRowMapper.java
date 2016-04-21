@@ -22,6 +22,7 @@ import uk.ac.kcl.model.BinaryDocument;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 import org.springframework.jdbc.core.RowMapper;
 import uk.ac.kcl.model.Document;
@@ -52,12 +53,13 @@ public abstract class DocumentRowMapper implements RowMapper<Document>{
 
         //add additional query fields for ES export
         ResultSetMetaData meta = rs.getMetaData();
+        List<String> fieldsToIgnore = Arrays.asList(env.getProperty("elasticsearch.excludeFromIndexing").split(","));
         int colCount = meta.getColumnCount();
 
             for (int col=1; col <= colCount; col++)
             {
                 Object value = rs.getObject(col);
-                if (value != null)
+                if (value != null && !fieldsToIgnore.contains(meta.getColumnLabel(col)))
                 {
                     doc.getAdditionalFields().put(meta.getColumnLabel(col),value);
                 }

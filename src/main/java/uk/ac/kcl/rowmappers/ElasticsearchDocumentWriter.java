@@ -24,8 +24,10 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 
 
 /**
@@ -84,7 +86,12 @@ public class ElasticsearchDocumentWriter implements ItemWriter<Document> {
     @Override
     public final void write(List<? extends Document> documents) throws Exception {
         BulkRequestBuilder bulkRequest = client.prepareBulk();
+
         for (Document doc : documents) {
+            //include outputs of processing
+            if(doc.getOutputData()!=null) {
+                doc.getAdditionalFields().put(env.getProperty("elasticsearch.processedFieldName"), doc.getOutputData());
+            }
             IndexRequestBuilder request = client.prepareIndex(
                     env.getProperty("elasticsearch.index.name"),
                     env.getProperty("elasticsearch.type")).setSource(
