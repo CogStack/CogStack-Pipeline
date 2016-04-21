@@ -10,6 +10,7 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.shield.ShieldPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemWriter;
@@ -51,6 +52,8 @@ public class ElasticsearchDocumentWriter implements ItemWriter<Document> {
                             .put("shield.user", env.getProperty("elasticsearch.shield.user"))
                             .put("shield.ssl.keystore.path", env.getProperty("elasticsearch.shield.ssl.keystore.path"))
                             .put("shield.ssl.keystore.password", env.getProperty("elasticsearch.shield.ssl.keystore.password"))
+                            .put("shield.ssl.truststore.path", env.getProperty("elasticsearch.shield.ssl.truststore.path"))
+                            .put("shield.ssl.truststore.password", env.getProperty("elasticsearch.shield.ssl.truststore.password"))
                             .put("shield.transport.ssl", env.getProperty("elasticsearch.shield.transport.ssl"))
                             .build();
                 }else {
@@ -62,7 +65,9 @@ public class ElasticsearchDocumentWriter implements ItemWriter<Document> {
 
 
 
-        client = TransportClient.builder().settings(settings)
+        client = TransportClient.builder()
+                .addPlugin(ShieldPlugin.class)
+                .settings(settings)
                 .build()
                 .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(
                         env.getProperty("elasticsearch.cluster.host")),
