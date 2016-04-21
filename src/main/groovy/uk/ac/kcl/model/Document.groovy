@@ -12,5 +12,5 @@ abstract class Document {
     String primaryKeyFieldValue
     String timeStamp
     String outputData
-    HashMap<String,byte[]> additionalFields = new HashMap<String,byte[]>();
+    HashMap<String,Object> additionalFields = new HashMap<String,Object>();
 }

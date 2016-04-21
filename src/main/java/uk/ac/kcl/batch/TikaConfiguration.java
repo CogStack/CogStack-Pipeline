@@ -67,7 +67,7 @@ public class TikaConfiguration {
     @Bean
     public Step tikaSlaveStep(    
             @Qualifier("binaryDocumentItemReader")ItemReader<BinaryDocument> reader,
-            @Qualifier("simpleItemWriter")  ItemWriter<Document> writer,
+            @Qualifier("esDocumentWriter")  ItemWriter<Document> writer,
             @Qualifier("tikaItemProcessor")   ItemProcessor<BinaryDocument, BinaryDocument> processor,
             @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor,
             StepBuilderFactory stepBuilderFactory
