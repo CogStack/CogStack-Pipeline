@@ -39,38 +39,16 @@ public class JobCompleteNotificationListener extends JobExecutionListenerSupport
 
 	private static final Logger log = LoggerFactory.getLogger(JobCompleteNotificationListener.class);
 
-//        @Autowired
-//	public JDBCDocumentTarget jdbcDocumentTarget;
 
-	private DataSource targetDataSource;        
-        
-        @Autowired
-        public void setDataSource(@Qualifier("targetDataSource") DataSource targetDataSource){
-            this.targetDataSource = targetDataSource;
-        }
-                
-                
-        @Autowired
-        Environment env;
-        
-        @Autowired
-        @Qualifier("validationQueryRowMapper")        
-        RowMapper<BinaryDocument> rowmapper; 
+
+
+
 
 
 	@Override
 	public void afterJob(JobExecution jobExecution) {
 		if(jobExecution.getStatus() == BatchStatus.COMPLETED) {
 			log.info("!!! JOB FINISHED! Time to verify the results");
-
-                            JdbcTemplate jdbcTemplate = new JdbcTemplate(targetDataSource);
-			List<BinaryDocument> results = 
-                                jdbcTemplate
-                                .query(env.getProperty("target.validationQuery"), rowmapper);
-
-			for (BinaryDocument doc : results) {
-				log.info("Found <" + doc.getPrimaryKeyFieldValue() + "> in the database.");
-			}
 
 		}
 	}

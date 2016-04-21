@@ -61,14 +61,7 @@ public class ColumnValuePartitioner implements Partitioner {
 		jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 
-	/**
-	 * Partition a database table assuming that the data in the column specified
-	 * are uniformly distributed. The execution context values will have keys
-	 * <code>minValue</code> and <code>maxValue</code> specifying the range of
-	 * values to consider in each partition.
-	 *
-	 * @see Partitioner#partition(int)
-	 */
+
 	@Override
 	public Map<String, ExecutionContext> partition(int gridSize) {
 

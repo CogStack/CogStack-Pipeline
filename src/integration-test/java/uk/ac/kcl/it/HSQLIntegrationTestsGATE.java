@@ -64,7 +64,7 @@ import uk.ac.kcl.batch.GateConfiguration;
                 "classpath:gate.properties",
                 "classpath:concurrency.properties",
                 "classpath:hsql_db.properties",                                                
-                "classpath:step.properties"})
+                "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
     JobConfiguration.class,
     BatchConfigurer.class,

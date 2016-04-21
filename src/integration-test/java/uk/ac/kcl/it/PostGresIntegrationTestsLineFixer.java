@@ -59,7 +59,7 @@ import uk.ac.kcl.batch.BatchConfigurer;
         "classpath:dBLineFixer.properties",
         "classpath:elasticsearch.properties",
         "classpath:postgres_db.properties",
-        "classpath:step.properties"})
+        "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
         JobConfiguration.class,
         BatchConfigurer.class},

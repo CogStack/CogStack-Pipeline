@@ -61,7 +61,7 @@ import uk.ac.kcl.batch.GateConfiguration;
                 "classpath:concurrency.properties",
                 "classpath:postgres_db.properties",
                 "classpath:elasticsearch.properties",
-                "classpath:step.properties"})
+                "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
     JobConfiguration.class,
     BatchConfigurer.class,

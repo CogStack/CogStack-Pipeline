@@ -35,6 +35,17 @@ public class ItemHandlers {
 
 
 
+    private String getPartitioningLogic(String minValue, String maxValue, String previousSuccessfulJobStartTime){
+        String returnString;
+        if(env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("true")) {
+            returnString = "WHERE " +env.getProperty("timeStamp") + " >= "+ previousSuccessfulJobStartTime
+                    + "AND " + env.getProperty("columntoPartition")
+                    + " BETWEEN " + minValue + " AND " + maxValue ;
+        }else{
+            returnString = ("WHERE " + env.getProperty("columntoPartition") + " BETWEEN " + minValue + " AND " + maxValue) ;
+        }
+        return returnString;
+    }
 
     @Bean
     @StepScope
@@ -42,6 +53,7 @@ public class ItemHandlers {
     public ItemReader<TextDocument> textDocumentItemReader(
             @Value("#{stepExecutionContext[minValue]}") String minValue,
             @Value("#{stepExecutionContext[maxValue]}") String maxValue,
+            @Value("#{jobExecutionContext[previousSuccessfulJobStartTime]}") String previousSuccessfulJobStartTime,
             @Qualifier("textDocumentRowMapper")RowMapper<TextDocument> documentRowmapper,
             @Qualifier("sourceDataSource") DataSource jdbcDocumentSource) throws Exception {
 
@@ -51,7 +63,7 @@ public class ItemHandlers {
         qp.setSelectClause(env.getProperty("source.selectClause"));
         qp.setFromClause(env.getProperty("source.fromClause"));
         qp.setSortKey(env.getProperty("source.sortKey"));
-        qp.setWhereClause("WHERE " + env.getProperty("columntoPartition") + " BETWEEN " + minValue + " AND " + maxValue) ;
+        qp.setWhereClause(getPartitioningLogic(minValue,maxValue,previousSuccessfulJobStartTime));
         qp.setDataSource(jdbcDocumentSource);
         reader.setFetchSize(Integer.parseInt(env.getProperty("source.pageSize")));
         reader.setQueryProvider(qp.getObject());
@@ -67,6 +79,7 @@ public class ItemHandlers {
     public ItemReader<BinaryDocument> binaryDocumentItemReader(
             @Value("#{stepExecutionContext[minValue]}") String minValue,
             @Value("#{stepExecutionContext[maxValue]}") String maxValue,
+            @Value("#{jobExecutionContext[previousSuccessfulJobStartTime]}") String previousSuccessfulJobStartTime,
             @Qualifier("binaryDocumentRowMapper")RowMapper<BinaryDocument> documentRowmapper,
             @Qualifier("sourceDataSource") DataSource jdbcDocumentSource) throws Exception {
 
@@ -76,7 +89,7 @@ public class ItemHandlers {
         qp.setSelectClause(env.getProperty("source.selectClause"));
         qp.setFromClause(env.getProperty("source.fromClause"));
         qp.setSortKey(env.getProperty("source.sortKey"));
-        qp.setWhereClause("WHERE " + env.getProperty("columntoPartition") + " BETWEEN " + minValue + " AND " + maxValue) ;
+        qp.setWhereClause(getPartitioningLogic(minValue,maxValue,previousSuccessfulJobStartTime));
         qp.setDataSource(jdbcDocumentSource);
         reader.setFetchSize(Integer.parseInt(env.getProperty("source.pageSize")));
         reader.setQueryProvider(qp.getObject());

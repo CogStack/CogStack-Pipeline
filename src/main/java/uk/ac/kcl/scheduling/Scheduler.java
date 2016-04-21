@@ -16,6 +16,7 @@
 package uk.ac.kcl.scheduling;
 
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.Job;
@@ -35,6 +36,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Scheduled;
 import uk.ac.kcl.batch.ScheduledJobConfiguration;
+import utils.BatchJobUtils;
 
 /**
  *
@@ -49,6 +51,8 @@ public class Scheduler {
 
 
     @Autowired
+    JobExplorer jobExplorer;
+    @Autowired
     JobLauncher jobLauncher;
 
     @Autowired
@@ -59,7 +63,8 @@ public class Scheduler {
     @Scheduled(cron = "${scheduler.rate}")
     public void doTask()  {
 
-            JobParameters param = new JobParametersBuilder().addString("startTime", new Date().toString()).toJobParameters();
+
+        JobParameters param = new JobParametersBuilder().addString("previousSuccessfulJobStartTime", BatchJobUtils.getLastSuccessfulJobDate()).toJobParameters();
             try {
                 JobExecution execution = jobLauncher.run(job, param);
                 System.out.println(execution.getStatus().toString());
