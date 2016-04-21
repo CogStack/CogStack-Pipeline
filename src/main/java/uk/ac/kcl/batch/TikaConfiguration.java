@@ -64,10 +64,11 @@ public class TikaConfiguration {
         return new TikaDocumentItemProcessor();
     }
 
+
     @Bean
     public Step tikaSlaveStep(    
             @Qualifier("binaryDocumentItemReader")ItemReader<BinaryDocument> reader,
-            @Qualifier("esDocumentWriter")  ItemWriter<Document> writer,
+            @Qualifier("compositeESandJdbcItemWriter")  ItemWriter<Document> writer,
             @Qualifier("tikaItemProcessor")   ItemProcessor<BinaryDocument, BinaryDocument> processor,
             @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor,
             StepBuilderFactory stepBuilderFactory

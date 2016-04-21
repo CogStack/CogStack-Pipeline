@@ -78,7 +78,7 @@ public class GateConfiguration {
     @Bean
     public Step gateSlaveStep(
             @Qualifier("textDocumentItemReader") ItemReader<TextDocument> reader,
-            @Qualifier("simpleItemWriter") ItemWriter<Document> writer,
+            @Qualifier("compositeESandJdbcItemWriter") ItemWriter<Document> writer,
             @Qualifier("gateItemProcessor") ItemProcessor<TextDocument, TextDocument> processor,
             StepBuilderFactory stepBuilderFactory,
             @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor

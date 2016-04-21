@@ -52,8 +52,8 @@ public class ElasticsearchDocumentWriter implements ItemWriter<Document> {
                             .put("shield.user", env.getProperty("elasticsearch.shield.user"))
                             .put("shield.ssl.keystore.path", env.getProperty("elasticsearch.shield.ssl.keystore.path"))
                             .put("shield.ssl.keystore.password", env.getProperty("elasticsearch.shield.ssl.keystore.password"))
-                            .put("shield.ssl.truststore.path", env.getProperty("elasticsearch.shield.ssl.truststore.path"))
-                            .put("shield.ssl.truststore.password", env.getProperty("elasticsearch.shield.ssl.truststore.password"))
+                            //.put("shield.ssl.truststore.path", env.getProperty("elasticsearch.shield.ssl.truststore.path"))
+                            //.put("shield.ssl.truststore.password", env.getProperty("elasticsearch.shield.ssl.truststore.password"))
                             .put("shield.transport.ssl", env.getProperty("elasticsearch.shield.transport.ssl"))
                             .build();
                 }else {
