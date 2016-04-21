@@ -6,6 +6,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
+import uk.ac.kcl.model.Document;
 import uk.ac.kcl.model.MultilineDocument;
 
 import javax.annotation.PostConstruct;
@@ -18,7 +19,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 @Service("multiRowDocumentRowmapper")
-public class MultiRowDocumentRowMapper implements RowMapper<MultilineDocument> {
+public class MultiRowDocumentRowMapper <B extends Document> extends DocumentRowMapper {
     public MultiRowDocumentRowMapper(){}
     @Autowired
     @Qualifier("sourceDataSource")
@@ -40,7 +41,7 @@ public class MultiRowDocumentRowMapper implements RowMapper<MultilineDocument> {
 
 
     @Override
-    public MultilineDocument mapRow(ResultSet rs, int i) throws SQLException {
+    public Document mapRow(ResultSet rs, int i) throws SQLException {
 
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT ")
@@ -65,15 +66,14 @@ public class MultiRowDocumentRowMapper implements RowMapper<MultilineDocument> {
         for (MultilineDocument doc : docs) {
             map.put(Integer.valueOf(doc.getLineKey()), doc.getLineContents());
         }
-        MultilineDocument doc = new MultilineDocument();
-        doc.setDocumentKey(rs.getString(env.getProperty("lf.documentKeyName")));
-        doc.setTimeStamp(rs.getString(env.getProperty("lf.timeStamp")));
+        Document doc = new MultilineDocument();
+        mapFields(doc,rs);
 
         StringBuilder sb2 = new StringBuilder();
         for (Map.Entry<Integer, String> entry : map.entrySet()) {
             sb2.append(entry.getValue());
         }
-        doc.setLineContents(sb2.toString());
+        doc.setOutputData(sb2.toString());
         return doc;
     }
 }

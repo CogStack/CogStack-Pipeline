@@ -17,6 +17,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.RowMapper;
 import uk.ac.kcl.model.BinaryDocument;
 import uk.ac.kcl.model.Document;
+import uk.ac.kcl.model.MultilineDocument;
 import uk.ac.kcl.model.TextDocument;
 
 import javax.annotation.Resource;
@@ -107,4 +108,15 @@ public class ItemHandlers {
         return writer;
 
     }
+
+//    @Bean
+//    @Qualifier("dBLineFixerItemWriter")
+//    public ItemWriter<Document> dBLineFixerItemWriter(
+//            @Qualifier("targetDataSource") DataSource jdbcDocumentTarget) {
+//        JdbcBatchItemWriter<Document> writer = new JdbcBatchItemWriter<>();
+//        writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
+//        writer.setSql(env.getProperty("target.Sql"));
+//        writer.setDataSource(jdbcDocumentTarget);
+//        return writer;
+//    }
 }

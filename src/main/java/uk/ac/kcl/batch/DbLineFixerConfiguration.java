@@ -30,13 +30,12 @@ import org.springframework.batch.item.database.JdbcPagingItemReader;
 import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jdbc.core.RowMapper;
+import uk.ac.kcl.itemHandlers.ItemHandlers;
+import uk.ac.kcl.model.Document;
 import uk.ac.kcl.model.MultilineDocument;
 import uk.ac.kcl.rowmappers.MultiRowDocumentRowMapper;
 
@@ -45,6 +44,7 @@ import uk.ac.kcl.rowmappers.MultiRowDocumentRowMapper;
  * @author King's College London, Richard Jackson <richgjackson@gmail.com>
  */
 @Configuration
+@Import(ItemHandlers.class)
 @Profile("dBLineFixer")
 @PropertySource("file:${TURBO_LASER}/dBLineFixer.conf")
 public class DbLineFixerConfiguration {
@@ -86,16 +86,6 @@ public class DbLineFixerConfiguration {
     }
 
 
-    @Bean
-    @Qualifier("dBLineFixerItemWriter")
-    public ItemWriter<MultilineDocument> dBLineFixerItemWriter(
-            @Qualifier("targetDataSource") DataSource jdbcDocumentTarget) {
-        JdbcBatchItemWriter<MultilineDocument> writer = new JdbcBatchItemWriter<>();
-        writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
-        writer.setSql(env.getProperty("target.Sql"));
-        writer.setDataSource(jdbcDocumentTarget);
-        return writer;
-    }
 
 //    @Bean
 //    @Qualifier("multiRowDocumentRowmapper")
@@ -109,7 +99,7 @@ public class DbLineFixerConfiguration {
     @Bean
     public Step dBLineFixerSlaveStep(
             @Qualifier("dBLineFixerItemReader") ItemReader<MultilineDocument> reader,
-            @Qualifier("dBLineFixerItemWriter")  ItemWriter<MultilineDocument> writer,
+            @Qualifier("compositeESandJdbcItemWriter")  ItemWriter<Document> writer,
             @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor,
             StepBuilderFactory stepBuilderFactory
     ) {

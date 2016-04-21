@@ -46,32 +46,34 @@ public class ElasticsearchDocumentWriter implements ItemWriter<Document> {
     public void init() throws UnknownHostException {
         Settings settings;
 
-                if(env.getProperty("elasticsearch.shield.enabled").equalsIgnoreCase("true")){
-                    settings =Settings.settingsBuilder()
-                            .put("cluster.name", env.getProperty("elasticsearch.cluster.name"))
-                            .put("shield.user", env.getProperty("elasticsearch.shield.user"))
-                            .put("shield.ssl.keystore.path", env.getProperty("elasticsearch.shield.ssl.keystore.path"))
-                            .put("shield.ssl.keystore.password", env.getProperty("elasticsearch.shield.ssl.keystore.password"))
-                            //.put("shield.ssl.truststore.path", env.getProperty("elasticsearch.shield.ssl.truststore.path"))
-                            //.put("shield.ssl.truststore.password", env.getProperty("elasticsearch.shield.ssl.truststore.password"))
-                            .put("shield.transport.ssl", env.getProperty("elasticsearch.shield.transport.ssl"))
-                            .build();
-                }else {
-                    settings =Settings.settingsBuilder()
-                            .put("cluster.name", env.getProperty("elasticsearch.cluster.name")).build();
-                }
-//Add transport addresses and do something with the client...
+        if(env.getProperty("elasticsearch.shield.enabled").equalsIgnoreCase("true")){
+            settings =Settings.settingsBuilder()
+                    .put("cluster.name", env.getProperty("elasticsearch.cluster.name"))
+                    .put("shield.user", env.getProperty("elasticsearch.shield.user"))
+                    .put("shield.ssl.keystore.path", env.getProperty("elasticsearch.shield.ssl.keystore.path"))
+                    .put("shield.ssl.keystore.password", env.getProperty("elasticsearch.shield.ssl.keystore.password"))
+                    //.put("shield.ssl.truststore.path", env.getProperty("elasticsearch.shield.ssl.truststore.path"))
+                    //.put("shield.ssl.truststore.password", env.getProperty("elasticsearch.shield.ssl.truststore.password"))
+                    .put("shield.transport.ssl", env.getProperty("elasticsearch.shield.transport.ssl"))
+                    .build();
+            client = TransportClient.builder()
+                    .addPlugin(ShieldPlugin.class)
+                    .settings(settings)
+                    .build()
+                    .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(
+                            env.getProperty("elasticsearch.cluster.host")),
+                            Integer.valueOf(env.getProperty("elasticsearch.cluster.port"))));
+        }else {
+            settings =Settings.settingsBuilder()
+                    .put("cluster.name", env.getProperty("elasticsearch.cluster.name")).build();
+            client = TransportClient.builder()
+                    .settings(settings)
+                    .build()
+                    .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(
+                            env.getProperty("elasticsearch.cluster.host")),
+                            Integer.valueOf(env.getProperty("elasticsearch.cluster.port"))));
+        }
 
-
-
-
-        client = TransportClient.builder()
-                .addPlugin(ShieldPlugin.class)
-                .settings(settings)
-                .build()
-                .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(
-                        env.getProperty("elasticsearch.cluster.host")),
-                        Integer.valueOf(env.getProperty("elasticsearch.cluster.port"))));
         timeout = Long.valueOf(env.getProperty("elasticsearch.response.timeout"));
     }
     @PreDestroy

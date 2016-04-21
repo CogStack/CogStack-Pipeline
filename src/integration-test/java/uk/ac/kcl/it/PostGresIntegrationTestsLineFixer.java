@@ -53,15 +53,16 @@ import uk.ac.kcl.batch.BatchConfigurer;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @TestPropertySource({
-		"classpath:postgres_test_config_line_fixer.properties",
-                "classpath:jms.properties",
-                "classpath:concurrency.properties",
-                "classpath:dBLineFixer.properties",  
-                "classpath:postgres_db.properties",                                                
-                "classpath:step.properties"})
+        "classpath:postgres_test_config_line_fixer.properties",
+        "classpath:jms.properties",
+        "classpath:concurrency.properties",
+        "classpath:dBLineFixer.properties",
+        "classpath:elasticsearch.properties",
+        "classpath:postgres_db.properties",
+        "classpath:step.properties"})
 @ContextConfiguration(classes = {
-    JobConfiguration.class,
-    BatchConfigurer.class},
+        JobConfiguration.class,
+        BatchConfigurer.class},
         loader = AnnotationConfigContextLoader.class)
 public class PostGresIntegrationTestsLineFixer  {
 
@@ -116,58 +117,69 @@ public class PostGresIntegrationTestsLineFixer  {
         } catch (NoSuchJobException | JobParametersNotFoundException | JobRestartException | JobExecutionAlreadyRunningException | JobInstanceAlreadyCompleteException | UnexpectedJobExecutionException | JobParametersInvalidException ex) {
             java.util.logging.Logger.getLogger(PostGresIntegrationTestsLineFixer.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }    
-        
-    
+    }
+
+
     private void initPostgresMultiLineTextTable(){
         sourceTemplate.execute("DROP TABLE IF EXISTS tblInputDocs");
         sourceTemplate.execute("CREATE TABLE tblInputDocs"
                 + "( ID  SERIAL PRIMARY KEY"
-                + ", TIMESTAMP text "
-                + ", DOC_ID integer "
+                + ", srcColumnFieldName text "
+                + ", srcTableName text "
+                + ", primaryKeyFieldName text "
+                + ", primaryKeyFieldValue integer "
+                + ", binaryFieldName text "
+                + ", updateTime text "
+                //+ ", DOC_ID integer "
                 + ", LINE_ID integer "
                 + ", LINE_TEXT text )"
-                );
-
-        targetTemplate.execute("DROP TABLE IF EXISTS  tblOutputDocs");
+        );
+        targetTemplate.execute("DROP TABLE IF EXISTS tblOutputDocs");
         targetTemplate.execute("CREATE TABLE tblOutputDocs "
                 + "( ID  SERIAL PRIMARY KEY"
-                + ", TIMESTAMP text"
-                + ", DOC_ID integer"
+                + ", srcColumnFieldName text "
+                + ", srcTableName text "
+                + ", primaryKeyFieldName text "
+                + ", primaryKeyFieldValue text "
+                // + ", binaryFieldName text "
+                + ", updateTime text "
                 + ", LINE_TEXT_CONCAT text )");
     }
-    
-    
+
+
     private void initPostGresJobRepository(){
         dropTablesResource = new ClassPathResource("org/springframework/batch/core/schema-drop-postgresql.sql");
         makeTablesResource = new ClassPathResource("org/springframework/batch/core/schema-postgresql.sql");
         rdp.addScript(dropTablesResource);
         rdp.addScript(makeTablesResource);
-        rdp.execute(jdbcTargetDocumentFinder);        
+        rdp.execute(jdbcTargetDocumentFinder);
     }
-      
 
-    
+
+
     private void insertTestLinesForDBLineFixer(DataSource ds){
         JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
         int docCount = 10;
         int lineCountIncrementer = 1;
         String sql = "INSERT INTO tblInputDocs "
-                + "( DOC_ID"
-                + ", TIMESTAMP "
+                + "( srcColumnFieldName"
+                + ", srcTableName"
+                + ", primaryKeyFieldName"
+                + ", primaryKeyFieldValue"
+                + ", updateTime"
                 + ", LINE_ID"
                 + ", LINE_TEXT"
-                + ") VALUES (?,?,?,?)";
+                + ") VALUES (?,?,?,?,?,?,?)";
         for (int i = 0; i <= docCount; i++) {
             for(int j = 0;j < lineCountIncrementer; j++){
                 String text = "This is DOC_ID:" + i + " and LINE_ID:" + j ;
-                jdbcTemplate.update(sql, i,"17-JAN-82",j,text);
+                jdbcTemplate.update(sql, "fictionalColumnFieldName","fictionalTableName","fictionalPrimaryKeyFieldName",i,"11-OCT-17",j,text);
             }
             lineCountIncrementer++;
             if(lineCountIncrementer % 50 == 0){
                 lineCountIncrementer = 0;
             }
-        }                
+        }
+
     }
-    
 }
