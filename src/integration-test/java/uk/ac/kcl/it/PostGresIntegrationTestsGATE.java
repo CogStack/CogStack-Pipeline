@@ -156,7 +156,7 @@ public class PostGresIntegrationTestsGATE {
     
     private void insertTestXHTMLForGate(DataSource ds, boolean includeGateBreaker) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
-        int docCount = 10;
+        int docCount = 10000;
         byte[] bytes = null;
         try {
             bytes = IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream("xhtml_test"));
