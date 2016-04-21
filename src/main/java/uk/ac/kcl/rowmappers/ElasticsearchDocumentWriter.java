@@ -43,9 +43,24 @@ public class ElasticsearchDocumentWriter implements ItemWriter<Document> {
     private Client client;
     @PostConstruct
     public void init() throws UnknownHostException {
-        Settings settings = Settings.settingsBuilder()
-                .put("cluster.name", env.getProperty("elasticsearch.cluster.name")).build();
+        Settings settings;
+
+                if(env.getProperty("elasticsearch.shield.enabled").equalsIgnoreCase("true")){
+                    settings =Settings.settingsBuilder()
+                            .put("cluster.name", env.getProperty("elasticsearch.cluster.name"))
+                            .put("shield.user", env.getProperty("elasticsearch.shield.user"))
+                            .put("shield.ssl.keystore.path", env.getProperty("elasticsearch.shield.ssl.keystore.path"))
+                            .put("shield.ssl.keystore.password", env.getProperty("elasticsearch.shield.ssl.keystore.password"))
+                            .put("shield.transport.ssl", env.getProperty("elasticsearch.shield.transport.ssl"))
+                            .build();
+                }else {
+                    settings =Settings.settingsBuilder()
+                            .put("cluster.name", env.getProperty("elasticsearch.cluster.name")).build();
+                }
 //Add transport addresses and do something with the client...
+
+
+
 
         client = TransportClient.builder().settings(settings)
                 .build()
