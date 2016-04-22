@@ -35,13 +35,20 @@ public class ItemHandlers {
 
     private String getPartitioningLogic(String minValue, String maxValue, String lastSuccessfulItemDate){
         String returnString;
-        if(env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("true")&& lastSuccessfulItemDate!= null) {
+        if(env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("true")
+                && lastSuccessfulItemDate!= null) {
             returnString = "WHERE " +env.getProperty("timeStamp") + " >= '"+ lastSuccessfulItemDate
+                    + "' AND " + env.getProperty("columntoPartition")
+                    + " BETWEEN '" + minValue + "' AND '" + maxValue +"'";
+        }else if (env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("true")
+                && env.getProperty("firstJobStartDate")!= null) {
+            returnString = "WHERE " +env.getProperty("firstJobStartDate") + " >= '"+ lastSuccessfulItemDate
                     + "' AND " + env.getProperty("columntoPartition")
                     + " BETWEEN '" + minValue + "' AND '" + maxValue +"'";
         }else{
             returnString = ("WHERE " + env.getProperty("columntoPartition") + " BETWEEN " + minValue + " AND " + maxValue) ;
         }
+
         return returnString;
     }
 
