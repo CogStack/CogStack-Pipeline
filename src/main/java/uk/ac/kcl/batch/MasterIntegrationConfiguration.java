@@ -101,9 +101,12 @@ public class MasterIntegrationConfiguration {
         public Job tikaJob(JobBuilderFactory jobs,
                            StepBuilderFactory steps,
                            @Qualifier("columnRangePartitioner")Partitioner partitioner,
-                           @Qualifier("partitionHandler") PartitionHandler partitionHandler) {
+                           @Qualifier("partitionHandler") PartitionHandler partitionHandler,
+                           JobCompleteNotificationListener jobCompleteNotificationListener
+                           ) {
             Job job = jobs.get("tikaJob")
                     .incrementer(new RunIdIncrementer())
+                    .listener(jobCompleteNotificationListener)
                     .flow(
                             steps
                                     .get("tikaMasterStep")
@@ -126,9 +129,11 @@ public class MasterIntegrationConfiguration {
         public Job dBLineFixerJob(JobBuilderFactory jobs,
                                   StepBuilderFactory steps,
                                   @Qualifier("columnRangePartitioner")Partitioner partitioner,
-                                  @Qualifier("partitionHandler") PartitionHandler gatePartitionHandler) {
+                                  @Qualifier("partitionHandler") PartitionHandler gatePartitionHandler,
+                                  JobCompleteNotificationListener jobCompleteNotificationListener    ) {
             Job job = jobs.get("dBLineFixerJob")
                     .incrementer(new RunIdIncrementer())
+                    .listener(jobCompleteNotificationListener)
                     .flow(
                             steps
                                     .get("dBLineFixerMasterStep")
