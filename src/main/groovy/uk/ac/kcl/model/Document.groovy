@@ -12,5 +12,5 @@ abstract class Document {
     String primaryKeyFieldValue
     String timeStamp
     String outputData
-    HashMap<String,Object> additionalFields = new HashMap<String,Object>();
+    LinkedHashMap<String,Object> additionalFields = new HashMap<String,Object>();
 }
