@@ -43,7 +43,7 @@ import org.springframework.jms.connection.CachingConnectionFactory;
 
 @EnableIntegration
 @Configuration
-@ComponentScan("uk.ac.kcl.rowmappers")
+@ComponentScan({"uk.ac.kcl.rowmappers","uk.ac.kcl.utils"})
 @EnableBatchProcessing
 @Import({          
             DbLineFixerConfiguration.class, 
@@ -83,14 +83,7 @@ public class JobConfiguration {
         return exec;
     }    
 
-    @Bean
-    public Partitioner partitioner(@Qualifier("sourceDataSource") DataSource jdbcDocumentSource) {
-        ColumnRangePartitioner columnRangePartitioner = new ColumnRangePartitioner();
-        columnRangePartitioner.setColumn(env.getProperty("columntoPartition"));
-        columnRangePartitioner.setTable(env.getProperty("tableToPartition"));
-        columnRangePartitioner.setDataSource(jdbcDocumentSource);
-        return columnRangePartitioner;
-    }
+
     
     @Value("${source.username}")
     String sourceUserName;

@@ -38,9 +38,9 @@ public class ItemHandlers {
     private String getPartitioningLogic(String minValue, String maxValue, String previousSuccessfulJobStartTime){
         String returnString;
         if(env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("true")) {
-            returnString = "WHERE " +env.getProperty("timeStamp") + " >= "+ previousSuccessfulJobStartTime
-                    + "AND " + env.getProperty("columntoPartition")
-                    + " BETWEEN " + minValue + " AND " + maxValue ;
+            returnString = "WHERE " +env.getProperty("timeStamp") + " >= '"+ previousSuccessfulJobStartTime
+                    + "' AND " + env.getProperty("columntoPartition")
+                    + " BETWEEN '" + minValue + "' AND '" + maxValue +"'";
         }else{
             returnString = ("WHERE " + env.getProperty("columntoPartition") + " BETWEEN " + minValue + " AND " + maxValue) ;
         }
@@ -53,7 +53,7 @@ public class ItemHandlers {
     public ItemReader<TextDocument> textDocumentItemReader(
             @Value("#{stepExecutionContext[minValue]}") String minValue,
             @Value("#{stepExecutionContext[maxValue]}") String maxValue,
-            @Value("#{jobExecutionContext[previousSuccessfulJobStartTime]}") String previousSuccessfulJobStartTime,
+            @Value("#{stepExecutionContext[previousSuccessfulJobStartTime]}") String previousSuccessfulJobStartTime,
             @Qualifier("textDocumentRowMapper")RowMapper<TextDocument> documentRowmapper,
             @Qualifier("sourceDataSource") DataSource jdbcDocumentSource) throws Exception {
 
@@ -79,7 +79,7 @@ public class ItemHandlers {
     public ItemReader<BinaryDocument> binaryDocumentItemReader(
             @Value("#{stepExecutionContext[minValue]}") String minValue,
             @Value("#{stepExecutionContext[maxValue]}") String maxValue,
-            @Value("#{jobExecutionContext[previousSuccessfulJobStartTime]}") String previousSuccessfulJobStartTime,
+            @Value("#{stepExecutionContext[previousSuccessfulJobStartTime]}") String previousSuccessfulJobStartTime,
             @Qualifier("binaryDocumentRowMapper")RowMapper<BinaryDocument> documentRowmapper,
             @Qualifier("sourceDataSource") DataSource jdbcDocumentSource) throws Exception {
 

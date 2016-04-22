@@ -15,6 +15,7 @@
  */
 package uk.ac.kcl.batch;
 
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -25,6 +26,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  */
 @Configuration
 @Import(JobConfiguration.class)
+@ComponentScan({"uk.ac.kcl.utils"})
 @EnableScheduling
 public class ScheduledJobConfiguration {
 

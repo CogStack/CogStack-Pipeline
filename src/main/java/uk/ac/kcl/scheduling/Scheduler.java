@@ -16,7 +16,6 @@
 package uk.ac.kcl.scheduling;
 
 import java.util.Date;
-import java.util.List;
 import java.util.logging.Level;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.Job;
@@ -26,17 +25,15 @@ import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.batch.core.launch.JobOperator;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Scheduled;
 import uk.ac.kcl.batch.ScheduledJobConfiguration;
-import utils.BatchJobUtils;
+import uk.ac.kcl.utils.BatchJobUtils;
 
 /**
  *
@@ -58,13 +55,19 @@ public class Scheduler {
     @Autowired
     Job job;
 
+    @Autowired
+    BatchJobUtils batchJobUtils;
+
     final static Logger logger = Logger.getLogger(Scheduler.class);
 
     @Scheduled(cron = "${scheduler.rate}")
     public void doTask()  {
 
+        String lastGoodJob = batchJobUtils.getLastSuccessfulJobDate();
 
-        JobParameters param = new JobParametersBuilder().addString("previousSuccessfulJobStartTime", BatchJobUtils.getLastSuccessfulJobDate()).toJobParameters();
+        logger.info("Last good run was " + lastGoodJob +". Recommencing from then");
+        JobParameters param = new JobParametersBuilder()
+                .addDate("attemptDate",new Date()).toJobParameters();
             try {
                 JobExecution execution = jobLauncher.run(job, param);
                 System.out.println(execution.getStatus().toString());

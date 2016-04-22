@@ -18,12 +18,19 @@ package uk.ac.kcl.partitioners;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
+
 
 import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.item.ExecutionContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Service;
+import uk.ac.kcl.utils.BatchJobUtils;
 
 /**
  * Simple minded partitioner for a range of values of a column in a database
@@ -33,7 +40,28 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * @author Dave Syer
  *
  */
+@Service("columnRangePartitioner")
 public class ColumnRangePartitioner implements Partitioner {
+
+	@Autowired
+	@Qualifier("sourceDataSource")
+	DataSource sourceDataSource;
+
+	@Autowired
+	Environment env;
+
+	@Autowired
+	BatchJobUtils batchJobUtils;
+
+	@PostConstruct
+	public void init(){
+		setColumn(env.getProperty("columntoPartition"));
+		setTable(env.getProperty("tableToPartition"));
+		setDataSource(sourceDataSource);
+
+	}
+
+
 
 	private JdbcOperations jdbcTemplate;
 
@@ -41,43 +69,22 @@ public class ColumnRangePartitioner implements Partitioner {
 
 	private String column;
 
-	/**
-	 * The name of the SQL table the data are in.
-	 *
-	 * @param table the name of the table
-	 */
 	public void setTable(String table) {
 		this.table = table;
 	}
 
-	/**
-	 * The name of the column to partition.
-	 *
-	 * @param column the column name.
-	 */
 	public void setColumn(String column) {
 		this.column = column;
 	}
 
-	/**
-	 * The data source for connecting to the database.
-	 *
-	 * @param dataSource a {@link DataSource}
-	 */
 	public void setDataSource(DataSource dataSource) {
 		jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 
-	/**
-	 * Partition a database table assuming that the data in the column specified
-	 * are uniformly distributed. The execution context values will have keys
-	 * <code>minValue</code> and <code>maxValue</code> specifying the range of
-	 * values to consider in each partition.
-	 *
-	 * @see Partitioner#partition(int)
-	 */
 	@Override
 	public Map<String, ExecutionContext> partition(int gridSize) {
+
+		String lastGoodJob = batchJobUtils.getLastSuccessfulJobDate();
 		long min = jdbcTemplate.queryForObject("SELECT MIN(" + column + ") from " + table, Long.class);
 		long max = jdbcTemplate.queryForObject("SELECT MAX(" + column + ") from " + table, Long.class);
 		long targetSize = (max - min) / gridSize + 1;
@@ -96,6 +103,7 @@ public class ColumnRangePartitioner implements Partitioner {
 			}
 			value.putLong("minValue", start);
 			value.putLong("maxValue", end);
+			value.putString("previousSuccessfulJobStartTime",lastGoodJob);
 			start += targetSize;
 			end += targetSize;
 			number++;

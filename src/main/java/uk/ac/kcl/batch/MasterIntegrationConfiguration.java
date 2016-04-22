@@ -24,10 +24,7 @@ import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.integration.partition.MessageChannelPartitionHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportResource;
-import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.integration.core.MessagingTemplate;
@@ -41,6 +38,7 @@ import uk.ac.kcl.scheduling.Scheduler;
  */
 @Profile("master")
 @ImportResource("classpath:spring-master.xml")
+@ComponentScan("uk.ac.kcl.partitioners")
 @Configuration
 public class MasterIntegrationConfiguration {
 
@@ -73,17 +71,17 @@ public class MasterIntegrationConfiguration {
 
         @Bean
         public Job gateJob(JobBuilderFactory jobs,
-                StepBuilderFactory steps,
-                Partitioner partitioner,
-                @Qualifier("partitionHandler") PartitionHandler gatePartitionHandler) {
+                           StepBuilderFactory steps,
+                           @Qualifier("columnRangePartitioner") Partitioner partitioner,
+                           @Qualifier("partitionHandler") PartitionHandler gatePartitionHandler) {
             Job job = jobs.get("gateJob")
                     .incrementer(new RunIdIncrementer())
                     .flow(
                             steps
-                            .get("gateMasterStep")
-                            .partitioner("gateSlaveStep", partitioner)
-                            .partitionHandler(gatePartitionHandler)
-                            .build()
+                                    .get("gateMasterStep")
+                                    .partitioner("gateSlaveStep", partitioner)
+                                    .partitionHandler(gatePartitionHandler)
+                                    .build()
                     )
                     .end()
                     .build();
@@ -97,17 +95,17 @@ public class MasterIntegrationConfiguration {
     public static class TikaJobMaster {
         @Bean
         public Job tikaJob(JobBuilderFactory jobs,
-                StepBuilderFactory steps,
-                Partitioner partitioner,
-                @Qualifier("partitionHandler") PartitionHandler partitionHandler) {
+                           StepBuilderFactory steps,
+                           @Qualifier("columnRangePartitioner")Partitioner partitioner,
+                           @Qualifier("partitionHandler") PartitionHandler partitionHandler) {
             Job job = jobs.get("tikaJob")
                     .incrementer(new RunIdIncrementer())
                     .flow(
                             steps
-                            .get("tikaMasterStep")
-                            .partitioner("tikaSlaveStep", partitioner)
-                            .partitionHandler(partitionHandler)
-                            .build()
+                                    .get("tikaMasterStep")
+                                    .partitioner("tikaSlaveStep", partitioner)
+                                    .partitionHandler(partitionHandler)
+                                    .build()
                     )
                     .end()
                     .build();
@@ -122,17 +120,17 @@ public class MasterIntegrationConfiguration {
     public static class DBLineFixerMaster {
         @Bean
         public Job dBLineFixerJob(JobBuilderFactory jobs,
-                StepBuilderFactory steps,
-                Partitioner partitioner,
-                @Qualifier("partitionHandler") PartitionHandler gatePartitionHandler) {
+                                  StepBuilderFactory steps,
+                                  @Qualifier("columnRangePartitioner")Partitioner partitioner,
+                                  @Qualifier("partitionHandler") PartitionHandler gatePartitionHandler) {
             Job job = jobs.get("dBLineFixerJob")
                     .incrementer(new RunIdIncrementer())
                     .flow(
                             steps
-                            .get("dBLineFixerMasterStep")
-                            .partitioner("dBLineFixerSlaveStep", partitioner)
-                            .partitionHandler(gatePartitionHandler)
-                            .build()
+                                    .get("dBLineFixerMasterStep")
+                                    .partitioner("dBLineFixerSlaveStep", partitioner)
+                                    .partitionHandler(gatePartitionHandler)
+                                    .build()
                     )
                     .end()
                     .build();
