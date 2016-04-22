@@ -1,6 +1,5 @@
 package uk.ac.kcl.itemHandlers;
 
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
@@ -17,7 +16,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.RowMapper;
 import uk.ac.kcl.model.BinaryDocument;
 import uk.ac.kcl.model.Document;
-import uk.ac.kcl.model.MultilineDocument;
 import uk.ac.kcl.model.TextDocument;
 
 import javax.annotation.Resource;
@@ -35,10 +33,10 @@ public class ItemHandlers {
 
 
 
-    private String getPartitioningLogic(String minValue, String maxValue, String previousSuccessfulJobStartTime){
+    private String getPartitioningLogic(String minValue, String maxValue, String lastSuccessfulItemDate){
         String returnString;
-        if(env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("true")) {
-            returnString = "WHERE " +env.getProperty("timeStamp") + " >= '"+ previousSuccessfulJobStartTime
+        if(env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("true")&& lastSuccessfulItemDate!= null) {
+            returnString = "WHERE " +env.getProperty("timeStamp") + " >= '"+ lastSuccessfulItemDate
                     + "' AND " + env.getProperty("columntoPartition")
                     + " BETWEEN '" + minValue + "' AND '" + maxValue +"'";
         }else{
@@ -53,7 +51,7 @@ public class ItemHandlers {
     public ItemReader<TextDocument> textDocumentItemReader(
             @Value("#{stepExecutionContext[minValue]}") String minValue,
             @Value("#{stepExecutionContext[maxValue]}") String maxValue,
-            @Value("#{stepExecutionContext[previousSuccessfulJobStartTime]}") String previousSuccessfulJobStartTime,
+            @Value("#{stepExecutionContext[last_successful_record_date_from_previous_job]}") String lastSuccessfulItemDate,
             @Qualifier("textDocumentRowMapper")RowMapper<TextDocument> documentRowmapper,
             @Qualifier("sourceDataSource") DataSource jdbcDocumentSource) throws Exception {
 
@@ -63,7 +61,7 @@ public class ItemHandlers {
         qp.setSelectClause(env.getProperty("source.selectClause"));
         qp.setFromClause(env.getProperty("source.fromClause"));
         qp.setSortKey(env.getProperty("source.sortKey"));
-        qp.setWhereClause(getPartitioningLogic(minValue,maxValue,previousSuccessfulJobStartTime));
+        qp.setWhereClause(getPartitioningLogic(minValue,maxValue, lastSuccessfulItemDate));
         qp.setDataSource(jdbcDocumentSource);
         reader.setFetchSize(Integer.parseInt(env.getProperty("source.pageSize")));
         reader.setQueryProvider(qp.getObject());
@@ -79,7 +77,7 @@ public class ItemHandlers {
     public ItemReader<BinaryDocument> binaryDocumentItemReader(
             @Value("#{stepExecutionContext[minValue]}") String minValue,
             @Value("#{stepExecutionContext[maxValue]}") String maxValue,
-            @Value("#{stepExecutionContext[previousSuccessfulJobStartTime]}") String previousSuccessfulJobStartTime,
+            @Value("#{stepExecutionContext[last_successful_record_date_from_previous_job]}") String lastSuccessfulItemDate,
             @Qualifier("binaryDocumentRowMapper")RowMapper<BinaryDocument> documentRowmapper,
             @Qualifier("sourceDataSource") DataSource jdbcDocumentSource) throws Exception {
 
@@ -89,7 +87,7 @@ public class ItemHandlers {
         qp.setSelectClause(env.getProperty("source.selectClause"));
         qp.setFromClause(env.getProperty("source.fromClause"));
         qp.setSortKey(env.getProperty("source.sortKey"));
-        qp.setWhereClause(getPartitioningLogic(minValue,maxValue,previousSuccessfulJobStartTime));
+        qp.setWhereClause(getPartitioningLogic(minValue,maxValue,lastSuccessfulItemDate));
         qp.setDataSource(jdbcDocumentSource);
         reader.setFetchSize(Integer.parseInt(env.getProperty("source.pageSize")));
         reader.setQueryProvider(qp.getObject());

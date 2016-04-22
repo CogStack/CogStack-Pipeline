@@ -63,11 +63,14 @@ public class Scheduler {
     @Scheduled(cron = "${scheduler.rate}")
     public void doTask()  {
 
-        String lastGoodJob = batchJobUtils.getLastSuccessfulJobDate();
+
+        Object lastGoodJob = batchJobUtils.getLastSuccessfulRecordDate();
 
         logger.info("Last good run was " + lastGoodJob +". Recommencing from then");
         JobParameters param = new JobParametersBuilder()
-                .addDate("attemptDate",new Date()).toJobParameters();
+                .addDate("this_attempt_date",new Date())
+                //.addDate("last_successful_record_date",batchJobUtils.getLastSuccessfulRecordDate())
+                .toJobParameters();
             try {
                 JobExecution execution = jobLauncher.run(job, param);
                 System.out.println(execution.getStatus().toString());

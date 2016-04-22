@@ -26,10 +26,12 @@ import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import uk.ac.kcl.listeners.JobCompleteNotificationListener;
 import uk.ac.kcl.utils.BatchJobUtils;
 
 /**
@@ -41,6 +43,7 @@ import uk.ac.kcl.utils.BatchJobUtils;
  *
  */
 @Service("columnRangePartitioner")
+@ComponentScan("uk.ac.kcl.listeners")
 public class ColumnRangePartitioner implements Partitioner {
 
 	@Autowired
@@ -51,17 +54,20 @@ public class ColumnRangePartitioner implements Partitioner {
 	Environment env;
 
 	@Autowired
-	BatchJobUtils batchJobUtils;
+	JobCompleteNotificationListener jobCompleteNotificationListener;
+	private String timeStamp;
 
 	@PostConstruct
 	public void init(){
 		setColumn(env.getProperty("columntoPartition"));
 		setTable(env.getProperty("tableToPartition"));
+		setTimeStampColumnName(env.getProperty("timeStamp"));
 		setDataSource(sourceDataSource);
 
 	}
 
-
+	@Autowired
+	BatchJobUtils batchJobUtils;
 
 	private JdbcOperations jdbcTemplate;
 
@@ -77,6 +83,8 @@ public class ColumnRangePartitioner implements Partitioner {
 		this.column = column;
 	}
 
+	public void setTimeStampColumnName(String timeStamp) {this.timeStamp = timeStamp;}
+
 	public void setDataSource(DataSource dataSource) {
 		jdbcTemplate = new JdbcTemplate(dataSource);
 	}
@@ -84,9 +92,11 @@ public class ColumnRangePartitioner implements Partitioner {
 	@Override
 	public Map<String, ExecutionContext> partition(int gridSize) {
 
-		String lastGoodJob = batchJobUtils.getLastSuccessfulJobDate();
+		Object lastGoodJob = batchJobUtils.getLastSuccessfulRecordDate();
 		long min = jdbcTemplate.queryForObject("SELECT MIN(" + column + ") from " + table, Long.class);
 		long max = jdbcTemplate.queryForObject("SELECT MAX(" + column + ") from " + table, Long.class);
+		String lastItemDate = jdbcTemplate.queryForObject("SELECT MAX(" + timeStamp + ") from " + table, String.class);
+		jobCompleteNotificationListener.setLastDateInthisJob(lastItemDate);
 		long targetSize = (max - min) / gridSize + 1;
 
 		Map<String, ExecutionContext> result = new HashMap<String, ExecutionContext>();
@@ -103,7 +113,7 @@ public class ColumnRangePartitioner implements Partitioner {
 			}
 			value.putLong("minValue", start);
 			value.putLong("maxValue", end);
-			value.putString("previousSuccessfulJobStartTime",lastGoodJob);
+			value.put("last_successful_record_date_from_previous_job",lastGoodJob);
 			start += targetSize;
 			end += targetSize;
 			number++;

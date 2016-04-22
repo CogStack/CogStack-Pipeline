@@ -30,6 +30,7 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.integration.core.MessagingTemplate;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.PollableChannel;
+import uk.ac.kcl.listeners.JobCompleteNotificationListener;
 import uk.ac.kcl.scheduling.Scheduler;
 
 /**
@@ -38,7 +39,7 @@ import uk.ac.kcl.scheduling.Scheduler;
  */
 @Profile("master")
 @ImportResource("classpath:spring-master.xml")
-@ComponentScan("uk.ac.kcl.partitioners")
+@ComponentScan({"uk.ac.kcl.partitioners","uk.ac.kcl.listeners"})
 @Configuration
 public class MasterIntegrationConfiguration {
 
@@ -73,9 +74,12 @@ public class MasterIntegrationConfiguration {
         public Job gateJob(JobBuilderFactory jobs,
                            StepBuilderFactory steps,
                            @Qualifier("columnRangePartitioner") Partitioner partitioner,
-                           @Qualifier("partitionHandler") PartitionHandler gatePartitionHandler) {
+                           @Qualifier("partitionHandler") PartitionHandler gatePartitionHandler,
+                            JobCompleteNotificationListener jobCompleteNotificationListener
+                            ) {
             Job job = jobs.get("gateJob")
                     .incrementer(new RunIdIncrementer())
+                    .listener(jobCompleteNotificationListener)
                     .flow(
                             steps
                                     .get("gateMasterStep")

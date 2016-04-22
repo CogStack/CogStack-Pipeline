@@ -17,6 +17,8 @@ package uk.ac.kcl.listeners;
 
 //import io.bluecell.data.JDBCDocumentSource;
 //import io.bluecell.data.JDBCDocumentTarget;
+import org.springframework.batch.core.JobExecutionListener;
+import org.springframework.batch.core.repository.JobRepository;
 import uk.ac.kcl.model.BinaryDocument;
 import java.util.List;
 import javax.sql.DataSource;
@@ -34,21 +36,34 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
-
-public class JobCompleteNotificationListener extends JobExecutionListenerSupport {
+@Component
+public class JobCompleteNotificationListener implements JobExecutionListener {
 
 	private static final Logger log = LoggerFactory.getLogger(JobCompleteNotificationListener.class);
 
+	private String lastDateInthisJob;
+
+	public void setLastDateInthisJob(String string){
+		this.lastDateInthisJob = string;
+	}
 
 
+	@Override
+	public void beforeJob(JobExecution jobExecution) {
 
+	}
 
-
-
+	@Autowired
+	JobRepository jobRepository;
 	@Override
 	public void afterJob(JobExecution jobExecution) {
 		if(jobExecution.getStatus() == BatchStatus.COMPLETED) {
 			log.info("!!! JOB FINISHED! Time to verify the results");
+			log.info("promoting last good record date to JobExecutionContext");
+			jobExecution.getExecutionContext().put("last_successful_record_date_from_this_job", lastDateInthisJob);
+			jobRepository.updateExecutionContext(jobExecution);
+
+
 
 		}
 	}
