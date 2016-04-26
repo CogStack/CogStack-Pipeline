@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
 import java.sql.Date;
-
+import java.sql.Timestamp;
 
 
 /**
@@ -50,15 +50,29 @@ public class BatchJobUtils {
         return id;
     }
 
-    public Object getLastSuccessfulRecordDate(){
-        ExecutionContext ec = getLastSuccessfulJobExecutionContext();
-        Object lastGoodDate =  ec.get("last_successful_record_date_from_this_job");
-        return lastGoodDate;
-
+    public Timestamp getLastSuccessfulRecordTimestamp(){
+        try {
+            ExecutionContext ec = getLastSuccessfulJobExecutionContext();
+            Timestamp lastGoodDate = new Timestamp(Long.valueOf(ec.get("last_successful_timestamp_from_this_job").toString()));
+            return lastGoodDate;
+        }catch(NullPointerException ex){
+            return null;
+        }
     }
 
     public ExecutionContext getLastSuccessfulJobExecutionContext(){
+        try {
+            return jobExplorer.getJobExecution(getLastSuccessfulJobExecutionID()).getExecutionContext();
+        }catch(NullPointerException ex){
+            return null;
+        }
+    }
 
-        return jobExplorer.getJobExecution(getLastSuccessfulJobExecutionID()).getExecutionContext();
+    public String cleanSqlString(String string){
+        if (string == null ){
+            return "";
+        }else{
+            return string;
+        }
     }
 }

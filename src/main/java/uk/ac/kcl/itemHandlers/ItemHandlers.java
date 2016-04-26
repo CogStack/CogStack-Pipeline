@@ -33,17 +33,13 @@ public class ItemHandlers {
 
 
 
-    private String getPartitioningLogic(String minValue, String maxValue, String lastSuccessfulItemDate){
+    private String getPartitioningLogic(String minValue, String maxValue, String minTimeStamp, String maxTimeStamp){
         String returnString;
         if(env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("true")
-                && lastSuccessfulItemDate!= null) {
-            returnString = "WHERE " +env.getProperty("timeStamp") + " >= '"+ lastSuccessfulItemDate
-                    + "' AND " + env.getProperty("columntoPartition")
-                    + " BETWEEN '" + minValue + "' AND '" + maxValue +"'";
-        }else if (env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("true")
-                && env.getProperty("firstJobStartDate")!= null) {
-            returnString = "WHERE " +env.getProperty("firstJobStartDate") + " >= '"+ lastSuccessfulItemDate
-                    + "' AND " + env.getProperty("columntoPartition")
+                && minTimeStamp!= null && maxTimeStamp != null) {
+            returnString = "WHERE " +env.getProperty("timeStamp")
+                    + " BETWEEN '" + minTimeStamp + "' AND '" + maxTimeStamp +"'"
+                    + " AND " + env.getProperty("columntoPartition")
                     + " BETWEEN '" + minValue + "' AND '" + maxValue +"'";
         }else{
             returnString = ("WHERE " + env.getProperty("columntoPartition") + " BETWEEN " + minValue + " AND " + maxValue) ;
@@ -58,7 +54,8 @@ public class ItemHandlers {
     public ItemReader<TextDocument> textDocumentItemReader(
             @Value("#{stepExecutionContext[minValue]}") String minValue,
             @Value("#{stepExecutionContext[maxValue]}") String maxValue,
-            @Value("#{stepExecutionContext[last_successful_record_date_from_previous_job]}") String lastSuccessfulItemDate,
+            @Value("#{stepExecutionContext[min_time_stamp]}") String minTimeStamp,
+            @Value("#{stepExecutionContext[max_time_stamp]}") String maxTimeStamp,
             @Qualifier("textDocumentRowMapper")RowMapper<TextDocument> documentRowmapper,
             @Qualifier("sourceDataSource") DataSource jdbcDocumentSource) throws Exception {
 
@@ -68,7 +65,7 @@ public class ItemHandlers {
         qp.setSelectClause(env.getProperty("source.selectClause"));
         qp.setFromClause(env.getProperty("source.fromClause"));
         qp.setSortKey(env.getProperty("source.sortKey"));
-        qp.setWhereClause(getPartitioningLogic(minValue,maxValue, lastSuccessfulItemDate));
+        qp.setWhereClause(getPartitioningLogic(minValue,maxValue, minTimeStamp,maxTimeStamp));
         qp.setDataSource(jdbcDocumentSource);
         reader.setFetchSize(Integer.parseInt(env.getProperty("source.pageSize")));
         reader.setQueryProvider(qp.getObject());
@@ -84,7 +81,8 @@ public class ItemHandlers {
     public ItemReader<BinaryDocument> binaryDocumentItemReader(
             @Value("#{stepExecutionContext[minValue]}") String minValue,
             @Value("#{stepExecutionContext[maxValue]}") String maxValue,
-            @Value("#{stepExecutionContext[last_successful_record_date_from_previous_job]}") String lastSuccessfulItemDate,
+            @Value("#{stepExecutionContext[min_time_stamp]}") String minTimeStamp,
+            @Value("#{stepExecutionContext[max_time_stamp]}") String maxTimeStamp,
             @Qualifier("binaryDocumentRowMapper")RowMapper<BinaryDocument> documentRowmapper,
             @Qualifier("sourceDataSource") DataSource jdbcDocumentSource) throws Exception {
 
@@ -94,7 +92,7 @@ public class ItemHandlers {
         qp.setSelectClause(env.getProperty("source.selectClause"));
         qp.setFromClause(env.getProperty("source.fromClause"));
         qp.setSortKey(env.getProperty("source.sortKey"));
-        qp.setWhereClause(getPartitioningLogic(minValue,maxValue,lastSuccessfulItemDate));
+        qp.setWhereClause(getPartitioningLogic(minValue,maxValue,minTimeStamp,maxTimeStamp));
         qp.setDataSource(jdbcDocumentSource);
         reader.setFetchSize(Integer.parseInt(env.getProperty("source.pageSize")));
         reader.setQueryProvider(qp.getObject());
@@ -127,14 +125,4 @@ public class ItemHandlers {
 
     }
 
-//    @Bean
-//    @Qualifier("dBLineFixerItemWriter")
-//    public ItemWriter<Document> dBLineFixerItemWriter(
-//            @Qualifier("targetDataSource") DataSource jdbcDocumentTarget) {
-//        JdbcBatchItemWriter<Document> writer = new JdbcBatchItemWriter<>();
-//        writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
-//        writer.setSql(env.getProperty("target.Sql"));
-//        writer.setDataSource(jdbcDocumentTarget);
-//        return writer;
-//    }
 }

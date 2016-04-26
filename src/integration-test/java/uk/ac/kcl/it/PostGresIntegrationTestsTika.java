@@ -15,6 +15,7 @@
  */
 package uk.ac.kcl.it;
 
+import org.springframework.context.annotation.ComponentScan;
 import uk.ac.kcl.batch.JobConfiguration;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -55,6 +56,7 @@ import uk.ac.kcl.batch.TikaConfiguration;
  * @author rich
  */
 @RunWith(SpringJUnit4ClassRunner.class)
+@ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
     "classpath:postgres_test_config_tika.properties",
     "classpath:jms.properties",
@@ -73,40 +75,16 @@ public class PostGresIntegrationTestsTika {
     final static Logger logger = Logger.getLogger(PostGresIntegrationTestsTika.class);
 
     @Autowired
-    @Qualifier("sourceDataSource")
-    public DataSource sourceDataSource;
-
-    @Autowired
-    @Qualifier("targetDataSource")
-    public DataSource jdbcTargetDocumentFinder;
-
-    private JdbcTemplate sourceTemplate;
-    private JdbcTemplate targetTemplate;
-    private ResourceDatabasePopulator rdp = new ResourceDatabasePopulator();
-    private Resource dropTablesResource;
-    private Resource makeTablesResource;
-
-    @Before
-    public void initTemplates() {
-        sourceTemplate = new JdbcTemplate(sourceDataSource);
-        targetTemplate = new JdbcTemplate(jdbcTargetDocumentFinder);
-    }
-
-    @After
-    public void dropDb() {
-        //sourceTemplate.execute("DROP TABLE tblInputDocs");
-        //targetTemplate.execute("DROP TABLE tblOutputDocs");
-    }
-
-    @Autowired
     JobOperator jobOperator;
 
-    //@Ignore
+    @Autowired
+    PostGresTestUtils utils;
+
     @Test
     public void postgresTikaPipelineTest() {
-        initPostgresTikaTable();
-        initPostGresJobRepository();
-        insertTestBinariesForTika(sourceDataSource);
+        utils.initPostgresTikaTable();
+        utils.initPostGresJobRepository();
+        utils.insertTestBinariesForTika();
         try {
             jobOperator.startNextInstance("tikaJob");
         } catch (NoSuchJobException | JobParametersNotFoundException | JobRestartException | JobExecutionAlreadyRunningException | JobInstanceAlreadyCompleteException | UnexpectedJobExecutionException | JobParametersInvalidException ex) {
@@ -114,59 +92,5 @@ public class PostGresIntegrationTestsTika {
         }
     }
 
-    private void initPostgresTikaTable() {
-////        for postgres
-        sourceTemplate.execute("DROP TABLE IF EXISTS tblInputDocs");
-        sourceTemplate.execute("CREATE TABLE tblInputDocs"
-                + "( ID  SERIAL PRIMARY KEY"
-                + ", srcColumnFieldName text "
-                + ", srcTableName text "
-                + ", primaryKeyFieldName text "
-                + ", primaryKeyFieldValue text "
-                + ", binaryFieldName text "
-                + ", updateTime text "
-                + ", body bytea )");
 
-        targetTemplate.execute("DROP TABLE IF EXISTS tblOutputDocs");
-        targetTemplate.execute("CREATE TABLE tblOutputDocs "
-                + "( ID  SERIAL PRIMARY KEY"
-                + ", srcColumnFieldName text "
-                + ", srcTableName text "
-                + ", primaryKeyFieldName text "
-                + ", primaryKeyFieldValue text "
-               // + ", binaryFieldName text "
-                + ", updateTime text "
-                + ", xhtml text )");
-    }
-
-    private void initPostGresJobRepository() {
-        dropTablesResource = new ClassPathResource("org/springframework/batch/core/schema-drop-postgresql.sql");
-        makeTablesResource = new ClassPathResource("org/springframework/batch/core/schema-postgresql.sql");
-        rdp.addScript(dropTablesResource);
-        rdp.addScript(makeTablesResource);
-        rdp.execute(jdbcTargetDocumentFinder);
-    }
-
-    private void insertTestBinariesForTika(DataSource ds) {
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
-        int docCount = 10;
-        byte[] bytes = null;
-        try {
-            bytes = IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream("tika/testdocs/docexample.doc"));
-        } catch (IOException ex) {
-            java.util.logging.Logger.getLogger(PostGresIntegrationTestsTika.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        String sql = "INSERT INTO tblInputDocs "
-                + "( srcColumnFieldName"
-                + ", srcTableName"
-                + ", primaryKeyFieldName"
-                + ", primaryKeyFieldValue"
-                + ", updateTime"
-                + ", body"
-                + ") VALUES (?,?,?,?,?,?)";
-        for (int ii = 0; ii < docCount; ii++) {
-            jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName", "fictionalPrimaryKeyFieldName", ii, "11-OCT-17", bytes);
-        }
-    }
 }

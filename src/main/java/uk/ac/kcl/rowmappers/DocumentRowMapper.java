@@ -49,7 +49,7 @@ public abstract class DocumentRowMapper implements RowMapper<Document>{
         doc.setSrcColumnFieldName(rs.getString(env.getProperty("srcColumnFieldName")));
         doc.setPrimaryKeyFieldName(rs.getString(env.getProperty("primaryKeyFieldName")));
         doc.setPrimaryKeyFieldValue(rs.getString(env.getProperty("primaryKeyFieldValue")));
-        doc.setTimeStamp(rs.getString(env.getProperty("timeStamp")));
+        doc.setTimeStamp(rs.getDate(env.getProperty("timeStamp")));
 
         //add additional query fields for ES export
         ResultSetMetaData meta = rs.getMetaData();

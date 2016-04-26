@@ -60,11 +60,8 @@ public class JobCompleteNotificationListener implements JobExecutionListener {
 		if(jobExecution.getStatus() == BatchStatus.COMPLETED) {
 			log.info("!!! JOB FINISHED! Time to verify the results");
 			log.info("promoting last good record date to JobExecutionContext");
-			jobExecution.getExecutionContext().put("last_successful_record_date_from_this_job", lastDateInthisJob);
+			jobExecution.getExecutionContext().put("last_successful_timestamp_from_this_job", lastDateInthisJob);
 			jobRepository.updateExecutionContext(jobExecution);
-
-
-
 		}
 	}
 }

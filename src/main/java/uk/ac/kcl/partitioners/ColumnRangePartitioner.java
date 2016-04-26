@@ -15,13 +15,11 @@
  */
 package uk.ac.kcl.partitioners;
 
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
-
-
 import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +30,8 @@ import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import uk.ac.kcl.listeners.JobCompleteNotificationListener;
+import uk.ac.kcl.model.PartitionParams;
+import uk.ac.kcl.rowmappers.PartitionParamsRowMapper;
 import uk.ac.kcl.utils.BatchJobUtils;
 
 /**
@@ -55,6 +55,7 @@ public class ColumnRangePartitioner implements Partitioner {
 
 	@Autowired
 	JobCompleteNotificationListener jobCompleteNotificationListener;
+
 	private String timeStamp;
 
 	@PostConstruct
@@ -63,13 +64,14 @@ public class ColumnRangePartitioner implements Partitioner {
 		setTable(env.getProperty("tableToPartition"));
 		setTimeStampColumnName(env.getProperty("timeStamp"));
 		setDataSource(sourceDataSource);
-
 	}
 
 	@Autowired
 	BatchJobUtils batchJobUtils;
 
 	private JdbcOperations jdbcTemplate;
+
+
 
 	private String table;
 
@@ -91,34 +93,69 @@ public class ColumnRangePartitioner implements Partitioner {
 
 	@Override
 	public Map<String, ExecutionContext> partition(int gridSize) {
-
-		Object lastGoodJob = batchJobUtils.getLastSuccessfulRecordDate();
-		long min = jdbcTemplate.queryForObject("SELECT MIN(" + column + ") from " + table, Long.class);
-		long max = jdbcTemplate.queryForObject("SELECT MAX(" + column + ") from " + table, Long.class);
-		String lastItemDate = jdbcTemplate.queryForObject("SELECT MAX(" + timeStamp + ") from " + table, String.class);
-		jobCompleteNotificationListener.setLastDateInthisJob(lastItemDate);
-		long targetSize = (max - min) / gridSize + 1;
-
+		Timestamp lastGoodJob;
+		String sql;
+		if(env.getProperty("firstJobStartDate") !=null){
+			lastGoodJob = null;
+			sql =	" SELECT "   +
+					batchJobUtils.cleanSqlString(env.getProperty("partitionerPreFieldsSQL")) +
+					" MAX(" + column + ") AS max_id , " +
+					" MIN(" + column + ") AS min_id , " +
+					" MAX(" + timeStamp + ") AS max_time_stamp , " +
+					" MIN(" + timeStamp + ") AS min_time_stamp  " +
+					" FROM ( " +
+					" SELECT * FROM " + table + " " +
+					" WHERE " + timeStamp + " > '" + env.getProperty("firstJobStartDate") + "' " +
+					" ORDER BY " + timeStamp +" ASC " +
+					batchJobUtils.cleanSqlString(env.getProperty("partitionerPostOrderByClause")) +
+					" ) t1" ;
+		} else if(batchJobUtils.getLastSuccessfulRecordTimestamp() != null) {
+			lastGoodJob = batchJobUtils.getLastSuccessfulRecordTimestamp();
+			sql =	" SELECT "   +
+					batchJobUtils.cleanSqlString(env.getProperty("partitionerPreFieldsSQL")) +
+					" MAX(" + column + ") AS max_id , " +
+					"                          MIN(" + column + ") AS min_id , " +
+					" MAX(" + timeStamp + ") AS max_time_stamp , " +
+					" MIN(" + timeStamp + ") AS min_time_stamp  " +
+					" FROM ( " +
+					" SELECT * FROM " + table + " " +
+					" WHERE " + timeStamp + " > " + lastGoodJob.toString() + " " +
+					" ORDER BY " + timeStamp  +" ASC " +
+					batchJobUtils.cleanSqlString(env.getProperty("partitionerPostOrderByClause")) +
+					" ) t1" ;
+		}else{
+			lastGoodJob = null;
+			sql =	" SELECT "   +
+					batchJobUtils.cleanSqlString(env.getProperty("partitionerPreFieldsSQL")) +
+					" MAX(" + column + ") AS max_id , " +
+					" MIN(" + column + ") AS min_id , " +
+					" MAX(" + timeStamp + ") AS max_time_stamp , " +
+					" MIN(" + timeStamp + ") AS min_time_stamp  " +
+					" FROM ( " +
+					" SELECT * FROM " + table + " " +
+					" ORDER BY " + timeStamp +" ASC " +
+					batchJobUtils.cleanSqlString(env.getProperty("partitionerPostOrderByClause")) +
+					" ) t1" ;
+		}
+		PartitionParams params = (PartitionParams) jdbcTemplate.queryForObject(
+				sql, new PartitionParamsRowMapper());
+		jobCompleteNotificationListener.setLastDateInthisJob(params.getMaxTimeStamp().toString());
 		Map<String, ExecutionContext> result = new HashMap<String, ExecutionContext>();
+		long targetSize = (params.getMaxId() - params.getMinId()) / gridSize + 1;
 		long number = 0;
-		long start = min;
+		long start = params.getMinId();
 		long end = start + targetSize - 1;
-
-		while (start <= max) {
+		for(int i=0; i<gridSize; i++) {
 			ExecutionContext value = new ExecutionContext();
-			result.put("partition" + number, value);
-
-			if (end >= max) {
-				end = max;
-			}
+			result.put("partition" + (i+1), value);
 			value.putLong("minValue", start);
 			value.putLong("maxValue", end);
-			value.put("last_successful_record_date_from_previous_job",lastGoodJob);
+			value.put("min_time_stamp", params.getMinTimeStamp().toString());
+			value.put("max_time_stamp", params.getMaxTimeStamp().toString());
 			start += targetSize;
 			end += targetSize;
 			number++;
 		}
-
 		return result;
 	}
 }

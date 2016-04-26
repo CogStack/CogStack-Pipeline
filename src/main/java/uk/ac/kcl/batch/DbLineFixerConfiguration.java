@@ -66,6 +66,8 @@ public class DbLineFixerConfiguration {
     public ItemReader<MultilineDocument> dBLineFixerItemReader(
             @Value("#{stepExecutionContext[minValue]}") String minValue,
             @Value("#{stepExecutionContext[maxValue]}") String maxValue,
+            @Value("#{stepExecutionContext[min_time_stamp]}") String minTimeStamp,
+            @Value("#{stepExecutionContext[max_time_stamp]}") String maxTimeStamp,
             @Qualifier("multiRowDocumentRowmapper")RowMapper<MultilineDocument> multiRowDocumentRowmapper,
             @Qualifier("sourceDataSource") DataSource jdbcDocumentSource) throws Exception {
         JdbcPagingItemReader<MultilineDocument> reader = new JdbcPagingItemReader<>();
@@ -74,14 +76,14 @@ public class DbLineFixerConfiguration {
         qp.setSelectClause(env.getProperty("source.selectClause"));
         qp.setFromClause(env.getProperty("source.fromClause"));
         qp.setSortKey(env.getProperty("source.sortKey"));
-        qp.setWhereClause("WHERE " + env.getProperty("columntoPartition") + " BETWEEN " + minValue + " AND " + maxValue) ;
+        qp.setWhereClause("WHERE " + env.getProperty("columntoPartition") +
+        " BETWEEN " + minValue + " AND " + maxValue +
+        " AND " + env.getProperty("timeStamp") +
+        " BETWEEN '" +minTimeStamp + "' AND '" + maxTimeStamp + "'");
         qp.setDataSource(jdbcDocumentSource);
         reader.setFetchSize(Integer.parseInt(env.getProperty("source.pageSize")));
-
-
         reader.setQueryProvider(qp.getObject());
         reader.setRowMapper(multiRowDocumentRowmapper);
-
         return reader;
     }
 

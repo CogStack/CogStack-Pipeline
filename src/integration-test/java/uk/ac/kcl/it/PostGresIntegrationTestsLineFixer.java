@@ -15,6 +15,7 @@
  */
 package uk.ac.kcl.it;
 
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 import uk.ac.kcl.batch.JobConfiguration;
 import java.util.logging.Level;
@@ -52,6 +53,7 @@ import uk.ac.kcl.batch.BatchConfigurer;
  * @author rich
  */
 @RunWith(SpringJUnit4ClassRunner.class)
+@ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
         "classpath:postgres_test_config_line_fixer.properties",
         "classpath:jms.properties",
@@ -68,118 +70,28 @@ public class PostGresIntegrationTestsLineFixer  {
 
     final static Logger logger = Logger.getLogger(PostGresIntegrationTestsLineFixer.class);
 
-    @Autowired
-    @Qualifier("sourceDataSource")
-    public DataSource sourceDataSource;
-
-    @Autowired
-    @Qualifier("targetDataSource")
-    public DataSource jdbcTargetDocumentFinder;
-
-    private JdbcTemplate sourceTemplate;
-    private JdbcTemplate targetTemplate;
-    private ResourceDatabasePopulator rdp = new ResourceDatabasePopulator();
-    private Resource dropTablesResource;
-    private Resource makeTablesResource;
-
-
-
-    @Before
-    public void initTemplates() {
-        sourceTemplate = new JdbcTemplate(sourceDataSource);
-        targetTemplate = new JdbcTemplate(jdbcTargetDocumentFinder);
-    }
-
-    @After
-    public void dropDb() {
-        //sourceTemplate.execute("DROP TABLE tblInputDocs");
-        //targetTemplate.execute("DROP TABLE tblOutputDocs");
-    }
-
 
     @Autowired
     JobOperator jobOperator;
 
     @Autowired
     Environment env;
-    //@Ignore
+
+    @Autowired
+    PostGresTestUtils utils;
+
     @Test
     public void postgresDBLineFixerPipelineTest() {
 
-        assertNotNull(env.getProperty("lf.documentKeyName"));
 
-        initPostGresJobRepository();
-        initPostgresMultiLineTextTable();
-        insertTestLinesForDBLineFixer(sourceDataSource);
+        utils.initPostGresJobRepository();
+        utils.initPostgresMultiLineTextTable();
+        utils.insertTestLinesForDBLineFixer();
 
         try {
             jobOperator.startNextInstance("dBLineFixerJob");
         } catch (NoSuchJobException | JobParametersNotFoundException | JobRestartException | JobExecutionAlreadyRunningException | JobInstanceAlreadyCompleteException | UnexpectedJobExecutionException | JobParametersInvalidException ex) {
             java.util.logging.Logger.getLogger(PostGresIntegrationTestsLineFixer.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-
-
-    private void initPostgresMultiLineTextTable(){
-        sourceTemplate.execute("DROP TABLE IF EXISTS tblInputDocs");
-        sourceTemplate.execute("CREATE TABLE tblInputDocs"
-                + "( ID  SERIAL PRIMARY KEY"
-                + ", srcColumnFieldName text "
-                + ", srcTableName text "
-                + ", primaryKeyFieldName text "
-                + ", primaryKeyFieldValue integer "
-                + ", binaryFieldName text "
-                + ", updateTime text "
-                //+ ", DOC_ID integer "
-                + ", LINE_ID integer "
-                + ", LINE_TEXT text )"
-        );
-        targetTemplate.execute("DROP TABLE IF EXISTS tblOutputDocs");
-        targetTemplate.execute("CREATE TABLE tblOutputDocs "
-                + "( ID  SERIAL PRIMARY KEY"
-                + ", srcColumnFieldName text "
-                + ", srcTableName text "
-                + ", primaryKeyFieldName text "
-                + ", primaryKeyFieldValue text "
-                // + ", binaryFieldName text "
-                + ", updateTime text "
-                + ", LINE_TEXT_CONCAT text )");
-    }
-
-
-    private void initPostGresJobRepository(){
-        dropTablesResource = new ClassPathResource("org/springframework/batch/core/schema-drop-postgresql.sql");
-        makeTablesResource = new ClassPathResource("org/springframework/batch/core/schema-postgresql.sql");
-        rdp.addScript(dropTablesResource);
-        rdp.addScript(makeTablesResource);
-        rdp.execute(jdbcTargetDocumentFinder);
-    }
-
-
-
-    private void insertTestLinesForDBLineFixer(DataSource ds){
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
-        int docCount = 10;
-        int lineCountIncrementer = 1;
-        String sql = "INSERT INTO tblInputDocs "
-                + "( srcColumnFieldName"
-                + ", srcTableName"
-                + ", primaryKeyFieldName"
-                + ", primaryKeyFieldValue"
-                + ", updateTime"
-                + ", LINE_ID"
-                + ", LINE_TEXT"
-                + ") VALUES (?,?,?,?,?,?,?)";
-        for (int i = 0; i <= docCount; i++) {
-            for(int j = 0;j < lineCountIncrementer; j++){
-                String text = "This is DOC_ID:" + i + " and LINE_ID:" + j ;
-                jdbcTemplate.update(sql, "fictionalColumnFieldName","fictionalTableName","fictionalPrimaryKeyFieldName",i,"11-OCT-17",j,text);
-            }
-            lineCountIncrementer++;
-            if(lineCountIncrementer % 50 == 0){
-                lineCountIncrementer = 0;
-            }
-        }
-
     }
 }
