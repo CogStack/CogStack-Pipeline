@@ -71,7 +71,6 @@ public class PostGresIntegrationTestsLineFixer  {
 
     final static Logger logger = Logger.getLogger(PostGresIntegrationTestsLineFixer.class);
 
-
     @Autowired
     JobOperator jobOperator;
 
@@ -83,12 +82,9 @@ public class PostGresIntegrationTestsLineFixer  {
 
     @Test
     public void postgresDBLineFixerPipelineTest() {
-
-
         utils.initPostGresJobRepository();
         utils.initPostgresMultiLineTextTable();
         utils.insertTestLinesForDBLineFixer();
-
         try {
             jobOperator.startNextInstance("dBLineFixerJob");
         } catch (NoSuchJobException | JobParametersNotFoundException | JobRestartException | JobExecutionAlreadyRunningException | JobInstanceAlreadyCompleteException | UnexpectedJobExecutionException | JobParametersInvalidException ex) {

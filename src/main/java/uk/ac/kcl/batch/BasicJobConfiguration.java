@@ -39,18 +39,13 @@ import javax.annotation.Resource;
 
 @Import(ItemHandlers.class)
 @Profile("basic")
-@PropertySource("file:${TURBO_LASER}/basic.conf")
 @Configuration
 public class BasicJobConfiguration {
     @Resource
     Environment env;
-    /* 
-    
-    
-    
+    /*
     *******************************************Basic Job
-    
-*/
+    */
 
 
 
@@ -61,7 +56,7 @@ public class BasicJobConfiguration {
             @Qualifier("compositeESandJdbcItemWriter")  ItemWriter<Document> writer,
             StepBuilderFactory stepBuilderFactory
     ) {
-        Step step = stepBuilderFactory.get("dBLineFixerSlaveStep")
+        Step step = stepBuilderFactory.get("basicSlaveStep")
                 .<Document, Document> chunk(
                         Integer.parseInt(env.getProperty("chunkSize")))
                 .reader(reader)
@@ -70,7 +65,6 @@ public class BasicJobConfiguration {
                 .skipLimit(Integer.parseInt(env.getProperty("skipLimit")))
                 .skip(Exception.class)
                 .build();
-
         return step;
     }
 }

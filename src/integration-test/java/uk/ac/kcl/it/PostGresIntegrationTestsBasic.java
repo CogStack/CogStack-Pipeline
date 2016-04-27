@@ -64,7 +64,7 @@ public class PostGresIntegrationTestsBasic {
     PostGresTestUtils utils;
 
     @Test
-    public void postgresTikaPipelineTest() {
+    public void postgresBasicPipelineTest() {
         utils.createBasicInputTable();
         utils.createBasicOutputTable();
         utils.initPostGresJobRepository();

@@ -48,6 +48,7 @@ import org.springframework.jms.connection.CachingConnectionFactory;
 @Import({          
             DbLineFixerConfiguration.class, 
             GateConfiguration.class,
+            BasicJobConfiguration.class,
             BatchConfigurer.class,
             TikaConfiguration.class,
             SlaveIntegrationConfiguration.class,

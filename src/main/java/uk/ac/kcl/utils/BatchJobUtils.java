@@ -33,6 +33,23 @@ public class BatchJobUtils {
     @Autowired
     private JobExplorer jobExplorer;
 
+    public Timestamp checkForNewRecordsBeyondConfiguredProcessingPeriod(
+            String tableName,
+            Timestamp lastestTimestamp,
+            String timestampColumnName){
+        JdbcTemplate template = new JdbcTemplate(targetDataSource);
+        String sql = "select MIN(" + timestampColumnName + ") AS min_time_stamp " +
+                    " FROM " + tableName + " " +
+                    " WHERE " + timestampColumnName + " >  '" + lastestTimestamp.toString() + "'";
+        Long timestampLong = (Long)template.queryForObject(sql, Long.class);
+
+        if(timestampLong == null){
+            return null;
+        }else {
+            return new Timestamp(timestampLong);
+        }
+    }
+
     public String getLastSuccessfulJobDate(){
         JdbcTemplate template = new JdbcTemplate(targetDataSource);
         String sql = "select max(start_time) AS start_time from batch_job_execution bje \n" +
@@ -53,27 +70,31 @@ public class BatchJobUtils {
         return id;
     }
 
-    public Timestamp convertStringToTimeStamp(String data) throws ParseException {
+
+    public Timestamp convertStringToTimeStamp(String data) {
         SimpleDateFormat format = new SimpleDateFormat(env.getProperty("datePatternForScheduling"));
-        java.util.Date date = (java.util.Date)format.parse(data);
+        java.util.Date date = null;
+        try {
+            date = (java.util.Date)format.parse(data);
+        } catch (ParseException e) {
+            logger.error("DATE PARSE EXCEPTION", e);
+        }
         Timestamp lastGoodDate = new Timestamp(date.getTime());
         return lastGoodDate;
     }
 
     public Timestamp getLastSuccessfulRecordTimestamp(){
-        try {
+
             ExecutionContext ec = getLastSuccessfulJobExecutionContext();
-            SimpleDateFormat format = new SimpleDateFormat(env.getProperty("datePatternForScheduling"));
-            java.util.Date date = convertStringToTimeStamp(ec.get("last_successful_timestamp_from_this_job").toString());
-            Timestamp lastGoodDate = new Timestamp(date.getTime());
-            return lastGoodDate;
-        }catch(NullPointerException ex){
-            logger.info("No previous job finished. Starting from scratch");
-        } catch (ParseException e) {
-            logger.error("DATE PARSE EXCEPTION", e);
-            System.exit(1);
-        }
-        return null;
+//            SimpleDateFormat format = new SimpleDateFormat(env.getProperty("datePatternForScheduling"));
+//            java.util.Date date = convertStringToTimeStamp();
+            if(ec == null){
+                logger.info("No previous job found in job repository");
+                return null;
+            }else{
+                Timestamp lastGoodDate = new Timestamp(Long.parseLong(ec.get("last_successful_timestamp_from_this_job").toString()));
+                return lastGoodDate;
+            }
     }
 
     public ExecutionContext getLastSuccessfulJobExecutionContext(){

@@ -125,7 +125,6 @@ public class ItemHandlers {
         reader.setFetchSize(Integer.parseInt(env.getProperty("source.pageSize")));
         reader.setQueryProvider(qp.getObject());
         reader.setRowMapper(documentRowmapper);
-
         return reader;
     }
 

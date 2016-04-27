@@ -93,12 +93,13 @@ public class MasterIntegrationConfiguration {
 
         }
     }
+
     @Configuration
     @Profile("basic")
     public static class BasicJobMaster {
 
         @Bean
-        public Job gateJob(JobBuilderFactory jobs,
+        public Job basicJob(JobBuilderFactory jobs,
                            StepBuilderFactory steps,
                            @Qualifier("columnRangePartitioner") Partitioner partitioner,
                            @Qualifier("partitionHandler") PartitionHandler gatePartitionHandler,

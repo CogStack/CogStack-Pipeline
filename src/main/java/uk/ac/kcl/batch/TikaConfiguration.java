@@ -83,7 +83,6 @@ public class TikaConfiguration {
                 .skip(Exception.class)
                 .taskExecutor(taskExecutor)                 
                 .build();
-         
          return step;
     }
 }

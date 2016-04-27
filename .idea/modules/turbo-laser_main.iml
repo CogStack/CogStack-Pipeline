@@ -3,7 +3,7 @@
   <component name="FacetManager">
     <facet type="Spring" name="Spring">
       <configuration>
-        <fileset id="fileset" name="Spring Application Context" removed="false">
+        <fileset id="fileset" name="Spring Application Context" removed="false" profiles="basic,dBLineFixer,gate,master,slave,tika">
           <file>file://$MODULE_DIR$/../../src/main/resources/spring-master.xml</file>
           <file>file://$MODULE_DIR$/../../src/main/resources/spring-slave.xml</file>
           <file>file://$MODULE_DIR$/../../src/main/java/uk/ac/kcl/batch/ScheduledJobConfiguration.java</file>
