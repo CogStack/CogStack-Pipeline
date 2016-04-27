@@ -111,7 +111,7 @@ public class PostGresTestUtils {
                 + ", srcTableName text "
                 + ", primaryKeyFieldName text "
                 + ", primaryKeyFieldValue text "
-                + ", updateTime text "
+                + ", updateTime Date "
                 + ", input bytea )");
 
         targetTemplate.execute("DROP TABLE IF EXISTS tblOutputDocs");
@@ -121,7 +121,7 @@ public class PostGresTestUtils {
                 + ", srcTableName text "
                 + ", primaryKeyFieldName text "
                 + ", primaryKeyFieldValue text "
-                + ", updateTime text "
+                + ", updateTime Date "
                 + ", output text )");
     }
 
@@ -217,7 +217,7 @@ public class PostGresTestUtils {
     }
     public void insertTestBinariesForTika() {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
-        int docCount = 10;
+        int docCount = 100;
         byte[] bytes = null;
         try {
             bytes = IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream("tika/testdocs/docexample.doc"));
@@ -231,16 +231,16 @@ public class PostGresTestUtils {
                 + ", primaryKeyFieldName"
                 + ", primaryKeyFieldValue"
                 + ", updateTime"
-                + ", body"
+                + ", input"
                 + ") VALUES (?,?,?,?,?,?)";
         for (int ii = 0; ii < docCount; ii++) {
-            jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName", "fictionalPrimaryKeyFieldName", ii, "11-OCT-17", bytes);
+            jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName", "fictionalPrimaryKeyFieldName", ii, new Date((ii*1000*60*60*24)), bytes);
         }
     }
 
     public void insertTestLinesForDBLineFixer(){
         JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
-        int docCount = 10;
+        int docCount = 100;
         int lineCountIncrementer = 1;
         String sql = "INSERT INTO tblInputDocs "
                 + "( srcColumnFieldName"
@@ -254,7 +254,7 @@ public class PostGresTestUtils {
         for (int i = 0; i <= docCount; i++) {
             for(int j = 0;j < lineCountIncrementer; j++){
                 String text = "This is DOC_ID:" + i + " and LINE_ID:" + j ;
-                jdbcTemplate.update(sql, "fictionalColumnFieldName","fictionalTableName","fictionalPrimaryKeyFieldName",i,"11-OCT-17",j,text);
+                jdbcTemplate.update(sql, "fictionalColumnFieldName","fictionalTableName","fictionalPrimaryKeyFieldName",i,new Date((i*1000*60*60*24)),j,text);
             }
             lineCountIncrementer++;
             if(lineCountIncrementer % 50 == 0){

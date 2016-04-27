@@ -68,7 +68,8 @@ import uk.ac.kcl.batch.TikaConfiguration;
 @ContextConfiguration(classes = {
     JobConfiguration.class,
     BatchConfigurer.class,
-    TikaConfiguration.class},
+    TikaConfiguration.class,
+    PostGresTestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 public class PostGresIntegrationTestsTika {
 

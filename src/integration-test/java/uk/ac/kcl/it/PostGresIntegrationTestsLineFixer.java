@@ -64,7 +64,8 @@ import uk.ac.kcl.batch.BatchConfigurer;
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
         JobConfiguration.class,
-        BatchConfigurer.class},
+        BatchConfigurer.class,
+        PostGresTestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 public class PostGresIntegrationTestsLineFixer  {
 

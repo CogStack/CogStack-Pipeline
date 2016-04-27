@@ -77,9 +77,9 @@ public class DbLineFixerConfiguration {
         qp.setFromClause(env.getProperty("source.fromClause"));
         qp.setSortKey(env.getProperty("source.sortKey"));
         qp.setWhereClause("WHERE " + env.getProperty("columntoPartition") +
-        " BETWEEN " + minValue + " AND " + maxValue +
-        " AND " + env.getProperty("timeStamp") +
-        " BETWEEN '" +minTimeStamp + "' AND '" + maxTimeStamp + "'");
+        " BETWEEN " + minValue + " AND " + maxValue + " ");
+//        " AND " + env.getProperty("timeStamp") +
+//        " BETWEEN '" +minTimeStamp + "' AND '" + maxTimeStamp + "'");
         qp.setDataSource(jdbcDocumentSource);
         reader.setFetchSize(Integer.parseInt(env.getProperty("source.pageSize")));
         reader.setQueryProvider(qp.getObject());
@@ -87,15 +87,6 @@ public class DbLineFixerConfiguration {
         return reader;
     }
 
-
-
-//    @Bean
-//    @Qualifier("multiRowDocumentRowmapper")
-//    public RowMapper multiRowDocumentRowmapper(
-//            @Qualifier("sourceDataSource") DataSource ds) {
-//        MultiRowDocumentRowMapper simpleMapper = new MultiRowDocumentRowMapper(ds);
-//        return simpleMapper;
-//    }
 
 
     @Bean

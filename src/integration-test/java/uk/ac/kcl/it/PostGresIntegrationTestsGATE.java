@@ -78,17 +78,6 @@ public class PostGresIntegrationTestsGATE {
 
     final static Logger logger = Logger.getLogger(PostGresIntegrationTestsGATE.class);
 
-    @Configuration
-    static class ContextConfiguration {
-
-        // this bean will be injected into the OrderServiceTest class
-        @Bean
-        public PostGresTestUtils postGresTestUtils() {
-            return new PostGresTestUtils();
-
-        }
-    }
-
 
     @Autowired
     PostGresTestUtils utils;

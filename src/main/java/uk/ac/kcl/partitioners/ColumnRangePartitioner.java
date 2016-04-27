@@ -98,42 +98,48 @@ public class ColumnRangePartitioner implements Partitioner {
 		if(env.getProperty("firstJobStartDate") !=null){
 			lastGoodJob = null;
 			sql =	" SELECT "   +
-					batchJobUtils.cleanSqlString(env.getProperty("partitionerPreFieldsSQL")) +
 					" MAX(" + column + ") AS max_id , " +
 					" MIN(" + column + ") AS min_id , " +
 					" MAX(" + timeStamp + ") AS max_time_stamp , " +
 					" MIN(" + timeStamp + ") AS min_time_stamp  " +
 					" FROM ( " +
-					" SELECT * FROM " + table + " " +
+					" SELECT " +
+					batchJobUtils.cleanSqlString(env.getProperty("partitionerPreFieldsSQL")) +
+					" " + column + ", " + timeStamp +
+					" FROM " + table + " " +
 					" WHERE " + timeStamp + " > '" + env.getProperty("firstJobStartDate") + "' " +
-					" ORDER BY " + timeStamp +" ASC " +
+					" ORDER BY " + timeStamp +" ASC " +" , " + column +" ASC " +
 					batchJobUtils.cleanSqlString(env.getProperty("partitionerPostOrderByClause")) +
 					" ) t1" ;
 		} else if(batchJobUtils.getLastSuccessfulRecordTimestamp() != null) {
 			lastGoodJob = batchJobUtils.getLastSuccessfulRecordTimestamp();
 			sql =	" SELECT "   +
-					batchJobUtils.cleanSqlString(env.getProperty("partitionerPreFieldsSQL")) +
 					" MAX(" + column + ") AS max_id , " +
 					"                          MIN(" + column + ") AS min_id , " +
 					" MAX(" + timeStamp + ") AS max_time_stamp , " +
 					" MIN(" + timeStamp + ") AS min_time_stamp  " +
 					" FROM ( " +
-					" SELECT * FROM " + table + " " +
+					" SELECT " +
+					batchJobUtils.cleanSqlString(env.getProperty("partitionerPreFieldsSQL")) +
+					" " + column + ", " + timeStamp +
+					" FROM " + table + " " +
 					" WHERE " + timeStamp + " > " + lastGoodJob.toString() + " " +
-					" ORDER BY " + timeStamp  +" ASC " +
+					" ORDER BY " + timeStamp  +" ASC " +" , " + column +" ASC " +
 					batchJobUtils.cleanSqlString(env.getProperty("partitionerPostOrderByClause")) +
 					" ) t1" ;
 		}else{
 			lastGoodJob = null;
 			sql =	" SELECT "   +
-					batchJobUtils.cleanSqlString(env.getProperty("partitionerPreFieldsSQL")) +
 					" MAX(" + column + ") AS max_id , " +
 					" MIN(" + column + ") AS min_id , " +
 					" MAX(" + timeStamp + ") AS max_time_stamp , " +
 					" MIN(" + timeStamp + ") AS min_time_stamp  " +
 					" FROM ( " +
-					" SELECT * FROM " + table + " " +
-					" ORDER BY " + timeStamp +" ASC " +
+					" SELECT " +
+					batchJobUtils.cleanSqlString(env.getProperty("partitionerPreFieldsSQL")) +
+					" " + column + ", " + timeStamp +
+					" FROM " + table + " " +
+					" ORDER BY " + timeStamp +" ASC " +" , " + column +" ASC " +
 					batchJobUtils.cleanSqlString(env.getProperty("partitionerPostOrderByClause")) +
 					" ) t1" ;
 		}
