@@ -57,6 +57,7 @@ public class ColumnRangePartitioner implements Partitioner {
     JobCompleteNotificationListener jobCompleteNotificationListener;
 
     private String timeStamp;
+    private boolean firstRun = true;
 
     @PostConstruct
     public void init(){
@@ -149,7 +150,7 @@ public class ColumnRangePartitioner implements Partitioner {
 //batchJobUtils.cleanSqlString(env.getProperty("partitionerPreFieldsSQL")) +
                 " " + column + ", " + timeStamp +
                 " FROM " + table + " ";
-        if(env.getProperty("firstJobStartDate") !=null){
+        if(env.getProperty("firstJobStartDate") !=null && firstRun){
             logger.info ("firstJobStartDate detected in configs. Commencing from " + env.getProperty("firstJobStartDate"));
             lastGoodJob = null;
             Timestamp earliestRecord = new Timestamp(Long.valueOf(env.getProperty("firstJobStartDate")));
@@ -160,6 +161,7 @@ public class ColumnRangePartitioner implements Partitioner {
                     " ORDER BY " + timeStamp +" ASC " +" , " + column +" ASC " +
                     //batchJobUtils.cleanSqlString(env.getProperty("partitionerPostOrderByClause")) +
                     " ) t1" ;
+            firstRun = false;
         } else if(batchJobUtils.getLastSuccessfulRecordTimestamp() != null) {
             lastGoodJob = batchJobUtils.getLastSuccessfulRecordTimestamp();
             logger.info ("last successful batch retrieved from job repository. Commencing from " + lastGoodJob.toString());
