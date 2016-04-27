@@ -1,6 +1,5 @@
 package uk.ac.kcl.it;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
@@ -25,41 +24,21 @@ import javax.sql.DataSource;
  */
 
 
-import org.springframework.stereotype.Service;
 import uk.ac.kcl.batch.JobConfiguration;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.util.logging.Level;
-import javax.sql.DataSource;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.batch.core.JobParametersInvalidException;
-import org.springframework.batch.core.UnexpectedJobExecutionException;
-import org.springframework.batch.core.launch.JobOperator;
-import org.springframework.batch.core.launch.JobParametersNotFoundException;
-import org.springframework.batch.core.launch.NoSuchJobException;
-import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
-import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
-import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import uk.ac.kcl.batch.BatchConfigurer;
-import uk.ac.kcl.batch.DbLineFixerConfiguration;
-import uk.ac.kcl.batch.GateConfiguration;
 
 /**
  *
@@ -110,7 +89,7 @@ public class PostGresTestUtils {
                 + ", srcColumnFieldName text "
                 + ", srcTableName text "
                 + ", primaryKeyFieldName text "
-                + ", primaryKeyFieldValue text "
+                + ", primaryKeyFieldValue integer "
                 + ", updateTime Date "
                 + ", input bytea )");
 
@@ -120,7 +99,7 @@ public class PostGresTestUtils {
                 + ", srcColumnFieldName text "
                 + ", srcTableName text "
                 + ", primaryKeyFieldName text "
-                + ", primaryKeyFieldValue text "
+                + ", primaryKeyFieldValue integer "
                 + ", updateTime Date "
                 + ", output text )");
     }
@@ -133,7 +112,7 @@ public class PostGresTestUtils {
                 + ", srcColumnFieldName text "
                 + ", srcTableName text "
                 + ", primaryKeyFieldName text "
-                + ", primaryKeyFieldValue text "
+                + ", primaryKeyFieldValue integer "
                 + ", updateTime Date "
                 + ", input text )");
 
@@ -143,12 +122,13 @@ public class PostGresTestUtils {
                 + ", srcColumnFieldName text "
                 + ", srcTableName text "
                 + ", primaryKeyFieldName text "
-                + ", primaryKeyFieldValue text "
+                + ", primaryKeyFieldValue integer "
                 + ", updateTime Date "
                 + ", output text )");
     }
 
-    public void initPostgresMultiLineTextTable(){
+
+    public void createBasicInputTable(){
         sourceTemplate.execute("DROP TABLE IF EXISTS tblInputDocs");
         sourceTemplate.execute("CREATE TABLE tblInputDocs"
                 + "( ID  SERIAL PRIMARY KEY"
@@ -156,17 +136,42 @@ public class PostGresTestUtils {
                 + ", srcTableName text "
                 + ", primaryKeyFieldName text "
                 + ", primaryKeyFieldValue integer "
-                + ", updateTime Date "
-                + ", LINE_ID integer "
-                + ", LINE_TEXT text )"
-        );
+                + ", updateTime Date )");
+
+    }
+
+    public void createBasicOutputTable(){
         targetTemplate.execute("DROP TABLE IF EXISTS tblOutputDocs");
         targetTemplate.execute("CREATE TABLE tblOutputDocs "
                 + "( ID  SERIAL PRIMARY KEY"
                 + ", srcColumnFieldName text "
                 + ", srcTableName text "
                 + ", primaryKeyFieldName text "
-                + ", primaryKeyFieldValue text "
+                + ", primaryKeyFieldValue integer "
+                + ", updateTime Date )");
+
+
+    }
+
+    public void initPostgresMultiLineTextTable(){
+        createBasicInputTable();
+        sourceTemplate.execute("DROP TABLE IF EXISTS tblDocLines");
+        sourceTemplate.execute("CREATE TABLE tblDocLines"
+                + "( ID  SERIAL PRIMARY KEY"
+                + ", primaryKeyFieldValue integer "
+                + ", updateTime Date "
+                + ", LINE_ID integer "
+                + ", LINE_TEXT text )"
+        );
+
+
+        targetTemplate.execute("DROP TABLE IF EXISTS tblOutputDocs");
+        targetTemplate.execute("CREATE TABLE tblOutputDocs "
+                + "( ID  SERIAL PRIMARY KEY"
+                + ", srcColumnFieldName text "
+                + ", srcTableName text "
+                + ", primaryKeyFieldName text "
+                + ", primaryKeyFieldValue integer "
                 + ", updateTime Date "
                 + ", LINE_TEXT_CONCAT text )");
     }
@@ -238,9 +243,9 @@ public class PostGresTestUtils {
         }
     }
 
-    public void insertTestLinesForDBLineFixer(){
+    public void insertDataIntoBasicTable(){
         JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
-        int docCount = 100;
+        int docCount = 34;
         int lineCountIncrementer = 1;
         String sql = "INSERT INTO tblInputDocs "
                 + "( srcColumnFieldName"
@@ -248,18 +253,34 @@ public class PostGresTestUtils {
                 + ", primaryKeyFieldName"
                 + ", primaryKeyFieldValue"
                 + ", updateTime"
+                + ") VALUES (?,?,?,?,?)";
+        for (int i = 0; i <= docCount; i++) {
+            jdbcTemplate.update(sql, "fictionalColumnFieldName","fictionalTableName","fictionalPrimaryKeyFieldName",i,new Date((i*1000*60*60*24)));
+        }
+    }
+
+
+    public void insertTestLinesForDBLineFixer(){
+        insertDataIntoBasicTable();
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
+        int lineCountIncrementer = 1;
+        int docCount = 100;
+        String sql = "INSERT INTO tblDocLines "
+                + "( primaryKeyFieldValue"
+                + ", updateTime"
                 + ", LINE_ID"
                 + ", LINE_TEXT"
-                + ") VALUES (?,?,?,?,?,?,?)";
+                + ") VALUES (?,?,?,?)";
         for (int i = 0; i <= docCount; i++) {
             for(int j = 0;j < lineCountIncrementer; j++){
                 String text = "This is DOC_ID:" + i + " and LINE_ID:" + j ;
-                jdbcTemplate.update(sql, "fictionalColumnFieldName","fictionalTableName","fictionalPrimaryKeyFieldName",i,new Date((i*1000*60*60*24)),j,text);
+                jdbcTemplate.update(sql,i,new Date((i*1000*60*60*24)),j,text);
             }
             lineCountIncrementer++;
             if(lineCountIncrementer % 50 == 0){
                 lineCountIncrementer = 0;
             }
         }
+
     }
 }

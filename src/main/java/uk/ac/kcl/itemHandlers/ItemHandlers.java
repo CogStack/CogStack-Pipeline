@@ -48,6 +48,34 @@ public class ItemHandlers {
         return returnString;
     }
 
+
+    @Bean
+    @StepScope
+    @Qualifier("documentItemReader")
+    public ItemReader<Document> documentItemReader(
+            @Value("#{stepExecutionContext[minValue]}") String minValue,
+            @Value("#{stepExecutionContext[maxValue]}") String maxValue,
+            @Value("#{stepExecutionContext[min_time_stamp]}") String minTimeStamp,
+            @Value("#{stepExecutionContext[max_time_stamp]}") String maxTimeStamp,
+            @Qualifier("documentRowMapper")RowMapper<Document> documentRowmapper,
+            @Qualifier("sourceDataSource") DataSource jdbcDocumentSource) throws Exception {
+
+        JdbcPagingItemReader<Document> reader = new JdbcPagingItemReader<>();
+        reader.setDataSource(jdbcDocumentSource);
+        SqlPagingQueryProviderFactoryBean qp = new SqlPagingQueryProviderFactoryBean();
+        qp.setSelectClause(env.getProperty("source.selectClause"));
+        qp.setFromClause(env.getProperty("source.fromClause"));
+        qp.setSortKey(env.getProperty("source.sortKey"));
+        qp.setWhereClause(getPartitioningLogic(minValue,maxValue, minTimeStamp,maxTimeStamp));
+        qp.setDataSource(jdbcDocumentSource);
+        reader.setFetchSize(Integer.parseInt(env.getProperty("source.pageSize")));
+        reader.setQueryProvider(qp.getObject());
+        reader.setRowMapper(documentRowmapper);
+
+        return reader;
+    }
+
+
     @Bean
     @StepScope
     @Qualifier("textDocumentItemReader")
@@ -122,7 +150,6 @@ public class ItemHandlers {
         delegates.add(jdbcItemWriter);
         writer.setDelegates(delegates);
         return writer;
-
     }
 
 }

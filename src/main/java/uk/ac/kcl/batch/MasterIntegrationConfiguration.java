@@ -75,8 +75,8 @@ public class MasterIntegrationConfiguration {
                            StepBuilderFactory steps,
                            @Qualifier("columnRangePartitioner") Partitioner partitioner,
                            @Qualifier("partitionHandler") PartitionHandler gatePartitionHandler,
-                            JobCompleteNotificationListener jobCompleteNotificationListener
-                            ) {
+                           JobCompleteNotificationListener jobCompleteNotificationListener
+        ) {
             Job job = jobs.get("gateJob")
                     .incrementer(new RunIdIncrementer())
                     .listener(jobCompleteNotificationListener)
@@ -93,6 +93,34 @@ public class MasterIntegrationConfiguration {
 
         }
     }
+    @Configuration
+    @Profile("basic")
+    public static class BasicJobMaster {
+
+        @Bean
+        public Job gateJob(JobBuilderFactory jobs,
+                           StepBuilderFactory steps,
+                           @Qualifier("columnRangePartitioner") Partitioner partitioner,
+                           @Qualifier("partitionHandler") PartitionHandler gatePartitionHandler,
+                           JobCompleteNotificationListener jobCompleteNotificationListener
+        ) {
+            Job job = jobs.get("basicJob")
+                    .incrementer(new RunIdIncrementer())
+                    .listener(jobCompleteNotificationListener)
+                    .flow(
+                            steps
+                                    .get("basicMasterStep")
+                                    .partitioner("basicSlaveStep", partitioner)
+                                    .partitionHandler(gatePartitionHandler)
+                                    .build()
+                    )
+                    .end()
+                    .build();
+            return job;
+
+        }
+
+    }
 
     @Configuration
     @Profile("tika")
@@ -103,7 +131,7 @@ public class MasterIntegrationConfiguration {
                            @Qualifier("columnRangePartitioner")Partitioner partitioner,
                            @Qualifier("partitionHandler") PartitionHandler partitionHandler,
                            JobCompleteNotificationListener jobCompleteNotificationListener
-                           ) {
+        ) {
             Job job = jobs.get("tikaJob")
                     .incrementer(new RunIdIncrementer())
                     .listener(jobCompleteNotificationListener)

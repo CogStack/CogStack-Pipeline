@@ -18,6 +18,7 @@ package uk.ac.kcl.it;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -30,31 +31,32 @@ import uk.ac.kcl.batch.ScheduledJobConfiguration;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @TestPropertySource({
-        "classpath:postgres_test_config_gate.properties",
+        "classpath:postgres_test_config_tika.properties",
         "classpath:jms.properties",
-        "classpath:gate.properties",
+        "classpath:tika.properties",
         "classpath:concurrency.properties",
         "classpath:postgres_db.properties",
         "classpath:elasticsearch.properties",
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
-        ScheduledJobConfiguration.class},
+        ScheduledJobConfiguration.class,
+        PostGresTestUtils.class},
         loader = AnnotationConfigContextLoader.class)
-public class PostGresIntegrationTestsGATEScheduling {
+public class PostGresIntegrationTestsTikaScheduling {
 
-    final static Logger logger = Logger.getLogger(PostGresIntegrationTestsGATEScheduling.class);
+    final static Logger logger = Logger.getLogger(PostGresIntegrationTestsTikaScheduling.class);
 
+    @Autowired
+    PostGresTestUtils utils;
     @Test
     public void postgresGatePipelineTest() {
-        //initMsSqlServerGateTable();
-        //initMsSqlServerJobRepository();
-        //insertTestXHTMLForGate(sourceDataSource, false);
+        utils.initPostgresTikaTable();
+        utils.initPostGresJobRepository();
+        utils.insertTestBinariesForTika();
         try {
             Thread.sleep(1000000000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
     }
-
 }

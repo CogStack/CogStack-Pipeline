@@ -16,10 +16,15 @@
 package uk.ac.kcl.partitioners;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
+
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +51,8 @@ import uk.ac.kcl.utils.BatchJobUtils;
 @ComponentScan("uk.ac.kcl.listeners")
 public class ColumnRangePartitioner implements Partitioner {
 
+	final static Logger logger = LoggerFactory.getLogger(ColumnRangePartitioner.class);
+
 	@Autowired
 	@Qualifier("sourceDataSource")
 	DataSource sourceDataSource;
@@ -69,7 +76,7 @@ public class ColumnRangePartitioner implements Partitioner {
 	@Autowired
 	BatchJobUtils batchJobUtils;
 
-	private JdbcOperations jdbcTemplate;
+	private JdbcTemplate jdbcTemplate;
 
 
 
@@ -94,9 +101,12 @@ public class ColumnRangePartitioner implements Partitioner {
 	@Override
 	public Map<String, ExecutionContext> partition(int gridSize) {
 		Timestamp lastGoodJob;
+		Timestamp processingPeriod;
 		String sql;
 		if(env.getProperty("firstJobStartDate") !=null){
 			lastGoodJob = null;
+			Timestamp earliestRecord = new Timestamp(Long.valueOf(env.getProperty("firstJobStartDate")));
+			processingPeriod = new Timestamp(earliestRecord.getTime() + Long.valueOf(env.getProperty("processingPeriod")));
 			sql =	" SELECT "   +
 					" MAX(" + column + ") AS max_id , " +
 					" MIN(" + column + ") AS min_id , " +
@@ -104,31 +114,17 @@ public class ColumnRangePartitioner implements Partitioner {
 					" MIN(" + timeStamp + ") AS min_time_stamp  " +
 					" FROM ( " +
 					" SELECT " +
-					batchJobUtils.cleanSqlString(env.getProperty("partitionerPreFieldsSQL")) +
+					//batchJobUtils.cleanSqlString(env.getProperty("partitionerPreFieldsSQL")) +
 					" " + column + ", " + timeStamp +
 					" FROM " + table + " " +
-					" WHERE " + timeStamp + " > '" + env.getProperty("firstJobStartDate") + "' " +
+					" WHERE " + timeStamp + " BETWEEN '" + earliestRecord.toString() +
+					"' AND '" + processingPeriod.toString() + "'" +
 					" ORDER BY " + timeStamp +" ASC " +" , " + column +" ASC " +
-					batchJobUtils.cleanSqlString(env.getProperty("partitionerPostOrderByClause")) +
+					//batchJobUtils.cleanSqlString(env.getProperty("partitionerPostOrderByClause")) +
 					" ) t1" ;
 		} else if(batchJobUtils.getLastSuccessfulRecordTimestamp() != null) {
 			lastGoodJob = batchJobUtils.getLastSuccessfulRecordTimestamp();
-			sql =	" SELECT "   +
-					" MAX(" + column + ") AS max_id , " +
-					"                          MIN(" + column + ") AS min_id , " +
-					" MAX(" + timeStamp + ") AS max_time_stamp , " +
-					" MIN(" + timeStamp + ") AS min_time_stamp  " +
-					" FROM ( " +
-					" SELECT " +
-					batchJobUtils.cleanSqlString(env.getProperty("partitionerPreFieldsSQL")) +
-					" " + column + ", " + timeStamp +
-					" FROM " + table + " " +
-					" WHERE " + timeStamp + " > " + lastGoodJob.toString() + " " +
-					" ORDER BY " + timeStamp  +" ASC " +" , " + column +" ASC " +
-					batchJobUtils.cleanSqlString(env.getProperty("partitionerPostOrderByClause")) +
-					" ) t1" ;
-		}else{
-			lastGoodJob = null;
+			processingPeriod = new Timestamp(lastGoodJob.getTime() + Long.valueOf(env.getProperty("processingPeriod")));
 			sql =	" SELECT "   +
 					" MAX(" + column + ") AS max_id , " +
 					" MIN(" + column + ") AS min_id , " +
@@ -136,16 +132,42 @@ public class ColumnRangePartitioner implements Partitioner {
 					" MIN(" + timeStamp + ") AS min_time_stamp  " +
 					" FROM ( " +
 					" SELECT " +
-					batchJobUtils.cleanSqlString(env.getProperty("partitionerPreFieldsSQL")) +
+					//batchJobUtils.cleanSqlString(env.getProperty("partitionerPreFieldsSQL")) +
 					" " + column + ", " + timeStamp +
 					" FROM " + table + " " +
-					" ORDER BY " + timeStamp +" ASC " +" , " + column +" ASC " +
-					batchJobUtils.cleanSqlString(env.getProperty("partitionerPostOrderByClause")) +
+					" WHERE " + timeStamp + " BETWEEN '" + lastGoodJob.toString() +
+					"' AND '" + processingPeriod.toString() + "'" +
+					" ORDER BY " + timeStamp  +" ASC " + " , " + column +" ASC " +
+					//batchJobUtils.cleanSqlString(env.getProperty("partitionerPostOrderByClause")) +
+					" ) t1" ;
+		}else{
+			lastGoodJob = null;
+			String tsSql = "SELECT MIN(" + timeStamp + ")  FROM " + table;
+
+			Timestamp earliestRecord = jdbcTemplate.queryForObject(tsSql,Timestamp.class);
+			String test = env.getProperty("processingPeriod");
+			processingPeriod = new Timestamp(Long.parseLong(test));
+			processingPeriod.setTime(earliestRecord.getTime() + processingPeriod.getTime());
+			sql =	" SELECT "   +
+					" MAX(" + column + ") AS max_id , " +
+					" MIN(" + column + ") AS min_id , " +
+					" MAX(" + timeStamp + ") AS max_time_stamp , " +
+					" MIN(" + timeStamp + ") AS min_time_stamp  " +
+					" FROM ( " +
+					" SELECT " +
+					//batchJobUtils.cleanSqlString(env.getProperty("partitionerPreFieldsSQL")) +
+					" " + column + ", " + timeStamp +
+					" FROM " + table + " " +
+					" WHERE " + timeStamp + " BETWEEN '" + earliestRecord.toString() +
+					"' AND '" + processingPeriod.toString() + "'" +
+					" ORDER BY " + timeStamp  +" ASC " + " , " + column +" ASC " +
+					//batchJobUtils.cleanSqlString(env.getProperty("partitionerPostOrderByClause")) +
 					" ) t1" ;
 		}
+		logger.info ("This job SQL: " + sql);
 		PartitionParams params = (PartitionParams) jdbcTemplate.queryForObject(
 				sql, new PartitionParamsRowMapper());
-		jobCompleteNotificationListener.setLastDateInthisJob(params.getMaxTimeStamp().toString());
+		jobCompleteNotificationListener.setLastDateInthisJob(String.valueOf(params.getMaxTimeStamp()));
 		Map<String, ExecutionContext> result = new HashMap<String, ExecutionContext>();
 		long targetSize = (params.getMaxId() - params.getMinId()) / gridSize + 1;
 		long number = 0;

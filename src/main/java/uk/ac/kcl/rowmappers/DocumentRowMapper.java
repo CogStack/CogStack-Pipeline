@@ -28,7 +28,7 @@ import org.springframework.jdbc.core.RowMapper;
 import uk.ac.kcl.model.Document;
 
 @Component
-public abstract class DocumentRowMapper implements RowMapper<Document>{
+public class DocumentRowMapper implements RowMapper<Document>{
 
     @Autowired
     Environment env;
@@ -68,4 +68,10 @@ public abstract class DocumentRowMapper implements RowMapper<Document>{
 
     }
 
+    @Override
+    public Document mapRow(ResultSet rs, int rowNum) throws SQLException {
+        Document doc = new Document();
+        mapFields(doc,rs);
+        return doc;
+    }
 }

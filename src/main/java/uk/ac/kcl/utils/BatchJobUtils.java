@@ -1,6 +1,7 @@
 package uk.ac.kcl.utils;
 
 
+import org.apache.log4j.Logger;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 import javax.sql.DataSource;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 
 /**
@@ -19,7 +22,7 @@ import java.sql.Timestamp;
  */
 @Service
 public class BatchJobUtils {
-
+    final static Logger logger = Logger.getLogger(BatchJobUtils.class);
     @Autowired
     Environment env;
 
@@ -50,14 +53,27 @@ public class BatchJobUtils {
         return id;
     }
 
+    public Timestamp convertStringToTimeStamp(String data) throws ParseException {
+        SimpleDateFormat format = new SimpleDateFormat(env.getProperty("datePatternForScheduling"));
+        java.util.Date date = (java.util.Date)format.parse(data);
+        Timestamp lastGoodDate = new Timestamp(date.getTime());
+        return lastGoodDate;
+    }
+
     public Timestamp getLastSuccessfulRecordTimestamp(){
         try {
             ExecutionContext ec = getLastSuccessfulJobExecutionContext();
-            Timestamp lastGoodDate = new Timestamp(Long.valueOf(ec.get("last_successful_timestamp_from_this_job").toString()));
+            SimpleDateFormat format = new SimpleDateFormat(env.getProperty("datePatternForScheduling"));
+            java.util.Date date = convertStringToTimeStamp(ec.get("last_successful_timestamp_from_this_job").toString());
+            Timestamp lastGoodDate = new Timestamp(date.getTime());
             return lastGoodDate;
         }catch(NullPointerException ex){
-            return null;
+            logger.info("No previous job finished. Starting from scratch");
+        } catch (ParseException e) {
+            logger.error("DATE PARSE EXCEPTION", e);
+            System.exit(1);
         }
+        return null;
     }
 
     public ExecutionContext getLastSuccessfulJobExecutionContext(){
