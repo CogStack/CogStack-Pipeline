@@ -41,12 +41,12 @@ public class BatchJobUtils {
         String sql = "select MIN(" + timestampColumnName + ") AS min_time_stamp " +
                     " FROM " + tableName + " " +
                     " WHERE " + timestampColumnName + " >  '" + lastestTimestamp.toString() + "'";
-        Long timestampLong = (Long)template.queryForObject(sql, Long.class);
+        Timestamp timestampLong = (Timestamp)template.queryForObject(sql, Timestamp.class);
 
         if(timestampLong == null){
             return null;
         }else {
-            return new Timestamp(timestampLong);
+            return new Timestamp(timestampLong.getTime());
         }
     }
 

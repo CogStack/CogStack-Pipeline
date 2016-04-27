@@ -2,20 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8fa4ce33-e860-41c6-a6d6-4cf8986d4df1" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules/turbo-laser_main.iml" afterPath="$PROJECT_DIR$/.idea/modules/turbo-laser_main.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsBasic.java" afterPath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsBasic.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsLineFixer.java" afterPath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsLineFixer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsTikaScheduling.java" afterPath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsTikaScheduling.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/resources/hsql_test_config_line_fixer.properties" afterPath="$PROJECT_DIR$/src/integration-test/resources/hsql_test_config_line_fixer.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_basic.properties" afterPath="$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_basic.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_gate.properties" afterPath="$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_gate.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_line_fixer.properties" afterPath="$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_line_fixer.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/BasicJobConfiguration.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/BasicJobConfiguration.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/JobConfiguration.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/JobConfiguration.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/MasterIntegrationConfiguration.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/MasterIntegrationConfiguration.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/TikaConfiguration.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/TikaConfiguration.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/itemHandlers/ItemHandlers.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/itemHandlers/ItemHandlers.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/partitioners/ColumnRangePartitioner.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/partitioners/ColumnRangePartitioner.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/utils/BatchJobUtils.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/utils/BatchJobUtils.java" />
     </list>
     <ignored path="turbo-laser.iws" />
@@ -68,78 +55,8 @@
       <file leaf-file-name="PostGresIntegrationTestsBasicScheduling.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsBasicScheduling.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="142">
-              <caret line="42" column="43" selection-start-line="42" selection-start-column="43" selection-end-line="42" selection-end-column="43" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ColumnRangePartitioner.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/partitioners/ColumnRangePartitioner.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="184">
-              <caret line="98" column="0" selection-start-line="98" selection-start-column="0" selection-end-line="98" selection-end-column="0" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <marker date="1461782472363" expanded="true" signature="4986:5444" placeholder="SELECT MAX(m... missingValue" />
-                <marker date="1461782472363" expanded="true" signature="5283:5444" placeholder="SELECT missi... missingValue" />
-                <marker date="1461782472363" expanded="true" signature="7192:7228" placeholder="SELECT MIN(m... missingValue" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="BatchJobUtils.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/utils/BatchJobUtils.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="256">
-              <caret line="92" column="28" selection-start-line="92" selection-start-column="28" selection-end-line="92" selection-end-column="28" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <marker date="1461782685683" expanded="true" signature="1194:1251" placeholder="select MIN(m... " />
-                <marker date="1461782685683" expanded="true" signature="1194:1252" placeholder="select MIN(m... " />
-                <marker date="1461782685683" expanded="true" signature="1194:1272" placeholder="select MIN(m... " />
-                <marker date="1461782685683" expanded="true" signature="1194:1282" placeholder="select MIN(m... " />
-                <marker date="1461782685683" expanded="true" signature="1194:1283" placeholder="select MIN(m... missingValue" />
-                <marker date="1461782685683" expanded="true" signature="1194:1400" placeholder="select MIN(m... missingValue" />
-                <marker date="1461782685683" expanded="true" signature="1194:1401" placeholder="select MIN(m... missingValue" />
-                <marker date="1461782685683" expanded="true" signature="1194:1403" placeholder="select MIN(j... batch_job_execution" />
-                <marker date="1461782685683" expanded="true" signature="1760:2034" placeholder="select max(s... batch_job_execution" />
-                <marker date="1461782685683" expanded="true" signature="2291:2571" placeholder="select max(j... batch_job_execution" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ItemHandlers.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/itemHandlers/ItemHandlers.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="120">
-              <caret line="62" column="0" selection-start-line="62" selection-start-column="0" selection-end-line="62" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="BasicJobConfiguration.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/BasicJobConfiguration.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="247">
-              <caret line="58" column="0" selection-start-line="58" selection-start-column="0" selection-end-line="58" selection-end-column="0" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#2011#2031#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="postgres_test_config_basic.properties" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_basic.properties">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="345">
-              <caret line="30" column="20" selection-start-line="30" selection-start-column="20" selection-end-line="30" selection-end-column="20" />
+            <state relative-caret-position="46">
+              <caret line="33" column="3" selection-start-line="33" selection-start-column="3" selection-end-line="33" selection-end-column="3" />
               <folding />
             </state>
           </provider>
@@ -590,9 +507,9 @@
         <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsLineFixer.java" />
         <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsBasic.java" />
         <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsTikaScheduling.java" />
-        <option value="$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_basic.properties" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/partitioners/ColumnRangePartitioner.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/utils/BatchJobUtils.java" />
+        <option value="$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_basic.properties" />
       </list>
     </option>
   </component>
@@ -613,9 +530,9 @@
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="65" />
-    <option name="y" value="24" />
-    <option name="width" value="1855" />
-    <option name="height" value="1056" />
+    <option name="y" value="-4" />
+    <option name="width" value="1301" />
+    <option name="height" value="772" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <OptionsSetting value="true" id="Add" />
@@ -642,107 +559,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope">
-        <subPane subId="Problems" />
-        <subPane subId="Project Files">
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="turbo-laser">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-        <subPane subId="Tests">
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="turbo-laser">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="turbo-laser_test">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="src/test">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="turbo-laser">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="turbo-laser_test">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="src/test">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="java">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="uk/ac/kcl">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="turbo-laser">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="turbo-laser_test">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="src/test">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="java">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="uk/ac/kcl">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="integrationtests">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
-      <pane id="ProjectPane">
-        <subPane />
-      </pane>
-      <pane id="Scratches" />
       <pane id="PackagesPane">
         <subPane>
           <PATH>
@@ -953,6 +769,107 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope">
+        <subPane subId="Problems" />
+        <subPane subId="Project Files">
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="turbo-laser">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+        <subPane subId="Tests">
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="turbo-laser">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="turbo-laser_test">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="src/test">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="turbo-laser">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="turbo-laser_test">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="src/test">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="java">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="uk/ac/kcl">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="turbo-laser">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="turbo-laser_test">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="src/test">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="java">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="uk/ac/kcl">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="integrationtests">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="ProjectPane">
+        <subPane />
+      </pane>
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -1641,19 +1558,11 @@
       <workItem from="1461750947881" duration="12421000" />
       <workItem from="1461763692514" duration="4183000" />
       <workItem from="1461768932779" duration="11156000" />
+      <workItem from="1461783351301" duration="1204000" />
     </task>
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="PostGresIntegrationTestsBasicScheduling - 2016.04.27 at 18h 37m 00s.xml">
-      <configuration name="PostGresIntegrationTestsBasicScheduling" configurationId="JUnit" />
-    </history-entry>
-    <history-entry file="PostGresIntegrationTestsBasicScheduling - 2016.04.27 at 18h 37m 51s.xml">
-      <configuration name="PostGresIntegrationTestsBasicScheduling" configurationId="JUnit" />
-    </history-entry>
-    <history-entry file="PostGresIntegrationTestsBasicScheduling - 2016.04.27 at 18h 39m 53s.xml">
-      <configuration name="PostGresIntegrationTestsBasicScheduling" configurationId="JUnit" />
-    </history-entry>
     <history-entry file="PostGresIntegrationTestsBasicScheduling - 2016.04.27 at 19h 28m 32s.xml">
       <configuration name="PostGresIntegrationTestsBasicScheduling" configurationId="JUnit" />
     </history-entry>
@@ -1664,6 +1573,15 @@
       <configuration name="PostGresIntegrationTestsBasicScheduling" configurationId="JUnit" />
     </history-entry>
     <history-entry file="PostGresIntegrationTestsBasicScheduling - 2016.04.27 at 19h 43m 58s.xml">
+      <configuration name="PostGresIntegrationTestsBasicScheduling" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="PostGresIntegrationTestsBasicScheduling - 2016.04.27 at 20h 00m 25s.xml">
+      <configuration name="PostGresIntegrationTestsBasicScheduling" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="PostGresIntegrationTestsBasicScheduling - 2016.04.27 at 20h 07m 07s.xml">
+      <configuration name="PostGresIntegrationTestsBasicScheduling" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="PostGresIntegrationTestsBasicScheduling - 2016.04.27 at 20h 14m 58s.xml">
       <configuration name="PostGresIntegrationTestsBasicScheduling" configurationId="JUnit" />
     </history-entry>
     <history-entry file="PostGresIntegrationTestsTikaScheduling - 2016.04.27 at 18h 25m 59s.xml">
@@ -1677,11 +1595,11 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="182021000" />
+    <option name="totallyTimeSpent" value="183225000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="65" y="24" width="1855" height="1056" extended-state="6" />
-    <editor active="true" />
+    <frame x="65" y="-4" width="1301" height="772" extended-state="6" />
+    <editor active="false" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -1691,19 +1609,19 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32935917" sideWeight="0.50269026" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32988048" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.45537525" sideWeight="0.727133" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.8338279" sideWeight="0.727133" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Spring" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22222222" sideWeight="0.49213484" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17689243" sideWeight="0.49213484" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.12990603" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31360492" sideWeight="0.5078652" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.4087221" sideWeight="0.49577248" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.52373886" sideWeight="0.49577248" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -1776,12 +1694,6 @@
           <line>74</line>
           <properties />
           <option name="timeStamp" value="61" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/utils/BatchJobUtils.java</url>
-          <line>87</line>
-          <properties />
-          <option name="timeStamp" value="62" />
         </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
@@ -1857,7 +1769,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="137">
           <caret line="62" column="31" selection-start-line="62" selection-start-column="31" selection-end-line="62" selection-end-column="31" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1932,7 +1843,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="504">
           <caret line="50" column="9" selection-start-line="50" selection-start-column="9" selection-end-line="50" selection-end-column="9" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1950,23 +1860,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.batch/spring-batch-core/3.0.6.RELEASE/7e8c00855cd5cdf8d953c817eceb5695671f8b07/spring-batch-core-3.0.6.RELEASE-sources.jar!/org/springframework/batch/core/partition/support/SimpleStepExecutionSplitter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="95">
-          <caret line="213" column="0" selection-start-line="213" selection-start-column="0" selection-end-line="213" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SQLServerIntegrationTestsGATE.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="108">
           <caret line="61" column="13" selection-start-line="61" selection-start-column="13" selection-end-line="61" selection-end-column="13" />
-          <folding>
-            <marker date="1461191711565" expanded="true" signature="4500:4938" placeholder="CREATE TABLE... tblInputDocs" />
-            <marker date="1461191711565" expanded="true" signature="5098:5542" placeholder="CREATE TABLE... tblOutputDocs" />
-            <marker date="1461191711565" expanded="true" signature="6559:6853" placeholder="INSERT INTO dbo.tblInputDocs... " />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1974,32 +1871,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="18">
           <caret line="52" column="43" selection-start-line="52" selection-start-column="43" selection-end-line="52" selection-end-column="43" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <marker date="1461769928450" expanded="true" signature="2901:2934" placeholder="DROP TABLE I... " />
-            <marker date="1461769928450" expanded="true" signature="2970:3303" placeholder="CREATE TABLE... tblInputDocs" />
-            <marker date="1461769928450" expanded="true" signature="3340:3374" placeholder="DROP TABLE I... " />
-            <marker date="1461769928450" expanded="true" signature="3410:3745" placeholder="CREATE TABLE... tblOutputDocs" />
-            <marker date="1461769928450" expanded="true" signature="3862:3895" placeholder="DROP TABLE I... " />
-            <marker date="1461769928450" expanded="true" signature="3931:4263" placeholder="CREATE TABLE... tblInputDocs" />
-            <marker date="1461769928450" expanded="true" signature="4300:4334" placeholder="DROP TABLE I... " />
-            <marker date="1461769928450" expanded="true" signature="4370:4705" placeholder="CREATE TABLE... tblOutputDocs" />
-            <marker date="1461769928450" expanded="true" signature="4790:4823" placeholder="DROP TABLE I... " />
-            <marker date="1461769928450" expanded="true" signature="4859:5157" placeholder="CREATE TABLE... tblInputDocs" />
-            <marker date="1461769928450" expanded="true" signature="5243:5277" placeholder="DROP TABLE I... " />
-            <marker date="1461769928450" expanded="true" signature="5313:5613" placeholder="CREATE TABLE... tblOutputDocs" />
-            <marker date="1461769928450" expanded="true" signature="5313:5617" placeholder="CREATE TABLE... tblOutputDocs" />
-            <marker date="1461769928450" expanded="true" signature="5741:5768" placeholder="DROP TABLE I... " />
-            <marker date="1461769928450" expanded="true" signature="5741:5773" placeholder="DROP TABLE I... " />
-            <marker date="1461769928450" expanded="true" signature="5809:6047" placeholder="CREATE TABLE... tblInputDocs" />
-            <marker date="1461769928450" expanded="true" signature="6094:6128" placeholder="DROP TABLE I... " />
-            <marker date="1461769928450" expanded="true" signature="6164:6465" placeholder="CREATE TABLE... tblOutputDocs" />
-            <marker date="1461769928450" expanded="true" signature="6164:6509" placeholder="CREATE TABLE... tblOutputDocs" />
-            <marker date="1461769928450" expanded="true" signature="7507:7797" placeholder="INSERT INTO tblInputDocs... " />
-            <marker date="1461769928450" expanded="true" signature="9170:9460" placeholder="INSERT INTO tblInputDocs... " />
-            <marker date="1461769928450" expanded="true" signature="9892:10152" placeholder="INSERT INTO tblInputDocs... " />
-            <marker date="1461769928450" expanded="true" signature="10612:10813" placeholder="INSERT INTO tblInputDocs... " />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -2015,7 +1886,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="324">
           <caret line="34" column="1" selection-start-line="34" selection-start-column="1" selection-end-line="34" selection-end-column="1" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2023,9 +1893,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="18">
           <caret line="37" column="0" selection-start-line="37" selection-start-column="0" selection-end-line="37" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -2033,7 +1900,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="252">
           <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2041,7 +1907,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="184">
           <caret line="30" column="13" selection-start-line="30" selection-start-column="13" selection-end-line="30" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2049,7 +1914,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="270">
           <caret line="31" column="0" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2065,7 +1929,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="450">
           <caret line="102" column="45" selection-start-line="102" selection-start-column="27" selection-end-line="102" selection-end-column="45" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2073,7 +1936,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="280">
           <caret line="70" column="27" selection-start-line="70" selection-start-column="27" selection-end-line="70" selection-end-column="27" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2081,7 +1943,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="108">
           <caret line="6" column="29" selection-start-line="6" selection-start-column="29" selection-end-line="6" selection-end-column="29" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2097,7 +1958,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="198">
           <caret line="59" column="21" selection-start-line="59" selection-start-column="21" selection-end-line="59" selection-end-column="21" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2121,9 +1981,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="193">
           <caret line="50" column="24" selection-start-line="50" selection-start-column="24" selection-end-line="50" selection-end-column="24" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -2131,15 +1988,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="216">
           <caret line="57" column="10" selection-start-line="57" selection-start-column="0" selection-end-line="57" selection-end-column="63" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_basic.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="345">
-          <caret line="30" column="20" selection-start-line="30" selection-start-column="20" selection-end-line="30" selection-end-column="20" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2147,7 +1995,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="252">
           <caret line="49" column="33" selection-start-line="49" selection-start-column="33" selection-end-line="49" selection-end-column="33" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2155,26 +2002,20 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="20">
           <caret line="31" column="39" selection-start-line="31" selection-start-column="39" selection-end-line="31" selection-end-column="39" />
-          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/BasicJobConfiguration.java">
+    <entry file="file://$PROJECT_DIR$/src/main/groovy/uk/ac/kcl/model/PartitionParams.groovy">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="247">
-          <caret line="58" column="0" selection-start-line="58" selection-start-column="0" selection-end-line="58" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#2011#2031#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="108">
+          <caret line="6" column="6" selection-start-line="6" selection-start-column="6" selection-end-line="6" selection-end-column="6" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/itemHandlers/ItemHandlers.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/rowmappers/PartitionParamsRowMapper.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="62" column="0" selection-start-line="62" selection-start-column="0" selection-end-line="62" selection-end-column="0" />
-          <folding />
+        <state relative-caret-position="144">
+          <caret line="17" column="13" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
         </state>
       </provider>
     </entry>
@@ -2186,26 +2027,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/groovy/uk/ac/kcl/model/PartitionParams.groovy">
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.batch/spring-batch-core/3.0.6.RELEASE/7e8c00855cd5cdf8d953c817eceb5695671f8b07/spring-batch-core-3.0.6.RELEASE-sources.jar!/org/springframework/batch/core/partition/support/SimpleStepExecutionSplitter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="6" column="6" selection-start-line="6" selection-start-column="6" selection-end-line="6" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/rowmappers/PartitionParamsRowMapper.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="17" column="13" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
+        <state relative-caret-position="95">
+          <caret line="213" column="0" selection-start-line="213" selection-start-column="0" selection-end-line="213" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/partitioners/ColumnRangePartitioner.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="184">
-          <caret line="98" column="0" selection-start-line="98" selection-start-column="0" selection-end-line="98" selection-end-column="0" />
+        <state relative-caret-position="186">
+          <caret line="103" column="0" selection-start-line="103" selection-start-column="0" selection-end-line="103" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
             <marker date="1461782472363" expanded="true" signature="4986:5444" placeholder="SELECT MAX(m... missingValue" />
@@ -2218,27 +2051,53 @@
     <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/utils/BatchJobUtils.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="256">
-          <caret line="92" column="28" selection-start-line="92" selection-start-column="28" selection-end-line="92" selection-end-column="28" />
+          <caret line="46" column="0" selection-start-line="46" selection-start-column="0" selection-end-line="46" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <marker date="1461782685683" expanded="true" signature="1194:1251" placeholder="select MIN(m... " />
-            <marker date="1461782685683" expanded="true" signature="1194:1252" placeholder="select MIN(m... " />
-            <marker date="1461782685683" expanded="true" signature="1194:1272" placeholder="select MIN(m... " />
-            <marker date="1461782685683" expanded="true" signature="1194:1282" placeholder="select MIN(m... " />
-            <marker date="1461782685683" expanded="true" signature="1194:1283" placeholder="select MIN(m... missingValue" />
-            <marker date="1461782685683" expanded="true" signature="1194:1400" placeholder="select MIN(m... missingValue" />
-            <marker date="1461782685683" expanded="true" signature="1194:1401" placeholder="select MIN(m... missingValue" />
-            <marker date="1461782685683" expanded="true" signature="1194:1403" placeholder="select MIN(j... batch_job_execution" />
-            <marker date="1461782685683" expanded="true" signature="1760:2034" placeholder="select max(s... batch_job_execution" />
-            <marker date="1461782685683" expanded="true" signature="2291:2571" placeholder="select max(j... batch_job_execution" />
+            <marker date="1461783639094" expanded="true" signature="1194:1251" placeholder="select MIN(m... " />
+            <marker date="1461783639094" expanded="true" signature="1194:1252" placeholder="select MIN(m... " />
+            <marker date="1461783639094" expanded="true" signature="1194:1272" placeholder="select MIN(m... " />
+            <marker date="1461783639094" expanded="true" signature="1194:1282" placeholder="select MIN(m... " />
+            <marker date="1461783639094" expanded="true" signature="1194:1283" placeholder="select MIN(m... missingValue" />
+            <marker date="1461783639094" expanded="true" signature="1194:1400" placeholder="select MIN(m... missingValue" />
+            <marker date="1461783639094" expanded="true" signature="1194:1401" placeholder="select MIN(m... missingValue" />
+            <marker date="1461783639094" expanded="true" signature="1194:1403" placeholder="select MIN(j... batch_job_execution" />
+            <marker date="1461783639094" expanded="true" signature="1785:2059" placeholder="select max(s... batch_job_execution" />
+            <marker date="1461783639094" expanded="true" signature="2316:2596" placeholder="select max(j... batch_job_execution" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/BasicJobConfiguration.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="58" column="0" selection-start-line="58" selection-start-column="0" selection-end-line="58" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/itemHandlers/ItemHandlers.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="62" column="0" selection-start-line="62" selection-start-column="0" selection-end-line="62" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_basic.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="201">
+          <caret line="30" column="20" selection-start-line="30" selection-start-column="20" selection-end-line="30" selection-end-column="20" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsBasicScheduling.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="142">
-          <caret line="42" column="43" selection-start-line="42" selection-start-column="43" selection-end-line="42" selection-end-column="43" />
+        <state relative-caret-position="46">
+          <caret line="33" column="3" selection-start-line="33" selection-start-column="3" selection-end-line="33" selection-end-column="3" />
           <folding />
         </state>
       </provider>
