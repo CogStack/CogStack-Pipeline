@@ -16,7 +16,6 @@
 package uk.ac.kcl.partitioners;
 
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.PostConstruct;
@@ -31,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
-import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import uk.ac.kcl.listeners.JobCompleteNotificationListener;
@@ -97,18 +95,21 @@ public class ColumnRangePartitioner implements Partitioner {
     public Map<String, ExecutionContext> partition(int gridSize) {
         PartitionParams params = getPartitionParams();
         Map<String, ExecutionContext> result = new HashMap<String, ExecutionContext>();
-        if(isSynchedWithDatabase(params)) {
-            logger.info("Database appears to be synched. Checking again on next job");
+        if(noRecordsFoundInProcessingPeriod(params)) {
             Timestamp newestTimestampInDB = batchJobUtils.checkForNewRecordsBeyondConfiguredProcessingPeriod(table, lastGoodJob, timeStamp);
             if (newestTimestampInDB == null) {
                 jobCompleteNotificationListener.setLastDateInthisJob(String.valueOf(lastGoodJob.getTime()));
+                logger.info("Database appears to be synched as far as " + String.valueOf(lastGoodJob.toString())
+                        + "Checking again on next job" );
                 return result;
             } else {
+                logger.info("New data found! Next job will synch as far as " + String.valueOf(newestTimestampInDB.toString()));
                 jobCompleteNotificationListener.setLastDateInthisJob(String.valueOf(newestTimestampInDB.getTime()));
             }
             return result;
         }else {
-
+            logger.info("Database not yet synched. Synching as far as  "
+                    + params.getMaxTimeStamp().toString() +" this job");
             jobCompleteNotificationListener.setLastDateInthisJob(String.valueOf(params.getMaxTimeStamp().getTime()));
 
             long targetSize = (params.getMaxId() - params.getMinId()) / gridSize + 1;
@@ -130,7 +131,7 @@ public class ColumnRangePartitioner implements Partitioner {
         }
     }
 
-    private boolean isSynchedWithDatabase(PartitionParams partitionParams){
+    private boolean noRecordsFoundInProcessingPeriod(PartitionParams partitionParams){
         if(partitionParams.getMinTimeStamp() == null){
             return true;
         }else{
