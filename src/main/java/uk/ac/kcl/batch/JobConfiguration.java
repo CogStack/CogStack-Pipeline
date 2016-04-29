@@ -24,7 +24,9 @@ import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.integration.partition.BeanFactoryStepLocator;
 import org.springframework.batch.integration.partition.StepExecutionRequestHandler;
+import org.springframework.batch.support.DatabaseType;
 import org.springframework.context.annotation.*;
+import org.springframework.jdbc.support.MetaDataAccessException;
 import uk.ac.kcl.partitioners.ColumnRangePartitioner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -96,6 +98,11 @@ public class JobConfiguration {
     @Qualifier("sourceDataSource")
     public DataSource sourceDataSource() {
         BasicDataSource ds = new BasicDataSource();
+//        try {
+//            DatabaseType.fromMetaData(ds);
+//        } catch (MetaDataAccessException e) {
+//            e.printStackTrace();
+//        }
         ds.setDriverClassName(env.getProperty("source.Driver"));
         ds.setUrl(env.getProperty("source.JdbcPath"));
         ds.setUsername(sourceUserName);

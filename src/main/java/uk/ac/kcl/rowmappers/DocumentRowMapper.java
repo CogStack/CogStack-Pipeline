@@ -25,12 +25,16 @@ import java.util.Arrays;
 import java.util.List;
 import org.springframework.jdbc.core.RowMapper;
 import uk.ac.kcl.model.Document;
+import uk.ac.kcl.utils.BatchJobUtils;
 
 @Component
 public class DocumentRowMapper implements RowMapper<Document>{
 
     @Autowired
     Environment env;
+
+    @Autowired
+    BatchJobUtils batchJobUtils;
 
     protected void mapFields(Document doc, ResultSet rs) throws SQLException {
 //implement later if database name/schema is requried
@@ -63,10 +67,10 @@ public class DocumentRowMapper implements RowMapper<Document>{
                     if(meta.getColumnType(col)==91) {
                         Date dt = (Date)value;
                         Timestamp ts = new Timestamp(dt.getTime());
-                        doc.getAdditionalFields().put(meta.getColumnLabel(col), ts.toString());
+                        doc.getAdditionalFields().put(meta.getColumnLabel(col), batchJobUtils.convertTimeStampToESDateFormat(ts));
                     }else if (meta.getColumnType(col)==93){
                         Timestamp ts = (Timestamp) value;
-                        doc.getAdditionalFields().put(meta.getColumnLabel(col), ts.toString());
+                        doc.getAdditionalFields().put(meta.getColumnLabel(col), batchJobUtils.convertTimeStampToESDateFormat(ts));
                     }else {
                         doc.getAdditionalFields().put(meta.getColumnLabel(col), value);
                     }

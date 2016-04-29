@@ -71,16 +71,11 @@ public class BatchJobUtils {
     }
 
 
-    public Timestamp convertStringToTimeStamp(String data) {
-        SimpleDateFormat format = new SimpleDateFormat(env.getProperty("datePatternForScheduling"));
-        java.util.Date date = null;
-        try {
-            date = (java.util.Date)format.parse(data);
-        } catch (ParseException e) {
-            logger.error("DATE PARSE EXCEPTION", e);
-        }
-        Timestamp lastGoodDate = new Timestamp(date.getTime());
-        return lastGoodDate;
+    public String convertTimeStampToESDateFormat(Timestamp ts) {
+        SimpleDateFormat format = new SimpleDateFormat(env.getProperty("datePatternForES"));
+        //java.util.Date date = new java.util.Date(ts.getTime());
+        String parseResult = format.format(ts);
+        return parseResult;
     }
 
     public Timestamp getLastSuccessfulRecordTimestamp(){

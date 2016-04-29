@@ -40,6 +40,7 @@ import javax.annotation.Resource;
 @Import(ItemHandlers.class)
 @Profile("basic")
 @Configuration
+@PropertySource("file:${TURBO_LASER}/basic.conf")
 public class BasicJobConfiguration {
     @Resource
     Environment env;

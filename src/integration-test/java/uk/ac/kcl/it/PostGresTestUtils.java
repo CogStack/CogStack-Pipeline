@@ -90,7 +90,7 @@ public class PostGresTestUtils {
                 + ", srcTableName text "
                 + ", primaryKeyFieldName text "
                 + ", primaryKeyFieldValue integer "
-                + ", updateTime Date "
+                + ", updateTime TIMESTAMP "
                 + ", input bytea )");
 
         targetTemplate.execute("DROP TABLE IF EXISTS tblOutputDocs");
@@ -100,7 +100,7 @@ public class PostGresTestUtils {
                 + ", srcTableName text "
                 + ", primaryKeyFieldName text "
                 + ", primaryKeyFieldValue integer "
-                + ", updateTime Date "
+                + ", updateTime TIMESTAMP "
                 + ", output text )");
     }
 
