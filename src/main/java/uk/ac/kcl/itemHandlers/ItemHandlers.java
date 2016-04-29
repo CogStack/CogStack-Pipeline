@@ -38,7 +38,8 @@ public class ItemHandlers {
         if(env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("true")
                 && minTimeStamp!= null && maxTimeStamp != null) {
             returnString = "WHERE " +env.getProperty("timeStamp")
-                    + " BETWEEN '" + minTimeStamp + "' AND '" + maxTimeStamp +"'"
+                    + " BETWEEN CAST('" + minTimeStamp + "' AS "+env.getProperty("dbmsToJavaSqlTimestampType")+") "
+                    + " AND CAST('" + maxTimeStamp +"' AS "+env.getProperty("dbmsToJavaSqlTimestampType")+") "
                     + " AND " + env.getProperty("columntoPartition")
                     + " BETWEEN '" + minValue + "' AND '" + maxValue +"'";
         }else{

@@ -148,7 +148,7 @@ public class ColumnRangePartitioner implements Partitioner {
                 " MIN(" + timeStamp + ") AS min_time_stamp  " +
                 " FROM ( " +
                 " SELECT " +
-//batchJobUtils.cleanSqlString(env.getProperty("partitionerPreFieldsSQL")) +
+                batchJobUtils.cleanSqlString(env.getProperty("partitionerPreFieldsSQL")) +
                 " " + column + ", " + timeStamp +
                 " FROM " + table + " ";
         if(env.getProperty("firstJobStartDate") !=null && firstRun){
@@ -157,10 +157,10 @@ public class ColumnRangePartitioner implements Partitioner {
             Timestamp earliestRecord = new Timestamp(Long.valueOf(env.getProperty("firstJobStartDate")));
             processingPeriod = new Timestamp(earliestRecord.getTime() + Long.valueOf(env.getProperty("processingPeriod")));
             sql =	sql +
-                    " WHERE " + timeStamp + " > '" + earliestRecord.toString() +
-                    "' AND " + timeStamp + "<= '" + processingPeriod.toString() + "'" +
+                    " WHERE CAST (" + timeStamp + " as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) > CAST ('" + earliestRecord.toString() + "' as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) " +
+                    " AND CAST (" + timeStamp + " as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) <= CAST ('" + processingPeriod.toString() + "' as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) " +
                     " ORDER BY " + timeStamp +" ASC " +" , " + column +" ASC " +
-                    //batchJobUtils.cleanSqlString(env.getProperty("partitionerPostOrderByClause")) +
+                    batchJobUtils.cleanSqlString(env.getProperty("partitionerPostOrderByClause")) +
                     " ) t1" ;
             firstRun = false;
         } else if(batchJobUtils.getLastSuccessfulRecordTimestamp() != null) {
@@ -168,10 +168,10 @@ public class ColumnRangePartitioner implements Partitioner {
             logger.info ("last successful batch retrieved from job repository. Commencing from " + lastGoodJob.toString());
             processingPeriod = new Timestamp(lastGoodJob.getTime() + Long.valueOf(env.getProperty("processingPeriod")));
             sql =	sql +
-                    " WHERE " + timeStamp + " > '" + lastGoodJob.toString() +
-                    "' AND "  + timeStamp +  " <= '" + processingPeriod.toString() + "'" +
+                    " WHERE CAST (" + timeStamp + " as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) > CAST ('" + lastGoodJob.toString()  + "' as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) " +
+                    " AND CAST ("  + timeStamp +  " as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) <= CAST ('" + processingPeriod.toString() + "' as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) " +
                     " ORDER BY " + timeStamp  +" ASC " + " , " + column +" ASC " +
-                    //batchJobUtils.cleanSqlString(env.getProperty("partitionerPostOrderByClause")) +
+                    batchJobUtils.cleanSqlString(env.getProperty("partitionerPostOrderByClause")) +
                     " ) t1" ;
         }else{
             lastGoodJob = null;
@@ -182,10 +182,10 @@ public class ColumnRangePartitioner implements Partitioner {
             processingPeriod = new Timestamp(Long.parseLong(test));
             processingPeriod.setTime(earliestRecord.getTime() + processingPeriod.getTime());
             sql =	sql +
-                    " WHERE " + timeStamp + " > '" + earliestRecord.toString() +
-                    "' AND " + timeStamp + " <= '" + processingPeriod.toString() + "'" +
+                    " WHERE CAST (" + timeStamp + " as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) > CAST ('" + earliestRecord.toString()  + "' as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) " +
+                    " AND CAST (" + timeStamp + " as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) <= CAST ('" + processingPeriod.toString()  + "' as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) " +
                     " ORDER BY " + timeStamp  +" ASC " + " , " + column +" ASC " +
-                    //batchJobUtils.cleanSqlString(env.getProperty("partitionerPostOrderByClause")) +
+                    batchJobUtils.cleanSqlString(env.getProperty("partitionerPostOrderByClause")) +
                     " ) t1" ;
         }
         logger.info ("This job SQL: " + sql);

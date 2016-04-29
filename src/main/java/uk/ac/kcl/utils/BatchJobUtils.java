@@ -40,7 +40,7 @@ public class BatchJobUtils {
         JdbcTemplate template = new JdbcTemplate(targetDataSource);
         String sql = "select MIN(" + timestampColumnName + ") AS min_time_stamp " +
                     " FROM " + tableName + " " +
-                    " WHERE " + timestampColumnName + " >  '" + lastestTimestamp.toString() + "'";
+                    " WHERE CAST(" + timestampColumnName + " AS "+env.getProperty("dbmsToJavaSqlTimestampType")+") >  CAST('" + lastestTimestamp.toString() + "' AS "+env.getProperty("dbmsToJavaSqlTimestampType")+")";
         Timestamp timestampLong = (Timestamp)template.queryForObject(sql, Timestamp.class);
 
         if(timestampLong == null){

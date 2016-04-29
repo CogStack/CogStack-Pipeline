@@ -19,9 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import uk.ac.kcl.model.BinaryDocument;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
+
+import java.sql.*;
 import java.util.Arrays;
 import java.util.List;
 import org.springframework.jdbc.core.RowMapper;
@@ -61,7 +60,17 @@ public class DocumentRowMapper implements RowMapper<Document>{
                 Object value = rs.getObject(col);
                 if (value != null && !fieldsToIgnore.contains(meta.getColumnLabel(col)))
                 {
-                    doc.getAdditionalFields().put(meta.getColumnLabel(col),value);
+                    if(meta.getColumnType(col)==91) {
+                        Date dt = (Date)value;
+                        Timestamp ts = new Timestamp(dt.getTime());
+                        doc.getAdditionalFields().put(meta.getColumnLabel(col), ts.toString());
+                    }else if (meta.getColumnType(col)==93){
+                        Timestamp ts = (Timestamp) value;
+                        doc.getAdditionalFields().put(meta.getColumnLabel(col), ts.toString());
+                    }else {
+                        doc.getAdditionalFields().put(meta.getColumnLabel(col), value);
+                    }
+
                 }
             }
 
