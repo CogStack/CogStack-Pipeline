@@ -26,6 +26,8 @@ import org.springframework.batch.integration.partition.BeanFactoryStepLocator;
 import org.springframework.batch.integration.partition.StepExecutionRequestHandler;
 import org.springframework.batch.support.DatabaseType;
 import org.springframework.context.annotation.*;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.jdbc.support.MetaDataAccessException;
 import uk.ac.kcl.partitioners.ColumnRangePartitioner;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,8 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.integration.config.EnableIntegration;
 import org.springframework.jms.connection.CachingConnectionFactory;
 
+import java.sql.SQLException;
+
 /**
  *
  * @author rich
@@ -47,15 +51,15 @@ import org.springframework.jms.connection.CachingConnectionFactory;
 @Configuration
 @ComponentScan({"uk.ac.kcl.rowmappers","uk.ac.kcl.utils"})
 @EnableBatchProcessing
-@Import({          
-            DbLineFixerConfiguration.class, 
-            GateConfiguration.class,
-            BasicJobConfiguration.class,
-            BatchConfigurer.class,
-            TikaConfiguration.class,
-            SlaveIntegrationConfiguration.class,
-            MasterIntegrationConfiguration.class
-            })
+@Import({
+        DbLineFixerConfiguration.class,
+        GateConfiguration.class,
+        BasicJobConfiguration.class,
+        BatchConfigurer.class,
+        TikaConfiguration.class,
+        SlaveIntegrationConfiguration.class,
+        MasterIntegrationConfiguration.class
+})
 public class JobConfiguration {
     /* 
         
@@ -71,12 +75,12 @@ public class JobConfiguration {
         props.setNullValue("");
         return props;
     }
-    
+
     @Autowired
-    public Environment env;      
-    
-    
-    
+    public Environment env;
+
+
+
 
     @Bean
     @Qualifier("slaveTaskExecutor")
@@ -84,37 +88,76 @@ public class JobConfiguration {
         SimpleAsyncTaskExecutor exec = new SimpleAsyncTaskExecutor();
         exec.setConcurrencyLimit(Integer.parseInt(env.getProperty("concurrencyLimit")));
         return exec;
-    }    
+    }
 
 
-    
+
     @Value("${source.username}")
     String sourceUserName;
     @Value("${source.password}")
     String sourcePassword;
-    
+
     @Bean(destroyMethod = "close")
     @Primary
     @Qualifier("sourceDataSource")
     public DataSource sourceDataSource() {
         BasicDataSource ds = new BasicDataSource();
-//        try {
-//            DatabaseType.fromMetaData(ds);
-//        } catch (MetaDataAccessException e) {
-//            e.printStackTrace();
-//        }
         ds.setDriverClassName(env.getProperty("source.Driver"));
         ds.setUrl(env.getProperty("source.JdbcPath"));
         ds.setUsername(sourceUserName);
-        ds.setPassword(sourcePassword);        
+        ds.setPassword(sourcePassword);
+        executeSessionScripts(ds);
         return ds;
     }
+
+    private void executeSessionScripts(BasicDataSource ds) {
+
+        DatabaseType type = null;
+        try {
+            type = DatabaseType.fromMetaData(ds);
+
+            switch (type) {
+                case DERBY:
+                    break;
+                case DB2:
+                    break;
+                case DB2ZOS:
+                    break;
+                case HSQL:
+                    break;
+                case SQLSERVER:
+                    ScriptUtils.executeSqlScript(ds.getConnection(),
+                            new ClassPathResource(
+                                    "SqlServerSessionProperties.sql"));
+                    break;
+                case MYSQL:
+                    break;
+                case ORACLE:
+                    break;
+                case POSTGRES:
+                    ScriptUtils.executeSqlScript(ds.getConnection(),
+                            new ClassPathResource("PostgresSessionProperties.sql"));
+                    break;
+                case SYBASE:
+                    break;
+                case H2:
+                    break;
+                case SQLITE:
+                    break;
+            }
+        } catch (MetaDataAccessException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @Value("${target.username}")
     String targetUserName;
     @Value("${target.password}")
-    String targetPassword;    
-    
+    String targetPassword;
+
     @Bean(destroyMethod = "close")
     @Qualifier("targetDataSource")
     public DataSource targetDataSource() {
@@ -122,40 +165,41 @@ public class JobConfiguration {
         ds.setDriverClassName(env.getProperty("target.Driver"));
         ds.setUrl(env.getProperty("target.JdbcPath"));
         ds.setUsername(targetUserName);
-        ds.setPassword(targetPassword);                
+        ds.setPassword(targetPassword);
+        executeSessionScripts(ds);
         return ds;
-    }    
+    }
 
-    
-     
-    
-  
+
+
+
+
 //    
-            
+
     @Bean
     public BeanFactoryStepLocator stepLocator(){
         return new BeanFactoryStepLocator();
     }
-    
-    @Bean 
+
+    @Bean
     public CachingConnectionFactory connectionFactory(ActiveMQConnectionFactory factory){
         return new CachingConnectionFactory(factory);
     }
 
     @Bean
     public ActiveMQConnectionFactory amqConnectionFactory(){
-        ActiveMQConnectionFactory factory = 
+        ActiveMQConnectionFactory factory =
                 new ActiveMQConnectionFactory(env.getProperty("jmsIP"));
         factory.setUserName(env.getProperty("jmsUsername"));
         factory.setPassword(env.getProperty("jmsPassword"));
         return factory;
     }
-          
-   
-    
+
+
+
     @Bean
     public StepExecutionRequestHandler stepExecutionRequestHandler(
-    JobExplorer jobExplorer, BeanFactoryStepLocator stepLocator){
+            JobExplorer jobExplorer, BeanFactoryStepLocator stepLocator){
         StepExecutionRequestHandler handler = new StepExecutionRequestHandler();
         handler.setJobExplorer(jobExplorer);
         handler.setStepLocator(stepLocator);
