@@ -37,7 +37,7 @@ public class Main {
             ctx.getEnvironment().getPropertySources().addFirst(ps);
             ctx.register(ScheduledJobConfiguration.class);
             ctx.refresh();            
-            ScheduledJobConfiguration job = ctx.getBean(ScheduledJobConfiguration.class);
+            //ScheduledJobConfiguration job = ctx.getBean(ScheduledJobConfiguration.class);
         } else {
             try {
                 CommandLineJobRunner.main(args);

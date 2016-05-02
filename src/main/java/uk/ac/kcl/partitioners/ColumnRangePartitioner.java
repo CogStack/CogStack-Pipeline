@@ -68,7 +68,8 @@ public class ColumnRangePartitioner implements Partitioner {
     @Autowired
     BatchJobUtils batchJobUtils;
 
-    private JdbcTemplate jdbcTemplate;
+    //private JdbcTemplate jdbcTemplate;
+    private DataSource dataSource;
     Timestamp lastGoodJob;
     Timestamp processingPeriod;
 
@@ -87,9 +88,7 @@ public class ColumnRangePartitioner implements Partitioner {
 
     public void setTimeStampColumnName(String timeStamp) {this.timeStamp = timeStamp;}
 
-    public void setDataSource(DataSource dataSource) {
-        jdbcTemplate = new JdbcTemplate(dataSource);
-    }
+    public void setDataSource(DataSource dataSource) {this.dataSource = dataSource; };
 
     @Override
     public Map<String, ExecutionContext> partition(int gridSize) {
@@ -140,7 +139,7 @@ public class ColumnRangePartitioner implements Partitioner {
     }
 
     private PartitionParams getPartitionParams() {
-
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
         String sql = " SELECT "   +
                 " MAX(" + column + ") AS max_id , " +
                 " MIN(" + column + ") AS min_id , " +

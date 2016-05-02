@@ -29,6 +29,8 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Scheduled;
 import uk.ac.kcl.batch.ScheduledJobConfiguration;
@@ -45,6 +47,8 @@ public class Scheduler {
     @Autowired
     Environment env;
 
+    @Autowired
+    ApplicationContext appContext;
 
     @Autowired
     JobExplorer jobExplorer;
@@ -64,6 +68,8 @@ public class Scheduler {
 
 
         Object lastGoodJob = batchJobUtils.getLastSuccessfulRecordTimestamp();
+
+
 
         logger.info("Last good run was " + lastGoodJob +". Recommencing from then");
         JobParameters param = new JobParametersBuilder()

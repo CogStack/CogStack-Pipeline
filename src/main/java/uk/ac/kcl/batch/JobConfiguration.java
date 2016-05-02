@@ -19,6 +19,7 @@ package uk.ac.kcl.batch;
 import javax.sql.DataSource;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.commons.dbcp.BasicDataSourceFactory;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.partition.support.Partitioner;
@@ -29,6 +30,7 @@ import org.springframework.context.annotation.*;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.jdbc.support.MetaDataAccessException;
+import org.springframework.jndi.JndiObjectFactoryBean;
 import uk.ac.kcl.partitioners.ColumnRangePartitioner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -41,6 +43,7 @@ import org.springframework.integration.config.EnableIntegration;
 import org.springframework.jms.connection.CachingConnectionFactory;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
  *
@@ -79,7 +82,11 @@ public class JobConfiguration {
     @Autowired
     public Environment env;
 
-
+//    @Bean
+//    @Qualifier("jndiObjectFactoryBean")
+//    public JndiObjectFactoryBean basicDataSourceFactory(){
+//        return new org.springframework.jndi.JndiObjectFactoryBean();
+//    }
 
 
     @Bean
@@ -101,20 +108,33 @@ public class JobConfiguration {
     @Primary
     @Qualifier("sourceDataSource")
     public DataSource sourceDataSource() {
-        BasicDataSource ds = new BasicDataSource();
-        ds.setDriverClassName(env.getProperty("source.Driver"));
-        ds.setUrl(env.getProperty("source.JdbcPath"));
-        ds.setUsername(sourceUserName);
-        ds.setPassword(sourcePassword);
-        executeSessionScripts(ds);
-        return ds;
+        BasicDataSource tempDatasource = new BasicDataSource();
+        tempDatasource.setDriverClassName(env.getProperty("source.Driver"));
+        tempDatasource.setUsername(sourceUserName);
+        tempDatasource.setPassword(sourcePassword);
+        tempDatasource.setUrl(env.getProperty("source.JdbcPath"));
+
+
+        BasicDataSource mainDatasource = new BasicDataSource();
+        executeSessionScripts(tempDatasource, mainDatasource);
+        mainDatasource.setTestOnBorrow(true);
+        mainDatasource.setValidationQuery("SELECT 1");
+        mainDatasource.setDriverClassName(env.getProperty("source.Driver"));
+        mainDatasource.setUrl(env.getProperty("source.JdbcPath"));
+        mainDatasource.setUsername(sourceUserName);
+        mainDatasource.setPassword(sourcePassword);
+
+
+
+        return mainDatasource;
     }
 
-    private void executeSessionScripts(BasicDataSource ds) {
-
+    private void executeSessionScripts(BasicDataSource tempDatasource, BasicDataSource mainDatasource) {
+        //temp datasource required to get type
+        ArrayList<String> sqlStatements = new ArrayList<>();
         DatabaseType type = null;
         try {
-            type = DatabaseType.fromMetaData(ds);
+            type = DatabaseType.fromMetaData(tempDatasource);
 
             switch (type) {
                 case DERBY:
@@ -126,17 +146,14 @@ public class JobConfiguration {
                 case HSQL:
                     break;
                 case SQLSERVER:
-                    ScriptUtils.executeSqlScript(ds.getConnection(),
-                            new ClassPathResource(
-                                    "SqlServerSessionProperties.sql"));
+                    sqlStatements.add("SET DATEFORMAT ymd;");
+                    mainDatasource.setConnectionInitSqls(sqlStatements);
                     break;
                 case MYSQL:
                     break;
                 case ORACLE:
                     break;
                 case POSTGRES:
-                    ScriptUtils.executeSqlScript(ds.getConnection(),
-                            new ClassPathResource("PostgresSessionProperties.sql"));
                     break;
                 case SYBASE:
                     break;
@@ -147,9 +164,10 @@ public class JobConfiguration {
             }
         } catch (MetaDataAccessException e) {
             e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
     }
 
 
@@ -161,13 +179,24 @@ public class JobConfiguration {
     @Bean(destroyMethod = "close")
     @Qualifier("targetDataSource")
     public DataSource targetDataSource() {
-        BasicDataSource ds = new BasicDataSource();
-        ds.setDriverClassName(env.getProperty("target.Driver"));
-        ds.setUrl(env.getProperty("target.JdbcPath"));
-        ds.setUsername(targetUserName);
-        ds.setPassword(targetPassword);
-        executeSessionScripts(ds);
-        return ds;
+
+        BasicDataSource tempDatasource = new BasicDataSource();
+        tempDatasource.setDriverClassName(env.getProperty("target.Driver"));
+        tempDatasource.setUsername(targetUserName);
+        tempDatasource.setPassword(targetPassword);
+        tempDatasource.setUrl(env.getProperty("target.JdbcPath"));
+
+
+        BasicDataSource mainDatasource = new BasicDataSource();
+        executeSessionScripts(tempDatasource, mainDatasource);
+        mainDatasource.setTestOnBorrow(true);
+        mainDatasource.setValidationQuery("SELECT 1");
+        mainDatasource.setDriverClassName(env.getProperty("target.Driver"));
+        mainDatasource.setUrl(env.getProperty("target.JdbcPath"));
+        mainDatasource.setUsername(targetUserName);
+        mainDatasource.setPassword(targetPassword);
+
+        return mainDatasource;
     }
 
 

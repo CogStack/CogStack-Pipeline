@@ -1,1 +1,3 @@
-SET DATEFORMAT ymd
+--SET DATEFORMAT ydm;
+
+select 1
