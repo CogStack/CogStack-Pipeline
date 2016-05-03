@@ -22,6 +22,7 @@ import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.sax.BodyContentHandler;
 import org.apache.tika.sax.ToXMLContentHandler;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.xml.sax.ContentHandler;
 import uk.ac.kcl.model.BinaryDocument;
@@ -32,7 +33,7 @@ import uk.ac.kcl.model.BinaryDocument;
  */
 public class TikaDocumentItemProcessor implements ItemProcessor<BinaryDocument, BinaryDocument> {
 
-    private static final Logger logJdbcPath = Logger.getLogger(TikaDocumentItemProcessor.class);
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(TikaDocumentItemProcessor.class);
 
     private boolean keepTags;
 
@@ -47,7 +48,7 @@ public class TikaDocumentItemProcessor implements ItemProcessor<BinaryDocument, 
     @Override
     public BinaryDocument process(final BinaryDocument doc) throws Exception {
         ContentHandler handler;
-        logJdbcPath.debug("processing doc ID: " + doc.getPrimaryKeyFieldValue());
+        LOG.debug("processing doc ID: " + doc.getPrimaryKeyFieldValue());
         if (keepTags) {
             handler = new ToXMLContentHandler();
         } else {

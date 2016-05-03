@@ -18,6 +18,7 @@ package uk.ac.kcl.scheduling;
 import java.util.Date;
 import java.util.logging.Level;
 import org.apache.log4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
@@ -34,6 +35,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Scheduled;
 import uk.ac.kcl.batch.ScheduledJobConfiguration;
+import uk.ac.kcl.itemProcessors.GateDocumentItemProcessor;
 import uk.ac.kcl.utils.BatchJobUtils;
 
 /**
@@ -61,7 +63,7 @@ public class Scheduler {
     @Autowired
     BatchJobUtils batchJobUtils;
 
-    final static Logger logger = Logger.getLogger(Scheduler.class);
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(Scheduler.class);
 
     @Scheduled(cron = "${scheduler.rate}")
     public void doTask()  {
@@ -71,7 +73,7 @@ public class Scheduler {
 
 
 
-        logger.info("Last good run was " + lastGoodJob +". Recommencing from then");
+        LOG.info("Last good run was " + lastGoodJob +". Recommencing from then");
         JobParameters param = new JobParametersBuilder()
                 .addDate("this_attempt_date",new Date())
                 //.addDate("last_successful_record_date",batchJobUtils.getLastSuccessfulRecordTimestamp())

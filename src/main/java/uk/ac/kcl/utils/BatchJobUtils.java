@@ -2,6 +2,7 @@ package uk.ac.kcl.utils;
 
 
 import org.apache.log4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import uk.ac.kcl.service.GateService;
 
 import javax.sql.DataSource;
 import java.sql.Date;
@@ -22,7 +24,7 @@ import java.text.SimpleDateFormat;
  */
 @Service
 public class BatchJobUtils {
-    final static Logger logger = Logger.getLogger(BatchJobUtils.class);
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(BatchJobUtils.class);
     @Autowired
     Environment env;
 
@@ -84,7 +86,7 @@ public class BatchJobUtils {
 //            SimpleDateFormat format = new SimpleDateFormat(env.getProperty("datePatternForScheduling"));
 //            java.util.Date date = convertStringToTimeStamp();
             if(ec == null){
-                logger.info("No previous job found in job repository");
+                LOG.info("No previous job found in job repository");
                 return null;
             }else{
                 Timestamp lastGoodDate = new Timestamp(Long.parseLong(ec.get("last_successful_timestamp_from_this_job").toString()));

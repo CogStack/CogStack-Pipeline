@@ -1,0 +1,115 @@
+2016-05-03 09:55:15 INFO  plugins:180 - [Ashcan] modules [], plugins [], sites []
+2016-05-03 09:56:24 INFO  plugins:180 - [Albion] modules [], plugins [], sites []
+2016-05-03 09:56:24 DEBUG threadpool:481 - [Albion] creating thread_pool [force_merge], type [fixed], size [1], queue_size [null]
+2016-05-03 09:56:24 DEBUG threadpool:481 - [Albion] creating thread_pool [percolate], type [fixed], size [8], queue_size [1k]
+2016-05-03 09:56:24 DEBUG threadpool:524 - [Albion] creating thread_pool [fetch_shard_started], type [scaling], min [1], size [16], keep_alive [5m]
+2016-05-03 09:56:24 DEBUG threadpool:481 - [Albion] creating thread_pool [listener], type [fixed], size [4], queue_size [null]
+2016-05-03 09:56:24 DEBUG threadpool:481 - [Albion] creating thread_pool [index], type [fixed], size [8], queue_size [200]
+2016-05-03 09:56:24 DEBUG threadpool:524 - [Albion] creating thread_pool [refresh], type [scaling], min [1], size [4], keep_alive [5m]
+2016-05-03 09:56:24 DEBUG threadpool:481 - [Albion] creating thread_pool [suggest], type [fixed], size [8], queue_size [1k]
+2016-05-03 09:56:24 DEBUG threadpool:445 - [Albion] creating thread_pool [generic], type [cached], keep_alive [30s]
+2016-05-03 09:56:24 DEBUG threadpool:524 - [Albion] creating thread_pool [warmer], type [scaling], min [1], size [4], keep_alive [5m]
+2016-05-03 09:56:24 DEBUG threadpool:481 - [Albion] creating thread_pool [search], type [fixed], size [13], queue_size [1k]
+2016-05-03 09:56:24 DEBUG threadpool:524 - [Albion] creating thread_pool [flush], type [scaling], min [1], size [4], keep_alive [5m]
+2016-05-03 09:56:24 DEBUG threadpool:524 - [Albion] creating thread_pool [fetch_shard_store], type [scaling], min [1], size [16], keep_alive [5m]
+2016-05-03 09:56:24 DEBUG threadpool:524 - [Albion] creating thread_pool [management], type [scaling], min [1], size [5], keep_alive [5m]
+2016-05-03 09:56:24 DEBUG threadpool:481 - [Albion] creating thread_pool [get], type [fixed], size [8], queue_size [1k]
+2016-05-03 09:56:24 DEBUG threadpool:481 - [Albion] creating thread_pool [bulk], type [fixed], size [8], queue_size [50]
+2016-05-03 09:56:24 DEBUG threadpool:524 - [Albion] creating thread_pool [snapshot], type [scaling], min [1], size [4], keep_alive [5m]
+2016-05-03 09:56:25 DEBUG network:107 - configuration:
+
+lo
+        inet 127.0.0.1 netmask:255.0.0.0 scope:host
+        inet6 ::1 prefixlen:128 scope:host
+        UP LOOPBACK mtu:65536 index:1
+
+wlan0
+        inet 192.168.1.3 netmask:255.255.255.0 broadcast:192.168.1.255 scope:site
+        inet6 fe80::3ea9:f4ff:feaf:cb3c prefixlen:64 scope:link
+        hardware 3C:A9:F4:AF:CB:3C
+        UP MULTICAST mtu:1500 index:3
+
+docker0
+        inet 172.17.0.1 netmask:255.255.0.0 broadcast:0.0.0.0 scope:site
+        inet6 fe80::42:6aff:fe6c:15d4 prefixlen:64 scope:link
+        hardware 02:42:6A:6C:15:D4
+        UP MULTICAST mtu:1500 index:4
+
+veth845f854
+        inet6 fe80::85a:c2ff:fe71:ebf3 prefixlen:64 scope:link
+        hardware 0A:5A:C2:71:EB:F3
+        UP MULTICAST mtu:1500 index:6
+
+vetha0272a3
+        inet6 fe80::4876:3fff:fee0:8573 prefixlen:64 scope:link
+        hardware 4A:76:3F:E0:85:73
+        UP MULTICAST mtu:1500 index:8
+
+2016-05-03 09:56:25 DEBUG netty:104 - using gathering [true]
+2016-05-03 09:56:25 DEBUG transport:120 - [Albion] node_sampler_interval[5s]
+2016-05-03 09:56:25 DEBUG SelectorUtil:58 - Using select timeout of 500
+2016-05-03 09:56:25 DEBUG SelectorUtil:58 - Epoll-bug workaround enabled = false
+2016-05-03 09:56:25 DEBUG transport:177 - [Albion] adding address [{#transport#-1}{172.17.0.1}{172.17.0.1:9300}]
+2016-05-03 09:56:25 DEBUG netty:931 - [Albion] connected to node [{#transport#-1}{172.17.0.1}{172.17.0.1:9300}]
+2016-05-03 09:56:25 DEBUG netty:931 - [Albion] connected to node [{Paris}{yQlo-nCfSlOsBfs3LzSR4w}{172.17.0.1}{172.17.0.1:9300}]
+2016-05-03 09:56:31 DEBUG lzf:49 - using decoder[VanillaChunkDecoder] 
+2016-05-03 09:56:37 DEBUG netty:1068 - [Albion] disconnecting from [{Paris}{yQlo-nCfSlOsBfs3LzSR4w}{172.17.0.1}{172.17.0.1:9300}] due to explicit disconnect call
+2016-05-03 09:56:37 DEBUG netty:1068 - [Albion] disconnecting from [{#transport#-1}{172.17.0.1}{172.17.0.1:9300}] due to explicit disconnect call
+2016-05-03 10:07:16 INFO  plugins:180 - [Rancor] modules [], plugins [], sites []
+2016-05-03 11:08:50 INFO  plugins:180 - [Box] modules [], plugins [], sites []
+2016-05-03 11:08:50 DEBUG threadpool:481 - [Box] creating thread_pool [force_merge], type [fixed], size [1], queue_size [null]
+2016-05-03 11:08:50 DEBUG threadpool:481 - [Box] creating thread_pool [percolate], type [fixed], size [8], queue_size [1k]
+2016-05-03 11:08:50 DEBUG threadpool:524 - [Box] creating thread_pool [fetch_shard_started], type [scaling], min [1], size [16], keep_alive [5m]
+2016-05-03 11:08:50 DEBUG threadpool:481 - [Box] creating thread_pool [listener], type [fixed], size [4], queue_size [null]
+2016-05-03 11:08:50 DEBUG threadpool:481 - [Box] creating thread_pool [index], type [fixed], size [8], queue_size [200]
+2016-05-03 11:08:50 DEBUG threadpool:524 - [Box] creating thread_pool [refresh], type [scaling], min [1], size [4], keep_alive [5m]
+2016-05-03 11:08:50 DEBUG threadpool:481 - [Box] creating thread_pool [suggest], type [fixed], size [8], queue_size [1k]
+2016-05-03 11:08:50 DEBUG threadpool:445 - [Box] creating thread_pool [generic], type [cached], keep_alive [30s]
+2016-05-03 11:08:50 DEBUG threadpool:524 - [Box] creating thread_pool [warmer], type [scaling], min [1], size [4], keep_alive [5m]
+2016-05-03 11:08:50 DEBUG threadpool:481 - [Box] creating thread_pool [search], type [fixed], size [13], queue_size [1k]
+2016-05-03 11:08:50 DEBUG threadpool:524 - [Box] creating thread_pool [flush], type [scaling], min [1], size [4], keep_alive [5m]
+2016-05-03 11:08:50 DEBUG threadpool:524 - [Box] creating thread_pool [fetch_shard_store], type [scaling], min [1], size [16], keep_alive [5m]
+2016-05-03 11:08:50 DEBUG threadpool:524 - [Box] creating thread_pool [management], type [scaling], min [1], size [5], keep_alive [5m]
+2016-05-03 11:08:50 DEBUG threadpool:481 - [Box] creating thread_pool [get], type [fixed], size [8], queue_size [1k]
+2016-05-03 11:08:50 DEBUG threadpool:481 - [Box] creating thread_pool [bulk], type [fixed], size [8], queue_size [50]
+2016-05-03 11:08:50 DEBUG threadpool:524 - [Box] creating thread_pool [snapshot], type [scaling], min [1], size [4], keep_alive [5m]
+2016-05-03 11:08:51 DEBUG network:107 - configuration:
+
+lo
+        inet 127.0.0.1 netmask:255.0.0.0 scope:host
+        inet6 ::1 prefixlen:128 scope:host
+        UP LOOPBACK mtu:65536 index:1
+
+wlan0
+        inet 192.168.1.3 netmask:255.255.255.0 broadcast:192.168.1.255 scope:site
+        inet6 fe80::3ea9:f4ff:feaf:cb3c prefixlen:64 scope:link
+        hardware 3C:A9:F4:AF:CB:3C
+        UP MULTICAST mtu:1500 index:3
+
+docker0
+        inet 172.17.0.1 netmask:255.255.0.0 broadcast:0.0.0.0 scope:site
+        inet6 fe80::42:6aff:fe6c:15d4 prefixlen:64 scope:link
+        hardware 02:42:6A:6C:15:D4
+        UP MULTICAST mtu:1500 index:4
+
+veth845f854
+        inet6 fe80::85a:c2ff:fe71:ebf3 prefixlen:64 scope:link
+        hardware 0A:5A:C2:71:EB:F3
+        UP MULTICAST mtu:1500 index:6
+
+vetha0272a3
+        inet6 fe80::4876:3fff:fee0:8573 prefixlen:64 scope:link
+        hardware 4A:76:3F:E0:85:73
+        UP MULTICAST mtu:1500 index:8
+
+2016-05-03 11:08:51 DEBUG netty:104 - using gathering [true]
+2016-05-03 11:08:51 DEBUG transport:120 - [Box] node_sampler_interval[5s]
+2016-05-03 11:08:51 DEBUG SelectorUtil:58 - Using select timeout of 500
+2016-05-03 11:08:51 DEBUG SelectorUtil:58 - Epoll-bug workaround enabled = false
+2016-05-03 11:08:51 DEBUG transport:177 - [Box] adding address [{#transport#-1}{172.17.0.1}{172.17.0.1:9300}]
+2016-05-03 11:08:51 DEBUG netty:931 - [Box] connected to node [{#transport#-1}{172.17.0.1}{172.17.0.1:9300}]
+2016-05-03 11:08:51 DEBUG netty:931 - [Box] connected to node [{Paris}{yQlo-nCfSlOsBfs3LzSR4w}{172.17.0.1}{172.17.0.1:9300}]
+2016-05-03 11:08:56 DEBUG lzf:49 - using decoder[VanillaChunkDecoder] 
+2016-05-03 11:09:14 DEBUG netty:1068 - [Box] disconnecting from [{Paris}{yQlo-nCfSlOsBfs3LzSR4w}{172.17.0.1}{172.17.0.1:9300}] due to explicit disconnect call
+2016-05-03 11:09:14 DEBUG netty:1068 - [Box] disconnecting from [{#transport#-1}{172.17.0.1}{172.17.0.1:9300}] due to explicit disconnect call
+2016-05-03 11:14:41 INFO  plugins:180 - [Black Talon] modules [], plugins [], sites []

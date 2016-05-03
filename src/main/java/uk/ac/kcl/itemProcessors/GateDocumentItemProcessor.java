@@ -16,6 +16,7 @@
 package uk.ac.kcl.itemProcessors;
 
 import gate.Factory;
+import org.slf4j.LoggerFactory;
 import uk.ac.kcl.model.TextDocument;
 import uk.ac.kcl.service.GateService;
 import org.apache.log4j.Logger;
@@ -26,7 +27,7 @@ import org.springframework.core.env.Environment;
 
 public class GateDocumentItemProcessor implements ItemProcessor<TextDocument, TextDocument> {
 
-    private static final Logger logJdbcPath = Logger.getLogger(GateDocumentItemProcessor.class);
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(GateDocumentItemProcessor.class);
 
     @Autowired
     private GateService gateService;

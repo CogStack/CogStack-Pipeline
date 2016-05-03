@@ -34,6 +34,8 @@ import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 import org.apache.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import uk.ac.kcl.scheduling.Scheduler;
 
 /**
  *
@@ -41,7 +43,7 @@ import org.apache.log4j.Logger;
  */
 public class GateService {
 
-    final static Logger logger = Logger.getLogger(GateService.class);
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(GateService.class);
 
 
     File gateHome;
@@ -91,7 +93,7 @@ public class GateService {
         try {
             queue.put(controller);
         } catch (InterruptedException ex) {
-            logger.info("Interrupted", ex);
+            LOG.info("Interrupted", ex);
         }
         return doc;
     }

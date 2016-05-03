@@ -15,28 +15,19 @@
  */
 package uk.ac.kcl.itemProcessors;
 
-import org.apache.log4j.Logger;
-import org.apache.tika.metadata.Metadata;
-import org.apache.tika.parser.AutoDetectParser;
-import org.apache.tika.sax.BodyContentHandler;
-import org.apache.tika.sax.ToXMLContentHandler;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.xml.sax.ContentHandler;
-import uk.ac.kcl.model.BinaryDocument;
 import uk.ac.kcl.model.Document;
 import uk.ac.kcl.model.MultilineDocument;
-import uk.ac.kcl.model.TextDocument;
 import uk.ac.kcl.rowmappers.SimpleDocumentRowMapper;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -47,7 +38,7 @@ import java.util.TreeMap;
  */
 public class DbLineFixerItemProcessor implements ItemProcessor<Document, Document> {
 
-    private static final Logger logJdbcPath = Logger.getLogger(DbLineFixerItemProcessor.class);
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(DbLineFixerItemProcessor.class);
 
     @Autowired
     @Qualifier("sourceDataSource")
