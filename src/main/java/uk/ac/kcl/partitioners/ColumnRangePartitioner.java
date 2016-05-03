@@ -34,6 +34,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import uk.ac.kcl.listeners.JobCompleteNotificationListener;
 import uk.ac.kcl.model.PartitionParams;
+import uk.ac.kcl.model.ScheduledPartitionParams;
 import uk.ac.kcl.rowmappers.PartitionParamsRowMapper;
 import uk.ac.kcl.utils.BatchJobUtils;
 
@@ -92,27 +93,10 @@ public class ColumnRangePartitioner implements Partitioner {
 
     @Override
     public Map<String, ExecutionContext> partition(int gridSize) {
-        PartitionParams params = getPartitionParams();
         Map<String, ExecutionContext> result = new HashMap<String, ExecutionContext>();
-        if(noRecordsFoundInProcessingPeriod(params)) {
-            Timestamp newestTimestampInDB = batchJobUtils.checkForNewRecordsBeyondConfiguredProcessingPeriod(table, lastGoodJob, timeStamp);
-            if (newestTimestampInDB == null) {
-                jobCompleteNotificationListener.setLastDateInthisJob(String.valueOf(lastGoodJob.getTime()));
-                logger.info("Database appears to be synched as far as " + String.valueOf(lastGoodJob.toString())
-                        + "Checking again on next job" );
-                return result;
-            } else {
-                logger.info("New data found! Next job will synch as far as " + String.valueOf(newestTimestampInDB.toString()));
-                jobCompleteNotificationListener.setLastDateInthisJob(String.valueOf(newestTimestampInDB.getTime()));
-            }
-            return result;
-        }else {
-            logger.info("Database not yet synched. Synching as far as  "
-                    + params.getMaxTimeStamp().toString() +" this job");
-            jobCompleteNotificationListener.setLastDateInthisJob(String.valueOf(params.getMaxTimeStamp().getTime()));
-
+        if (env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("false")) {
+            PartitionParams params = getUnscheduledPartitionParams();
             long targetSize = (params.getMaxId() - params.getMinId()) / gridSize + 1;
-            long number = 0;
             long start = params.getMinId();
             long end = start + targetSize - 1;
             for (int i = 0; i < gridSize; i++) {
@@ -120,25 +104,73 @@ public class ColumnRangePartitioner implements Partitioner {
                 result.put("partition" + (i + 1), value);
                 value.putLong("minValue", start);
                 value.putLong("maxValue", end);
-                value.put("min_time_stamp", params.getMinTimeStamp().toString());
-                value.put("max_time_stamp", params.getMaxTimeStamp().toString());
                 start += targetSize;
                 end += targetSize;
-                number++;
             }
             return result;
+        }else{
+            ScheduledPartitionParams params = getScheduledPartitionParams();
+
+            if (noRecordsFoundInProcessingPeriod(params)) {
+                Timestamp newestTimestampInDB = batchJobUtils.checkForNewRecordsBeyondConfiguredProcessingPeriod(table, lastGoodJob, timeStamp);
+                if (newestTimestampInDB == null) {
+                    jobCompleteNotificationListener.setLastDateInthisJob(String.valueOf(lastGoodJob.getTime()));
+                    logger.info("Database appears to be synched as far as " + String.valueOf(lastGoodJob.toString())
+                            + "Checking again on next job");
+                    return result;
+                } else {
+                    logger.info("New data found! Next job will synch as far as " + String.valueOf(newestTimestampInDB.toString()));
+                    jobCompleteNotificationListener.setLastDateInthisJob(String.valueOf(newestTimestampInDB.getTime()));
+                }
+                return result;
+            } else {
+                logger.info("Database not yet synched. Synching as far as  "
+                        + params.getMaxTimeStamp().toString() + " this job");
+                jobCompleteNotificationListener.setLastDateInthisJob(String.valueOf(params.getMaxTimeStamp().getTime()));
+
+                long targetSize = (params.getMaxId() - params.getMinId()) / gridSize + 1;
+                long start = params.getMinId();
+                long end = start + targetSize - 1;
+                for (int i = 0; i < gridSize; i++) {
+                    ExecutionContext value = new ExecutionContext();
+                    result.put("partition" + (i + 1), value);
+                    value.putLong("minValue", start);
+                    value.putLong("maxValue", end);
+                    value.put("min_time_stamp", params.getMinTimeStamp().toString());
+                    value.put("max_time_stamp", params.getMaxTimeStamp().toString());
+                    start += targetSize;
+                    end += targetSize;
+                }
+                return result;
+            }
+
+
+
         }
     }
 
-    private boolean noRecordsFoundInProcessingPeriod(PartitionParams partitionParams){
-        if(partitionParams.getMinTimeStamp() == null){
+    private PartitionParams getUnscheduledPartitionParams() {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        String sql = " SELECT "   +
+                " MAX(" + column + ") AS max_id , " +
+                " MIN(" + column + ") AS min_id  " +
+                " FROM " + table + " ";
+
+        return (PartitionParams) jdbcTemplate.queryForObject(
+                sql, new PartitionParamsRowMapper());
+
+
+    }
+
+    private boolean noRecordsFoundInProcessingPeriod(ScheduledPartitionParams scheduledPartitionParams){
+        if(scheduledPartitionParams.getMinTimeStamp() == null){
             return true;
         }else{
             return false;
         }
     }
 
-    private PartitionParams getPartitionParams() {
+    private ScheduledPartitionParams getScheduledPartitionParams() {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
         String sql = " SELECT "   +
                 " MAX(" + column + ") AS max_id , " +
@@ -188,7 +220,7 @@ public class ColumnRangePartitioner implements Partitioner {
                     " ) t1" ;
         }
         logger.info ("This job SQL: " + sql);
-        return (PartitionParams) jdbcTemplate.queryForObject(
+        return (ScheduledPartitionParams) jdbcTemplate.queryForObject(
                 sql, new PartitionParamsRowMapper());
     }
 }

@@ -1,0 +1,161 @@
+361  [main] INFO  o.s.t.c.s.DefaultTestContextBootstrapper - Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener]
+371  [main] INFO  o.s.t.c.s.DefaultTestContextBootstrapper - Could not instantiate TestExecutionListener [org.springframework.test.context.web.ServletTestExecutionListener]. Specify custom listener classes or make the default listener classes (and their required dependencies) available. Offending class: [javax/servlet/ServletContext]
+378  [main] INFO  o.s.t.c.s.DefaultTestContextBootstrapper - Using TestExecutionListeners: [org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@2f112965, org.springframework.test.context.support.DependencyInjectionTestExecutionListener@1a04f701, org.springframework.test.context.support.DirtiesContextTestExecutionListener@4e91d63f, org.springframework.test.context.transaction.TransactionalTestExecutionListener@d4342c2, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@2bbf180e]
+527  [main] INFO  o.s.c.s.GenericApplicationContext - Refreshing org.springframework.context.support.GenericApplicationContext@3911c2a7: startup date [Tue May 03 23:22:57 BST 2016]; root of context hierarchy
+856  [main] INFO  o.s.b.f.s.DefaultListableBeanFactory - Overriding bean definition for bean 'jobExplorer' with a different definition: replacing [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springframework.batch.core.configuration.annotation.SimpleBatchConfiguration; factoryMethodName=jobExplorer; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springframework/batch/core/configuration/annotation/SimpleBatchConfiguration.class]] with [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=uk.ac.kcl.batch.BatchConfigurer; factoryMethodName=jobExplorer; initMethodName=null; destroyMethodName=(inferred); defined in class uk.ac.kcl.batch.BatchConfigurer]
+856  [main] INFO  o.s.b.f.s.DefaultListableBeanFactory - Overriding bean definition for bean 'jobRegistry' with a different definition: replacing [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springframework.batch.core.configuration.annotation.SimpleBatchConfiguration; factoryMethodName=jobRegistry; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springframework/batch/core/configuration/annotation/SimpleBatchConfiguration.class]] with [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=uk.ac.kcl.batch.BatchConfigurer; factoryMethodName=jobRegistry; initMethodName=null; destroyMethodName=(inferred); defined in class uk.ac.kcl.batch.BatchConfigurer]
+857  [main] INFO  o.s.b.f.s.DefaultListableBeanFactory - Overriding bean definition for bean 'jobLauncher' with a different definition: replacing [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springframework.batch.core.configuration.annotation.SimpleBatchConfiguration; factoryMethodName=jobLauncher; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springframework/batch/core/configuration/annotation/SimpleBatchConfiguration.class]] with [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=uk.ac.kcl.batch.BatchConfigurer; factoryMethodName=jobLauncher; initMethodName=null; destroyMethodName=(inferred); defined in class uk.ac.kcl.batch.BatchConfigurer]
+868  [main] INFO  o.s.b.f.xml.XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [spring-slave.xml]
+1189 [main] INFO  o.s.b.f.c.PropertiesFactoryBean - Loading properties file from URL [jar:file:/home/rich/.gradle/caches/modules-2/files-2.1/org.springframework.integration/spring-integration-core/4.2.3.RELEASE/379a93c0d5ed9b3ff44f1d9d435095e76a4566a3/spring-integration-core-4.2.3.RELEASE.jar!/META-INF/spring.integration.default.properties]
+1197 [main] INFO  o.s.i.config.IntegrationRegistrar - No bean named 'integrationHeaderChannelRegistry' has been explicitly defined. Therefore, a default DefaultHeaderChannelRegistry will be created.
+1225 [main] INFO  o.s.b.f.xml.XmlBeanDefinitionReader - Loading XML bean definitions from class path resource [spring-master.xml]
+1420 [main] WARN  o.s.c.a.ConfigurationClassEnhancer - @Bean method ScopeConfiguration.stepScope is non-static and returns an object assignable to Spring's BeanFactoryPostProcessor interface. This will result in a failure to process annotations such as @Autowired, @Resource and @PostConstruct within the method's declaring @Configuration class. Add the 'static' modifier to this method to avoid these container lifecycle issues; see @Bean javadoc for complete details.
+1431 [main] WARN  o.s.c.a.ConfigurationClassEnhancer - @Bean method ScopeConfiguration.jobScope is non-static and returns an object assignable to Spring's BeanFactoryPostProcessor interface. This will result in a failure to process annotations such as @Autowired, @Resource and @PostConstruct within the method's declaring @Configuration class. Add the 'static' modifier to this method to avoid these container lifecycle issues; see @Bean javadoc for complete details.
+1442 [main] INFO  o.s.i.c.DefaultConfiguringBeanFactoryPostProcessor - No bean named 'errorChannel' has been explicitly defined. Therefore, a default PublishSubscribeChannel will be created.
+1448 [main] INFO  o.s.i.c.DefaultConfiguringBeanFactoryPostProcessor - No bean named 'taskScheduler' has been explicitly defined. Therefore, a default ThreadPoolTaskScheduler will be created.
+1506 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'uk.ac.kcl.batch.JobConfiguration' of type [class uk.ac.kcl.batch.JobConfiguration$$EnhancerBySpringCGLIB$$2462767c] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+1607 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'targetDataSource' of type [class org.apache.commons.dbcp.BasicDataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+1629 [main] INFO  o.s.b.c.r.s.JobRepositoryFactoryBean - No database type set, using meta data indicating: SQLSERVER
+1717 [main] INFO  o.s.b.c.l.support.SimpleJobLauncher - No TaskExecutor has been set, defaulting to synchronous executor.
+1717 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'uk.ac.kcl.batch.BatchConfigurer' of type [class uk.ac.kcl.batch.BatchConfigurer$$EnhancerBySpringCGLIB$$174c1b65] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+1725 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'jobRegistry' of type [class org.springframework.batch.core.configuration.support.MapJobRegistry] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2470 [main] INFO  o.s.b.c.l.support.SimpleJobLauncher - No TaskExecutor has been set, defaulting to synchronous executor.
+2512 [main] WARN  o.s.b.c.l.AbstractListenerFactoryBean - org.springframework.batch.item.ItemReader is an interface.  The implementing class will not be queried for annotation based listener configurations.  If using @StepScope on a @Bean method, be sure to return the implementing class so listner annotations can be used.
+2520 [main] WARN  o.s.b.c.l.AbstractListenerFactoryBean - org.springframework.batch.item.ItemReader is an interface.  The implementing class will not be queried for annotation based listener configurations.  If using @StepScope on a @Bean method, be sure to return the implementing class so listner annotations can be used.
+2567 [main] INFO  o.s.b.f.c.PropertiesFactoryBean - Loading properties file from URL [jar:file:/home/rich/.gradle/caches/modules-2/files-2.1/org.springframework.integration/spring-integration-core/4.2.3.RELEASE/379a93c0d5ed9b3ff44f1d9d435095e76a4566a3/spring-integration-core-4.2.3.RELEASE.jar!/META-INF/spring.integration.default.properties]
+2595 [main] INFO  o.s.s.c.ThreadPoolTaskScheduler - Initializing ExecutorService  'taskScheduler'
+2753 [main] WARN  o.s.i.c.ReleaseStrategyFactoryBean - No ReleaseStrategy annotated method found on MessageChannelPartitionHandler; falling back to SequenceSizeReleaseStrategy, target:org.springframework.batch.integration.partition.MessageChannelPartitionHandler@72976b4, methodName:null
+2809 [main] INFO  o.s.c.s.DefaultLifecycleProcessor - Starting beans in phase 0
+2809 [main] INFO  o.s.i.endpoint.EventDrivenConsumer - Adding {jms:outbound-channel-adapter} as a subscriber to the 'replyChannel' channel
+2809 [main] INFO  o.s.i.channel.DirectChannel - Channel 'org.springframework.context.support.GenericApplicationContext@3911c2a7.replyChannel' has 1 subscriber(s).
+2809 [main] INFO  o.s.i.endpoint.EventDrivenConsumer - started org.springframework.integration.config.ConsumerEndpointFactoryBean#0
+2809 [main] INFO  o.s.i.endpoint.EventDrivenConsumer - Adding {service-activator} as a subscriber to the 'requestChannel' channel
+2809 [main] INFO  o.s.i.channel.DirectChannel - Channel 'org.springframework.context.support.GenericApplicationContext@3911c2a7.requestChannel' has 1 subscriber(s).
+2809 [main] INFO  o.s.i.endpoint.EventDrivenConsumer - started org.springframework.integration.config.ConsumerEndpointFactoryBean#1
+2809 [main] INFO  o.s.i.endpoint.EventDrivenConsumer - Adding {jms:outbound-channel-adapter} as a subscriber to the 'requestChannel' channel
+2809 [main] INFO  o.s.i.channel.DirectChannel - Channel 'org.springframework.context.support.GenericApplicationContext@3911c2a7.requestChannel' has 2 subscriber(s).
+2810 [main] INFO  o.s.i.endpoint.EventDrivenConsumer - started org.springframework.integration.config.ConsumerEndpointFactoryBean#2
+2810 [main] INFO  o.s.i.endpoint.EventDrivenConsumer - Adding {aggregator} as a subscriber to the 'replyChannel' channel
+2810 [main] INFO  o.s.i.channel.DirectChannel - Channel 'org.springframework.context.support.GenericApplicationContext@3911c2a7.replyChannel' has 2 subscriber(s).
+2810 [main] INFO  o.s.i.endpoint.EventDrivenConsumer - started org.springframework.integration.config.ConsumerEndpointFactoryBean#3
+2810 [main] INFO  o.s.i.endpoint.EventDrivenConsumer - Adding {logging-channel-adapter:_org.springframework.integration.errorLogger} as a subscriber to the 'errorChannel' channel
+2810 [main] INFO  o.s.i.c.PublishSubscribeChannel - Channel 'org.springframework.context.support.GenericApplicationContext@3911c2a7.errorChannel' has 1 subscriber(s).
+2810 [main] INFO  o.s.i.endpoint.EventDrivenConsumer - started _org.springframework.integration.errorLogger
+2810 [main] INFO  o.s.c.s.DefaultLifecycleProcessor - Starting beans in phase 1073741823
+2810 [main] INFO  o.s.i.j.ChannelPublishingJmsMessageListener$GatewayDelegate - started org.springframework.integration.jms.ChannelPublishingJmsMessageListener$GatewayDelegate@610d28b8
+2947 [main] INFO  o.s.j.c.CachingConnectionFactory - Established shared JMS Connection: ActiveMQConnection {id=ID:rich-Precision-M6800-47755-1462314180086-1:1,clientId=null,started=false}
+2971 [main] INFO  o.s.i.jms.JmsMessageDrivenEndpoint - started org.springframework.integration.jms.JmsMessageDrivenEndpoint#0
+2971 [main] INFO  o.s.i.j.ChannelPublishingJmsMessageListener$GatewayDelegate - started org.springframework.integration.jms.ChannelPublishingJmsMessageListener$GatewayDelegate@438c9aa7
+2972 [main] INFO  o.s.i.jms.JmsMessageDrivenEndpoint - started org.springframework.integration.jms.JmsMessageDrivenEndpoint#1
+3029 [main] INFO  o.s.j.datasource.init.ScriptUtils - Executing SQL script from class path resource [org/springframework/batch/core/schema-drop-sqlserver.sql]
+3064 [main] INFO  o.s.j.datasource.init.ScriptUtils - Executed SQL script from class path resource [org/springframework/batch/core/schema-drop-sqlserver.sql] in 35 ms.
+3065 [main] INFO  o.s.j.datasource.init.ScriptUtils - Executing SQL script from class path resource [org/springframework/batch/core/schema-sqlserver.sql]
+3088 [main] INFO  o.s.j.datasource.init.ScriptUtils - Executed SQL script from class path resource [org/springframework/batch/core/schema-sqlserver.sql] in 23 ms.
+7762 [task-scheduler-1] INFO  uk.ac.kcl.utils.BatchJobUtils - No previous job found in job repository
+7762 [task-scheduler-1] INFO  uk.ac.kcl.scheduling.Scheduler - Last good run was null. Recommencing from then
+7826 [task-scheduler-1] INFO  o.s.b.c.l.support.SimpleJobLauncher - Job: [FlowJob: [name=tikaJob]] launched with the following parameters: [{this_attempt_date=1462314185008}]
+7917 [task-scheduler-1] INFO  o.s.b.core.job.SimpleStepHandler - Executing step: [tikaMasterStep]
+7937 [task-scheduler-1] INFO  uk.ac.kcl.utils.BatchJobUtils - No previous job found in job repository
+7944 [task-scheduler-1] INFO  u.a.k.p.ColumnRangePartitioner - No previous successful batches detected. Commencing from first timestamp: 1970-01-01 00:00:00.0
+7944 [task-scheduler-1] INFO  u.a.k.p.ColumnRangePartitioner - This job SQL:  SELECT  MAX(primaryKeyFieldValue) AS max_id ,  MIN(primaryKeyFieldValue) AS min_id ,  MAX(updateTime) AS max_time_stamp ,  MIN(updateTime) AS min_time_stamp   FROM (  SELECT TOP 100 PERCENT primaryKeyFieldValue, updateTime FROM dbo.tblInputDocs  WHERE CAST (updateTime as DATETIME ) > CAST ('1970-01-01 00:00:00.0' as DATETIME )  AND CAST (updateTime as DATETIME ) <= CAST ('1970-02-10 00:00:00.0' as DATETIME )  ORDER BY updateTime ASC  , primaryKeyFieldValue ASC  ) t1
+8098 [task-scheduler-1] INFO  u.a.k.p.ColumnRangePartitioner - Database not yet synched. Synching as far as  1970-02-10 00:00:00.0 this job
+8756 [SimpleAsyncTaskExecutor-2] INFO  u.a.k.i.ElasticsearchDocumentWriter - 5 documents indexed into ElasticSearch in 10 ms
+8755 [SimpleAsyncTaskExecutor-3] INFO  u.a.k.i.ElasticsearchDocumentWriter - 2 documents indexed into ElasticSearch in 10 ms
+8755 [SimpleAsyncTaskExecutor-1] INFO  u.a.k.i.ElasticsearchDocumentWriter - 3 documents indexed into ElasticSearch in 8 ms
+8975 [SimpleAsyncTaskExecutor-7] INFO  u.a.k.i.ElasticsearchDocumentWriter - 4 documents indexed into ElasticSearch in 6 ms
+9016 [SimpleAsyncTaskExecutor-5] INFO  u.a.k.i.ElasticsearchDocumentWriter - 6 documents indexed into ElasticSearch in 5 ms
+9072 [SimpleAsyncTaskExecutor-6] INFO  u.a.k.i.ElasticsearchDocumentWriter - 10 documents indexed into ElasticSearch in 4 ms
+9251 [SimpleAsyncTaskExecutor-11] INFO  u.a.k.i.ElasticsearchDocumentWriter - 10 documents indexed into ElasticSearch in 13 ms
+9289 [task-scheduler-1] INFO  u.a.k.l.JobCompleteNotificationListener - !!! JOB FINISHED! promoting last good record date to JobExecutionContext
+9296 [task-scheduler-1] INFO  o.s.b.c.l.support.SimpleJobLauncher - Job: [FlowJob: [name=tikaJob]] completed with the following parameters: [{this_attempt_date=1462314185008}] and the following status: [COMPLETED]
+12769 [task-scheduler-1] INFO  uk.ac.kcl.scheduling.Scheduler - Last good run was 1970-02-10 00:00:00.0. Recommencing from then
+12779 [task-scheduler-1] INFO  o.s.b.c.l.support.SimpleJobLauncher - Job: [FlowJob: [name=tikaJob]] launched with the following parameters: [{this_attempt_date=1462314190014}]
+12797 [task-scheduler-1] INFO  o.s.b.core.job.SimpleStepHandler - Executing step: [tikaMasterStep]
+12827 [task-scheduler-1] INFO  u.a.k.p.ColumnRangePartitioner - last successful batch retrieved from job repository. Commencing from 1970-02-10 00:00:00.0
+12827 [task-scheduler-1] INFO  u.a.k.p.ColumnRangePartitioner - This job SQL:  SELECT  MAX(primaryKeyFieldValue) AS max_id ,  MIN(primaryKeyFieldValue) AS min_id ,  MAX(updateTime) AS max_time_stamp ,  MIN(updateTime) AS min_time_stamp   FROM (  SELECT TOP 100 PERCENT primaryKeyFieldValue, updateTime FROM dbo.tblInputDocs  WHERE CAST (updateTime as DATETIME ) > CAST ('1970-02-10 00:00:00.0' as DATETIME )  AND CAST (updateTime as DATETIME ) <= CAST ('1970-03-22 00:00:00.0' as DATETIME )  ORDER BY updateTime ASC  , primaryKeyFieldValue ASC  ) t1
+12833 [task-scheduler-1] INFO  u.a.k.p.ColumnRangePartitioner - Database not yet synched. Synching as far as  1970-03-22 00:00:00.0 this job
+13010 [SimpleAsyncTaskExecutor-20] INFO  u.a.k.i.ElasticsearchDocumentWriter - 5 documents indexed into ElasticSearch in 11 ms
+13019 [SimpleAsyncTaskExecutor-19] INFO  u.a.k.i.ElasticsearchDocumentWriter - 5 documents indexed into ElasticSearch in 16 ms
+13040 [SimpleAsyncTaskExecutor-16] INFO  u.a.k.i.ElasticsearchDocumentWriter - 10 documents indexed into ElasticSearch in 15 ms
+13158 [SimpleAsyncTaskExecutor-23] INFO  u.a.k.i.ElasticsearchDocumentWriter - 3 documents indexed into ElasticSearch in 7 ms
+13163 [SimpleAsyncTaskExecutor-24] INFO  u.a.k.i.ElasticsearchDocumentWriter - 3 documents indexed into ElasticSearch in 5 ms
+13170 [SimpleAsyncTaskExecutor-22] INFO  u.a.k.i.ElasticsearchDocumentWriter - 4 documents indexed into ElasticSearch in 4 ms
+13251 [SimpleAsyncTaskExecutor-27] INFO  u.a.k.i.ElasticsearchDocumentWriter - 3 documents indexed into ElasticSearch in 3 ms
+13275 [SimpleAsyncTaskExecutor-26] INFO  u.a.k.i.ElasticsearchDocumentWriter - 3 documents indexed into ElasticSearch in 2 ms
+13284 [SimpleAsyncTaskExecutor-28] INFO  u.a.k.i.ElasticsearchDocumentWriter - 4 documents indexed into ElasticSearch in 3 ms
+13316 [task-scheduler-1] INFO  u.a.k.l.JobCompleteNotificationListener - !!! JOB FINISHED! promoting last good record date to JobExecutionContext
+13323 [task-scheduler-1] INFO  o.s.b.c.l.support.SimpleJobLauncher - Job: [FlowJob: [name=tikaJob]] completed with the following parameters: [{this_attempt_date=1462314190014}] and the following status: [COMPLETED]
+17766 [task-scheduler-2] INFO  uk.ac.kcl.scheduling.Scheduler - Last good run was 1970-03-22 00:00:00.0. Recommencing from then
+17775 [task-scheduler-2] INFO  o.s.b.c.l.support.SimpleJobLauncher - Job: [FlowJob: [name=tikaJob]] launched with the following parameters: [{this_attempt_date=1462314195012}]
+17789 [task-scheduler-2] INFO  o.s.b.core.job.SimpleStepHandler - Executing step: [tikaMasterStep]
+17811 [task-scheduler-2] INFO  u.a.k.p.ColumnRangePartitioner - last successful batch retrieved from job repository. Commencing from 1970-03-22 00:00:00.0
+17811 [task-scheduler-2] INFO  u.a.k.p.ColumnRangePartitioner - This job SQL:  SELECT  MAX(primaryKeyFieldValue) AS max_id ,  MIN(primaryKeyFieldValue) AS min_id ,  MAX(updateTime) AS max_time_stamp ,  MIN(updateTime) AS min_time_stamp   FROM (  SELECT TOP 100 PERCENT primaryKeyFieldValue, updateTime FROM dbo.tblInputDocs  WHERE CAST (updateTime as DATETIME ) > CAST ('1970-03-22 00:00:00.0' as DATETIME )  AND CAST (updateTime as DATETIME ) <= CAST ('1970-05-01 00:00:00.0' as DATETIME )  ORDER BY updateTime ASC  , primaryKeyFieldValue ASC  ) t1
+17816 [task-scheduler-2] INFO  u.a.k.p.ColumnRangePartitioner - Database not yet synched. Synching as far as  1970-04-10 00:00:00.0 this job
+17884 [SimpleAsyncTaskExecutor-31] INFO  u.a.k.i.ElasticsearchDocumentWriter - 1 documents indexed into ElasticSearch in 2 ms
+17908 [SimpleAsyncTaskExecutor-32] INFO  u.a.k.i.ElasticsearchDocumentWriter - 2 documents indexed into ElasticSearch in 3 ms
+17917 [SimpleAsyncTaskExecutor-30] INFO  u.a.k.i.ElasticsearchDocumentWriter - 2 documents indexed into ElasticSearch in 10 ms
+17978 [SimpleAsyncTaskExecutor-34] INFO  u.a.k.i.ElasticsearchDocumentWriter - 5 documents indexed into ElasticSearch in 8 ms
+18028 [SimpleAsyncTaskExecutor-39] INFO  u.a.k.i.ElasticsearchDocumentWriter - 1 documents indexed into ElasticSearch in 9 ms
+18033 [SimpleAsyncTaskExecutor-38] INFO  u.a.k.i.ElasticsearchDocumentWriter - 2 documents indexed into ElasticSearch in 6 ms
+18043 [SimpleAsyncTaskExecutor-37] INFO  u.a.k.i.ElasticsearchDocumentWriter - 2 documents indexed into ElasticSearch in 11 ms
+18103 [SimpleAsyncTaskExecutor-43] INFO  u.a.k.i.ElasticsearchDocumentWriter - 1 documents indexed into ElasticSearch in 8 ms
+18106 [SimpleAsyncTaskExecutor-41] INFO  u.a.k.i.ElasticsearchDocumentWriter - 1 documents indexed into ElasticSearch in 10 ms
+18114 [SimpleAsyncTaskExecutor-42] INFO  u.a.k.i.ElasticsearchDocumentWriter - 2 documents indexed into ElasticSearch in 11 ms
+18139 [task-scheduler-2] INFO  u.a.k.l.JobCompleteNotificationListener - !!! JOB FINISHED! promoting last good record date to JobExecutionContext
+18143 [task-scheduler-2] INFO  o.s.b.c.l.support.SimpleJobLauncher - Job: [FlowJob: [name=tikaJob]] completed with the following parameters: [{this_attempt_date=1462314195012}] and the following status: [COMPLETED]
+22777 [task-scheduler-1] INFO  uk.ac.kcl.scheduling.Scheduler - Last good run was 1970-04-10 00:00:00.0. Recommencing from then
+22789 [task-scheduler-1] INFO  o.s.b.c.l.support.SimpleJobLauncher - Job: [FlowJob: [name=tikaJob]] launched with the following parameters: [{this_attempt_date=1462314200022}]
+22807 [task-scheduler-1] INFO  o.s.b.core.job.SimpleStepHandler - Executing step: [tikaMasterStep]
+22840 [task-scheduler-1] INFO  u.a.k.p.ColumnRangePartitioner - last successful batch retrieved from job repository. Commencing from 1970-04-10 00:00:00.0
+22841 [task-scheduler-1] INFO  u.a.k.p.ColumnRangePartitioner - This job SQL:  SELECT  MAX(primaryKeyFieldValue) AS max_id ,  MIN(primaryKeyFieldValue) AS min_id ,  MAX(updateTime) AS max_time_stamp ,  MIN(updateTime) AS min_time_stamp   FROM (  SELECT TOP 100 PERCENT primaryKeyFieldValue, updateTime FROM dbo.tblInputDocs  WHERE CAST (updateTime as DATETIME ) > CAST ('1970-04-10 00:00:00.0' as DATETIME )  AND CAST (updateTime as DATETIME ) <= CAST ('1970-05-20 00:00:00.0' as DATETIME )  ORDER BY updateTime ASC  , primaryKeyFieldValue ASC  ) t1
+22849 [task-scheduler-1] INFO  u.a.k.p.ColumnRangePartitioner - Database appears to be synched as far as 1970-04-10 00:00:00.0Checking again on next job
+22858 [task-scheduler-1] INFO  u.a.k.l.JobCompleteNotificationListener - !!! JOB FINISHED! promoting last good record date to JobExecutionContext
+22868 [task-scheduler-1] INFO  o.s.b.c.l.support.SimpleJobLauncher - Job: [FlowJob: [name=tikaJob]] completed with the following parameters: [{this_attempt_date=1462314200022}] and the following status: [COMPLETED]
+34838 [task-scheduler-3] INFO  uk.ac.kcl.scheduling.Scheduler - Last good run was 1970-04-10 00:00:00.0. Recommencing from then
+34868 [task-scheduler-3] INFO  o.s.b.c.l.support.SimpleJobLauncher - Job: [FlowJob: [name=tikaJob]] launched with the following parameters: [{this_attempt_date=1462314212083}]
+34899 [task-scheduler-3] INFO  o.s.b.core.job.SimpleStepHandler - Executing step: [tikaMasterStep]
+34922 [task-scheduler-3] INFO  u.a.k.p.ColumnRangePartitioner - last successful batch retrieved from job repository. Commencing from 1970-04-10 00:00:00.0
+34923 [task-scheduler-3] INFO  u.a.k.p.ColumnRangePartitioner - This job SQL:  SELECT  MAX(primaryKeyFieldValue) AS max_id ,  MIN(primaryKeyFieldValue) AS min_id ,  MAX(updateTime) AS max_time_stamp ,  MIN(updateTime) AS min_time_stamp   FROM (  SELECT TOP 100 PERCENT primaryKeyFieldValue, updateTime FROM dbo.tblInputDocs  WHERE CAST (updateTime as DATETIME ) > CAST ('1970-04-10 00:00:00.0' as DATETIME )  AND CAST (updateTime as DATETIME ) <= CAST ('1970-05-20 00:00:00.0' as DATETIME )  ORDER BY updateTime ASC  , primaryKeyFieldValue ASC  ) t1
+34938 [task-scheduler-3] INFO  u.a.k.p.ColumnRangePartitioner - Database appears to be synched as far as 1970-04-10 00:00:00.0Checking again on next job
+34953 [task-scheduler-3] INFO  u.a.k.l.JobCompleteNotificationListener - !!! JOB FINISHED! promoting last good record date to JobExecutionContext
+34959 [task-scheduler-3] INFO  o.s.b.c.l.support.SimpleJobLauncher - Job: [FlowJob: [name=tikaJob]] completed with the following parameters: [{this_attempt_date=1462314212083}] and the following status: [COMPLETED]
+37763 [task-scheduler-2] INFO  uk.ac.kcl.scheduling.Scheduler - Last good run was 1970-04-10 00:00:00.0. Recommencing from then
+37772 [task-scheduler-2] INFO  o.s.b.c.l.support.SimpleJobLauncher - Job: [FlowJob: [name=tikaJob]] launched with the following parameters: [{this_attempt_date=1462314215008}]
+37785 [task-scheduler-2] INFO  o.s.b.core.job.SimpleStepHandler - Executing step: [tikaMasterStep]
+37802 [task-scheduler-2] INFO  u.a.k.p.ColumnRangePartitioner - last successful batch retrieved from job repository. Commencing from 1970-04-10 00:00:00.0
+37803 [task-scheduler-2] INFO  u.a.k.p.ColumnRangePartitioner - This job SQL:  SELECT  MAX(primaryKeyFieldValue) AS max_id ,  MIN(primaryKeyFieldValue) AS min_id ,  MAX(updateTime) AS max_time_stamp ,  MIN(updateTime) AS min_time_stamp   FROM (  SELECT TOP 100 PERCENT primaryKeyFieldValue, updateTime FROM dbo.tblInputDocs  WHERE CAST (updateTime as DATETIME ) > CAST ('1970-04-10 00:00:00.0' as DATETIME )  AND CAST (updateTime as DATETIME ) <= CAST ('1970-05-20 00:00:00.0' as DATETIME )  ORDER BY updateTime ASC  , primaryKeyFieldValue ASC  ) t1
+37806 [task-scheduler-2] INFO  u.a.k.p.ColumnRangePartitioner - Database appears to be synched as far as 1970-04-10 00:00:00.0Checking again on next job
+37817 [task-scheduler-2] INFO  u.a.k.l.JobCompleteNotificationListener - !!! JOB FINISHED! promoting last good record date to JobExecutionContext
+37822 [task-scheduler-2] INFO  o.s.b.c.l.support.SimpleJobLauncher - Job: [FlowJob: [name=tikaJob]] completed with the following parameters: [{this_attempt_date=1462314215008}] and the following status: [COMPLETED]
+42763 [task-scheduler-4] INFO  uk.ac.kcl.scheduling.Scheduler - Last good run was 1970-04-10 00:00:00.0. Recommencing from then
+42775 [task-scheduler-4] INFO  o.s.b.c.l.support.SimpleJobLauncher - Job: [FlowJob: [name=tikaJob]] launched with the following parameters: [{this_attempt_date=1462314220008}]
+42789 [task-scheduler-4] INFO  o.s.b.core.job.SimpleStepHandler - Executing step: [tikaMasterStep]
+42806 [task-scheduler-4] INFO  u.a.k.p.ColumnRangePartitioner - last successful batch retrieved from job repository. Commencing from 1970-04-10 00:00:00.0
+42806 [task-scheduler-4] INFO  u.a.k.p.ColumnRangePartitioner - This job SQL:  SELECT  MAX(primaryKeyFieldValue) AS max_id ,  MIN(primaryKeyFieldValue) AS min_id ,  MAX(updateTime) AS max_time_stamp ,  MIN(updateTime) AS min_time_stamp   FROM (  SELECT TOP 100 PERCENT primaryKeyFieldValue, updateTime FROM dbo.tblInputDocs  WHERE CAST (updateTime as DATETIME ) > CAST ('1970-04-10 00:00:00.0' as DATETIME )  AND CAST (updateTime as DATETIME ) <= CAST ('1970-05-20 00:00:00.0' as DATETIME )  ORDER BY updateTime ASC  , primaryKeyFieldValue ASC  ) t1
+42809 [task-scheduler-4] INFO  u.a.k.p.ColumnRangePartitioner - Database appears to be synched as far as 1970-04-10 00:00:00.0Checking again on next job
+42816 [task-scheduler-4] INFO  u.a.k.l.JobCompleteNotificationListener - !!! JOB FINISHED! promoting last good record date to JobExecutionContext
+42821 [task-scheduler-4] INFO  o.s.b.c.l.support.SimpleJobLauncher - Job: [FlowJob: [name=tikaJob]] completed with the following parameters: [{this_attempt_date=1462314220008}] and the following status: [COMPLETED]
+42941 [Thread-3] INFO  o.s.c.s.GenericApplicationContext - Closing org.springframework.context.support.GenericApplicationContext@3911c2a7: startup date [Tue May 03 23:22:57 BST 2016]; root of context hierarchy
+42942 [Thread-3] INFO  o.s.c.s.DefaultLifecycleProcessor - Stopping beans in phase 2147483647
+42943 [Thread-3] INFO  o.s.i.j.ChannelPublishingJmsMessageListener$GatewayDelegate - stopped org.springframework.integration.jms.ChannelPublishingJmsMessageListener$GatewayDelegate@610d28b8
+42943 [Thread-3] INFO  o.s.i.jms.JmsMessageDrivenEndpoint - stopped org.springframework.integration.jms.JmsMessageDrivenEndpoint#0
+42944 [Thread-3] INFO  o.s.i.j.ChannelPublishingJmsMessageListener$GatewayDelegate - stopped org.springframework.integration.jms.ChannelPublishingJmsMessageListener$GatewayDelegate@438c9aa7
+42944 [Thread-3] INFO  o.s.i.jms.JmsMessageDrivenEndpoint - stopped org.springframework.integration.jms.JmsMessageDrivenEndpoint#1
+42944 [Thread-3] INFO  o.s.c.s.DefaultLifecycleProcessor - Stopping beans in phase 1073741823
+42944 [Thread-3] INFO  o.s.c.s.DefaultLifecycleProcessor - Stopping beans in phase 0
+42944 [Thread-3] INFO  o.s.i.endpoint.EventDrivenConsumer - Removing {jms:outbound-channel-adapter} as a subscriber to the 'replyChannel' channel
+42944 [Thread-3] INFO  o.s.i.channel.DirectChannel - Channel 'org.springframework.context.support.GenericApplicationContext@3911c2a7.replyChannel' has 1 subscriber(s).
+42944 [Thread-3] INFO  o.s.i.endpoint.EventDrivenConsumer - stopped org.springframework.integration.config.ConsumerEndpointFactoryBean#0
+42944 [Thread-3] INFO  o.s.i.endpoint.EventDrivenConsumer - Removing {service-activator} as a subscriber to the 'requestChannel' channel
+42944 [Thread-3] INFO  o.s.i.channel.DirectChannel - Channel 'org.springframework.context.support.GenericApplicationContext@3911c2a7.requestChannel' has 1 subscriber(s).
+42944 [Thread-3] INFO  o.s.i.endpoint.EventDrivenConsumer - stopped org.springframework.integration.config.ConsumerEndpointFactoryBean#1
+42944 [Thread-3] INFO  o.s.i.endpoint.EventDrivenConsumer - Removing {jms:outbound-channel-adapter} as a subscriber to the 'requestChannel' channel
+42944 [Thread-3] INFO  o.s.i.channel.DirectChannel - Channel 'org.springframework.context.support.GenericApplicationContext@3911c2a7.requestChannel' has 0 subscriber(s).
+42944 [Thread-3] INFO  o.s.i.endpoint.EventDrivenConsumer - stopped org.springframework.integration.config.ConsumerEndpointFactoryBean#2
+42944 [Thread-3] INFO  o.s.i.endpoint.EventDrivenConsumer - Removing {aggregator} as a subscriber to the 'replyChannel' channel
+42944 [Thread-3] INFO  o.s.i.channel.DirectChannel - Channel 'org.springframework.context.support.GenericApplicationContext@3911c2a7.replyChannel' has 0 subscriber(s).
+42944 [Thread-3] INFO  o.s.i.endpoint.EventDrivenConsumer - stopped org.springframework.integration.config.ConsumerEndpointFactoryBean#3
+42944 [Thread-3] INFO  o.s.i.endpoint.EventDrivenConsumer - Removing {logging-channel-adapter:_org.springframework.integration.errorLogger} as a subscriber to the 'errorChannel' channel
+42944 [Thread-3] INFO  o.s.i.c.PublishSubscribeChannel - Channel 'org.springframework.context.support.GenericApplicationContext@3911c2a7.errorChannel' has 0 subscriber(s).
+42944 [Thread-3] INFO  o.s.i.endpoint.EventDrivenConsumer - stopped _org.springframework.integration.errorLogger
+43144 [Thread-3] INFO  o.s.s.c.ThreadPoolTaskScheduler - Shutting down ExecutorService 'taskScheduler'

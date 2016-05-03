@@ -52,7 +52,7 @@ import java.util.ArrayList;
 
 @EnableIntegration
 @Configuration
-@ComponentScan({"uk.ac.kcl.rowmappers","uk.ac.kcl.utils"})
+@ComponentScan({"uk.ac.kcl.rowmappers","uk.ac.kcl.utils", "uk.ac.kcl.itemHandlers"})
 @EnableBatchProcessing
 @Import({
         DbLineFixerConfiguration.class,

@@ -92,7 +92,7 @@ public class SqlServerTestUtils {
                 + ", updateTime DateTIME "
                 + ", input VARBINARY(max) )");
 
-        sourceTemplate.execute("IF OBJECT_ID('dbo.tblOutputDocs', 'U') IS NOT NULL DROP TABLE  dbo.tblOutputDocs");
+        targetTemplate.execute("IF OBJECT_ID('dbo.tblOutputDocs', 'U') IS NOT NULL DROP TABLE  dbo.tblOutputDocs");
         targetTemplate.execute("CREATE TABLE dbo.tblOutputDocs "
                 + "( ID  BIGINT IDENTITY(1,1) PRIMARY KEY"
                 + ", srcColumnFieldName VARCHAR(MAX) "
@@ -105,7 +105,7 @@ public class SqlServerTestUtils {
 
     public void initTextualPostgresGateTable() {
 ////        for postgres
-        sourceTemplate.execute("DROP TABLE IF EXISTS dbo.tblInputDocs");
+        sourceTemplate.execute("IF OBJECT_ID('dbo.tblInputDocs', 'U') IS NOT NULL DROP TABLE  dbo.tblInputDocs");
         sourceTemplate.execute("CREATE TABLE dbo.tblInputDocs"
                 + "( ID  BIGINT IDENTITY(1,1) PRIMARY KEY"
                 + ", srcColumnFieldName VARCHAR(MAX) "
@@ -115,7 +115,7 @@ public class SqlServerTestUtils {
                 + ", updateTime DateTIME "
                 + ", input text )");
 
-        targetTemplate.execute("DROP TABLE IF EXISTS dbo.tblOutputDocs");
+        targetTemplate.execute("IF OBJECT_ID('dbo.tblOutputDocs', 'U') IS NOT NULL DROP TABLE  dbo.tblOutputDocs");
         targetTemplate.execute("CREATE TABLE dbo.tblOutputDocs "
                 + "( ID  BIGINT IDENTITY(1,1) PRIMARY KEY"
                 + ", srcColumnFieldName VARCHAR(MAX) "
@@ -128,7 +128,7 @@ public class SqlServerTestUtils {
 
 
     public void createBasicInputTable(){
-        sourceTemplate.execute("DROP TABLE IF EXISTS dbo.tblInputDocs");
+        sourceTemplate.execute("IF OBJECT_ID('dbo.tblInputDocs', 'U') IS NOT NULL DROP TABLE  dbo.tblInputDocs");
         sourceTemplate.execute("CREATE TABLE dbo.tblInputDocs"
                 + "( ID  BIGINT IDENTITY(1,1) PRIMARY KEY"
                 + ", srcColumnFieldName VARCHAR(MAX) "
@@ -140,7 +140,7 @@ public class SqlServerTestUtils {
     }
 
     public void createBasicOutputTable(){
-        targetTemplate.execute("DROP TABLE IF EXISTS dbo.tblOutputDocs");
+        targetTemplate.execute("IF OBJECT_ID('dbo.tblOutputDocs', 'U') IS NOT NULL DROP TABLE  dbo.tblOutputDocs");
         targetTemplate.execute("CREATE TABLE dbo.tblOutputDocs "
                 + "( ID  BIGINT IDENTITY(1,1) PRIMARY KEY"
                 + ", srcColumnFieldName VARCHAR(MAX) "
@@ -164,7 +164,7 @@ public class SqlServerTestUtils {
         );
 
 
-        targetTemplate.execute("DROP TABLE IF EXISTS dbo.tblOutputDocs");
+        targetTemplate.execute("IF OBJECT_ID('dbo.tblOutputDocs', 'U') IS NOT NULL DROP TABLE  dbo.tblOutputDocs");
         targetTemplate.execute("CREATE TABLE dbo.tblOutputDocs "
                 + "( ID  BIGINT IDENTITY(1,1) PRIMARY KEY"
                 + ", srcColumnFieldName varchar(max) "
@@ -229,7 +229,7 @@ public class SqlServerTestUtils {
     }
     public void insertTestBinariesForTika() {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
-        int docCount = 100000;
+        int docCount = 100;
         byte[] bytes = null;
         try {
             bytes = IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream("tika/testdocs/docexample.doc"));
@@ -252,7 +252,7 @@ public class SqlServerTestUtils {
 
     public void insertDataIntoBasicTable(){
         JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
-        int docCount = 34;
+        int docCount = 250000000;
         int lineCountIncrementer = 1;
         String sql = "INSERT INTO dbo.tblInputDocs "
                 + "( srcColumnFieldName"
