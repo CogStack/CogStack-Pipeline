@@ -2,21 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8fa4ce33-e860-41c6-a6d6-4cf8986d4df1" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerIntegrationTestsBasic.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/groovy/uk/ac/kcl/model/ScheduledPartitionParams.groovy" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/resources/logback.xml" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/resources/log4j.properties" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/turbo-laser.log" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/rowmappers/ElasticsearchDocumentWriter.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/itemHandlers/ElasticsearchDocumentWriter.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerTestUtils.java" afterPath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerTestUtils.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/resources/jobAndStep.properties" afterPath="$PROJECT_DIR$/src/integration-test/resources/jobAndStep.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_basic.properties" afterPath="$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_basic.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/resources/sql_server_db.properties" afterPath="$PROJECT_DIR$/src/integration-test/resources/sql_server_db.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/groovy/uk/ac/kcl/model/PartitionParams.groovy" afterPath="$PROJECT_DIR$/src/main/groovy/uk/ac/kcl/model/PartitionParams.groovy" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/JobConfiguration.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/JobConfiguration.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/partitioners/ColumnRangePartitioner.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/partitioners/ColumnRangePartitioner.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/rowmappers/PartitionParamsRowMapper.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/rowmappers/PartitionParamsRowMapper.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build.gradle" afterPath="$PROJECT_DIR$/build.gradle" />
     </list>
     <ignored path="turbo-laser.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -75,7 +62,7 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="SqlServerIntegrationTestsTika.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="SqlServerIntegrationTestsTika.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerIntegrationTestsTika.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="-4">
@@ -89,17 +76,17 @@
         <entry file="file://$PROJECT_DIR$/src/integration-test/resources/jobAndStep.properties">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="51">
-              <caret line="3" column="34" selection-start-line="3" selection-start-column="34" selection-end-line="3" selection-end-column="34" />
+              <caret line="3" column="27" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="27" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="build.gradle" pinned="false" current-in-tab="false">
+      <file leaf-file-name="build.gradle" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/build.gradle">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="619">
-              <caret line="154" column="5" selection-start-line="154" selection-start-column="5" selection-end-line="154" selection-end-column="5" />
+            <state relative-caret-position="609">
+              <caret line="222" column="0" selection-start-line="222" selection-start-column="0" selection-end-line="222" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -566,7 +553,6 @@
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/service/GateService.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/scheduling/Scheduler.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/itemProcessors/TikaDocumentItemProcessor.java" />
-        <option value="$PROJECT_DIR$/build.gradle" />
         <option value="$PROJECT_DIR$/src/main/groovy/uk/ac/kcl/model/PartitionParams.groovy" />
         <option value="$PROJECT_DIR$/src/main/groovy/uk/ac/kcl/model/ScheduledPartitionParams.groovy" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/itemProcessors/ElasticsearchDocumentWriter.java" />
@@ -581,6 +567,7 @@
         <option value="$PROJECT_DIR$/src/main/resources/log4j.properties" />
         <option value="$PROJECT_DIR$/src/main/resources/logback.xml" />
         <option value="$PROJECT_DIR$/src/integration-test/resources/jobAndStep.properties" />
+        <option value="$PROJECT_DIR$/build.gradle" />
       </list>
     </option>
   </component>
@@ -639,6 +626,14 @@
         <subPane subId="Project Files">
           <PATH>
             <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="turbo-laser">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="turbo-laser">
               <option name="myItemId" value="" />
               <option name="myItemType" value="" />
             </PATH_ELEMENT>
@@ -1499,7 +1494,7 @@
       <workItem from="1462204955472" duration="19540000" />
       <workItem from="1462230689212" duration="678000" />
       <workItem from="1462263299392" duration="6417000" />
-      <workItem from="1462304405624" duration="9840000" />
+      <workItem from="1462304405624" duration="12734000" />
     </task>
     <servers />
   </component>
@@ -1536,7 +1531,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="247843000" />
+    <option name="totallyTimeSpent" value="250737000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="65" y="24" width="1855" height="1056" extended-state="6" />
@@ -1550,7 +1545,7 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32935917" sideWeight="0.50269026" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32988048" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.543235" sideWeight="0.727133" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.31536114" sideWeight="0.727133" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Spring" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -2055,14 +2050,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="619">
-          <caret line="154" column="5" selection-start-line="154" selection-start-column="5" selection-end-line="154" selection-end-column="5" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/resources/logback.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="221">
@@ -2084,18 +2071,26 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/integration-test/resources/jobAndStep.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="3" column="34" selection-start-line="3" selection-start-column="34" selection-end-line="3" selection-end-column="34" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerIntegrationTestsTika.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-4">
           <caret line="59" column="36" selection-start-line="59" selection-start-column="36" selection-end-line="59" selection-end-column="36" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/integration-test/resources/jobAndStep.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" column="27" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="609">
+          <caret line="222" column="0" selection-start-line="222" selection-start-column="0" selection-end-line="222" selection-end-column="0" />
           <folding />
         </state>
       </provider>

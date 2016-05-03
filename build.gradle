@@ -28,8 +28,8 @@ sourceSets {
             srcDirs = ["src/test/java"]
         }
         resources {
-           srcDirs = ['src/test/resources']
-       }
+            srcDirs = ['src/test/resources']
+        }
 
     }
     integTest {
@@ -169,5 +169,54 @@ allprojects {
         tasks.withType(JavaCompile) {
             options.compilerArgs << "-Xlint:unchecked"
         }
+    }
+}
+
+task writeExampleConfig  {
+    //String concurrency = new File("src/integration-test/resources/concurrency.properties").text
+    String elasticsearch = new File("src/integration-test/resources/elasticsearch.properties").text
+    String gate = new File("src/integration-test/resources/gate.properties").text
+    String tika = new File("src/integration-test/resources/tika.properties").text
+    String jms = new File("src/integration-test/resources/jms.properties").text
+    String jobAndStep = new File("src/integration-test/resources/jobAndStep.properties").text
+    String postgres_db = new File("src/integration-test/resources/postgres_db.properties").text
+    String postgres_test_config_gate = new File("src/integration-test/resources/postgres_test_config_gate.properties").text
+    String postgres_test_config_tika = new File("src/integration-test/resources/postgres_test_config_tika.properties").text
+    String postgres_test_config_basic = new File("src/integration-test/resources/postgres_test_config_basic.properties").text
+
+    def gateExample = new File("postgresGateExample.conf")
+    gateExample.withWriter("UTF-8") { writer ->
+        writer.write(
+                elasticsearch
+                        + "\n" + gate
+                        + "\n" + jms
+                        + "\n" + elasticsearch
+                        + "\n" + jobAndStep
+                        + "\n" + postgres_db
+                        + "\n" + postgres_test_config_gate
+        )
+    }
+        def tikaExample = new File("postgresTikaExample.conf")
+    tikaExample.withWriter("UTF-8"){ writer ->
+            writer.write(
+                    elasticsearch
+                            +"\n" + tika
+                            +"\n" + jms
+                            + "\n" + elasticsearch
+                            +"\n" + jobAndStep
+                            +"\n" + postgres_db
+                            +"\n" + postgres_test_config_tika
+            )
+    }
+    def basicExample = new File("postgresBasicExample.conf")
+    basicExample.withWriter("UTF-8"){ writer ->
+        writer.write(
+                elasticsearch
+                        +"\n" + jms
+                        + "\n" + elasticsearch
+                        +"\n" + jobAndStep
+                        +"\n" + postgres_db
+                        +"\n" + postgres_test_config_basic
+        )
     }
 }
