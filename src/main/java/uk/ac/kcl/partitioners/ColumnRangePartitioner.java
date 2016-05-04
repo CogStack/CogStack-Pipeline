@@ -107,6 +107,7 @@ public class ColumnRangePartitioner implements Partitioner {
                 start += targetSize;
                 end += targetSize;
             }
+            logger.info("");
             return result;
         }else{
             ScheduledPartitionParams params = getScheduledPartitionParams();

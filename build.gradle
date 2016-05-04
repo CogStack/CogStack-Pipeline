@@ -106,42 +106,24 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-    compile 'org.slf4j:slf4j-log4j12:1.7.21'
-    compile 'org.slf4j:slf4j-api:1.7.21'
-    compile 'log4j:log4j:1.2.17'
+    //compile 'org.slf4j:slf4j-log4j12:1.7.21'
+    //compile 'org.slf4j:slf4j-api:1.7.21'
+    //compile 'log4j:log4j:1.2.17'
     compile "org.elasticsearch.plugin:shield:2.3.1"
     compile 'org.elasticsearch:elasticsearch:2.3.1'
     compile("org.springframework.boot:spring-boot-starter-batch")
     compile("org.hsqldb:hsqldb")
     compile 'org.hsqldb:hsqldb:2.3.3'
     compile 'net.sourceforge.jtds:jtds:1.3.1'
-    compile ('org.springframework.batch:spring-batch-core:3.0.6.RELEASE'){
-        exclude group: 'commons-logging', module: 'commons-logging' //by both name and group
-    }
-    compile ('org.springframework.batch:spring-batch-integration:3.0.6.RELEASE'){
-        exclude group: 'commons-logging', module: 'commons-logging' //by both name and group
-    }
-    compile ('org.springframework:spring-core:4.2.3.RELEASE'){
-        exclude group: 'commons-logging', module: 'commons-logging' //by both name and group
-    }
-    compile ('org.springframework:spring-test:4.2.3.RELEASE'){
-        exclude group: 'commons-logging', module: 'commons-logging' //by both name and group
-    }
-    compile ('org.springframework:spring-jdbc:4.2.3.RELEASE'){
-        exclude group: 'commons-logging', module: 'commons-logging' //by both name and group
-    }
-    compile ('org.springframework:spring-context:4.2.3.RELEASE'){
-        exclude group: 'commons-logging', module: 'commons-logging' //by both name and group
-    }
-    compile ('org.springframework:spring-jms:4.2.3.RELEASE'){
-        exclude group: 'commons-logging', module: 'commons-logging' //by both name and group
-    }
-    compile ('org.springframework.integration:spring-integration-core:4.2.3.RELEASE'){
-        exclude group: 'commons-logging', module: 'commons-logging' //by both name and group
-    }
-    compile ('org.springframework.integration:spring-integration-jms:4.2.3.RELEASE'){
-        exclude group: 'commons-logging', module: 'commons-logging' //by both name and group
-    }
+    compile ('org.springframework.batch:spring-batch-core:3.0.6.RELEASE')
+    compile ('org.springframework.batch:spring-batch-integration:3.0.6.RELEASE')
+    compile ('org.springframework:spring-core:4.2.3.RELEASE')
+    compile ('org.springframework:spring-test:4.2.3.RELEASE')
+    compile ('org.springframework:spring-jdbc:4.2.3.RELEASE')
+    compile ('org.springframework:spring-context:4.2.3.RELEASE')
+    compile ('org.springframework:spring-jms:4.2.3.RELEASE')
+    compile ('org.springframework.integration:spring-integration-core:4.2.3.RELEASE')
+    compile ('org.springframework.integration:spring-integration-jms:4.2.3.RELEASE')
     compile 'commons-dbcp:commons-dbcp:1.4'
     compile 'commons-io:commons-io:2.4'
     compile 'org.postgresql:postgresql:9.4-1205-jdbc42'
@@ -184,9 +166,9 @@ task writeExampleConfig  {
     String postgres_test_config_tika = new File("src/integration-test/resources/postgres_test_config_tika.properties").text
     String postgres_test_config_basic = new File("src/integration-test/resources/postgres_test_config_basic.properties").text
 
-    def gateExample = new File("postgresGateExample.conf")
+    def gateExample = new File("gate.conf")
     gateExample.withWriter("UTF-8") { writer ->
-        writer.write(
+        writer.write(  "# EXAMPLE CONFIG FOR gateJob \n" +
                 elasticsearch
                         + "\n" + gate
                         + "\n" + jms
@@ -196,9 +178,9 @@ task writeExampleConfig  {
                         + "\n" + postgres_test_config_gate
         )
     }
-        def tikaExample = new File("postgresTikaExample.conf")
+        def tikaExample = new File("tika.conf")
     tikaExample.withWriter("UTF-8"){ writer ->
-            writer.write(
+            writer.write ("# EXAMPLE CONFIG FOR tikaJob \n" +
                     elasticsearch
                             +"\n" + tika
                             +"\n" + jms
@@ -208,9 +190,9 @@ task writeExampleConfig  {
                             +"\n" + postgres_test_config_tika
             )
     }
-    def basicExample = new File("postgresBasicExample.conf")
+    def basicExample = new File("basic.conf")
     basicExample.withWriter("UTF-8"){ writer ->
-        writer.write(
+        writer.write("# EXAMPLE CONFIG FOR basicJob \n" +
                 elasticsearch
                         +"\n" + jms
                         + "\n" + elasticsearch
