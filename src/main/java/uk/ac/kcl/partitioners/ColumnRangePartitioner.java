@@ -95,6 +95,7 @@ public class ColumnRangePartitioner implements Partitioner {
     public Map<String, ExecutionContext> partition(int gridSize) {
         Map<String, ExecutionContext> result = new HashMap<String, ExecutionContext>();
         if (env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("false")) {
+            logger.info("Commencing PK only partition");
             PartitionParams params = getUnscheduledPartitionParams();
             long targetSize = (params.getMaxId() - params.getMinId()) / gridSize + 1;
             long start = params.getMinId();
@@ -107,7 +108,7 @@ public class ColumnRangePartitioner implements Partitioner {
                 start += targetSize;
                 end += targetSize;
             }
-            logger.info("");
+            logger.info("partitioning complete");
             return result;
         }else{
             ScheduledPartitionParams params = getScheduledPartitionParams();

@@ -45,7 +45,7 @@ import uk.ac.kcl.utils.BatchJobUtils;
 
 public class Scheduler {
 
-    
+
     @Autowired
     Environment env;
 
@@ -67,22 +67,24 @@ public class Scheduler {
 
     @Scheduled(cron = "${scheduler.rate}")
     public void doTask()  {
-
-
-        Object lastGoodJob = batchJobUtils.getLastSuccessfulRecordTimestamp();
-
-
-
-        LOG.info("Last good run was " + lastGoodJob +". Recommencing from then");
         JobParameters param = new JobParametersBuilder()
                 .addDate("this_attempt_date",new Date())
                 //.addDate("last_successful_record_date",batchJobUtils.getLastSuccessfulRecordTimestamp())
                 .toJobParameters();
-            try {
-                JobExecution execution = jobLauncher.run(job, param);
-                System.out.println(execution.getStatus().toString());
-            } catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException | JobParametersInvalidException ex) {
-                java.util.logging.Logger.getLogger(ScheduledJobConfiguration.class.getName()).log(Level.SEVERE, null, ex);
-            }
+
+
+        if(env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("true")) {
+            Object lastGoodJob = batchJobUtils.getLastSuccessfulRecordTimestamp();
+            LOG.info("Last good run was " + lastGoodJob + ". Recommencing from then");
+        }else{
+            LOG.info("Not using timeStampBasedScheduling");
+        }
+
+        try {
+            JobExecution execution = jobLauncher.run(job, param);
+            System.out.println(execution.getStatus().toString());
+        } catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException | JobParametersInvalidException ex) {
+            java.util.logging.Logger.getLogger(ScheduledJobConfiguration.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }
