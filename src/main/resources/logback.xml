@@ -10,21 +10,18 @@
 
 
     <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>turbo-laser.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <!-- rollover daily -->
-            <fileNamePattern>turbo-laser-%d{yyyy-MM-dd}.%i.txt</fileNamePattern>
-            <!-- each file should be at most 10MB, keep 60 days worth of history, but at most 500MB -->
-            <maxFileSize>10MB</maxFileSize>
-            <maxHistory>60</maxHistory>
-            <totalSizeCap>100MB</totalSizeCap>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>turbo-laser.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- keep 1 days' worth of history -->
+            <maxHistory>30</maxHistory>
         </rollingPolicy>
         <encoder>
-            <pattern>%msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <root level="info">
+    <root level="debug">
         <appender-ref ref="ROLLING" />
         <appender-ref ref="STDOUT" />
     </root>
