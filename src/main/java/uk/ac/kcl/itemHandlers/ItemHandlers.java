@@ -42,10 +42,10 @@ public class ItemHandlers {
                     "' AS "+env.getProperty("dbmsToJavaSqlTimestampType")+") "
                     + " AND CAST('" + maxTimeStamp +
                     "' AS "+env.getProperty("dbmsToJavaSqlTimestampType")+") "
-                    + " AND " + env.getProperty("columntoProcess")
+                    + " AND " + env.getProperty("columnToProcess")
                     + " BETWEEN '" + minValue + "' AND '" + maxValue +"'";
         }else{
-            returnString = ("WHERE " + env.getProperty("columntoProcess")
+            returnString = ("WHERE " + env.getProperty("columnToProcess")
                     + " BETWEEN " + minValue + " AND " + maxValue) ;
         }
 

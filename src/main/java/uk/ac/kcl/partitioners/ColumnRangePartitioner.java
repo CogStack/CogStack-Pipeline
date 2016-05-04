@@ -60,7 +60,7 @@ public class ColumnRangePartitioner implements Partitioner {
 
     @PostConstruct
     public void init(){
-        setColumn(env.getProperty("columntoPartition"));
+        setColumn(env.getProperty("columnToPartition"));
         setTable(env.getProperty("tableToPartition"));
         setTimeStampColumnName(env.getProperty("timeStamp"));
         setDataSource(sourceDataSource);
