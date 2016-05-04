@@ -38,12 +38,15 @@ public class ItemHandlers {
         if(env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("true")
                 && minTimeStamp!= null && maxTimeStamp != null) {
             returnString = "WHERE " +env.getProperty("timeStamp")
-                    + " BETWEEN CAST('" + minTimeStamp + "' AS "+env.getProperty("dbmsToJavaSqlTimestampType")+") "
-                    + " AND CAST('" + maxTimeStamp +"' AS "+env.getProperty("dbmsToJavaSqlTimestampType")+") "
-                    + " AND " + env.getProperty("columntoPartition")
+                    + " BETWEEN CAST('" + minTimeStamp +
+                    "' AS "+env.getProperty("dbmsToJavaSqlTimestampType")+") "
+                    + " AND CAST('" + maxTimeStamp +
+                    "' AS "+env.getProperty("dbmsToJavaSqlTimestampType")+") "
+                    + " AND " + env.getProperty("columntoProcess")
                     + " BETWEEN '" + minValue + "' AND '" + maxValue +"'";
         }else{
-            returnString = ("WHERE " + env.getProperty("columntoPartition") + " BETWEEN " + minValue + " AND " + maxValue) ;
+            returnString = ("WHERE " + env.getProperty("columntoProcess")
+                    + " BETWEEN " + minValue + " AND " + maxValue) ;
         }
 
         return returnString;
