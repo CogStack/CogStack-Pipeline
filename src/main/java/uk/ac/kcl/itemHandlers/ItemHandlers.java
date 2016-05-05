@@ -149,8 +149,11 @@ public class ItemHandlers {
             @Qualifier("simpleJdbcItemWriter") ItemWriter<Document> jdbcItemWriter) {
         CompositeItemWriter writer = new CompositeItemWriter<>();
         ArrayList<ItemWriter<Document>> delegates = new ArrayList<>();
+
         delegates.add(esItemWriter);
-        delegates.add(jdbcItemWriter);
+        if(env.getProperty("writeProcessedResultsToJdbc").equalsIgnoreCase("true")){
+            delegates.add(jdbcItemWriter);
+        }
         writer.setDelegates(delegates);
         return writer;
     }
