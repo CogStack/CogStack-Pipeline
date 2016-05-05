@@ -8,10 +8,13 @@ import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.JdbcPagingItemReader;
 import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean;
 import org.springframework.batch.item.support.CompositeItemWriter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.RowMapper;
 import uk.ac.kcl.model.BinaryDocument;
@@ -134,6 +137,7 @@ public class ItemHandlers {
 
     @Bean
     @Qualifier("simpleJdbcItemWriter")
+    @Profile("jdbc")
     public ItemWriter<Document> simpleJdbcItemWriter(@Qualifier("targetDataSource") DataSource jdbcDocumentTarget) {
         JdbcBatchItemWriter<Document> writer = new JdbcBatchItemWriter<>();
         writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
@@ -142,18 +146,28 @@ public class ItemHandlers {
         return writer;
     }
 
+    @Autowired(required = false)
+    @Qualifier("esDocumentWriter")
+    ItemWriter<Document> esItemWriter;
+
+    @Autowired(required = false)
+    @Qualifier("simpleJdbcItemWriter")
+    ItemWriter<Document> jdbcItemWriter;
+
+
     @Bean
     @Qualifier("compositeESandJdbcItemWriter")
-    public ItemWriter<Document> compositeESandJdbcItemWriter(
-            @Qualifier("esDocumentWriter") ItemWriter<Document> esItemWriter,
-            @Qualifier("simpleJdbcItemWriter") ItemWriter<Document> jdbcItemWriter) {
+    public ItemWriter<Document> compositeESandJdbcItemWriter() {
         CompositeItemWriter writer = new CompositeItemWriter<>();
         ArrayList<ItemWriter<Document>> delegates = new ArrayList<>();
 
-        delegates.add(esItemWriter);
-        if(env.getProperty("writeProcessedResultsToJdbc").equalsIgnoreCase("true")){
+        if(esItemWriter !=null) {
+            delegates.add(esItemWriter);
+        }
+        if(jdbcItemWriter !=null) {
             delegates.add(jdbcItemWriter);
         }
+
         writer.setDelegates(delegates);
         return writer;
     }

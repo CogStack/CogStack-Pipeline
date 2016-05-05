@@ -50,6 +50,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.batch.BatchConfigurer;
 import uk.ac.kcl.batch.TikaConfiguration;
+import uk.ac.kcl.scheduling.SingleJobLauncher;
 
 /**
  *
@@ -66,9 +67,7 @@ import uk.ac.kcl.batch.TikaConfiguration;
     "classpath:elasticsearch.properties",
     "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
-    JobConfiguration.class,
-    BatchConfigurer.class,
-    TikaConfiguration.class,
+        SingleJobLauncher.class,
     PostGresTestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 public class PostGresIntegrationTestsTika {
@@ -76,7 +75,7 @@ public class PostGresIntegrationTestsTika {
     final static Logger logger = Logger.getLogger(PostGresIntegrationTestsTika.class);
 
     @Autowired
-    JobOperator jobOperator;
+    SingleJobLauncher jobLauncher;
 
     @Autowired
     PostGresTestUtils utils;
@@ -86,11 +85,7 @@ public class PostGresIntegrationTestsTika {
         utils.initPostgresTikaTable();
         utils.initPostGresJobRepository();
         utils.insertTestBinariesForTika();
-        try {
-            jobOperator.startNextInstance("tikaJob");
-        } catch (NoSuchJobException | JobParametersNotFoundException | JobRestartException | JobExecutionAlreadyRunningException | JobInstanceAlreadyCompleteException | UnexpectedJobExecutionException | JobParametersInvalidException ex) {
-            java.util.logging.Logger.getLogger(PostGresIntegrationTestsTika.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        jobLauncher.launchJob();
     }
 
 

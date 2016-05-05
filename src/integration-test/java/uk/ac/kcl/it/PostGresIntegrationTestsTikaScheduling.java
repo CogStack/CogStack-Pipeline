@@ -23,7 +23,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import uk.ac.kcl.batch.ScheduledJobConfiguration;
+import uk.ac.kcl.scheduling.ScheduledJobLauncher;
 
 /**
  *
@@ -38,7 +38,7 @@ import uk.ac.kcl.batch.ScheduledJobConfiguration;
         "classpath:elasticsearch.properties",
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
-        ScheduledJobConfiguration.class,
+        ScheduledJobLauncher.class,
         PostGresTestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 public class PostGresIntegrationTestsTikaScheduling {
@@ -52,10 +52,5 @@ public class PostGresIntegrationTestsTikaScheduling {
         utils.initPostgresTikaTable();
         utils.initPostGresJobRepository();
         utils.insertTestBinariesForTika();
-        try {
-            Thread.sleep(1000000000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 }

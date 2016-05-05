@@ -33,9 +33,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
-import org.apache.log4j.Logger;
+
 import org.slf4j.LoggerFactory;
-import uk.ac.kcl.scheduling.Scheduler;
 
 /**
  *

@@ -20,7 +20,8 @@ import java.util.logging.Logger;
 import org.springframework.batch.core.launch.support.CommandLineJobRunner;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.env.SimpleCommandLinePropertySource;
-import uk.ac.kcl.batch.ScheduledJobConfiguration;
+import uk.ac.kcl.scheduling.ScheduledJobLauncher;
+import uk.ac.kcl.scheduling.SingleJobLauncher;
 
 /**
  *
@@ -29,16 +30,19 @@ import uk.ac.kcl.batch.ScheduledJobConfiguration;
 public class Main {
     
     public static void main(String[] args) {
-        SimpleCommandLinePropertySource ps = new SimpleCommandLinePropertySource(args);        
+        SimpleCommandLinePropertySource ps = new SimpleCommandLinePropertySource(args);
+        @SuppressWarnings("resource")
+        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+        ctx.getEnvironment().getPropertySources().addFirst(ps);
         if (ps.getProperty("nonOptionArgs").contains("scheduled")) {
-            
-            @SuppressWarnings("resource")
-            AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
-            ctx.getEnvironment().getPropertySources().addFirst(ps);
-            ctx.register(ScheduledJobConfiguration.class);
-            ctx.refresh();            
-            //ScheduledJobConfiguration job = ctx.getBean(ScheduledJobConfiguration.class);
-        } else {
+            ctx.register(ScheduledJobLauncher.class);
+            ctx.refresh();
+        } else if(ps.getProperty("nonOptionArgs").contains("single")){
+            ctx.register(SingleJobLauncher.class);
+            ctx.refresh();
+            SingleJobLauncher launcher = ctx.getBean(SingleJobLauncher.class);
+            launcher.launchJob();
+        } else{
             try {
                 CommandLineJobRunner.main(args);
             } catch (Exception ex) {

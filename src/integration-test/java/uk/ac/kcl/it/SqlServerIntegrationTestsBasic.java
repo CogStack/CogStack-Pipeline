@@ -35,6 +35,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.batch.BasicJobConfiguration;
 import uk.ac.kcl.batch.BatchConfigurer;
 import uk.ac.kcl.batch.JobConfiguration;
+import uk.ac.kcl.scheduling.SingleJobLauncher;
 
 import java.util.logging.Level;
 
@@ -58,21 +59,18 @@ public class SqlServerIntegrationTestsBasic {
     final static Logger logger = Logger.getLogger(SqlServerIntegrationTestsBasic.class);
 
     @Autowired
-    JobOperator jobOperator;
+    SingleJobLauncher jobLauncher;
 
     @Autowired
     SqlServerTestUtils utils;
 
     @Test
     public void sqlServerBasicPipelineTest() {
-//        utils.createBasicInputTable();
-//        utils.createBasicOutputTable();
+        utils.createBasicInputTable();
+        utils.createBasicOutputTable();
         utils.initJobRepository();
-//        utils.insertDataIntoBasicTable();
-        try {
-            jobOperator.startNextInstance("basicJob");
-        } catch (NoSuchJobException | JobParametersNotFoundException | JobRestartException | JobExecutionAlreadyRunningException | JobInstanceAlreadyCompleteException | UnexpectedJobExecutionException | JobParametersInvalidException ex) {
-            java.util.logging.Logger.getLogger(SqlServerIntegrationTestsBasic.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        utils.insertDataIntoBasicTable();
+        jobLauncher.launchJob();
+
     }
 }

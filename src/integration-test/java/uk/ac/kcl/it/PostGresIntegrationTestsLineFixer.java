@@ -47,6 +47,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.batch.BatchConfigurer;
+import uk.ac.kcl.scheduling.SingleJobLauncher;
 
 /**
  *
@@ -63,8 +64,7 @@ import uk.ac.kcl.batch.BatchConfigurer;
         "classpath:postgres_db.properties",
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
-        JobConfiguration.class,
-        BatchConfigurer.class,
+        SingleJobLauncher.class,
         PostGresTestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 public class PostGresIntegrationTestsLineFixer  {
@@ -72,7 +72,7 @@ public class PostGresIntegrationTestsLineFixer  {
     final static Logger logger = Logger.getLogger(PostGresIntegrationTestsLineFixer.class);
 
     @Autowired
-    JobOperator jobOperator;
+    SingleJobLauncher jobLauncher;
 
     @Autowired
     Environment env;
@@ -85,10 +85,6 @@ public class PostGresIntegrationTestsLineFixer  {
         utils.initPostGresJobRepository();
         utils.initPostgresMultiLineTextTable();
         utils.insertTestLinesForDBLineFixer();
-        try {
-            jobOperator.startNextInstance("dBLineFixerJob");
-        } catch (NoSuchJobException | JobParametersNotFoundException | JobRestartException | JobExecutionAlreadyRunningException | JobInstanceAlreadyCompleteException | UnexpectedJobExecutionException | JobParametersInvalidException ex) {
-            java.util.logging.Logger.getLogger(PostGresIntegrationTestsLineFixer.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        jobLauncher.launchJob();
     }
 }

@@ -49,7 +49,7 @@ import uk.ac.kcl.rowmappers.MultiRowDocumentRowMapper;
 @Configuration
 @Import(ItemHandlers.class)
 @Profile("dBLineFixer")
-@PropertySource("file:${TURBO_LASER}/dBLineFixer.conf")
+@PropertySource("classpath:dBLineFixerJob.conf")
 public class DbLineFixerConfiguration {
     @Resource
     Environment env;

@@ -41,7 +41,7 @@ import java.util.Arrays;
 @Import(ItemHandlers.class)
 @Configuration
 @Profile("gate")
-@PropertySource("file:${TURBO_LASER}/gate.conf")
+@PropertySource("classpath:gateJob.conf")
 public class GateConfiguration {
 
     @Resource

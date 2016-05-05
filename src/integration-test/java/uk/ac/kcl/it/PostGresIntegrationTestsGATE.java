@@ -52,6 +52,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.batch.BatchConfigurer;
 import uk.ac.kcl.batch.DbLineFixerConfiguration;
 import uk.ac.kcl.batch.GateConfiguration;
+import uk.ac.kcl.scheduling.SingleJobLauncher;
 
 /**
  *
@@ -68,17 +69,15 @@ import uk.ac.kcl.batch.GateConfiguration;
                 "classpath:elasticsearch.properties",
                 "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
-    JobConfiguration.class,
-    BatchConfigurer.class,
-    GateConfiguration.class,
-    DbLineFixerConfiguration.class,
+    SingleJobLauncher.class,
     PostGresTestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 public class PostGresIntegrationTestsGATE {
 
     final static Logger logger = Logger.getLogger(PostGresIntegrationTestsGATE.class);
 
-
+    @Autowired
+    SingleJobLauncher jobLauncher;
     @Autowired
     PostGresTestUtils utils;
 
@@ -91,11 +90,7 @@ public class PostGresIntegrationTestsGATE {
         utils.initTextualPostgresGateTable();
         utils.initPostGresJobRepository();
         utils.insertTestXHTMLForGate( false);
-        try {
-            jobOperator.startNextInstance("gateJob");
-        } catch (NoSuchJobException | JobParametersNotFoundException | JobRestartException | JobExecutionAlreadyRunningException | JobInstanceAlreadyCompleteException | UnexpectedJobExecutionException | JobParametersInvalidException ex) {
-            java.util.logging.Logger.getLogger(PostGresIntegrationTestsGATE.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        jobLauncher.launchJob();
     }
 
 

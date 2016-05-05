@@ -35,6 +35,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.batch.BatchConfigurer;
 import uk.ac.kcl.batch.JobConfiguration;
 import uk.ac.kcl.batch.TikaConfiguration;
+import uk.ac.kcl.scheduling.SingleJobLauncher;
 
 import java.util.logging.Level;
 
@@ -63,7 +64,7 @@ public class SqlServerIntegrationTestsTika {
     final static Logger logger = Logger.getLogger(SqlServerIntegrationTestsTika.class);
 
     @Autowired
-    JobOperator jobOperator;
+    SingleJobLauncher jobLauncher;
 
     @Autowired
     SqlServerTestUtils utils;
@@ -73,11 +74,7 @@ public class SqlServerIntegrationTestsTika {
         utils.initTikaTable();
         utils.initJobRepository();
         utils.insertTestBinariesForTika();
-        try {
-            jobOperator.startNextInstance("tikaJob");
-        } catch (NoSuchJobException | JobParametersNotFoundException | JobRestartException | JobExecutionAlreadyRunningException | JobInstanceAlreadyCompleteException | UnexpectedJobExecutionException | JobParametersInvalidException ex) {
-            java.util.logging.Logger.getLogger(SqlServerIntegrationTestsTika.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        jobLauncher.launchJob();
     }
 
 

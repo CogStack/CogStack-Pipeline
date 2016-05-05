@@ -25,6 +25,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.batch.*;
+import uk.ac.kcl.scheduling.ScheduledJobLauncher;
 
 import static junit.framework.TestCase.assertNotNull;
 
@@ -42,12 +43,8 @@ import static junit.framework.TestCase.assertNotNull;
         "classpath:elasticsearch.properties",
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
-        JobConfiguration.class,
-        BatchConfigurer.class,
-        GateConfiguration.class,
-        DbLineFixerConfiguration.class,
         PostGresTestUtils.class,
-        ScheduledJobConfiguration.class},
+        ScheduledJobLauncher.class},
         loader = AnnotationConfigContextLoader.class)
 public class PostGresIntegrationTestsBasicScheduling {
 
@@ -55,6 +52,9 @@ public class PostGresIntegrationTestsBasicScheduling {
 
     @Autowired
     PostGresTestUtils utils;
+
+    @Autowired
+    ScheduledJobLauncher launcher;
     @Test
     public void postgresGatePipelineTest() {
        utils.createBasicInputTable();
@@ -66,6 +66,8 @@ public class PostGresIntegrationTestsBasicScheduling {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+
 
     }
 

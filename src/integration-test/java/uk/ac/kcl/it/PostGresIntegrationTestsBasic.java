@@ -35,6 +35,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.batch.BasicJobConfiguration;
 import uk.ac.kcl.batch.BatchConfigurer;
 import uk.ac.kcl.batch.JobConfiguration;
+import uk.ac.kcl.scheduling.SingleJobLauncher;
 
 import java.util.logging.Level;
 
@@ -48,17 +49,15 @@ import java.util.logging.Level;
     "classpath:elasticsearch.properties",
     "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
-    JobConfiguration.class,
-    BatchConfigurer.class,
-    BasicJobConfiguration.class,
-    PostGresTestUtils.class},
+    PostGresTestUtils.class,
+    SingleJobLauncher.class},
         loader = AnnotationConfigContextLoader.class)
 public class PostGresIntegrationTestsBasic {
 
     final static Logger logger = Logger.getLogger(PostGresIntegrationTestsBasic.class);
 
     @Autowired
-    JobOperator jobOperator;
+    SingleJobLauncher jobLauncher;
 
     @Autowired
     PostGresTestUtils utils;
@@ -69,10 +68,6 @@ public class PostGresIntegrationTestsBasic {
         utils.createBasicOutputTable();
         utils.initPostGresJobRepository();
         utils.insertDataIntoBasicTable();
-        try {
-            jobOperator.startNextInstance("basicJob");
-        } catch (NoSuchJobException | JobParametersNotFoundException | JobRestartException | JobExecutionAlreadyRunningException | JobInstanceAlreadyCompleteException | UnexpectedJobExecutionException | JobParametersInvalidException ex) {
-            java.util.logging.Logger.getLogger(PostGresIntegrationTestsBasic.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        jobLauncher.launchJob();
     }
 }

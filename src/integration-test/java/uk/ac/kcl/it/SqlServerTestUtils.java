@@ -152,11 +152,11 @@ public class SqlServerTestUtils {
 
     }
 
-    public void initPostgresMultiLineTextTable(){
+    public void initMultiLineTextTable(){
         createBasicInputTable();
-        sourceTemplate.execute("DROP TABLE IF EXISTS dbo.tblDocLines");
+        sourceTemplate.execute("IF OBJECT_ID('dbo.tblDocLines', 'U') IS NOT NULL DROP TABLE  dbo.tblDocLines");
         sourceTemplate.execute("CREATE TABLE dbo.tblDocLines"
-                + "( ID  BIGINT IDENTITY(1,1) PRIMARY KEY,"
+                + "( ID  BIGINT IDENTITY(1,1) PRIMARY KEY"
                 + ", primaryKeyFieldValue BIGINT "
                 + ", updateTime DateTIME "
                 + ", LINE_ID BIGINT "
@@ -252,7 +252,7 @@ public class SqlServerTestUtils {
 
     public void insertDataIntoBasicTable(){
         JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
-        int docCount = 250000000;
+        int docCount = 34;
         int lineCountIncrementer = 1;
         String sql = "INSERT INTO dbo.tblInputDocs "
                 + "( srcColumnFieldName"

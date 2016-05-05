@@ -23,7 +23,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import uk.ac.kcl.batch.ScheduledJobConfiguration;
+import uk.ac.kcl.scheduling.ScheduledJobLauncher;
 
 /**
  *
@@ -39,7 +39,7 @@ import uk.ac.kcl.batch.ScheduledJobConfiguration;
         "classpath:elasticsearch.properties",
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
-        ScheduledJobConfiguration.class,
+        ScheduledJobLauncher.class,
         SqlServerTestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 public class SqlServerIntegrationTestsTikaScheduling {

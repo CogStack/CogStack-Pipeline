@@ -16,33 +16,26 @@
 package uk.ac.kcl.batch;
 
 
-import javax.sql.DataSource;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.commons.dbcp.BasicDataSource;
-import org.apache.commons.dbcp.BasicDataSourceFactory;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.integration.partition.BeanFactoryStepLocator;
 import org.springframework.batch.integration.partition.StepExecutionRequestHandler;
 import org.springframework.batch.support.DatabaseType;
-import org.springframework.context.annotation.*;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.jdbc.datasource.init.ScriptUtils;
-import org.springframework.jdbc.support.MetaDataAccessException;
-import org.springframework.jndi.JndiObjectFactoryBean;
-import uk.ac.kcl.partitioners.ColumnRangePartitioner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.integration.config.EnableIntegration;
+import org.springframework.jdbc.support.MetaDataAccessException;
 import org.springframework.jms.connection.CachingConnectionFactory;
 
-import java.sql.SQLException;
+import javax.sql.DataSource;
 import java.util.ArrayList;
 
 /**
@@ -81,13 +74,6 @@ public class JobConfiguration {
 
     @Autowired
     public Environment env;
-
-//    @Bean
-//    @Qualifier("jndiObjectFactoryBean")
-//    public JndiObjectFactoryBean basicDataSourceFactory(){
-//        return new org.springframework.jndi.JndiObjectFactoryBean();
-//    }
-
 
     @Bean
     @Qualifier("slaveTaskExecutor")

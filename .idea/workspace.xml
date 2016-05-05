@@ -2,17 +2,50 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8fa4ce33-e860-41c6-a6d6-4cf8986d4df1" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules/turbo-laser_main.iml" afterPath="$PROJECT_DIR$/.idea/modules/turbo-laser_main.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules/turbo-laser_test.iml" afterPath="$PROJECT_DIR$/.idea/modules/turbo-laser_test.iml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/scheduling/SingleJobLauncher.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/resources/gateJob.conf" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/resources/tikaJob.conf" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/HSQLIntegrationTestsGATE.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/HSQLIntegrationTestsLineFixer.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/GateJobIncrementer.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/ScheduledJobConfiguration.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/data/DocumentFinder.java" afterPath="" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/scheduling/Scheduler.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/scheduling/ScheduledJobLauncher.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/basic.conf" afterPath="$PROJECT_DIR$/basic.conf" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build.gradle" afterPath="$PROJECT_DIR$/build.gradle" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gate.conf" afterPath="$PROJECT_DIR$/gate.conf" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsBasic.java" afterPath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsBasic.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsBasicScheduling.java" afterPath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsBasicScheduling.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/resources/elasticsearch.properties" afterPath="$PROJECT_DIR$/src/integration-test/resources/elasticsearch.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/resources/jobAndStep.properties" afterPath="$PROJECT_DIR$/src/integration-test/resources/jobAndStep.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsDBLineFixerScheduling.java" afterPath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsDBLineFixerScheduling.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsGATE.java" afterPath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsGATE.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsLineFixer.java" afterPath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsLineFixer.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsTika.java" afterPath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsTika.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsTikaScheduling.java" afterPath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsTikaScheduling.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SQLServerIntegrationTestsGATE.java" afterPath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SQLServerIntegrationTestsGATE.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SQLServerIntegrationTestsLineFixer.java" afterPath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SQLServerIntegrationTestsLineFixer.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerIntegrationTestsBasic.java" afterPath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerIntegrationTestsBasic.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerIntegrationTestsTika.java" afterPath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerIntegrationTestsTika.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerIntegrationTestsTikaScheduling.java" afterPath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerIntegrationTestsTikaScheduling.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerTestUtils.java" afterPath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerTestUtils.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_basic.properties" afterPath="$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_basic.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_gate.properties" afterPath="$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_gate.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_line_fixer.properties" afterPath="$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_line_fixer.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_tika.properties" afterPath="$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_tika.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/resources/sql_server_db.properties" afterPath="$PROJECT_DIR$/src/integration-test/resources/sql_server_db.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/resources/sql_server_test_config_tika.properties" afterPath="$PROJECT_DIR$/src/integration-test/resources/sql_server_test_config_tika.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/resources/sqlserver_test_config_line_fixer.properties" afterPath="$PROJECT_DIR$/src/integration-test/resources/sqlserver_test_config_line_fixer.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/Main.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/Main.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/BasicJobConfiguration.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/BasicJobConfiguration.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/DbLineFixerConfiguration.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/DbLineFixerConfiguration.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/GateConfiguration.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/GateConfiguration.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/JobConfiguration.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/JobConfiguration.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/MasterIntegrationConfiguration.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/MasterIntegrationConfiguration.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/TikaConfiguration.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/TikaConfiguration.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/itemHandlers/ElasticsearchDocumentWriter.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/itemHandlers/ElasticsearchDocumentWriter.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/itemHandlers/ItemHandlers.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/itemHandlers/ItemHandlers.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/service/GateService.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/service/GateService.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tika.conf" afterPath="$PROJECT_DIR$/tika.conf" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/turbo-laser.2016-05-05.log" afterPath="$PROJECT_DIR$/turbo-laser.2016-05-05.log" />
     </list>
     <ignored path="turbo-laser.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -82,51 +115,101 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="ElasticsearchDocumentWriter.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/itemHandlers/ElasticsearchDocumentWriter.java">
+      <file leaf-file-name="postgres_test_config_basic.properties" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_basic.properties">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="456">
-              <caret line="99" column="0" selection-start-line="99" selection-start-column="0" selection-end-line="99" selection-end-column="0" />
+            <state relative-caret-position="248">
+              <caret line="26" column="0" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="34" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="elasticsearch.properties" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/integration-test/resources/elasticsearch.properties">
+      <file leaf-file-name="PostGresIntegrationTestsGATE.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsGATE.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="18">
-              <caret line="1" column="39" selection-start-line="1" selection-start-column="39" selection-end-line="1" selection-end-column="39" />
+            <state relative-caret-position="332">
+              <caret line="78" column="14" selection-start-line="78" selection-start-column="14" selection-end-line="78" selection-end-column="14" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="jobAndStep.properties" pinned="false" current-in-tab="true">
+      <file leaf-file-name="MasterIntegrationConfiguration.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/MasterIntegrationConfiguration.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="169">
+              <caret line="57" column="0" selection-start-line="57" selection-start-column="0" selection-end-line="57" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="jms.properties" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/integration-test/resources/jms.properties">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="postgres_test_config_tika.properties" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_tika.properties">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="435">
+              <caret line="36" column="59" selection-start-line="36" selection-start-column="59" selection-end-line="36" selection-end-column="59" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="GateService.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/service/GateService.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="162">
+              <caret line="67" column="0" selection-start-line="67" selection-start-column="0" selection-end-line="67" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="postgres_test_config_line_fixer.properties" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_line_fixer.properties">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="418">
+              <caret line="34" column="66" selection-start-line="34" selection-start-column="66" selection-end-line="34" selection-end-column="66" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="postgres_test_config_gate.properties" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_gate.properties">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="340">
+              <caret line="26" column="34" selection-start-line="26" selection-start-column="34" selection-end-line="26" selection-end-column="34" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="jobAndStep.properties" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/integration-test/resources/jobAndStep.properties">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="427">
+            <state relative-caret-position="425">
               <caret line="25" column="35" selection-start-line="25" selection-start-column="35" selection-end-line="25" selection-end-column="35" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PostGresIntegrationTestsBasicScheduling.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsBasicScheduling.java">
+      <file leaf-file-name="gate.properties" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/integration-test/resources/gate.properties">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="374">
-              <caret line="65" column="0" selection-start-line="65" selection-start-column="0" selection-end-line="66" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="build.gradle" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/build.gradle">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="54">
-              <caret line="112" column="50" selection-start-line="112" selection-start-column="50" selection-end-line="112" selection-end-column="50" />
+            <state relative-caret-position="0">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -208,6 +291,11 @@
                 <option name="description" value="Compiles integ test Java source." />
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
                 <option name="name" value="compileIntegTestJava" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Displays all buildscript dependencies declared in root project 'turbo-laser'." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="buildEnvironment" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
                 <option name="description" value="Assembles integ test classes." />
@@ -371,7 +459,7 @@
     </option>
     <option name="modificationStamps">
       <map>
-        <entry key="$PROJECT_DIR$" value="2923636795683" />
+        <entry key="$PROJECT_DIR$" value="2924328287575" />
       </map>
     </option>
     <option name="projectBuildClasspath">
@@ -407,119 +495,123 @@
               <option name="name" value="turbo-laser" />
               <option name="projectBuildClasspath">
                 <list>
-                  <option value="/opt/gradle-2.8/src/language-java" />
-                  <option value="/opt/gradle-2.8/src/reporting" />
-                  <option value="/opt/gradle-2.8/src/core" />
-                  <option value="/opt/gradle-2.8/src/platform-base" />
-                  <option value="/opt/gradle-2.8/src/resources-http" />
-                  <option value="/opt/gradle-2.8/src/ui" />
-                  <option value="/opt/gradle-2.8/src/model-groovy" />
-                  <option value="/opt/gradle-2.8/src/tooling-api" />
-                  <option value="/opt/gradle-2.8/src/tooling-api-builders" />
-                  <option value="/opt/gradle-2.8/src/ivy" />
-                  <option value="/opt/gradle-2.8/src/build-comparison" />
-                  <option value="/opt/gradle-2.8/src/test-kit" />
-                  <option value="/opt/gradle-2.8/src/jacoco" />
-                  <option value="/opt/gradle-2.8/src/testing-native" />
-                  <option value="/opt/gradle-2.8/src/announce" />
-                  <option value="/opt/gradle-2.8/src/jetty" />
-                  <option value="/opt/gradle-2.8/src/language-native" />
-                  <option value="/opt/gradle-2.8/src/language-jvm" />
-                  <option value="/opt/gradle-2.8/src/messaging" />
-                  <option value="/opt/gradle-2.8/src/plugin-use" />
-                  <option value="/opt/gradle-2.8/src/launcher" />
-                  <option value="/opt/gradle-2.8/src/resources" />
-                  <option value="/opt/gradle-2.8/src/ide" />
-                  <option value="/opt/gradle-2.8/src/platform-play" />
-                  <option value="/opt/gradle-2.8/src/base-services-groovy" />
-                  <option value="/opt/gradle-2.8/src/build-init" />
-                  <option value="/opt/gradle-2.8/src/osgi" />
-                  <option value="/opt/gradle-2.8/src/wrapper" />
-                  <option value="/opt/gradle-2.8/src/native" />
-                  <option value="/opt/gradle-2.8/src/resources-s3" />
-                  <option value="/opt/gradle-2.8/src/ear" />
-                  <option value="/opt/gradle-2.8/src/javascript" />
-                  <option value="/opt/gradle-2.8/src/resources-sftp" />
-                  <option value="/opt/gradle-2.8/src/internal-testing" />
-                  <option value="/opt/gradle-2.8/src/sonar" />
-                  <option value="/opt/gradle-2.8/src/signing" />
-                  <option value="/opt/gradle-2.8/src/plugin-development" />
-                  <option value="/opt/gradle-2.8/src/language-groovy" />
-                  <option value="/opt/gradle-2.8/src/plugins" />
-                  <option value="/opt/gradle-2.8/src/cli" />
-                  <option value="/opt/gradle-2.8/src/publish" />
-                  <option value="/opt/gradle-2.8/src/internal-integ-testing" />
-                  <option value="/opt/gradle-2.8/src/platform-jvm" />
-                  <option value="/opt/gradle-2.8/src/ide-native" />
-                  <option value="/opt/gradle-2.8/src/platform-native" />
-                  <option value="/opt/gradle-2.8/src/diagnostics" />
-                  <option value="/opt/gradle-2.8/src/code-quality" />
-                  <option value="/opt/gradle-2.8/src/language-scala" />
-                  <option value="/opt/gradle-2.8/src/maven" />
-                  <option value="/opt/gradle-2.8/src/scala" />
-                  <option value="/opt/gradle-2.8/src/antlr" />
-                  <option value="/opt/gradle-2.8/src/open-api" />
-                  <option value="/opt/gradle-2.8/src/dependency-management" />
-                  <option value="/opt/gradle-2.8/src/base-services" />
-                  <option value="/opt/gradle-2.8/src/model-core" />
-                  <option value="/opt/gradle-2.8/lib/gradle-model-core-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/groovy-all-2.4.4.jar" />
-                  <option value="/opt/gradle-2.8/lib/gradle-base-services-groovy-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/gradle-messaging-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/gradle-launcher-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/gradle-ui-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/gradle-wrapper-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/gradle-model-groovy-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/gradle-resources-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/gradle-docs-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/gradle-tooling-api-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/gradle-base-services-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/ant-1.9.3.jar" />
-                  <option value="/opt/gradle-2.8/lib/gradle-native-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/gradle-core-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/gradle-open-api-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/gradle-cli-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/ant-launcher-1.9.3.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-platform-play-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-jacoco-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-jetty-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-plugin-development-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-code-quality-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-language-java-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-tooling-api-builders-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/ivy-2.2.0.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-signing-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-diagnostics-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-javascript-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-language-native-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-plugins-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-ivy-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-osgi-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-ear-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-resources-sftp-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-dependency-management-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-build-init-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-resources-http-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-scala-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-language-groovy-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-sonar-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-platform-native-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-plugin-use-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-testing-native-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-reporting-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-platform-jvm-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-ide-native-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-build-comparison-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-publish-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-ide-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-maven-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-resources-s3-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-language-scala-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-test-kit-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-language-jvm-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-platform-base-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-antlr-2.8.jar" />
-                  <option value="/opt/gradle-2.8/lib/plugins/gradle-announce-2.8.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/osgi" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/internal-integ-testing" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/javascript" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/model-groovy" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/dependency-management" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/cli" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/model-core" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/plugin-development" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/resources-sftp" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/resources-http" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/code-quality" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/internal-testing" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/test-kit" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/sonar" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/platform-jvm" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/ivy" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/ui" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/base-services" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/maven" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/launcher" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/tooling-api-builders" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/build-init" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/language-scala" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/publish" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/wrapper" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/reporting" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/language-java" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/language-native" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/platform-play" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/testing-native" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/ear" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/plugin-use" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/antlr" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/jetty" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/announce" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/messaging" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/build-comparison" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/tooling-api" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/plugins" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/testing-jvm" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/scala" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/platform-base" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/jacoco" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/language-groovy" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/resources-s3" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/native" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/ide" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/open-api" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/testing-base" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/diagnostics" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/resources" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/platform-native" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/base-services-groovy" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/signing" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/core" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/language-jvm" />
+                  <option value="/usr/local/gradle/gradle-2.11/src/ide-native" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/gradle-ui-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/gradle-wrapper-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/gradle-cli-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/gradle-open-api-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/gradle-core-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/ant-1.9.3.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/gradle-tooling-api-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/gradle-base-services-groovy-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/gradle-base-services-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/gradle-model-core-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/gradle-launcher-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/gradle-docs-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/gradle-native-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/ant-launcher-1.9.3.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/groovy-all-2.4.4.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/gradle-model-groovy-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/gradle-resources-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/gradle-messaging-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-plugin-use-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-scala-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-tooling-api-builders-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-antlr-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-jacoco-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/ivy-2.2.0.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-testing-native-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-platform-native-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-platform-jvm-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-build-init-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-language-java-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-resources-s3-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-resources-sftp-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-build-comparison-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-ide-native-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-signing-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-language-scala-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-resources-http-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-ivy-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-platform-base-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-reporting-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-sonar-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-jetty-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-platform-play-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-testing-base-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-announce-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-ear-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-publish-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-ide-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-test-kit-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-diagnostics-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-maven-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-dependency-management-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-language-native-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-osgi-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-testing-jvm-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-language-jvm-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-code-quality-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-javascript-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-plugins-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-language-groovy-2.11.jar" />
+                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-plugin-development-2.11.jar" />
                   <option value="$PROJECT_DIR$/buildSrc/src/main/java" />
                   <option value="$PROJECT_DIR$/buildSrc/src/main/groovy" />
                 </list>
@@ -536,29 +628,8 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/main/groovy/uk/ac/kcl/model/Document.groovy" />
-        <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/DbLineFixerConfiguration.java" />
-        <option value="$PROJECT_DIR$/src/integration-test/resources/dBLineFixer.properties" />
-        <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsGATEScheduling.java" />
-        <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsDBLineFixerScheduling.java" />
-        <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsGATE.java" />
-        <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/TikaConfiguration.java" />
-        <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/MasterIntegrationConfiguration.java" />
-        <option value="$PROJECT_DIR$/src/integration-test/resources/hsql_test_config_line_fixer.properties" />
-        <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsLineFixer.java" />
-        <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsBasic.java" />
-        <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsTikaScheduling.java" />
-        <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/listeners/JobCompleteNotificationListener.java" />
-        <option value="$PROJECT_DIR$/src/integration-test/resources/postgres_db.properties" />
-        <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/rowmappers/DocumentRowMapper.java" />
-        <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresTestUtils.java" />
-        <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/BasicJobConfiguration.java" />
-        <option value="$PROJECT_DIR$/src/main/resources/PostgresSessionProperties.sql" />
         <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework/spring-core/4.2.3.RELEASE/3ed00dad7a16b2a28df9348294f6a67151f43cf6/spring-core-4.2.3.RELEASE.jar!/org/springframework/cglib/proxy/MethodProxy.class" />
-        <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerIntegrationTestsTika.java" />
-        <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/Main.java" />
         <option value="$PROJECT_DIR$/src/main/resources/SqlServerSessionProperties.sql" />
-        <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerIntegrationTestsTikaScheduling.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/itemProcessors/DbLineFixerItemProcessor.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/itemProcessors/GateDocumentItemProcessor.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/utils/BatchJobUtils.java" />
@@ -567,26 +638,47 @@
         <option value="$PROJECT_DIR$/src/main/groovy/uk/ac/kcl/model/PartitionParams.groovy" />
         <option value="$PROJECT_DIR$/src/main/groovy/uk/ac/kcl/model/ScheduledPartitionParams.groovy" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/itemProcessors/ElasticsearchDocumentWriter.java" />
-        <option value="$PROJECT_DIR$/src/integration-test/resources/sql_server_db.properties" />
-        <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/JobConfiguration.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/rowmappers/PartitionParamsRowMapper.java" />
-        <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerTestUtils.java" />
-        <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerIntegrationTestsBasic.java" />
         <option value="$PROJECT_DIR$/src/main/resources/log4j.properties" />
-        <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/scheduling/Scheduler.java" />
         <option value="$PROJECT_DIR$/src/main/resources/logback.xml" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/partitioners/ColumnRangePartitioner.java" />
-        <option value="$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_basic.properties" />
-        <option value="$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_gate.properties" />
-        <option value="$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_line_fixer.properties" />
-        <option value="$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_tika.properties" />
-        <option value="$PROJECT_DIR$/src/integration-test/resources/sql_server_test_config_tika.properties" />
-        <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/itemHandlers/ElasticsearchDocumentWriter.java" />
-        <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/itemHandlers/ItemHandlers.java" />
-        <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsBasicScheduling.java" />
         <option value="$PROJECT_DIR$/build.gradle" />
         <option value="$PROJECT_DIR$/src/integration-test/resources/elasticsearch.properties" />
         <option value="$PROJECT_DIR$/src/integration-test/resources/jobAndStep.properties" />
+        <option value="$PROJECT_DIR$/src/integration-test/resources/sql_server_db.properties" />
+        <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/scheduling/Scheduler.java" />
+        <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/scheduling/JobLauncher.java" />
+        <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/scheduling/ScheduledJobLauncher.java" />
+        <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsDBLineFixerScheduling.java" />
+        <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerIntegrationTestsTikaScheduling.java" />
+        <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/scheduling/AbstractJobLauncher.java" />
+        <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/MasterIntegrationConfiguration.java" />
+        <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/Main.java" />
+        <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/scheduling/SingleJobLauncher.java" />
+        <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsBasicScheduling.java" />
+        <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsTikaScheduling.java" />
+        <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsGATE.java" />
+        <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsLineFixer.java" />
+        <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsTika.java" />
+        <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerIntegrationTestsBasic.java" />
+        <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerIntegrationTestsTika.java" />
+        <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SQLServerIntegrationTestsGATE.java" />
+        <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/TikaConfiguration.java" />
+        <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/BasicJobConfiguration.java" />
+        <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/DbLineFixerConfiguration.java" />
+        <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/GateConfiguration.java" />
+        <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SQLServerIntegrationTestsLineFixer.java" />
+        <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerTestUtils.java" />
+        <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/JobConfiguration.java" />
+        <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsBasic.java" />
+        <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/itemHandlers/ElasticsearchDocumentWriter.java" />
+        <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/itemHandlers/ItemHandlers.java" />
+        <option value="$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_basic.properties" />
+        <option value="$PROJECT_DIR$/src/integration-test/resources/sqlserver_test_config_line_fixer.properties" />
+        <option value="$PROJECT_DIR$/src/integration-test/resources/sql_server_test_config_tika.properties" />
+        <option value="$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_tika.properties" />
+        <option value="$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_line_fixer.properties" />
+        <option value="$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_gate.properties" />
       </list>
     </option>
   </component>
@@ -606,10 +698,10 @@
     <treeState />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="65" />
+    <option name="x" value="1985" />
     <option name="y" value="24" />
-    <option name="width" value="1301" />
-    <option name="height" value="744" />
+    <option name="width" value="1855" />
+    <option name="height" value="1056" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <OptionsSetting value="true" id="Add" />
@@ -636,12 +728,186 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
+      <pane id="ProjectPane">
+        <subPane />
+      </pane>
+      <pane id="PackagesPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleGroupNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleGroupNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser_main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleGroupNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser_main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="uk.ac.kcl" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleGroupNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser_main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="uk.ac.kcl" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="itemHandlers" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleGroupNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser_main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="uk.ac.kcl" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="batch" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleGroupNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser_integTest" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleGroupNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser_integTest" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="uk.ac.kcl.it" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
       <pane id="Scope">
         <subPane subId="Problems" />
         <subPane subId="Project Files">
           <PATH>
             <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="turbo-laser">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="turbo-laser">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="turbo-laser_main">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="src/main">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="turbo-laser">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="turbo-laser_main">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="src/main">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="resources">
               <option name="myItemId" value="" />
               <option name="myItemType" value="" />
             </PATH_ELEMENT>
@@ -724,51 +990,7 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="PackagesPane">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="turbo-laser" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="turbo-laser" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleGroupNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="turbo-laser" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="turbo-laser" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleGroupNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="turbo-laser_main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="turbo-laser" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="turbo-laser" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleGroupNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="turbo-laser_integTest" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
-      <pane id="ProjectPane">
-        <subPane />
-      </pane>
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -782,7 +1004,7 @@
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.Font" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
-    <property name="SearchEverywhereHistoryKey" value="ma&#9;FILE&#9;file:///home/rich/other_projects/temp/turbo-laser/src/main/java/uk/ac/kcl/Main.java&#10;batch&#9;FILE&#9;file:///home/rich/other_projects/temp/turbo-laser/src/main/java/uk/ac/kcl/utils/BatchJobUtils.java&#10;Mas&#9;FILE&#9;file:///home/rich/other_projects/temp/turbo-laser/src/main/java/uk/ac/kcl/batch/MasterIntegrationConfiguration.java&#10;StepBui&#9;PSI&#9;JAVA://org.springframework.batch.core.configuration.annotation.StepBuilderFactory&#10;bat&#9;FILE&#9;file:///home/rich/other_projects/temp/turbo-laser/src/main/java/uk/ac/kcl/utils/BatchJobUtils.java&#10;par&#9;FILE&#9;file:///home/rich/other_projects/temp/turbo-laser/src/main/java/uk/ac/kcl/partitioners/ColumnRangePartitioner.java&#10;basic.conf&#9;null&#9;null&#10;Bat&#9;FILE&#9;file:///home/rich/other_projects/temp/turbo-laser/src/main/java/uk/ac/kcl/utils/BatchJobUtils.java&#10;ed&#9;PSI&#9;JAVA://uk.ac.kcl.rowmappers.ElasticsearchDocumentWriter&#10;@Component&#9;PSI&#9;JAVA://org.springframework.stereotype.Component&#10;@Compo&#9;PSI&#9;JAVA://org.springframework.stereotype.Component&#10;in&#9;FILE&#9;file:///home/rich/other_projects/turbo-laser/src/test/java/uk/ac/kcl/it/PostGresIntegrationTestsGATE.java&#10;Ga&#9;FILE&#9;file:///home/rich/other_projects/turbo-laser/src/test/java/uk/ac/kcl/it/PostGresIntegrationTestsGATE.java&#10;ti&#9;FILE&#9;file:///home/rich/other_projects/turbo-laser/src/test/java/uk/ac/kcl/it/PostGresIntegrationTestsTika.java&#10;TEx&#9;null&#9;null&#10;Text&#9;FILE&#9;file:///home/rich/other_projects/turbo-laser/src/main/groovy/uk/ac/kcl/model/TextDocument.groovy&#10;otherFieldsList&#9;PSI&#9;JAVA://uk.ac.kcl.rowmappers.BinaryDocumentRowMapper#otherFieldsList&#10;Mul&#9;PSI&#9;JAVA://uk.ac.kcl.rowmappers.MultiRowDocumentRowMapper&#10;Inte&#9;FILE&#9;file:///home/rich/other_projects/turbo-laser/src/test/java/uk/ac/kcl/integrationtests/PostGresIntegrationTestsTika.java&#10;Dbli&#9;PSI&#9;JAVA://uk.ac.kcl.batch.DbLineFixerConfiguration&#10;T&#9;FILE&#9;file:///home/rich/other_projects/turbo-laser/src/test/java/uk/ac/kcl/integrationtests/PostGresIntegrationTestsTika.java&#10;Tika&#9;PSI&#9;JAVA://uk.ac.kcl.batch.TikaConfiguration" />
+    <property name="SearchEverywhereHistoryKey" value="propertyPlace&#9;PSI&#9;JAVA://org.springframework.beans.factory.config.PropertyPlaceholderConfigurer&#10;ma&#9;FILE&#9;file:///home/rich/other_projects/temp/turbo-laser/src/main/java/uk/ac/kcl/Main.java&#10;batch&#9;FILE&#9;file:///home/rich/other_projects/temp/turbo-laser/src/main/java/uk/ac/kcl/utils/BatchJobUtils.java&#10;Mas&#9;FILE&#9;file:///home/rich/other_projects/temp/turbo-laser/src/main/java/uk/ac/kcl/batch/MasterIntegrationConfiguration.java&#10;StepBui&#9;PSI&#9;JAVA://org.springframework.batch.core.configuration.annotation.StepBuilderFactory&#10;bat&#9;FILE&#9;file:///home/rich/other_projects/temp/turbo-laser/src/main/java/uk/ac/kcl/utils/BatchJobUtils.java&#10;par&#9;FILE&#9;file:///home/rich/other_projects/temp/turbo-laser/src/main/java/uk/ac/kcl/partitioners/ColumnRangePartitioner.java&#10;basic.conf&#9;null&#9;null&#10;Bat&#9;FILE&#9;file:///home/rich/other_projects/temp/turbo-laser/src/main/java/uk/ac/kcl/utils/BatchJobUtils.java&#10;ed&#9;PSI&#9;JAVA://uk.ac.kcl.rowmappers.ElasticsearchDocumentWriter&#10;@Component&#9;PSI&#9;JAVA://org.springframework.stereotype.Component&#10;@Compo&#9;PSI&#9;JAVA://org.springframework.stereotype.Component&#10;in&#9;FILE&#9;file:///home/rich/other_projects/turbo-laser/src/test/java/uk/ac/kcl/it/PostGresIntegrationTestsGATE.java&#10;Ga&#9;FILE&#9;file:///home/rich/other_projects/turbo-laser/src/test/java/uk/ac/kcl/it/PostGresIntegrationTestsGATE.java&#10;ti&#9;FILE&#9;file:///home/rich/other_projects/turbo-laser/src/test/java/uk/ac/kcl/it/PostGresIntegrationTestsTika.java&#10;TEx&#9;null&#9;null&#10;Text&#9;FILE&#9;file:///home/rich/other_projects/turbo-laser/src/main/groovy/uk/ac/kcl/model/TextDocument.groovy&#10;otherFieldsList&#9;PSI&#9;JAVA://uk.ac.kcl.rowmappers.BinaryDocumentRowMapper#otherFieldsList&#10;Mul&#9;PSI&#9;JAVA://uk.ac.kcl.rowmappers.MultiRowDocumentRowMapper&#10;Inte&#9;FILE&#9;file:///home/rich/other_projects/turbo-laser/src/test/java/uk/ac/kcl/integrationtests/PostGresIntegrationTestsTika.java&#10;Dbli&#9;PSI&#9;JAVA://uk.ac.kcl.batch.DbLineFixerConfiguration&#10;T&#9;FILE&#9;file:///home/rich/other_projects/turbo-laser/src/test/java/uk/ac/kcl/integrationtests/PostGresIntegrationTestsTika.java&#10;Tika&#9;PSI&#9;JAVA://uk.ac.kcl.batch.TikaConfiguration" />
     <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary" value="JUnit4" />
     <property name="extract.method.default.visibility" value="private" />
     <property name="com.intellij.database.dataSource.DataSourceTemplate" value="SQL Server (jTds)&#10;PostgreSQL" />
@@ -794,42 +1016,23 @@
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="uk.ac.kcl" />
     </key>
-    <key name="CreateTestDialog.Recents.Supers">
-      <recent name="" />
-    </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="uk.ac.kcl.scheduling" />
       <recent name="uk.ac.kcl.it" />
       <recent name="uk.ac.kcl.batch" />
       <recent name="uk.ac.kcl.itemProcessors" />
       <recent name="uk.ac.kcl.rowmappers" />
-      <recent name="uk.ac.kcl.partitioners" />
+    </key>
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/integration-test/resources" />
       <recent name="$PROJECT_DIR$/src/main/resources" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.PostGresIntegrationTestsBasicScheduling.postgresGatePipelineTest">
-    <configuration default="false" name="turbo-laser [clean build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value="clean" />
-            <option value="build" />
-          </list>
-        </option>
-        <option name="vmOptions" value="" />
-      </ExternalSystemSettings>
-      <method />
-    </configuration>
-    <configuration default="false" name="PostGresIntegrationTestsTikaScheduling" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="JUnit.PostGresIntegrationTestsTika">
+    <configuration default="false" name="SQLServerIntegrationTestsLineFixer" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
           <option name="PATTERN" value="uk.ac.kcl.it.*" />
@@ -840,7 +1043,7 @@
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
       <option name="PACKAGE_NAME" value="uk.ac.kcl.it" />
-      <option name="MAIN_CLASS_NAME" value="uk.ac.kcl.it.PostGresIntegrationTestsTikaScheduling" />
+      <option name="MAIN_CLASS_NAME" value="uk.ac.kcl.it.SQLServerIntegrationTestsLineFixer" />
       <option name="METHOD_NAME" />
       <option name="TEST_OBJECT" value="class" />
       <option name="VM_PARAMETERS" value="-ea" />
@@ -855,7 +1058,7 @@
       <patterns />
       <method />
     </configuration>
-    <configuration default="false" name="PostGresIntegrationTestsBasic" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration default="false" name="PostGresIntegrationTestsBasic.postgresBasicPipelineTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
           <option name="PATTERN" value="uk.ac.kcl.it.*" />
@@ -867,60 +1070,86 @@
       <option name="ALTERNATIVE_JRE_PATH" />
       <option name="PACKAGE_NAME" value="uk.ac.kcl.it" />
       <option name="MAIN_CLASS_NAME" value="uk.ac.kcl.it.PostGresIntegrationTestsBasic" />
-      <option name="METHOD_NAME" />
-      <option name="TEST_OBJECT" value="class" />
-      <option name="VM_PARAMETERS" value="-ea" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="singleModule" />
-      </option>
-      <envs />
-      <patterns />
-      <method />
-    </configuration>
-    <configuration default="false" name="PostGresIntegrationTestsBasicScheduling" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
-        <pattern>
-          <option name="PATTERN" value="uk.ac.kcl.it.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <module name="turbo-laser_integTest" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="uk.ac.kcl.it" />
-      <option name="MAIN_CLASS_NAME" value="uk.ac.kcl.it.PostGresIntegrationTestsBasicScheduling" />
-      <option name="METHOD_NAME" />
-      <option name="TEST_OBJECT" value="class" />
-      <option name="VM_PARAMETERS" value="-ea" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="singleModule" />
-      </option>
-      <envs />
-      <patterns />
-      <method />
-    </configuration>
-    <configuration default="false" name="PostGresIntegrationTestsBasicScheduling.postgresGatePipelineTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
-        <pattern>
-          <option name="PATTERN" value="uk.ac.kcl.it.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <module name="turbo-laser_integTest" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="uk.ac.kcl.it" />
-      <option name="MAIN_CLASS_NAME" value="uk.ac.kcl.it.PostGresIntegrationTestsBasicScheduling" />
-      <option name="METHOD_NAME" value="postgresGatePipelineTest" />
+      <option name="METHOD_NAME" value="postgresBasicPipelineTest" />
       <option name="TEST_OBJECT" value="method" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <envs />
+      <patterns />
+      <method />
+    </configuration>
+    <configuration default="false" name="PostGresIntegrationTestsGATE" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="uk.ac.kcl.it.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <module name="turbo-laser_integTest" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="uk.ac.kcl.it" />
+      <option name="MAIN_CLASS_NAME" value="uk.ac.kcl.it.PostGresIntegrationTestsGATE" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <envs />
+      <patterns />
+      <method />
+    </configuration>
+    <configuration default="false" name="PostGresIntegrationTestsLineFixer" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="uk.ac.kcl.it.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <module name="turbo-laser_integTest" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="uk.ac.kcl.it" />
+      <option name="MAIN_CLASS_NAME" value="uk.ac.kcl.it.PostGresIntegrationTestsLineFixer" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <envs />
+      <patterns />
+      <method />
+    </configuration>
+    <configuration default="false" name="PostGresIntegrationTestsTika" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="uk.ac.kcl.it.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <module name="turbo-laser_integTest" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="uk.ac.kcl.it" />
+      <option name="MAIN_CLASS_NAME" value="uk.ac.kcl.it.PostGresIntegrationTestsTika" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
       <option name="VM_PARAMETERS" value="-ea" />
       <option name="PARAMETERS" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
@@ -1396,24 +1625,24 @@
       <method />
     </configuration>
     <list size="5">
-      <item index="0" class="java.lang.String" itemvalue="Gradle.turbo-laser [clean build]" />
-      <item index="1" class="java.lang.String" itemvalue="JUnit.PostGresIntegrationTestsTikaScheduling" />
-      <item index="2" class="java.lang.String" itemvalue="JUnit.PostGresIntegrationTestsBasic" />
-      <item index="3" class="java.lang.String" itemvalue="JUnit.PostGresIntegrationTestsBasicScheduling" />
-      <item index="4" class="java.lang.String" itemvalue="JUnit.PostGresIntegrationTestsBasicScheduling.postgresGatePipelineTest" />
+      <item index="0" class="java.lang.String" itemvalue="JUnit.SQLServerIntegrationTestsLineFixer" />
+      <item index="1" class="java.lang.String" itemvalue="JUnit.PostGresIntegrationTestsBasic.postgresBasicPipelineTest" />
+      <item index="2" class="java.lang.String" itemvalue="JUnit.PostGresIntegrationTestsGATE" />
+      <item index="3" class="java.lang.String" itemvalue="JUnit.PostGresIntegrationTestsLineFixer" />
+      <item index="4" class="java.lang.String" itemvalue="JUnit.PostGresIntegrationTestsTika" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="JUnit.PostGresIntegrationTestsBasicScheduling.postgresGatePipelineTest" />
-        <item index="1" class="java.lang.String" itemvalue="JUnit.PostGresIntegrationTestsBasicScheduling" />
-        <item index="2" class="java.lang.String" itemvalue="JUnit.PostGresIntegrationTestsBasic" />
-        <item index="3" class="java.lang.String" itemvalue="JUnit.PostGresIntegrationTestsTikaScheduling" />
-        <item index="4" class="java.lang.String" itemvalue="Gradle.turbo-laser [clean build]" />
+        <item index="0" class="java.lang.String" itemvalue="JUnit.PostGresIntegrationTestsTika" />
+        <item index="1" class="java.lang.String" itemvalue="JUnit.PostGresIntegrationTestsLineFixer" />
+        <item index="2" class="java.lang.String" itemvalue="JUnit.PostGresIntegrationTestsGATE" />
+        <item index="3" class="java.lang.String" itemvalue="JUnit.PostGresIntegrationTestsBasic.postgresBasicPipelineTest" />
+        <item index="4" class="java.lang.String" itemvalue="JUnit.SQLServerIntegrationTestsLineFixer" />
       </list>
     </recent_temporary>
   </component>
   <component name="SbtLocalSettings">
-    <option name="lastUpdateTimestamp" value="1462445125527" />
+    <option name="lastUpdateTimestamp" value="1462478468120" />
     <option name="externalProjectsViewState">
       <projects_view />
     </option>
@@ -1464,70 +1693,73 @@
       <workItem from="1462304405624" duration="12734000" />
       <workItem from="1462353575255" duration="1871000" />
       <workItem from="1462356313892" duration="15894000" />
+      <workItem from="1462461874582" duration="4632000" />
+      <workItem from="1462476450565" duration="2082000" />
+      <workItem from="1462478549303" duration="3317000" />
     </task>
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="PostGresIntegrationTestsBasicScheduling - 2016.05.04 at 15h 21m 03s.xml">
-      <configuration name="PostGresIntegrationTestsBasicScheduling" configurationId="JUnit" />
+    <history-entry file="PostGresIntegrationTestsBasic_postgresBasicPipelineTest - 2016.05.05 at 21h 40m 31s.xml">
+      <configuration name="PostGresIntegrationTestsBasic.postgresBasicPipelineTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="PostGresIntegrationTestsBasicScheduling - 2016.05.04 at 15h 26m 50s.xml">
-      <configuration name="PostGresIntegrationTestsBasicScheduling" configurationId="JUnit" />
+    <history-entry file="PostGresIntegrationTestsBasic_postgresBasicPipelineTest - 2016.05.05 at 21h 41m 49s.xml">
+      <configuration name="PostGresIntegrationTestsBasic.postgresBasicPipelineTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="PostGresIntegrationTestsBasicScheduling - 2016.05.04 at 15h 28m 01s.xml">
-      <configuration name="PostGresIntegrationTestsBasicScheduling" configurationId="JUnit" />
+    <history-entry file="PostGresIntegrationTestsBasic_postgresBasicPipelineTest - 2016.05.05 at 21h 45m 14s.xml">
+      <configuration name="PostGresIntegrationTestsBasic.postgresBasicPipelineTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="PostGresIntegrationTestsBasicScheduling - 2016.05.04 at 15h 38m 06s.xml">
-      <configuration name="PostGresIntegrationTestsBasicScheduling" configurationId="JUnit" />
+    <history-entry file="PostGresIntegrationTestsBasic_postgresBasicPipelineTest - 2016.05.05 at 21h 45m 59s.xml">
+      <configuration name="PostGresIntegrationTestsBasic.postgresBasicPipelineTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="PostGresIntegrationTestsBasicScheduling - 2016.05.05 at 11h 40m 39s.xml">
-      <configuration name="PostGresIntegrationTestsBasicScheduling" configurationId="JUnit" />
+    <history-entry file="PostGresIntegrationTestsBasic_postgresBasicPipelineTest - 2016.05.05 at 21h 46m 22s.xml">
+      <configuration name="PostGresIntegrationTestsBasic.postgresBasicPipelineTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="PostGresIntegrationTestsBasicScheduling - 2016.05.05 at 11h 43m 46s.xml">
-      <configuration name="PostGresIntegrationTestsBasicScheduling" configurationId="JUnit" />
+    <history-entry file="PostGresIntegrationTestsGATE - 2016.05.05 at 21h 48m 01s.xml">
+      <configuration name="PostGresIntegrationTestsGATE" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="PostGresIntegrationTestsBasicScheduling_postgresGatePipelineTest - 2016.05.04 at 14h 54m 23s.xml">
-      <configuration name="PostGresIntegrationTestsBasicScheduling.postgresGatePipelineTest" configurationId="JUnit" />
+    <history-entry file="PostGresIntegrationTestsGATE - 2016.05.05 at 21h 50m 08s.xml">
+      <configuration name="PostGresIntegrationTestsGATE" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="PostGresIntegrationTestsBasicScheduling_postgresGatePipelineTest - 2016.05.05 at 11h 46m 24s.xml">
-      <configuration name="PostGresIntegrationTestsBasicScheduling.postgresGatePipelineTest" configurationId="JUnit" />
+    <history-entry file="PostGresIntegrationTestsGATE - 2016.05.05 at 21h 56m 57s.xml">
+      <configuration name="PostGresIntegrationTestsGATE" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="PostGresIntegrationTestsBasicScheduling_postgresGatePipelineTest - 2016.05.05 at 11h 49m 02s.xml">
-      <configuration name="PostGresIntegrationTestsBasicScheduling.postgresGatePipelineTest" configurationId="JUnit" />
+    <history-entry file="PostGresIntegrationTestsLineFixer - 2016.05.05 at 21h 57m 27s.xml">
+      <configuration name="PostGresIntegrationTestsLineFixer" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="PostGresIntegrationTestsBasicScheduling_postgresGatePipelineTest - 2016.05.05 at 11h 49m 58s.xml">
-      <configuration name="PostGresIntegrationTestsBasicScheduling.postgresGatePipelineTest" configurationId="JUnit" />
+    <history-entry file="PostGresIntegrationTestsTika - 2016.05.05 at 21h 57m 40s.xml">
+      <configuration name="PostGresIntegrationTestsTika" configurationId="JUnit" />
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="268502000" />
+    <option name="totallyTimeSpent" value="278533000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="65" y="24" width="1301" height="744" extended-state="6" />
-    <editor active="true" />
+    <frame x="1985" y="24" width="1855" height="1056" extended-state="6" />
+    <editor active="false" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.08308605" sideWeight="0.48525897" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4730417" sideWeight="0.48525897" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.54451036" sideWeight="0.50756973" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32988048" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.731454" sideWeight="0.86374503" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.4231943" sideWeight="0.86374503" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Spring" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2501992" sideWeight="0.49213484" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25714287" sideWeight="0.49213484" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.48813057" sideWeight="0.49730977" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.12988047" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2543235" sideWeight="0.49730977" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.12884097" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31360492" sideWeight="0.5078652" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.020771513" sideWeight="0.49243027" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.40183112" sideWeight="0.49243027" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -1588,11 +1820,17 @@
           <properties />
           <option name="timeStamp" value="2" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/service/GateService.java</url>
+          <line>67</line>
+          <properties />
+          <option name="timeStamp" value="87" />
+        </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="85" />
+      <option name="time" value="88" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -1601,10 +1839,25 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework/spring-core/4.2.3.RELEASE/20ed33f924eb214e5600da3b93cb46289891dc01/spring-core-4.2.3.RELEASE-sources.jar!/org/springframework/core/env/AbstractEnvironment.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/partitioners/ColumnRangePartitioner.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="139">
-          <caret line="530" column="0" selection-start-line="530" selection-start-column="0" selection-end-line="530" selection-end-column="0" />
+        <state relative-caret-position="324">
+          <caret line="193" column="82" selection-start-line="193" selection-start-column="82" selection-end-line="193" selection-end-column="82" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1904">
+          <caret line="112" column="50" selection-start-line="112" selection-start-column="50" selection-end-line="112" selection-end-column="50" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/integration-test/resources/elasticsearch.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="1" column="39" selection-start-line="1" selection-start-column="39" selection-end-line="1" selection-end-column="39" />
         </state>
       </provider>
     </entry>
@@ -1612,253 +1865,307 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="119">
           <caret line="7" column="56" selection-start-line="7" selection-start-column="56" selection-end-line="7" selection-end-column="56" />
-          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.batch/spring-batch-core/3.0.6.RELEASE/7e8c00855cd5cdf8d953c817eceb5695671f8b07/spring-batch-core-3.0.6.RELEASE-sources.jar!/org/springframework/batch/core/step/AbstractStep.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/ScheduledJobConfiguration.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/scheduling/SingleJobLauncher.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="139">
-          <caret line="218" column="0" selection-start-line="218" selection-start-column="0" selection-end-line="218" selection-end-column="0" />
+        <state relative-caret-position="635">
+          <caret line="77" column="25" selection-start-line="77" selection-start-column="25" selection-end-line="77" selection-end-column="25" />
         </state>
       </provider>
     </entry>
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework/spring-core/4.2.3.RELEASE/20ed33f924eb214e5600da3b93cb46289891dc01/spring-core-4.2.3.RELEASE-sources.jar!/org/springframework/util/Assert.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/utils/BatchJobUtils.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="190">
-          <caret line="116" column="0" selection-start-line="116" selection-start-column="0" selection-end-line="116" selection-end-column="0" />
+        <state relative-caret-position="200">
+          <caret line="23" column="3" selection-start-line="23" selection-start-column="3" selection-end-line="23" selection-end-column="3" />
         </state>
       </provider>
     </entry>
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.slf4j/jcl-over-slf4j/1.7.13/988decf2bd4133c233f1e63f0da7368ee78c6405/jcl-over-slf4j-1.7.13-sources.jar!/org/apache/commons/logging/impl/SLF4JLocationAwareLog.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="139">
-          <caret line="66" column="0" selection-start-line="66" selection-start-column="0" selection-end-line="66" selection-end-column="0" />
+        <state relative-caret-position="391">
+          <caret line="43" column="33" selection-start-line="43" selection-start-column="33" selection-end-line="43" selection-end-column="33" />
         </state>
       </provider>
     </entry>
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/ch.qos.logback/logback-classic/1.1.3/f4915df0360e7529c61f9e78ef3a06c19238e62e/logback-classic-1.1.3-sources.jar!/ch/qos/logback/classic/Logger.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/scheduling/ScheduledJobLauncher.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="139">
-          <caret line="771" column="0" selection-start-line="771" selection-start-column="0" selection-end-line="771" selection-end-column="0" />
+        <state relative-caret-position="357">
+          <caret line="40" column="0" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework/spring-jdbc/4.2.3.RELEASE/34f53e602bffc54e2d0e7b74fd19769ce73d37f/spring-jdbc-4.2.3.RELEASE-sources.jar!/org/springframework/jdbc/core/JdbcTemplate.java">
+    <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/HSQLIntegrationTestsGATE.java" />
+    <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsBasicScheduling.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="139">
-          <caret line="461" column="0" selection-start-line="461" selection-start-column="0" selection-end-line="461" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework/spring-jdbc/4.2.3.RELEASE/34f53e602bffc54e2d0e7b74fd19769ce73d37f/spring-jdbc-4.2.3.RELEASE-sources.jar!/org/springframework/jdbc/core/RowMapperResultSetExtractor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="156">
-          <caret line="72" column="0" selection-start-line="72" selection-start-column="0" selection-end-line="72" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerTestUtils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="261" column="32" selection-start-line="261" selection-start-column="32" selection-end-line="261" selection-end-column="32" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerIntegrationTestsBasic.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="161">
-          <caret line="72" column="0" selection-start-line="72" selection-start-column="0" selection-end-line="72" selection-end-column="0" />
+        <state relative-caret-position="187">
+          <caret line="55" column="14" selection-start-line="55" selection-start-column="14" selection-end-line="55" selection-end-column="14" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerIntegrationTestsTikaScheduling.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="39" column="43" selection-start-line="39" selection-start-column="43" selection-end-line="39" selection-end-column="43" />
+        <state relative-caret-position="51">
+          <caret line="41" column="28" selection-start-line="41" selection-start-column="28" selection-end-line="41" selection-end-column="28" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/itemProcessors/GateDocumentItemProcessor.java">
+    <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsTika.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="40" column="0" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/utils/BatchJobUtils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="139">
-          <caret line="91" column="0" selection-start-line="91" selection-start-column="0" selection-end-line="91" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/kcl/itemProcessors/GateDocumentItemProcessorTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="433">
-          <caret line="83" column="0" selection-start-line="83" selection-start-column="0" selection-end-line="83" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/uk/ac/kcl/partitioners/ColumnValuePartitionerTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="162">
-          <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+        <state relative-caret-position="196">
+          <caret line="77" column="34" selection-start-line="77" selection-start-column="34" selection-end-line="77" selection-end-column="34" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsTikaScheduling.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="182">
-          <caret line="40" column="30" selection-start-line="40" selection-start-column="30" selection-end-line="40" selection-end-column="30" />
+        <state relative-caret-position="383">
+          <caret line="53" column="42" selection-start-line="53" selection-start-column="42" selection-end-line="53" selection-end-column="42" />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresTestUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="271">
+          <caret line="254" column="32" selection-start-line="254" selection-start-column="32" selection-end-line="254" selection-end-column="32" />
+          <folding>
+            <marker date="1462203186116" expanded="true" signature="2901:2934" placeholder="DROP TABLE I... " />
+            <marker date="1462203186116" expanded="true" signature="2970:3308" placeholder="CREATE TABLE... tblInputDocs" />
+            <marker date="1462203186116" expanded="true" signature="3345:3379" placeholder="DROP TABLE I... " />
+            <marker date="1462203186116" expanded="true" signature="3415:3755" placeholder="CREATE TABLE... tblOutputDocs" />
+            <marker date="1462203186116" expanded="true" signature="3872:3905" placeholder="DROP TABLE I... " />
+            <marker date="1462203186116" expanded="true" signature="3941:4273" placeholder="CREATE TABLE... tblInputDocs" />
+            <marker date="1462203186116" expanded="true" signature="4310:4344" placeholder="DROP TABLE I... " />
+            <marker date="1462203186116" expanded="true" signature="4380:4715" placeholder="CREATE TABLE... tblOutputDocs" />
+            <marker date="1462203186116" expanded="true" signature="4800:4833" placeholder="DROP TABLE I... " />
+            <marker date="1462203186116" expanded="true" signature="4869:5167" placeholder="CREATE TABLE... tblInputDocs" />
+            <marker date="1462203186116" expanded="true" signature="5253:5287" placeholder="DROP TABLE I... " />
+            <marker date="1462203186116" expanded="true" signature="5323:5623" placeholder="CREATE TABLE... tblOutputDocs" />
+            <marker date="1462203186116" expanded="true" signature="5751:5783" placeholder="DROP TABLE I... " />
+            <marker date="1462203186116" expanded="true" signature="5819:6057" placeholder="CREATE TABLE... tblDocLines" />
+            <marker date="1462203186116" expanded="true" signature="6104:6138" placeholder="DROP TABLE I... " />
+            <marker date="1462203186116" expanded="true" signature="6174:6519" placeholder="CREATE TABLE... tblOutputDocs" />
+            <marker date="1462203186116" expanded="true" signature="7517:7807" placeholder="INSERT INTO tblInputDocs... " />
+            <marker date="1462203186116" expanded="true" signature="9180:9470" placeholder="INSERT INTO tblInputDocs... " />
+            <marker date="1462203186116" expanded="true" signature="9902:10162" placeholder="INSERT INTO tblInputDocs... " />
+            <marker date="1462203186116" expanded="true" signature="10622:10823" placeholder="INSERT INTO tblDocLines... " />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerIntegrationTestsBasic.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="355">
+          <caret line="72" column="32" selection-start-line="72" selection-start-column="32" selection-end-line="72" selection-end-column="32" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerIntegrationTestsTika.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="55">
-          <caret line="59" column="36" selection-start-line="59" selection-start-column="36" selection-end-line="59" selection-end-column="36" />
+        <state relative-caret-position="281">
+          <caret line="76" column="8" selection-start-line="76" selection-start-column="8" selection-end-line="76" selection-end-column="8" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/HsqlTestUtils.java">
+    <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SQLServerIntegrationTestsGATE.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="196">
+          <caret line="80" column="14" selection-start-line="0" selection-start-column="0" selection-end-line="97" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsLineFixer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="230">
+          <caret line="84" column="0" selection-start-line="84" selection-start-column="0" selection-end-line="86" selection-end-column="46" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework/spring-beans/4.2.3.RELEASE/a5a54ce1e6b8ce06244bc318569939bd77f504d7/spring-beans-4.2.3.RELEASE-sources.jar!/org/springframework/beans/factory/config/PropertyPlaceholderConfigurer.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="144">
-          <caret line="11" column="13" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
+          <caret line="64" column="23" selection-start-line="64" selection-start-column="23" selection-end-line="64" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/GateConfiguration.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="127">
+          <caret line="43" column="34" selection-start-line="43" selection-start-column="34" selection-end-line="43" selection-end-column="34" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/TikaConfiguration.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="227">
+          <caret line="42" column="13" selection-start-line="42" selection-start-column="13" selection-end-line="42" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsDBLineFixerScheduling.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="544">
+          <caret line="54" column="46" selection-start-line="54" selection-start-column="46" selection-end-line="54" selection-end-column="46" />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/tikaJob.conf">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/gateJob.conf">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/SlaveIntegrationConfiguration.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="28" column="6" selection-start-line="28" selection-start-column="6" selection-end-line="28" selection-end-column="6" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/BatchConfigurer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="44" column="13" selection-start-line="44" selection-start-column="13" selection-end-line="44" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/DbLineFixerConfiguration.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="694">
+          <caret line="85" column="33" selection-start-line="85" selection-start-column="33" selection-end-line="85" selection-end-column="33" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/GateJobIncrementer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="25" column="20" selection-start-line="25" selection-start-column="20" selection-end-line="25" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerTestUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="36" column="75" selection-start-line="36" selection-start-column="75" selection-end-line="36" selection-end-column="75" />
+          <folding>
+            <marker date="1462479042776" expanded="true" signature="3088:3475" placeholder="CREATE TABLE... tblInputDocs" />
+            <marker date="1462479042776" expanded="true" signature="3628:4008" placeholder="CREATE TABLE... tblOutputDocs" />
+            <marker date="1462479042776" expanded="true" signature="4239:4616" placeholder="CREATE TABLE... tblInputDocs" />
+            <marker date="1462479042776" expanded="true" signature="4769:5149" placeholder="CREATE TABLE... tblOutputDocs" />
+            <marker date="1462479042776" expanded="true" signature="5348:5691" placeholder="CREATE TABLE... tblInputDocs" />
+            <marker date="1462479042776" expanded="true" signature="5893:6238" placeholder="CREATE TABLE... tblOutputDocs" />
+            <marker date="1462479042776" expanded="true" signature="6358:6434" placeholder="DROP TABLE I... " />
+            <marker date="1462479042776" expanded="true" signature="6470:6736" placeholder="CREATE TABLE... tblDocLines" />
+            <marker date="1462479042776" expanded="true" signature="6899:7297" placeholder="CREATE TABLE... tblOutputDocs" />
+            <marker date="1462479042776" expanded="true" signature="8582:8876" placeholder="INSERT INTO dbo.tblInputDocs... " />
+            <marker date="1462479042776" expanded="true" signature="10254:10548" placeholder="INSERT INTO dbo.tblInputDocs... " />
+            <marker date="1462479042776" expanded="true" signature="10985:11249" placeholder="INSERT INTO dbo.tblInputDocs... " />
+            <marker date="1462479042776" expanded="true" signature="11709:11914" placeholder="INSERT INTO dbo.tblDocLines... " />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SQLServerIntegrationTestsLineFixer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="442">
+          <caret line="50" column="0" selection-start-line="50" selection-start-column="0" selection-end-line="50" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsBasic.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="54">
-          <caret line="43" column="42" selection-start-line="43" selection-start-column="42" selection-end-line="43" selection-end-column="42" />
+        <state relative-caret-position="510">
+          <caret line="66" column="38" selection-start-line="66" selection-start-column="38" selection-end-line="66" selection-end-column="38" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/Main.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/BasicJobConfiguration.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="38" column="38" selection-start-line="38" selection-start-column="38" selection-end-line="38" selection-end-column="38" />
+        <state relative-caret-position="204">
+          <caret line="40" column="0" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="17" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/integration-test/resources/concurrency.properties">
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.batch/spring-batch-infrastructure/3.0.5.RELEASE/dcb989096da032835c3abb523802e7582e6088a8/spring-batch-infrastructure-3.0.5.RELEASE-sources.jar!/org/springframework/batch/item/support/CompositeItemWriter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="136">
+          <caret line="50" column="0" selection-start-line="50" selection-start-column="0" selection-end-line="50" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/integration-test/resources/dBLineFixer.properties">
+    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/scheduling/SingleJobLauncher.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="290">
+          <caret line="78" column="0" selection-start-line="78" selection-start-column="0" selection-end-line="78" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/logback.xml">
+    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/JobConfiguration.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="23" column="21" selection-start-line="23" selection-start-column="21" selection-end-line="23" selection-end-column="21" />
+        <state relative-caret-position="-2086">
+          <caret line="58" column="13" selection-start-line="58" selection-start-column="13" selection-end-line="58" selection-end-column="13" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/itemHandlers/ElasticsearchDocumentWriter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="111">
+          <caret line="34" column="0" selection-start-line="34" selection-start-column="0" selection-end-line="34" selection-end-column="25" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework/spring-context/4.2.3.RELEASE/e27b48d7dab85e42e81b648c94bb2c3255852c0/spring-context-4.2.3.RELEASE-sources.jar!/org/springframework/scheduling/concurrent/ReschedulingRunnable.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/itemHandlers/ItemHandlers.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="94">
-          <caret line="80" column="0" selection-start-line="80" selection-start-column="0" selection-end-line="80" selection-end-column="0" />
+        <state relative-caret-position="528">
+          <caret line="168" column="9" selection-start-line="168" selection-start-column="9" selection-end-line="168" selection-end-column="9" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="jar:///usr/lib/jvm/java-8-oracle/src.zip!/java/lang/Thread.java">
+    <entry file="file://$PROJECT_DIR$/src/integration-test/resources/sqlserver_test_config_line_fixer.properties">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="94">
-          <caret line="744" column="0" selection-start-line="744" selection-start-column="0" selection-end-line="744" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/scheduling/Scheduler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="246">
-          <caret line="88" column="1" selection-start-line="88" selection-start-column="1" selection-end-line="88" selection-end-column="1" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/integration-test/resources/postgres_db.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="234">
-          <caret line="13" column="38" selection-start-line="13" selection-start-column="38" selection-end-line="13" selection-end-column="38" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework/spring-core/4.2.3.RELEASE/20ed33f924eb214e5600da3b93cb46289891dc01/spring-core-4.2.3.RELEASE-sources.jar!/org/springframework/core/task/SyncTaskExecutor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="49" column="0" selection-start-line="49" selection-start-column="0" selection-end-line="49" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.batch/spring-batch-core/3.0.6.RELEASE/7e8c00855cd5cdf8d953c817eceb5695671f8b07/spring-batch-core-3.0.6.RELEASE-sources.jar!/org/springframework/batch/core/launch/support/SimpleJobLauncher.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="63">
-          <caret line="134" column="0" selection-start-line="134" selection-start-column="0" selection-end-line="134" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/rowmappers/PartitionParamsRowMapper.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="92">
-          <caret line="23" column="0" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_basic.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="200">
-          <caret line="16" column="0" selection-start-line="16" selection-start-column="0" selection-end-line="21" selection-end-column="40" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_gate.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="412">
-          <caret line="23" column="0" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_line_fixer.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="353">
-          <caret line="21" column="40" selection-start-line="21" selection-start-column="40" selection-end-line="21" selection-end-column="40" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/integration-test/resources/sql_server_test_config_tika.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="232">
-          <caret line="16" column="0" selection-start-line="16" selection-start-column="0" selection-end-line="21" selection-end-column="40" />
+        <state relative-caret-position="418">
+          <caret line="34" column="66" selection-start-line="34" selection-start-column="66" selection-end-line="34" selection-end-column="66" />
           <folding />
         </state>
       </provider>
@@ -1871,137 +2178,90 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/integration-test/resources/sqlserver_test_config_line_fixer.properties">
+    <entry file="file://$PROJECT_DIR$/src/integration-test/resources/sql_server_test_config_tika.properties">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="435">
+          <caret line="38" column="59" selection-start-line="38" selection-start-column="59" selection-end-line="38" selection-end-column="59" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/rowmappers/DocumentRowMapper.java">
+    <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsGATE.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="594">
-          <caret line="75" column="0" selection-start-line="75" selection-start-column="0" selection-end-line="75" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_tika.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/partitioners/ColumnRangePartitioner.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="324">
-          <caret line="193" column="82" selection-start-line="193" selection-start-column="82" selection-end-line="193" selection-end-column="82" />
-          <folding>
-            <marker date="1462372591204" expanded="true" signature="6183:6326" placeholder="SELECT MAX(m... missingValue" />
-            <marker date="1462372591204" expanded="true" signature="6879:7351" placeholder="SELECT MAX(m... missingValue" />
-            <marker date="1462372591204" expanded="true" signature="7176:7351" placeholder="SELECT missi... missingValue" />
-            <marker date="1462372591204" expanded="true" signature="9641:9677" placeholder="SELECT MIN(m... missingValue" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/BatchConfigurer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="492">
-          <caret line="128" column="0" selection-start-line="128" selection-start-column="0" selection-end-line="128" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/BasicJobConfiguration.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="564">
-          <caret line="71" column="0" selection-start-line="71" selection-start-column="0" selection-end-line="71" selection-end-column="0" />
+        <state relative-caret-position="332">
+          <caret line="78" column="14" selection-start-line="78" selection-start-column="14" selection-end-line="78" selection-end-column="14" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/MasterIntegrationConfiguration.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="504">
-          <caret line="79" column="0" selection-start-line="79" selection-start-column="0" selection-end-line="79" selection-end-column="0" />
+        <state relative-caret-position="169">
+          <caret line="57" column="0" selection-start-line="57" selection-start-column="0" selection-end-line="57" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/TikaConfiguration.java">
+    <entry file="file://$PROJECT_DIR$/src/integration-test/resources/jms.properties">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="41" column="13" selection-start-line="41" selection-start-column="13" selection-end-line="41" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/itemHandlers/ItemHandlers.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="402">
-          <caret line="153" column="55" selection-start-line="153" selection-start-column="28" selection-end-line="153" selection-end-column="55" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/SlaveIntegrationConfiguration.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="28" column="6" selection-start-line="28" selection-start-column="6" selection-end-line="28" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/JobConfiguration.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="95" column="32" selection-start-line="95" selection-start-column="32" selection-end-line="95" selection-end-column="32" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="54">
-          <caret line="112" column="50" selection-start-line="112" selection-start-column="50" selection-end-line="112" selection-end-column="50" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsBasicScheduling.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="65" column="0" selection-start-line="65" selection-start-column="0" selection-end-line="66" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/itemHandlers/ElasticsearchDocumentWriter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="456">
-          <caret line="99" column="0" selection-start-line="99" selection-start-column="0" selection-end-line="99" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/integration-test/resources/elasticsearch.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="18">
-          <caret line="1" column="39" selection-start-line="1" selection-start-column="39" selection-end-line="1" selection-end-column="39" />
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/integration-test/resources/jobAndStep.properties">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="427">
+        <state relative-caret-position="425">
           <caret line="25" column="35" selection-start-line="25" selection-start-column="35" selection-end-line="25" selection-end-column="35" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/integration-test/resources/gate.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_basic.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="248">
+          <caret line="26" column="0" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="34" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_gate.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="26" column="34" selection-start-line="26" selection-start-column="34" selection-end-line="26" selection-end-column="34" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_line_fixer.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="418">
+          <caret line="34" column="66" selection-start-line="34" selection-start-column="66" selection-end-line="34" selection-end-column="66" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_tika.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="435">
+          <caret line="36" column="59" selection-start-line="36" selection-start-column="59" selection-end-line="36" selection-end-column="59" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/service/GateService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="162">
+          <caret line="67" column="0" selection-start-line="67" selection-start-column="0" selection-end-line="67" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -2062,12 +2322,11 @@
       </state>
       <state key="ModuleStructureConfigurable.UI">
         <settings>
-          <last-edited>turbo-laser_integTest|turbo-laser</last-edited>
+          <last-edited>Spring|turbo-laser_integTest|turbo-laser</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
                 <option value="0.2" />
-                <option value="0.6" />
               </list>
             </option>
           </splitter-proportions>

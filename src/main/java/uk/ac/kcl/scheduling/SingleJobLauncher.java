@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2016 King's College London, Richard Jackson <richgjackson@gmail.com>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,8 +16,7 @@
 package uk.ac.kcl.scheduling;
 
 import java.util.Date;
-import java.util.logging.Level;
-import org.apache.log4j.Logger;
+
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
@@ -31,29 +30,28 @@ import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteExcep
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
-import org.springframework.scheduling.annotation.Scheduled;
-import uk.ac.kcl.batch.ScheduledJobConfiguration;
-import uk.ac.kcl.itemProcessors.GateDocumentItemProcessor;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.stereotype.Service;
+import uk.ac.kcl.batch.JobConfiguration;
 import uk.ac.kcl.utils.BatchJobUtils;
 
 /**
  *
  * @author King's College London, Richard Jackson <richgjackson@gmail.com>
  */
-
-public class Scheduler {
+@Service
+@Import(JobConfiguration.class)
+@ComponentScan({"uk.ac.kcl.utils"})
+@EnableScheduling
+public class SingleJobLauncher {
 
 
     @Autowired
     Environment env;
 
-    @Autowired
-    ApplicationContext appContext;
-
-    @Autowired
-    JobExplorer jobExplorer;
     @Autowired
     JobLauncher jobLauncher;
 
@@ -63,16 +61,13 @@ public class Scheduler {
     @Autowired
     BatchJobUtils batchJobUtils;
 
-    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(Scheduler.class);
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(SingleJobLauncher.class);
 
-    @Scheduled(cron = "${scheduler.rate}")
-    public void doTask()  {
+    public void launchJob()  {
         JobParameters param = new JobParametersBuilder()
                 .addDate("this_attempt_date",new Date())
                 //.addDate("last_successful_record_date",batchJobUtils.getLastSuccessfulRecordTimestamp())
                 .toJobParameters();
-
-
         if(env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("true")) {
             Object lastGoodJob = batchJobUtils.getLastSuccessfulRecordTimestamp();
             LOG.info("Last good run was " + lastGoodJob + ". Recommencing from then");
@@ -84,7 +79,7 @@ public class Scheduler {
             JobExecution execution = jobLauncher.run(job, param);
             System.out.println(execution.getStatus().toString());
         } catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException | JobParametersInvalidException ex) {
-            java.util.logging.Logger.getLogger(ScheduledJobConfiguration.class.getName()).log(Level.SEVERE, null, ex);
+            LOG.error("Cannot launch job",ex);
         }
     }
 }

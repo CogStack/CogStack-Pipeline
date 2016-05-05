@@ -13,23 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.kcl.batch;
+package uk.ac.kcl.scheduling;
 
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+import uk.ac.kcl.batch.JobConfiguration;
 
 /**
  *
  * @author King's College London, Richard Jackson <richgjackson@gmail.com>
  */
-@Configuration
+@Service
 @Import(JobConfiguration.class)
-@ComponentScan({"uk.ac.kcl.utils"})
 @EnableScheduling
-public class ScheduledJobConfiguration {
+public class ScheduledJobLauncher extends SingleJobLauncher {
 
 
 
+
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(ScheduledJobLauncher.class);
+
+    @Scheduled(cron = "${scheduler.rate}")
+    public void doTask()  {
+        launchJob();
+    }
 }
