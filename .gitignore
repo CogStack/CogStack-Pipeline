@@ -1,6 +1,7 @@
 .nb-gradle/*
 build/*
 .gradle/*
+libs/*
 private/*
 nbproject/*
 .nb-gradle-properties

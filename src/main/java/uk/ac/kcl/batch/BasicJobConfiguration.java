@@ -52,7 +52,7 @@ public class BasicJobConfiguration {
     public Step basicSlaveStep(
             @Qualifier("documentItemReader") ItemReader<Document> reader,
             @Qualifier("compositeESandJdbcItemWriter")  ItemWriter<Document> writer,
-           // @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor,
+            @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor,
             StepBuilderFactory stepBuilderFactory
     ) {
         Step step = stepBuilderFactory.get("basicSlaveStep")
@@ -63,7 +63,7 @@ public class BasicJobConfiguration {
                 .faultTolerant()
                 .skipLimit(Integer.parseInt(env.getProperty("skipLimit")))
                 .skip(Exception.class)
-           //     .taskExecutor(taskExecutor)
+                .taskExecutor(taskExecutor)
                 .build();
         return step;
     }
