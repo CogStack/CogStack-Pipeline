@@ -2,6 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8fa4ce33-e860-41c6-a6d6-4cf8986d4df1" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/gradle.xml" afterPath="$PROJECT_DIR$/.idea/gradle.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="turbo-laser.iws" />
@@ -9,6 +12,8 @@
     <ignored path="$PROJECT_DIR$/.gradle/" />
     <ignored path="$PROJECT_DIR$/build/" />
     <ignored path=".idea/dataSources.local.xml" />
+    <ignored path="$PROJECT_DIR$/src/integration-test/.gradle/" />
+    <ignored path="$PROJECT_DIR$/src/integration-test/build/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -37,6 +42,9 @@
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
     </projectState>
+    <projectState path="$PROJECT_DIR$/src/integration-test">
+      <ProjectState />
+    </projectState>
   </component>
   <component name="ExternalProjectsManager">
     <system id="GRADLE">
@@ -48,6 +56,9 @@
           <activation />
         </task>
         <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <task path="$PROJECT_DIR$/src/integration-test">
           <activation />
         </task>
         <projects_view>
@@ -76,6 +87,20 @@
                 <option name="myItemType" value="org.jetbrains.plugins.gradle.service.project.view.GradleViewContributor$SourceSetsNode" />
               </PATH_ELEMENT>
             </PATH>
+            <PATH>
+              <PATH_ELEMENT>
+                <option name="myItemId" value="" />
+                <option name="myItemType" value="com.intellij.openapi.externalSystem.view.ExternalProjectsStructure$RootNode" />
+              </PATH_ELEMENT>
+              <PATH_ELEMENT>
+                <option name="myItemId" value="integration-test" />
+                <option name="myItemType" value="com.intellij.openapi.externalSystem.view.ProjectNode" />
+              </PATH_ELEMENT>
+              <PATH_ELEMENT>
+                <option name="myItemId" value="Tasks" />
+                <option name="myItemType" value="com.intellij.openapi.externalSystem.view.TasksNode" />
+              </PATH_ELEMENT>
+            </PATH>
           </tree_state>
         </projects_view>
       </state>
@@ -91,12 +116,15 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="180">
               <caret line="34" column="39" selection-start-line="34" selection-start-column="39" selection-end-line="34" selection-end-column="39" />
-              <folding />
+              <folding>
+                <element signature="e#0#2369#0" expanded="false" />
+                <element signature="imports" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="logback.xml" pinned="false" current-in-tab="true">
+      <file leaf-file-name="logback.xml" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/resources/logback.xml">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="486">
@@ -111,7 +139,10 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="252">
               <caret line="39" column="37" selection-start-line="39" selection-start-column="37" selection-end-line="39" selection-end-column="37" />
-              <folding />
+              <folding>
+                <element signature="e#0#2394#0" expanded="false" />
+                <element signature="imports" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -121,7 +152,10 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="216">
               <caret line="43" column="37" selection-start-line="43" selection-start-column="37" selection-end-line="43" selection-end-column="37" />
-              <folding />
+              <folding>
+                <element signature="e#0#3428#0" expanded="false" />
+                <element signature="imports" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -131,7 +165,12 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="234">
               <caret line="40" column="37" selection-start-line="40" selection-start-column="37" selection-end-line="40" selection-end-column="37" />
-              <folding />
+              <folding>
+                <element signature="e#0#4511#0" expanded="false" />
+                <element signature="imports" expanded="false" />
+                <element signature="e#3490#3491#0" expanded="false" />
+                <element signature="e#3543#3544#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -141,7 +180,12 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="180">
               <caret line="45" column="13" selection-start-line="45" selection-start-column="13" selection-end-line="45" selection-end-column="13" />
-              <folding />
+              <folding>
+                <element signature="e#0#4782#0" expanded="false" />
+                <element signature="imports" expanded="false" />
+                <element signature="e#3143#3144#0" expanded="false" />
+                <element signature="e#3186#3187#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -151,16 +195,19 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="522">
               <caret line="57" column="4" selection-start-line="57" selection-start-column="4" selection-end-line="57" selection-end-column="4" />
-              <folding />
+              <folding>
+                <element signature="e#0#3095#0" expanded="false" />
+                <element signature="imports" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PostGresIntegrationTestsBasic.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="PostGresIntegrationTestsBasic.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsBasic.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="468">
-              <caret line="49" column="16" selection-start-line="49" selection-start-column="16" selection-end-line="49" selection-end-column="16" />
+            <state relative-caret-position="90">
+              <caret line="31" column="21" selection-start-line="31" selection-start-column="21" selection-end-line="31" selection-end-column="21" />
               <folding />
             </state>
           </provider>
@@ -213,6 +260,22 @@
         <entry>
           <key>
             <ExternalProjectPojo>
+              <option name="name" value="integration-test" />
+              <option name="path" value="$PROJECT_DIR$/src/integration-test" />
+            </ExternalProjectPojo>
+          </key>
+          <value>
+            <list>
+              <ExternalProjectPojo>
+                <option name="name" value="integration-test" />
+                <option name="path" value="$PROJECT_DIR$/src/integration-test" />
+              </ExternalProjectPojo>
+            </list>
+          </value>
+        </entry>
+        <entry>
+          <key>
+            <ExternalProjectPojo>
               <option name="name" value="turbo-laser" />
               <option name="path" value="$PROJECT_DIR$" />
             </ExternalProjectPojo>
@@ -262,11 +325,6 @@
                 <option name="description" value="Compiles integ test Java source." />
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
                 <option name="name" value="compileIntegTestJava" />
-              </ExternalTaskPojo>
-              <ExternalTaskPojo>
-                <option name="description" value="Displays all buildscript dependencies declared in root project 'turbo-laser'." />
-                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
-                <option name="name" value="buildEnvironment" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
                 <option name="description" value="Assembles integ test classes." />
@@ -426,11 +484,67 @@
             </list>
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/src/integration-test">
+          <value>
+            <list>
+              <ExternalTaskPojo>
+                <option name="description" value="Initializes a new Gradle build. [incubating]" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/src/integration-test" />
+                <option name="name" value="init" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Displays the components produced by root project 'integration-test'. [incubating]" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/src/integration-test" />
+                <option name="name" value="components" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Displays the sub-projects of root project 'integration-test'." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/src/integration-test" />
+                <option name="name" value="projects" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Displays the insight into a specific dependency in root project 'integration-test'." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/src/integration-test" />
+                <option name="name" value="dependencyInsight" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Generates Gradle wrapper files. [incubating]" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/src/integration-test" />
+                <option name="name" value="wrapper" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Displays all dependencies declared in root project 'integration-test'." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/src/integration-test" />
+                <option name="name" value="dependencies" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Displays a help message." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/src/integration-test" />
+                <option name="name" value="help" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Displays the configuration model of root project 'integration-test'. [incubating]" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/src/integration-test" />
+                <option name="name" value="model" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Displays the properties of root project 'integration-test'." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/src/integration-test" />
+                <option name="name" value="properties" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Displays the tasks runnable from root project 'integration-test'." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/src/integration-test" />
+                <option name="name" value="tasks" />
+              </ExternalTaskPojo>
+            </list>
+          </value>
+        </entry>
       </map>
     </option>
     <option name="modificationStamps">
       <map>
-        <entry key="$PROJECT_DIR$" value="2924364628056" />
+        <entry key="$PROJECT_DIR$" value="2925063493081" />
       </map>
     </option>
     <option name="projectBuildClasspath">
@@ -466,125 +580,258 @@
               <option name="name" value="turbo-laser" />
               <option name="projectBuildClasspath">
                 <list>
-                  <option value="/usr/local/gradle/gradle-2.11/src/osgi" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/internal-integ-testing" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/javascript" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/model-groovy" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/dependency-management" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/cli" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/model-core" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/plugin-development" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/resources-sftp" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/resources-http" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/code-quality" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/internal-testing" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/test-kit" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/sonar" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/platform-jvm" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/ivy" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/ui" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/base-services" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/maven" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/launcher" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/tooling-api-builders" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/build-init" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/language-scala" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/publish" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/wrapper" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/reporting" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/language-java" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/language-native" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/platform-play" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/testing-native" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/ear" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/plugin-use" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/antlr" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/jetty" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/announce" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/messaging" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/build-comparison" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/tooling-api" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/plugins" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/testing-jvm" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/scala" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/platform-base" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/jacoco" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/language-groovy" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/resources-s3" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/native" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/ide" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/open-api" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/testing-base" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/diagnostics" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/resources" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/platform-native" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/base-services-groovy" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/signing" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/core" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/language-jvm" />
-                  <option value="/usr/local/gradle/gradle-2.11/src/ide-native" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/gradle-ui-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/gradle-wrapper-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/gradle-cli-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/gradle-open-api-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/gradle-core-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/ant-1.9.3.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/gradle-tooling-api-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/gradle-base-services-groovy-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/gradle-base-services-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/gradle-model-core-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/gradle-launcher-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/gradle-docs-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/gradle-native-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/ant-launcher-1.9.3.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/groovy-all-2.4.4.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/gradle-model-groovy-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/gradle-resources-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/gradle-messaging-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-plugin-use-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-scala-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-tooling-api-builders-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-antlr-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-jacoco-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/ivy-2.2.0.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-testing-native-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-platform-native-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-platform-jvm-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-build-init-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-language-java-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-resources-s3-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-resources-sftp-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-build-comparison-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-ide-native-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-signing-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-language-scala-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-resources-http-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-ivy-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-platform-base-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-reporting-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-sonar-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-jetty-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-platform-play-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-testing-base-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-announce-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-ear-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-publish-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-ide-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-test-kit-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-diagnostics-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-maven-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-dependency-management-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-language-native-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-osgi-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-testing-jvm-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-language-jvm-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-code-quality-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-javascript-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-plugins-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-language-groovy-2.11.jar" />
-                  <option value="/usr/local/gradle/gradle-2.11/lib/plugins/gradle-plugin-development-2.11.jar" />
+                  <option value="/opt/gradle-2.8/src/language-java" />
+                  <option value="/opt/gradle-2.8/src/reporting" />
+                  <option value="/opt/gradle-2.8/src/core" />
+                  <option value="/opt/gradle-2.8/src/platform-base" />
+                  <option value="/opt/gradle-2.8/src/resources-http" />
+                  <option value="/opt/gradle-2.8/src/ui" />
+                  <option value="/opt/gradle-2.8/src/model-groovy" />
+                  <option value="/opt/gradle-2.8/src/tooling-api" />
+                  <option value="/opt/gradle-2.8/src/tooling-api-builders" />
+                  <option value="/opt/gradle-2.8/src/ivy" />
+                  <option value="/opt/gradle-2.8/src/build-comparison" />
+                  <option value="/opt/gradle-2.8/src/test-kit" />
+                  <option value="/opt/gradle-2.8/src/jacoco" />
+                  <option value="/opt/gradle-2.8/src/testing-native" />
+                  <option value="/opt/gradle-2.8/src/announce" />
+                  <option value="/opt/gradle-2.8/src/jetty" />
+                  <option value="/opt/gradle-2.8/src/language-native" />
+                  <option value="/opt/gradle-2.8/src/language-jvm" />
+                  <option value="/opt/gradle-2.8/src/messaging" />
+                  <option value="/opt/gradle-2.8/src/plugin-use" />
+                  <option value="/opt/gradle-2.8/src/launcher" />
+                  <option value="/opt/gradle-2.8/src/resources" />
+                  <option value="/opt/gradle-2.8/src/ide" />
+                  <option value="/opt/gradle-2.8/src/platform-play" />
+                  <option value="/opt/gradle-2.8/src/base-services-groovy" />
+                  <option value="/opt/gradle-2.8/src/build-init" />
+                  <option value="/opt/gradle-2.8/src/osgi" />
+                  <option value="/opt/gradle-2.8/src/wrapper" />
+                  <option value="/opt/gradle-2.8/src/native" />
+                  <option value="/opt/gradle-2.8/src/resources-s3" />
+                  <option value="/opt/gradle-2.8/src/ear" />
+                  <option value="/opt/gradle-2.8/src/javascript" />
+                  <option value="/opt/gradle-2.8/src/resources-sftp" />
+                  <option value="/opt/gradle-2.8/src/internal-testing" />
+                  <option value="/opt/gradle-2.8/src/sonar" />
+                  <option value="/opt/gradle-2.8/src/signing" />
+                  <option value="/opt/gradle-2.8/src/plugin-development" />
+                  <option value="/opt/gradle-2.8/src/language-groovy" />
+                  <option value="/opt/gradle-2.8/src/plugins" />
+                  <option value="/opt/gradle-2.8/src/cli" />
+                  <option value="/opt/gradle-2.8/src/publish" />
+                  <option value="/opt/gradle-2.8/src/internal-integ-testing" />
+                  <option value="/opt/gradle-2.8/src/platform-jvm" />
+                  <option value="/opt/gradle-2.8/src/ide-native" />
+                  <option value="/opt/gradle-2.8/src/platform-native" />
+                  <option value="/opt/gradle-2.8/src/diagnostics" />
+                  <option value="/opt/gradle-2.8/src/code-quality" />
+                  <option value="/opt/gradle-2.8/src/language-scala" />
+                  <option value="/opt/gradle-2.8/src/maven" />
+                  <option value="/opt/gradle-2.8/src/scala" />
+                  <option value="/opt/gradle-2.8/src/antlr" />
+                  <option value="/opt/gradle-2.8/src/open-api" />
+                  <option value="/opt/gradle-2.8/src/dependency-management" />
+                  <option value="/opt/gradle-2.8/src/base-services" />
+                  <option value="/opt/gradle-2.8/src/model-core" />
+                  <option value="/opt/gradle-2.8/lib/gradle-model-core-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/groovy-all-2.4.4.jar" />
+                  <option value="/opt/gradle-2.8/lib/gradle-base-services-groovy-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/gradle-messaging-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/gradle-launcher-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/gradle-ui-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/gradle-wrapper-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/gradle-model-groovy-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/gradle-resources-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/gradle-docs-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/gradle-tooling-api-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/gradle-base-services-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/ant-1.9.3.jar" />
+                  <option value="/opt/gradle-2.8/lib/gradle-native-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/gradle-core-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/gradle-open-api-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/gradle-cli-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/ant-launcher-1.9.3.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-platform-play-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-jacoco-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-jetty-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-plugin-development-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-code-quality-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-language-java-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-tooling-api-builders-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/ivy-2.2.0.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-signing-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-diagnostics-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-javascript-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-language-native-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-plugins-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-ivy-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-osgi-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-ear-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-resources-sftp-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-dependency-management-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-build-init-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-resources-http-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-scala-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-language-groovy-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-sonar-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-platform-native-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-plugin-use-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-testing-native-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-reporting-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-platform-jvm-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-ide-native-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-build-comparison-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-publish-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-ide-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-maven-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-resources-s3-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-language-scala-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-test-kit-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-language-jvm-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-platform-base-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-antlr-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-announce-2.8.jar" />
                   <option value="$PROJECT_DIR$/buildSrc/src/main/java" />
                   <option value="$PROJECT_DIR$/buildSrc/src/main/groovy" />
+                </list>
+              </option>
+            </ExternalProjectBuildClasspathPojo>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/integration-test">
+          <value>
+            <ExternalProjectBuildClasspathPojo>
+              <option name="modulesBuildClasspath">
+                <map>
+                  <entry key="$PROJECT_DIR$/src/integration-test">
+                    <value>
+                      <ExternalModuleBuildClasspathPojo>
+                        <option name="path" value="$PROJECT_DIR$/src/integration-test" />
+                      </ExternalModuleBuildClasspathPojo>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+              <option name="name" value="integration-test" />
+              <option name="projectBuildClasspath">
+                <list>
+                  <option value="/opt/gradle-2.8/src/language-java" />
+                  <option value="/opt/gradle-2.8/src/reporting" />
+                  <option value="/opt/gradle-2.8/src/core" />
+                  <option value="/opt/gradle-2.8/src/platform-base" />
+                  <option value="/opt/gradle-2.8/src/resources-http" />
+                  <option value="/opt/gradle-2.8/src/ui" />
+                  <option value="/opt/gradle-2.8/src/model-groovy" />
+                  <option value="/opt/gradle-2.8/src/tooling-api" />
+                  <option value="/opt/gradle-2.8/src/tooling-api-builders" />
+                  <option value="/opt/gradle-2.8/src/ivy" />
+                  <option value="/opt/gradle-2.8/src/build-comparison" />
+                  <option value="/opt/gradle-2.8/src/test-kit" />
+                  <option value="/opt/gradle-2.8/src/jacoco" />
+                  <option value="/opt/gradle-2.8/src/testing-native" />
+                  <option value="/opt/gradle-2.8/src/announce" />
+                  <option value="/opt/gradle-2.8/src/jetty" />
+                  <option value="/opt/gradle-2.8/src/language-native" />
+                  <option value="/opt/gradle-2.8/src/language-jvm" />
+                  <option value="/opt/gradle-2.8/src/messaging" />
+                  <option value="/opt/gradle-2.8/src/plugin-use" />
+                  <option value="/opt/gradle-2.8/src/launcher" />
+                  <option value="/opt/gradle-2.8/src/resources" />
+                  <option value="/opt/gradle-2.8/src/ide" />
+                  <option value="/opt/gradle-2.8/src/platform-play" />
+                  <option value="/opt/gradle-2.8/src/base-services-groovy" />
+                  <option value="/opt/gradle-2.8/src/build-init" />
+                  <option value="/opt/gradle-2.8/src/osgi" />
+                  <option value="/opt/gradle-2.8/src/wrapper" />
+                  <option value="/opt/gradle-2.8/src/native" />
+                  <option value="/opt/gradle-2.8/src/resources-s3" />
+                  <option value="/opt/gradle-2.8/src/ear" />
+                  <option value="/opt/gradle-2.8/src/javascript" />
+                  <option value="/opt/gradle-2.8/src/resources-sftp" />
+                  <option value="/opt/gradle-2.8/src/internal-testing" />
+                  <option value="/opt/gradle-2.8/src/sonar" />
+                  <option value="/opt/gradle-2.8/src/signing" />
+                  <option value="/opt/gradle-2.8/src/plugin-development" />
+                  <option value="/opt/gradle-2.8/src/language-groovy" />
+                  <option value="/opt/gradle-2.8/src/plugins" />
+                  <option value="/opt/gradle-2.8/src/cli" />
+                  <option value="/opt/gradle-2.8/src/publish" />
+                  <option value="/opt/gradle-2.8/src/internal-integ-testing" />
+                  <option value="/opt/gradle-2.8/src/platform-jvm" />
+                  <option value="/opt/gradle-2.8/src/ide-native" />
+                  <option value="/opt/gradle-2.8/src/platform-native" />
+                  <option value="/opt/gradle-2.8/src/diagnostics" />
+                  <option value="/opt/gradle-2.8/src/code-quality" />
+                  <option value="/opt/gradle-2.8/src/language-scala" />
+                  <option value="/opt/gradle-2.8/src/maven" />
+                  <option value="/opt/gradle-2.8/src/scala" />
+                  <option value="/opt/gradle-2.8/src/antlr" />
+                  <option value="/opt/gradle-2.8/src/open-api" />
+                  <option value="/opt/gradle-2.8/src/dependency-management" />
+                  <option value="/opt/gradle-2.8/src/base-services" />
+                  <option value="/opt/gradle-2.8/src/model-core" />
+                  <option value="/opt/gradle-2.8/lib/gradle-model-core-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/groovy-all-2.4.4.jar" />
+                  <option value="/opt/gradle-2.8/lib/gradle-base-services-groovy-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/gradle-messaging-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/gradle-launcher-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/gradle-ui-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/gradle-wrapper-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/gradle-model-groovy-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/gradle-resources-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/gradle-docs-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/gradle-tooling-api-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/gradle-base-services-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/ant-1.9.3.jar" />
+                  <option value="/opt/gradle-2.8/lib/gradle-native-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/gradle-core-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/gradle-open-api-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/gradle-cli-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/ant-launcher-1.9.3.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-platform-play-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-jacoco-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-jetty-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-plugin-development-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-code-quality-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-language-java-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-tooling-api-builders-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/ivy-2.2.0.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-signing-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-diagnostics-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-javascript-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-language-native-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-plugins-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-ivy-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-osgi-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-ear-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-resources-sftp-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-dependency-management-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-build-init-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-resources-http-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-scala-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-language-groovy-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-sonar-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-platform-native-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-plugin-use-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-testing-native-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-reporting-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-platform-jvm-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-ide-native-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-build-comparison-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-publish-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-ide-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-maven-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-resources-s3-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-language-scala-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-test-kit-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-language-jvm-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-platform-base-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-antlr-2.8.jar" />
+                  <option value="/opt/gradle-2.8/lib/plugins/gradle-announce-2.8.jar" />
+                  <option value="$PROJECT_DIR$/src/integration-test/buildSrc/src/main/java" />
+                  <option value="$PROJECT_DIR$/src/integration-test/buildSrc/src/main/groovy" />
                 </list>
               </option>
             </ExternalProjectBuildClasspathPojo>
@@ -702,169 +949,43 @@
       <pane id="ProjectPane">
         <subPane />
       </pane>
+      <pane id="PackagesPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleGroupNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser_test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleGroupNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser_main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
       <pane id="Scope">
         <subPane subId="Problems" />
         <subPane subId="Project Files">
           <PATH>
             <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="turbo-laser">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="turbo-laser_test">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="src/test">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="turbo-laser">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="turbo-laser_test">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="src/test">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="resources">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="turbo-laser">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="turbo-laser_test">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="src/test">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="resources">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="tika/testdocs">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="turbo-laser">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="turbo-laser_test">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="src/test">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="java">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="uk/ac/kcl">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="turbo-laser">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="turbo-laser_main">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="src/main">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="turbo-laser">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="turbo-laser_main">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="src/main">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="resources">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="turbo-laser">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="turbo-laser_main">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="src/main">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="java">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="uk/ac/kcl">
               <option name="myItemId" value="" />
               <option name="myItemType" value="" />
             </PATH_ELEMENT>
@@ -913,40 +1034,12 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="PackagesPane">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="turbo-laser" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="turbo-laser" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleGroupNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="turbo-laser" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="turbo-laser" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleGroupNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="turbo-laser_main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
       <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/integration-test" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="js-jscs-nodeInterpreter" value="/usr/bin/node" />
     <property name="last_directory_selection" value="$PROJECT_DIR$/src/main/resources" />
@@ -1586,7 +1679,7 @@
     </recent_temporary>
   </component>
   <component name="SbtLocalSettings">
-    <option name="lastUpdateTimestamp" value="1462498376339" />
+    <option name="lastUpdateTimestamp" value="1462532742466" />
     <option name="externalProjectsViewState">
       <projects_view />
     </option>
@@ -1645,18 +1738,20 @@
       <workItem from="1462528955196" duration="1805000" />
       <workItem from="1462530856612" duration="72000" />
       <workItem from="1462531014700" duration="212000" />
-      <workItem from="1462531822896" duration="108000" />
+      <workItem from="1462531822896" duration="303000" />
+      <workItem from="1462532149210" duration="241000" />
+      <workItem from="1462532420502" duration="397000" />
     </task>
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="PostGresIntegrationTestsBasic - 2016.05.06 at 11h 19m 28s.xml">
-      <configuration name="PostGresIntegrationTestsBasic" configurationId="JUnit" />
-    </history-entry>
     <history-entry file="PostGresIntegrationTestsBasic - 2016.05.06 at 11h 21m 01s.xml">
       <configuration name="PostGresIntegrationTestsBasic" configurationId="JUnit" />
     </history-entry>
     <history-entry file="PostGresIntegrationTestsBasic - 2016.05.06 at 11h 21m 25s.xml">
+      <configuration name="PostGresIntegrationTestsBasic" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="PostGresIntegrationTestsBasic - 2016.05.06 at 12h 06m 54s.xml">
       <configuration name="PostGresIntegrationTestsBasic" configurationId="JUnit" />
     </history-entry>
     <history-entry file="SqlServerIntegrationTestsBasicScheduling - 2016.05.06 at 01h 54m 03s.xml">
@@ -1682,41 +1777,41 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="296831000" />
+    <option name="totallyTimeSpent" value="297664000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="65" y="24" width="1301" height="744" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4718101" sideWeight="0.48525897" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25940996" sideWeight="0.37304583" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32988048" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5356083" sideWeight="0.6269542" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Spring" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3426295" sideWeight="0.49213484" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17928287" sideWeight="0.49213484" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.12828685" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.52085453" sideWeight="0.49730977" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3314741" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31360492" sideWeight="0.5078652" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.43234995" sideWeight="0.49243027" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24940239" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.43234995" sideWeight="0.49243027" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4718101" sideWeight="0.48525897" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="SBT" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.53549695" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.087537095" sideWeight="0.6269542" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32974634" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.52085453" sideWeight="0.49730977" order="1" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1991,7 +2086,7 @@
         <state relative-caret-position="408">
           <caret line="111" column="0" selection-start-line="111" selection-start-column="0" selection-end-line="111" selection-end-column="0" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="imports" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -2064,7 +2159,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="180">
           <caret line="34" column="39" selection-start-line="34" selection-start-column="39" selection-end-line="34" selection-end-column="39" />
-          <folding />
+          <folding>
+            <element signature="e#0#2369#0" expanded="false" />
+            <element signature="imports" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -2072,7 +2170,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="252">
           <caret line="39" column="37" selection-start-line="39" selection-start-column="37" selection-end-line="39" selection-end-column="37" />
-          <folding />
+          <folding>
+            <element signature="e#0#2394#0" expanded="false" />
+            <element signature="imports" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -2080,7 +2181,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="216">
           <caret line="43" column="37" selection-start-line="43" selection-start-column="37" selection-end-line="43" selection-end-column="37" />
-          <folding />
+          <folding>
+            <element signature="e#0#3428#0" expanded="false" />
+            <element signature="imports" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -2088,7 +2192,12 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="234">
           <caret line="40" column="37" selection-start-line="40" selection-start-column="37" selection-end-line="40" selection-end-column="37" />
-          <folding />
+          <folding>
+            <element signature="e#0#4511#0" expanded="false" />
+            <element signature="imports" expanded="false" />
+            <element signature="e#3490#3491#0" expanded="false" />
+            <element signature="e#3543#3544#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -2096,7 +2205,12 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="180">
           <caret line="45" column="13" selection-start-line="45" selection-start-column="13" selection-end-line="45" selection-end-column="13" />
-          <folding />
+          <folding>
+            <element signature="e#0#4782#0" expanded="false" />
+            <element signature="imports" expanded="false" />
+            <element signature="e#3143#3144#0" expanded="false" />
+            <element signature="e#3186#3187#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -2104,15 +2218,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="522">
           <caret line="57" column="4" selection-start-line="57" selection-start-column="4" selection-end-line="57" selection-end-column="4" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsBasic.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="468">
-          <caret line="49" column="16" selection-start-line="49" selection-start-column="16" selection-end-line="49" selection-end-column="16" />
-          <folding />
+          <folding>
+            <element signature="e#0#3095#0" expanded="false" />
+            <element signature="imports" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -2140,6 +2249,14 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsBasic.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="31" column="21" selection-start-line="31" selection-start-column="21" selection-end-line="31" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
   </component>
   <component name="gradleExecuteTaskHistory">
     <option value="$PROJECT_DIR$" />
@@ -2161,7 +2278,7 @@
       </state>
       <state key="FacetStructureConfigurable.UI">
         <settings>
-          <last-edited>Spring (turbo-laser_integTest)|Spring</last-edited>
+          <last-edited>Spring</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -2196,7 +2313,7 @@
       </state>
       <state key="ModuleStructureConfigurable.UI">
         <settings>
-          <last-edited>turbo-laser_test|turbo-laser</last-edited>
+          <last-edited>turbo-laser_integTest|turbo-laser</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>

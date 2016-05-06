@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/turbo-laser.iml" filepath="$PROJECT_DIR$/.idea/modules/turbo-laser.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/turbo-laser_integTest.iml" filepath="$PROJECT_DIR$/.idea/modules/turbo-laser_integTest.iml" group="turbo-laser" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/turbo-laser_integTest.iml" filepath="$PROJECT_DIR$/.idea/modules/turbo-laser_integTest.iml" group="turbo-laser" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/turbo-laser_main.iml" filepath="$PROJECT_DIR$/.idea/modules/turbo-laser_main.iml" group="turbo-laser" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/turbo-laser_test.iml" filepath="$PROJECT_DIR$/.idea/modules/turbo-laser_test.iml" group="turbo-laser" />
     </modules>
