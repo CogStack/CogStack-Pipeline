@@ -59,9 +59,9 @@ public class ColumnRangePartitioner implements Partitioner {
 
     @PostConstruct
     public void init(){
-        setColumn(env.getProperty("columnToPartition"));
+        setColumn(env.getProperty("pkColumnNameToPartition"));
         setTable(env.getProperty("tableToPartition"));
-        setTimeStampColumnName(env.getProperty("timeStamp"));
+        setTimeStampColumnName(env.getProperty("timeStampColumnNameToPartition"));
         setDataSource(sourceDataSource);
     }
 

@@ -6,4 +6,6 @@ package uk.ac.kcl.model
 class PartitionParams {
     long minId
     long maxId
+
+
 }
