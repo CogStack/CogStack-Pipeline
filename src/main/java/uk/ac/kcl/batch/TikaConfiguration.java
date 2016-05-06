@@ -38,7 +38,7 @@ import javax.annotation.Resource;
 @Import(ItemHandlers.class)
 @Configuration
 @Profile("tika")
-@PropertySource("classpath:tikaJob.conf")
+@PropertySource("file:${TURBO_LASER}/tikaJob.conf")
 public class TikaConfiguration {
     @Resource
     Environment env;

@@ -38,7 +38,7 @@ import javax.annotation.Resource;
 @Configuration
 @Import(ItemHandlers.class)
 @Profile("dBLineFixer")
-@PropertySource("classpath:dBLineFixerJob.conf")
+@PropertySource("file:${TURBO_LASER}/dBLineFixerJob.conf")
 public class DbLineFixerConfiguration {
     @Resource
     Environment env;
