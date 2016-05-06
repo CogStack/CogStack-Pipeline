@@ -1,6 +1,5 @@
 package uk.ac.kcl.rowmappers;
 
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import uk.ac.kcl.model.BinaryDocument;
 import uk.ac.kcl.model.Document;

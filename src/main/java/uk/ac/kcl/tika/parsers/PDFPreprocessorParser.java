@@ -32,26 +32,7 @@ package uk.ac.kcl.tika.parsers;
  * limitations under the License.
  */
 
-import uk.ac.kcl.tika.config.ImageMagickConfig;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import org.apache.commons.io.FileUtils;
-
 import org.apache.commons.logging.LogFactory;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.io.IOUtils;
@@ -65,6 +46,11 @@ import org.apache.tika.parser.pdf.PDFParser;
 import org.apache.tika.sax.BodyContentHandler;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
+import uk.ac.kcl.tika.config.ImageMagickConfig;
+
+import java.io.*;
+import java.util.*;
+import java.util.concurrent.*;
 
 public class PDFPreprocessorParser extends AbstractParser {
 

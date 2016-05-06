@@ -15,23 +15,19 @@
  */
 package uk.ac.kcl.itemProcessors;
 
-import uk.ac.kcl.batch.JobConfiguration;
-import uk.ac.kcl.model.BinaryDocument;
-import java.nio.charset.StandardCharsets;
 import org.apache.commons.io.IOUtils;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Ignore;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import uk.ac.kcl.batch.JobConfiguration;
 import uk.ac.kcl.model.TextDocument;
+
+import java.nio.charset.StandardCharsets;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
  *

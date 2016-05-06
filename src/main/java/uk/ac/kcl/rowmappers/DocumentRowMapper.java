@@ -17,15 +17,14 @@ package uk.ac.kcl.rowmappers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
-import uk.ac.kcl.model.BinaryDocument;
+import uk.ac.kcl.model.Document;
+import uk.ac.kcl.utils.BatchJobUtils;
 
 import java.sql.*;
 import java.util.Arrays;
 import java.util.List;
-import org.springframework.jdbc.core.RowMapper;
-import uk.ac.kcl.model.Document;
-import uk.ac.kcl.utils.BatchJobUtils;
 
 @Component
 public class DocumentRowMapper implements RowMapper<Document>{
@@ -72,7 +71,7 @@ public class DocumentRowMapper implements RowMapper<Document>{
                         Timestamp ts = (Timestamp) value;
                         doc.getAdditionalFields().put(meta.getColumnLabel(col), batchJobUtils.convertTimeStampToESDateFormat(ts));
                     }else {
-                        doc.getAdditionalFields().put(meta.getColumnLabel(col), value);
+                        doc.getAdditionalFields().put(meta.getColumnLabel(col), rs.getString(col));
                     }
 
                 }

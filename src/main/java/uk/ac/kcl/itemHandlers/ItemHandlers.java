@@ -10,7 +10,6 @@ import org.springframework.batch.item.database.support.SqlPagingQueryProviderFac
 import org.springframework.batch.item.support.CompositeItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,8 +32,6 @@ public class ItemHandlers {
 
     @Resource
     Environment env;
-
-
 
     private String getPartitioningLogic(String minValue, String maxValue, String minTimeStamp, String maxTimeStamp){
         String returnString;

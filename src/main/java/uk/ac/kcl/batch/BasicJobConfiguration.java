@@ -18,7 +18,6 @@ package uk.ac.kcl.batch;
 
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,8 +25,6 @@ import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.core.task.TaskExecutor;
 import uk.ac.kcl.itemHandlers.ItemHandlers;
-import uk.ac.kcl.itemProcessors.DbLineFixerItemProcessor;
-import uk.ac.kcl.model.BinaryDocument;
 import uk.ac.kcl.model.Document;
 
 import javax.annotation.Resource;
@@ -55,6 +52,7 @@ public class BasicJobConfiguration {
     public Step basicSlaveStep(
             @Qualifier("documentItemReader") ItemReader<Document> reader,
             @Qualifier("compositeESandJdbcItemWriter")  ItemWriter<Document> writer,
+           // @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor,
             StepBuilderFactory stepBuilderFactory
     ) {
         Step step = stepBuilderFactory.get("basicSlaveStep")
@@ -65,6 +63,7 @@ public class BasicJobConfiguration {
                 .faultTolerant()
                 .skipLimit(Integer.parseInt(env.getProperty("skipLimit")))
                 .skip(Exception.class)
+           //     .taskExecutor(taskExecutor)
                 .build();
         return step;
     }

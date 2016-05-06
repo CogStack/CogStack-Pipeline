@@ -1,12 +1,27 @@
 package uk.ac.kcl.it;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import uk.ac.kcl.batch.JobConfiguration;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.sql.Date;
+import java.util.logging.Level;
+
 /*
  * Copyright 2016 King's College London, Richard Jackson <richgjackson@gmail.com>.
  *
@@ -22,23 +37,6 @@ import javax.sql.DataSource;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-
-import uk.ac.kcl.batch.JobConfiguration;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.sql.Date;
-import java.util.logging.Level;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.io.Resource;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  *

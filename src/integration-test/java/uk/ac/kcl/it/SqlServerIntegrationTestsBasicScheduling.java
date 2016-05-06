@@ -18,53 +18,49 @@ package uk.ac.kcl.it;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.batch.core.launch.JobOperator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import uk.ac.kcl.scheduling.ScheduledJobLauncher;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
 
-/**
- *
- * @author rich
- */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
-		"classpath:postgres_test_config_gate.properties",
-                "classpath:jms.properties",
-                "classpath:gate.properties",
-                "classpath:concurrency.properties",
-                "classpath:postgres_db.properties",
-                "classpath:elasticsearch.properties",
-                "classpath:jobAndStep.properties"})
+    "classpath:sqlserver_test_config_basic.properties",
+    "classpath:jms.properties",
+    "classpath:concurrency.properties",
+    "classpath:sql_server_db.properties",
+    "classpath:elasticsearch.properties",
+    "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
-    SingleJobLauncher.class,
-    PostGresTestUtils.class},
+    ScheduledJobLauncher.class,
+    SqlServerTestUtils.class},
         loader = AnnotationConfigContextLoader.class)
-public class PostGresIntegrationTestsGATE {
+public class SqlServerIntegrationTestsBasicScheduling {
 
-    final static Logger logger = Logger.getLogger(PostGresIntegrationTestsGATE.class);
-
-    @Autowired
-    SingleJobLauncher jobLauncher;
-    @Autowired
-    PostGresTestUtils utils;
+    final static Logger logger = Logger.getLogger(SqlServerIntegrationTestsBasicScheduling.class);
 
     @Autowired
-    JobOperator jobOperator;
+    ScheduledJobLauncher jobLauncher;
 
-    //@Ignore
+    @Autowired
+    SqlServerTestUtils utils;
+
     @Test
-    public void postgresGatePipelineTest() {
-        utils.initTextualPostgresGateTable();
-        utils.initPostGresJobRepository();
-        utils.insertTestXHTMLForGate( false);
-        jobLauncher.launchJob();
+    public void sqlServerBasicPipelineTest() {
+        utils.createBasicInputTable();
+        utils.createBasicOutputTable();
+        utils.initJobRepository();
+        utils.insertDataIntoBasicTable();
+        try {
+            Thread.sleep(1000000000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
     }
-
-
 }

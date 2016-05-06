@@ -6,10 +6,6 @@
 package uk.ac.kcl.tika.parsers;
 
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.tika.config.TikaConfig;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
@@ -20,26 +16,26 @@ import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.external.ExternalParser;
 import org.apache.tika.parser.pdf.PDFParser;
 import org.apache.tika.sax.BodyContentHandler;
-import static org.junit.Assume.assumeTrue;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.xml.sax.SAXException;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import org.junit.Ignore;
-import org.springframework.test.context.TestPropertySource;
 import uk.ac.kcl.batch.TikaConfiguration;
 import uk.ac.kcl.tika.config.ImageMagickConfig;
-import static uk.ac.kcl.tika.parsers.PDFPreprocessorParser.getImageMagickProg;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import static org.junit.Assert.*;
 import static org.junit.Assume.assumeTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static uk.ac.kcl.tika.parsers.PDFPreprocessorParser.getImageMagickProg;
 
 /**
  *

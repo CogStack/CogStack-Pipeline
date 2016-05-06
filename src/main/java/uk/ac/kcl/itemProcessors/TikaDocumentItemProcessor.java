@@ -15,9 +15,6 @@
  */
 package uk.ac.kcl.itemProcessors;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import org.apache.log4j.Logger;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.sax.BodyContentHandler;
@@ -26,6 +23,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.xml.sax.ContentHandler;
 import uk.ac.kcl.model.BinaryDocument;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 
 /**
  *

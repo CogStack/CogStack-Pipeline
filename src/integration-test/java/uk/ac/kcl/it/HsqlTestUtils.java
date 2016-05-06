@@ -1,9 +1,10 @@
 package uk.ac.kcl.it;
 
-import java.io.IOException;
 import org.hsqldb.Server;
 import org.hsqldb.persist.HsqlProperties;
 import org.hsqldb.server.ServerAcl;
+
+import java.io.IOException;
 
 /**
  *

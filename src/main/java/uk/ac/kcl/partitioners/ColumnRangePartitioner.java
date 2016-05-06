@@ -15,13 +15,6 @@
  */
 package uk.ac.kcl.partitioners;
 
-import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.Map;
-import javax.annotation.PostConstruct;
-import javax.sql.DataSource;
-
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.partition.support.Partitioner;
@@ -37,6 +30,12 @@ import uk.ac.kcl.model.PartitionParams;
 import uk.ac.kcl.model.ScheduledPartitionParams;
 import uk.ac.kcl.rowmappers.PartitionParamsRowMapper;
 import uk.ac.kcl.utils.BatchJobUtils;
+
+import javax.annotation.PostConstruct;
+import javax.sql.DataSource;
+import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @Service("columnRangePartitioner")
@@ -133,6 +132,7 @@ public class ColumnRangePartitioner implements Partitioner {
                 long targetSize = (params.getMaxId() - params.getMinId()) / gridSize + 1;
                 long start = params.getMinId();
                 long end = start + targetSize - 1;
+                logger.info("Commencing timestamp ordered PK partitioning");
                 for (int i = 0; i < gridSize; i++) {
                     ExecutionContext value = new ExecutionContext();
                     result.put("partition" + (i + 1), value);
@@ -143,6 +143,7 @@ public class ColumnRangePartitioner implements Partitioner {
                     start += targetSize;
                     end += targetSize;
                 }
+                logger.info("partitioning complete");
                 return result;
             }
 

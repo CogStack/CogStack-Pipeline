@@ -15,38 +15,16 @@
  */
 package uk.ac.kcl.it;
 
+import org.apache.log4j.Logger;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
-import uk.ac.kcl.batch.JobConfiguration;
-import java.util.logging.Level;
-import javax.sql.DataSource;
-import org.apache.log4j.Logger;
-import org.hsqldb.Server;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.runner.RunWith;
-import org.springframework.batch.core.JobParametersInvalidException;
-import org.springframework.batch.core.UnexpectedJobExecutionException;
-import org.springframework.batch.core.launch.JobOperator;
-import org.springframework.batch.core.launch.JobParametersNotFoundException;
-import org.springframework.batch.core.launch.NoSuchJobException;
-import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
-import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
-import org.springframework.batch.core.repository.JobRestartException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import uk.ac.kcl.batch.BatchConfigurer;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
 
 /**

@@ -17,12 +17,11 @@ package uk.ac.kcl.itemProcessors;
 
 import gate.Factory;
 import org.slf4j.LoggerFactory;
-import uk.ac.kcl.model.TextDocument;
-import uk.ac.kcl.service.GateService;
-import org.apache.log4j.Logger;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import uk.ac.kcl.model.TextDocument;
+import uk.ac.kcl.service.GateService;
 
 
 public class GateDocumentItemProcessor implements ItemProcessor<TextDocument, TextDocument> {

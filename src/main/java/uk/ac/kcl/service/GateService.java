@@ -15,16 +15,14 @@
  */
 package uk.ac.kcl.service;
 
-import gate.Annotation;
-import gate.Corpus;
-import gate.CorpusController;
-import gate.Factory;
-import gate.Gate;
+import gate.*;
 import gate.creole.ExecutionException;
 import gate.creole.ResourceInstantiationException;
 import gate.persist.PersistenceException;
 import gate.util.GateException;
 import gate.util.persistence.PersistenceManager;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
@@ -33,8 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
-
-import org.slf4j.LoggerFactory;
 
 /**
  *

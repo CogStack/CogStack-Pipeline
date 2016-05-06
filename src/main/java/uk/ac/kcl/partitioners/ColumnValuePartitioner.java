@@ -21,7 +21,6 @@ import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 import uk.ac.kcl.rowmappers.ColumnKeyRowMapper;
 
-
 import javax.sql.DataSource;
 import java.util.*;
 

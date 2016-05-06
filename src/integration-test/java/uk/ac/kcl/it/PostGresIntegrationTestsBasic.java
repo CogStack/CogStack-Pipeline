@@ -18,26 +18,13 @@ package uk.ac.kcl.it;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.batch.core.JobParametersInvalidException;
-import org.springframework.batch.core.UnexpectedJobExecutionException;
-import org.springframework.batch.core.launch.JobOperator;
-import org.springframework.batch.core.launch.JobParametersNotFoundException;
-import org.springframework.batch.core.launch.NoSuchJobException;
-import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
-import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
-import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import uk.ac.kcl.batch.BasicJobConfiguration;
-import uk.ac.kcl.batch.BatchConfigurer;
-import uk.ac.kcl.batch.JobConfiguration;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
-
-import java.util.logging.Level;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")

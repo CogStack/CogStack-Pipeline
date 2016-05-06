@@ -30,7 +30,6 @@ import org.springframework.integration.core.MessagingTemplate;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.PollableChannel;
 import uk.ac.kcl.listeners.JobCompleteNotificationListener;
-import uk.ac.kcl.scheduling.ScheduledJobLauncher;
 
 /**
  *
