@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="8fa4ce33-e860-41c6-a6d6-4cf8986d4df1" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/resources/basicJob.conf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/resources/dBLineFixerJob.conf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/resources/gateJob.conf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/resources/tikaJob.conf" afterPath="" />
-    </list>
+    <list default="true" id="8fa4ce33-e860-41c6-a6d6-4cf8986d4df1" name="Default" comment="" />
     <ignored path="turbo-laser.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path="$PROJECT_DIR$/.gradle/" />
@@ -1747,7 +1742,7 @@
       <workItem from="1462478549303" duration="13105000" />
       <workItem from="1462492882562" duration="4549000" />
       <workItem from="1462497545234" duration="1764000" />
-      <workItem from="1462528955196" duration="1710000" />
+      <workItem from="1462528955196" duration="1766000" />
     </task>
     <servers />
   </component>
@@ -1784,7 +1779,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="296344000" />
+    <option name="totallyTimeSpent" value="296400000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="65" y="-4" width="1301" height="772" extended-state="6" />
