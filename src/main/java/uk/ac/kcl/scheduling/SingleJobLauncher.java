@@ -60,7 +60,7 @@ public class SingleJobLauncher {
     public void launchJob()  {
         JobParameters param = new JobParametersBuilder()
                 .addDate("this_attempt_date",new Date())
-                //.addDate("last_successful_record_date",batchJobUtils.getLastSuccessfulRecordTimestamp())
+                .addString("jobClass",env.getProperty("jobClass"))
                 .toJobParameters();
         if(env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("true")) {
             Object lastGoodJob = batchJobUtils.getLastSuccessfulRecordTimestamp();

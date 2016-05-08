@@ -34,6 +34,7 @@ import uk.ac.kcl.scheduling.SingleJobLauncher;
     "classpath:concurrency.properties",
     "classpath:postgres_db.properties",
     "classpath:elasticsearch.properties",
+    "classpath:basic.properties",
     "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
     PostGresTestUtils.class,

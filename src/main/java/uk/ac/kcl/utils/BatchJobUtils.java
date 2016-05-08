@@ -36,7 +36,7 @@ public class BatchJobUtils {
             Timestamp lastestTimestamp,
             String timestampColumnName){
         JdbcTemplate template = new JdbcTemplate(targetDataSource);
-        String sql = "select MIN(" + timestampColumnName + ") AS min_time_stamp " +
+        String sql = "SELECT MIN(" + timestampColumnName + ") AS min_time_stamp " +
                     " FROM " + tableName + " " +
                     " WHERE CAST(" + timestampColumnName + " AS "+env.getProperty("dbmsToJavaSqlTimestampType")+") >  CAST('" + lastestTimestamp.toString() + "' AS "+env.getProperty("dbmsToJavaSqlTimestampType")+")";
         Timestamp timestampLong = (Timestamp)template.queryForObject(sql, Timestamp.class);
@@ -48,22 +48,24 @@ public class BatchJobUtils {
         }
     }
 
-    public String getLastSuccessfulJobDate(){
-        JdbcTemplate template = new JdbcTemplate(targetDataSource);
-        String sql = "select max(start_time) AS start_time from batch_job_execution bje \n" +
-                "join batch_job_instance bji on bje.job_instance_id = bji.job_instance_id \n" +
-                "where bje.exit_code = 'COMPLETED' and bji.job_name = '" + env.getProperty("jobName") + "'";
-
-        String startTime = (String)template.queryForObject(sql, String.class);
-        return startTime;
-    }
+//    public String getLastSuccessfulJobDate(){
+//        JdbcTemplate template = new JdbcTemplate(targetDataSource);
+//        String sql = "SELECT MAX(start_time) AS start_time FROM batch_job_execution bje \n" +
+//                "JOIN batch_job_instance bji ON bje.job_instance_id = bji.job_instance_id \n" +
+//                "WHERE bje.exit_code = 'COMPLETED' AND bji.job_name = '" + env.getProperty("jobName") + "'";
+//
+//        String startTime = (String)template.queryForObject(sql, String.class);
+//        return startTime;
+//    }
 
     public Long getLastSuccessfulJobExecutionID(){
         JdbcTemplate template = new JdbcTemplate(targetDataSource);
-        String sql = "select max(job_execution_id) AS start_time from batch_job_execution bje \n" +
-                "join batch_job_instance bji on bje.job_instance_id = bji.job_instance_id \n" +
-                "where bje.exit_code = 'COMPLETED' and bji.job_name = '" + env.getProperty("jobName") + "'";
-
+        String sql = "SELECT MAX(bje.job_execution_id) FROM batch_job_execution bje \n" +
+                " JOIN batch_job_instance bji ON bje.job_instance_id = bji.job_instance_id \n" +
+                " JOIN batch_job_execution_params bjep ON bje.job_execution_id = bjep.job_execution_id" +
+                " WHERE bje.exit_code = 'COMPLETED' AND bji.job_name = '" + env.getProperty("jobName") + "'" +
+                " AND bjep.key_name = 'jobClass' AND bjep.string_val= '" + env.getProperty("jobClass") + "'";
+        LOG.info("Looking for last previous job with query " + sql);
         Long id = (Long)template.queryForObject(sql, Long.class);
         return id;
     }

@@ -1,10 +1,6 @@
 buildscript {
     repositories {
         mavenCentral()
-//        //if using ms jdbc driver
-//        flatDir {
-//            dirs '/home/rich/Downloads/sqljdbc_4.2/enu'
-//        }
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:1.3.0.RELEASE")
@@ -165,6 +161,7 @@ task writeExampleConfig  {
     String elasticsearch = new File("src/integration-test/resources/elasticsearch.properties").text
     String gate = new File("src/integration-test/resources/gate.properties").text
     String tika = new File("src/integration-test/resources/tika.properties").text
+    String basic = new File("src/integration-test/resources/basic.properties").text
     String jms = new File("src/integration-test/resources/jms.properties").text
     String jobAndStep = new File("src/integration-test/resources/jobAndStep.properties").text
     String postgres_db = new File("src/integration-test/resources/postgres_db.properties").text
@@ -201,7 +198,8 @@ task writeExampleConfig  {
         writer.write("# EXAMPLE CONFIG FOR basicJob \n" +
                 elasticsearch
                         +"\n" + jms
-                        + "\n" + elasticsearch
+                        +"\n" + elasticsearch
+                        +"\n" + basic
                         +"\n" + jobAndStep
                         +"\n" + postgres_db
                         +"\n" + postgres_test_config_basic
