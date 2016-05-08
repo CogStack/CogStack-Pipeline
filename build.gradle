@@ -169,7 +169,8 @@ task writeExampleConfig  {
     String postgres_test_config_tika = new File("src/integration-test/resources/postgres_test_config_tika.properties").text
     String postgres_test_config_basic = new File("src/integration-test/resources/postgres_test_config_basic.properties").text
 
-    def gateExample = new File("gate.conf")
+    new File("exampleConfigs").mkdir()
+    def gateExample = new File("exampleConfigs/gateJob.conf")
     gateExample.withWriter("UTF-8") { writer ->
         writer.write(  "# EXAMPLE CONFIG FOR gateJob \n" +
                 elasticsearch
@@ -181,7 +182,7 @@ task writeExampleConfig  {
                         + "\n" + postgres_test_config_gate
         )
     }
-        def tikaExample = new File("tika.conf")
+        def tikaExample = new File("exampleConfigs/tikaJob.conf")
     tikaExample.withWriter("UTF-8"){ writer ->
             writer.write ("# EXAMPLE CONFIG FOR tikaJob \n" +
                     elasticsearch
@@ -193,7 +194,7 @@ task writeExampleConfig  {
                             +"\n" + postgres_test_config_tika
             )
     }
-    def basicExample = new File("basic.conf")
+    def basicExample = new File("exampleConfigs/basicJob.conf")
     basicExample.withWriter("UTF-8"){ writer ->
         writer.write("# EXAMPLE CONFIG FOR basicJob \n" +
                 elasticsearch
