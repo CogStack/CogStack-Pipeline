@@ -18,6 +18,7 @@ package uk.ac.kcl;
 import org.springframework.batch.core.launch.support.CommandLineJobRunner;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.env.SimpleCommandLinePropertySource;
+import uk.ac.kcl.batch.JobConfiguration;
 import uk.ac.kcl.scheduling.ScheduledJobLauncher;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
 
@@ -43,7 +44,11 @@ public class Main {
             ctx.refresh();
             SingleJobLauncher launcher = ctx.getBean(SingleJobLauncher.class);
             launcher.launchJob();
-        } else{
+        } else if (ps.getProperty("nonOptionArgs").contains("slave")){
+            ctx.register(JobConfiguration.class);
+            ctx.refresh();
+        }
+        else{
             try {
                 CommandLineJobRunner.main(args);
             } catch (Exception ex) {

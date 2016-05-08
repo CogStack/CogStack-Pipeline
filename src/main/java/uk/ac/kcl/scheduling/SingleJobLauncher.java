@@ -24,6 +24,7 @@ import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Service;
@@ -39,20 +40,19 @@ import java.util.Date;
 @Service
 @Import(JobConfiguration.class)
 @ComponentScan({"uk.ac.kcl.utils"})
-@EnableScheduling
 public class SingleJobLauncher {
 
 
     @Autowired
     Environment env;
 
-    @Autowired
+    @Autowired(required=false)
     JobLauncher jobLauncher;
 
-    @Autowired
+    @Autowired(required=false)
     Job job;
 
-    @Autowired
+    @Autowired(required=false)
     BatchJobUtils batchJobUtils;
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(SingleJobLauncher.class);

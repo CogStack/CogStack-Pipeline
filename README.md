@@ -68,10 +68,6 @@ For example
 java -Dspring.profiles.active=tika,master,slave,elasticsearch,jdbc -jar turbo-laser-0.3.0.jar scheduled
 ```
 
-To add additional JVM processes, via the wonders of Spring Integration, just launch an instance as follows
-```
-java  -Dspring.profiles.active=tika,slave -jar turbo-laser-0.3.0.jar scheduled
-```
 ## Logging support
 
 Turbo-laser uses the SLF4J abstraction for logging, with logback as the concrete implementation. To name a logfile, simply add the -DLOG_FILE_NAME system flag when launching the JVM
@@ -84,10 +80,17 @@ java -DLOG_FILE_NAME=aTestLog -Dspring.profiles.active=tika,master,slave,elastic
 ```
 
 
-
-
-
 Turbo-laser assumes the job repository schema is already in place in the DB implementation of your choice (see spring batch docs for more details)
+
+
+## Scaling
+
+To add additional JVM processes, vither locally or remotely (via the wonders of Spring Integration), just launch an instance as per the following example
+
+```
+java  -Dspring.profiles.active=tika,elasticsearch,jdbc,slave -jar turbo-laser-0.3.0.jar slave
+```
+
 
 
 

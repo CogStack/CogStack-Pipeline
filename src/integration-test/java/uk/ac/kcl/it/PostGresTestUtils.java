@@ -243,7 +243,7 @@ public class PostGresTestUtils {
 
     public void insertDataIntoBasicTable(){
         JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
-        int docCount = 34;
+        int docCount = 2000;
         int lineCountIncrementer = 1;
         String sql = "INSERT INTO tblInputDocs "
                 + "( srcColumnFieldName"

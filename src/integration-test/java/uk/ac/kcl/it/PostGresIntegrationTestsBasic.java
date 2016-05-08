@@ -56,6 +56,6 @@ public class PostGresIntegrationTestsBasic {
         utils.createBasicOutputTable();
         utils.initPostGresJobRepository();
         utils.insertDataIntoBasicTable();
-        jobLauncher.launchJob();
+        //jobLauncher.launchJob();
     }
 }
