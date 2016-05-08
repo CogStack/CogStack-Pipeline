@@ -56,6 +56,7 @@ import java.util.logging.Level;
 public class PostGresTestUtils {
 
     final static Logger logger = Logger.getLogger(PostGresIntegrationTestsGATE.class);
+    long today = System.currentTimeMillis();
 
     @Autowired
     @Qualifier("sourceDataSource")
@@ -203,8 +204,9 @@ public class PostGresTestUtils {
                 + ", updateTime"
                 + ", input"
                 + ") VALUES (?,?,?,?,?,?)";
-        for (int ii = 0; ii < docCount; ii++) {
-            jdbcTemplate.update(sql, "fictionalColumnFieldName","fictionalTableName","fictionalPrimaryKeyFieldName", ii,new Date((ii*1000*60*60*24)),  xhtmlString);
+        for (long ii = 0; ii < docCount; ii++) {
+            jdbcTemplate.update(sql, "fictionalColumnFieldName","fictionalTableName","fictionalPrimaryKeyFieldName", ii,new Date(today),  xhtmlString);
+            today = today + 86400000;
 
         }
         //see what happens with a really long document...
@@ -237,7 +239,8 @@ public class PostGresTestUtils {
                 + ", input"
                 + ") VALUES (?,?,?,?,?,?)";
         for (int ii = 0; ii < docCount; ii++) {
-            jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName", "fictionalPrimaryKeyFieldName", ii, new Date((ii*1000*60*60*24)), bytes);
+            jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName", "fictionalPrimaryKeyFieldName", ii, new Date(today), bytes);
+            today = today + 86400000;
         }
     }
 
@@ -252,8 +255,10 @@ public class PostGresTestUtils {
                 + ", primaryKeyFieldValue"
                 + ", updateTime"
                 + ") VALUES (?,?,?,?,?)";
-        for (int i = 0; i <= docCount; i++) {
-            jdbcTemplate.update(sql, "fictionalColumnFieldName","fictionalTableName","fictionalPrimaryKeyFieldName",i,new Date((i*1000*60*60*24)));
+
+        for (long i = 0; i <= docCount; i++) {
+            jdbcTemplate.update(sql, "fictionalColumnFieldName","fictionalTableName","fictionalPrimaryKeyFieldName",i,new Date(today));
+            today = today + 86400000;
         }
     }
 
@@ -272,7 +277,8 @@ public class PostGresTestUtils {
         for (int i = 0; i <= docCount; i++) {
             for(int j = 0;j < lineCountIncrementer; j++){
                 String text = "This is DOC_ID:" + i + " and LINE_ID:" + j ;
-                jdbcTemplate.update(sql,i,new Date((i*1000*60*60*24)),j,text);
+                jdbcTemplate.update(sql,i,new Date(today),j,text);
+                today = today + 86400000;
             }
             lineCountIncrementer++;
             if(lineCountIncrementer % 50 == 0){

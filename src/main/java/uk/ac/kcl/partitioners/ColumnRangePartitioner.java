@@ -216,7 +216,7 @@ public class ColumnRangePartitioner implements Partitioner {
             processingPeriod = new Timestamp(Long.parseLong(test));
             processingPeriod.setTime(earliestRecord.getTime() + processingPeriod.getTime());
             sql =	sql +
-                    " WHERE CAST (" + timeStamp + " as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) > CAST ('" + earliestRecord.toString()  + "' as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) " +
+                    " WHERE CAST (" + timeStamp + " as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) >= CAST ('" + earliestRecord.toString()  + "' as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) " +
                     " AND CAST (" + timeStamp + " as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) <= CAST ('" + processingPeriod.toString()  + "' as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) " +
                     " ORDER BY " + timeStamp  +" ASC " + " , " + column +" ASC " +
                     batchJobUtils.cleanSqlString(env.getProperty("partitionerPostOrderByClause")) +
