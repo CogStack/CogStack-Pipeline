@@ -3,12 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="8fa4ce33-e860-41c6-a6d6-4cf8986d4df1" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/exampleConfigs/basicJob.conf" afterPath="$PROJECT_DIR$/exampleConfigs/basicJob.conf" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsBasicScheduling.java" afterPath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsBasicScheduling.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresTestUtils.java" afterPath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresTestUtils.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/resources/jobAndStep.properties" afterPath="$PROJECT_DIR$/src/integration-test/resources/jobAndStep.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_basic.properties" afterPath="$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_basic.properties" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/partitioners/ColumnRangePartitioner.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/partitioners/ColumnRangePartitioner.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/resources/logback.xml" afterPath="$PROJECT_DIR$/src/main/resources/logback.xml" />
     </list>
     <ignored path="turbo-laser.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -145,7 +141,7 @@
       <file leaf-file-name="postgres_test_config_basic.properties" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_basic.properties">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="227">
+            <state relative-caret-position="468">
               <caret line="26" column="12" selection-start-line="26" selection-start-column="12" selection-end-line="26" selection-end-column="12" />
               <folding />
             </state>
@@ -155,7 +151,7 @@
       <file leaf-file-name="postgres_test_config_gate.properties" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_gate.properties">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="368">
+            <state relative-caret-position="630">
               <caret line="35" column="19" selection-start-line="35" selection-start-column="19" selection-end-line="35" selection-end-column="28" />
               <folding />
             </state>
@@ -165,7 +161,7 @@
       <file leaf-file-name="postgres_test_config_tika.properties" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_tika.properties">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="332">
+            <state relative-caret-position="594">
               <caret line="33" column="16" selection-start-line="33" selection-start-column="16" selection-end-line="33" selection-end-column="16" />
               <folding />
             </state>
@@ -175,7 +171,7 @@
       <file leaf-file-name="ItemHandlers.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/itemHandlers/ItemHandlers.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="118">
+            <state relative-caret-position="522">
               <caret line="54" column="0" selection-start-line="54" selection-start-column="0" selection-end-line="54" selection-end-column="0" />
               <folding />
             </state>
@@ -185,15 +181,24 @@
       <file leaf-file-name="ColumnRangePartitioner.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/partitioners/ColumnRangePartitioner.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="128">
-              <caret line="94" column="0" selection-start-line="94" selection-start-column="0" selection-end-line="94" selection-end-column="0" />
+            <state relative-caret-position="608">
+              <caret line="138" column="1" selection-start-line="138" selection-start-column="1" selection-end-line="138" selection-end-column="1" />
               <folding>
-                <element signature="e#3088#3114#0" expanded="true" />
-                <marker date="1462744735335" expanded="true" signature="6340:6483" placeholder="SELECT MAX(m... missingValue" />
-                <marker date="1462744735335" expanded="true" signature="7036:7508" placeholder="SELECT MAX(m... missingValue" />
-                <marker date="1462744735335" expanded="true" signature="7333:7508" placeholder="SELECT missi... missingValue" />
-                <marker date="1462744735335" expanded="true" signature="9798:9834" placeholder="SELECT MIN(m... missingValue" />
+                <marker date="1462788411428" expanded="true" signature="6337:6480" placeholder="SELECT MAX(m... missingValue" />
+                <marker date="1462788411428" expanded="true" signature="7033:7505" placeholder="SELECT MAX(m... missingValue" />
+                <marker date="1462788411428" expanded="true" signature="7330:7505" placeholder="SELECT missi... missingValue" />
+                <marker date="1462788411428" expanded="true" signature="9795:9831" placeholder="SELECT MIN(m... missingValue" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="logback.xml" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/resources/logback.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="414">
+              <caret line="23" column="28" selection-start-line="23" selection-start-column="28" selection-end-line="23" selection-end-column="28" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -213,10 +218,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PostGresTestUtils.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="PostGresTestUtils.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresTestUtils.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="18">
+            <state relative-caret-position="2072">
               <caret line="143" column="27" selection-start-line="143" selection-start-column="27" selection-end-line="143" selection-end-column="27" />
               <folding>
                 <marker date="1462748407999" expanded="true" signature="2944:2977" placeholder="DROP TABLE I... " />
@@ -686,7 +691,6 @@
         <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerIntegrationTestsBasicScheduling.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/utils/BatchJobUtils.java" />
         <option value="$PROJECT_DIR$/src/integration-test/resources/basic.properties" />
-        <option value="$PROJECT_DIR$/src/main/resources/logback.xml" />
         <option value="$PROJECT_DIR$/build.gradle" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/SlaveIntegrationConfiguration.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/scheduling/ScheduledJobLauncher.java" />
@@ -694,11 +698,12 @@
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/Main.java" />
         <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsBasic.java" />
         <option value="dbtable:/52084ea8/ebd99f2c-3e72-4bf5-8a61-90d842e725de/minicogs.public.tbloutputdocs" />
-        <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/partitioners/ColumnRangePartitioner.java" />
         <option value="$PROJECT_DIR$/src/integration-test/resources/jobAndStep.properties" />
         <option value="$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_basic.properties" />
         <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsBasicScheduling.java" />
         <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresTestUtils.java" />
+        <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/partitioners/ColumnRangePartitioner.java" />
+        <option value="$PROJECT_DIR$/src/main/resources/logback.xml" />
       </list>
     </option>
   </component>
@@ -748,7 +753,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="PackagesPane">
         <subPane>
           <PATH>
@@ -915,6 +919,7 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane />
       </pane>
@@ -1819,6 +1824,7 @@
       <workItem from="1462532420502" duration="6064000" />
       <workItem from="1462725322024" duration="8814000" />
       <workItem from="1462735943316" duration="10962000" />
+      <workItem from="1462788363520" duration="774000" />
     </task>
     <servers />
   </component>
@@ -1855,7 +1861,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="323107000" />
+    <option name="totallyTimeSpent" value="323881000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="65" y="-4" width="1301" height="772" extended-state="6" />
@@ -1863,31 +1869,31 @@
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4718101" sideWeight="0.48525897" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25940996" sideWeight="0.37304583" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32988048" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.045994066" sideWeight="0.6269542" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Spring" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32937685" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.089243025" sideWeight="0.49213484" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19840637" sideWeight="0.49213484" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1689243" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19282869" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24940239" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24940239" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31360492" sideWeight="0.5078652" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.30267063" sideWeight="0.49243027" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24940239" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.30267063" sideWeight="0.49243027" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4718101" sideWeight="0.48525897" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="SBT" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.53549695" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.045994066" sideWeight="0.6269542" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32974634" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5964392" sideWeight="0.49730977" order="1" side_tool="false" content_ui="tabs" />
     </layout>
@@ -2043,7 +2049,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="396">
           <caret line="22" column="43" selection-start-line="22" selection-start-column="43" selection-end-line="22" selection-end-column="43" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2051,7 +2056,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="396">
           <caret line="22" column="43" selection-start-line="22" selection-start-column="43" selection-end-line="22" selection-end-column="43" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2059,7 +2063,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="396">
           <caret line="22" column="43" selection-start-line="22" selection-start-column="43" selection-end-line="22" selection-end-column="43" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2074,7 +2077,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="306">
           <caret line="77" column="50" selection-start-line="77" selection-start-column="50" selection-end-line="77" selection-end-column="50" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2181,19 +2183,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/logback.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="176">
-          <caret line="14" column="62" selection-start-line="14" selection-start-column="62" selection-end-line="14" selection-end-column="62" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="18">
           <caret line="168" column="47" selection-start-line="168" selection-start-column="47" selection-end-line="168" selection-end-column="47" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2267,7 +2260,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="126">
           <caret line="39" column="3" selection-start-line="39" selection-start-column="3" selection-end-line="39" selection-end-column="3" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2288,7 +2280,6 @@
       <provider editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2296,16 +2287,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="199">
           <caret line="68" column="0" selection-start-line="68" selection-start-column="0" selection-end-line="68" selection-end-column="0" />
-          <folding>
-            <marker date="1462728475314" expanded="true" signature="1161:1486" placeholder="SELECT MIN(m... missingValue" />
-            <marker date="1462728475314" expanded="true" signature="1167:1486" placeholder="select MIN(m... missingValue" />
-            <marker date="1462728475314" expanded="true" signature="1876:2154" placeholder="SELECT MAX(s... batch_job_execution" />
-            <marker date="1462728475314" expanded="true" signature="1886:2154" placeholder="select max(s... batch_job_execution" />
-            <marker date="1462728475314" expanded="true" signature="2419:2797" placeholder="SELECT MAX(j... batch_job_execution" />
-            <marker date="1462728475314" expanded="true" signature="2419:2908" placeholder="SELECT MAX(j... batch_job_execution" />
-            <marker date="1462728475314" expanded="true" signature="2425:2686" placeholder="select max(j... batch_job_execution" />
-            <marker date="1462728475314" expanded="true" signature="2425:2797" placeholder="select max(j... batch_job_execution" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -2318,7 +2299,6 @@
       <provider editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2340,7 +2320,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/itemHandlers/ItemHandlers.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="118">
+        <state relative-caret-position="522">
           <caret line="54" column="0" selection-start-line="54" selection-start-column="0" selection-end-line="54" selection-end-column="0" />
           <folding />
         </state>
@@ -2348,7 +2328,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_gate.properties">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="368">
+        <state relative-caret-position="630">
           <caret line="35" column="19" selection-start-line="35" selection-start-column="19" selection-end-line="35" selection-end-column="28" />
           <folding />
         </state>
@@ -2356,23 +2336,9 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_tika.properties">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="332">
+        <state relative-caret-position="594">
           <caret line="33" column="16" selection-start-line="33" selection-start-column="16" selection-end-line="33" selection-end-column="16" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/partitioners/ColumnRangePartitioner.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="128">
-          <caret line="94" column="0" selection-start-line="94" selection-start-column="0" selection-end-line="94" selection-end-column="0" />
-          <folding>
-            <element signature="e#3088#3114#0" expanded="true" />
-            <marker date="1462744735335" expanded="true" signature="6340:6483" placeholder="SELECT MAX(m... missingValue" />
-            <marker date="1462744735335" expanded="true" signature="7036:7508" placeholder="SELECT MAX(m... missingValue" />
-            <marker date="1462744735335" expanded="true" signature="7333:7508" placeholder="SELECT missi... missingValue" />
-            <marker date="1462744735335" expanded="true" signature="9798:9834" placeholder="SELECT MIN(m... missingValue" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -2391,7 +2357,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/integration-test/resources/postgres_test_config_basic.properties">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="227">
+        <state relative-caret-position="468">
           <caret line="26" column="12" selection-start-line="26" selection-start-column="12" selection-end-line="26" selection-end-column="12" />
           <folding />
         </state>
@@ -2428,7 +2394,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresTestUtils.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="18">
+        <state relative-caret-position="2072">
           <caret line="143" column="27" selection-start-line="143" selection-start-column="27" selection-end-line="143" selection-end-column="27" />
           <folding>
             <marker date="1462748407999" expanded="true" signature="2944:2977" placeholder="DROP TABLE I... " />
@@ -2452,6 +2418,27 @@
             <marker date="1462748407999" expanded="true" signature="9998:10258" placeholder="INSERT INTO tblInputDocs... " />
             <marker date="1462748407999" expanded="true" signature="10746:10947" placeholder="INSERT INTO tblDocLines... " />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/partitioners/ColumnRangePartitioner.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="608">
+          <caret line="138" column="1" selection-start-line="138" selection-start-column="1" selection-end-line="138" selection-end-column="1" />
+          <folding>
+            <marker date="1462788411428" expanded="true" signature="6337:6480" placeholder="SELECT MAX(m... missingValue" />
+            <marker date="1462788411428" expanded="true" signature="7033:7505" placeholder="SELECT MAX(m... missingValue" />
+            <marker date="1462788411428" expanded="true" signature="7330:7505" placeholder="SELECT missi... missingValue" />
+            <marker date="1462788411428" expanded="true" signature="9795:9831" placeholder="SELECT MIN(m... missingValue" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/logback.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="414">
+          <caret line="23" column="28" selection-start-line="23" selection-start-column="28" selection-end-line="23" selection-end-column="28" />
+          <folding />
         </state>
       </provider>
     </entry>

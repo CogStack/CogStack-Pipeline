@@ -146,9 +146,6 @@ public class ColumnRangePartitioner implements Partitioner {
                 logger.info("partitioning complete");
                 return result;
             }
-
-
-
         }
     }
 
