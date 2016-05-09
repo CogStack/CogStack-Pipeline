@@ -56,10 +56,9 @@ public class PostGresIntegrationTestsBasicScheduling {
     @Test
     public void postgresGatePipelineTest() {
         utils.initPostGresJobRepository();
-       utils.createBasicInputTable();
-       utils.createBasicOutputTable();
-       utils.insertDataIntoBasicTable();
-
+        utils.createBasicInputTable();
+        utils.createBasicOutputTable();
+        utils.insertDataIntoBasicTable();
         try {
             Thread.sleep(1000000000);
         } catch (InterruptedException e) {

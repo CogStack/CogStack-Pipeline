@@ -30,6 +30,9 @@ import uk.ac.kcl.itemProcessors.DbLineFixerItemProcessor;
 import uk.ac.kcl.model.Document;
 
 import javax.annotation.Resource;
+import java.net.NoRouteToHostException;
+import java.sql.SQLException;
+import java.util.concurrent.TimeoutException;
 
 /**
  *
@@ -103,6 +106,9 @@ public class DbLineFixerConfiguration {
                 .faultTolerant()
                 .skipLimit(Integer.parseInt(env.getProperty("skipLimit")))
                 .skip(Exception.class)
+                .noSkip(SQLException.class)
+                .noSkip(TimeoutException.class)
+                .noSkip(NoRouteToHostException.class)
                 .taskExecutor(taskExecutor)
                 .build();
 

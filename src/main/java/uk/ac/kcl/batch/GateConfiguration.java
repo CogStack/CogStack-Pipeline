@@ -32,7 +32,10 @@ import uk.ac.kcl.service.GateService;
 
 import javax.annotation.Resource;
 import java.io.File;
+import java.net.NoRouteToHostException;
+import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.concurrent.TimeoutException;
 
 /**
  *
@@ -91,6 +94,9 @@ public class GateConfiguration {
                 .faultTolerant()
                 .skipLimit(Integer.valueOf(env.getProperty("skipLimit")))
                 .skip(Exception.class)
+                .noSkip(SQLException.class)
+                .noSkip(TimeoutException.class)
+                .noSkip(NoRouteToHostException.class)
                 .taskExecutor(taskExecutor)
                 .build();
 

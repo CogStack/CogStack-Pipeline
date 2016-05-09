@@ -7,11 +7,9 @@ import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
-import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.item.database.JdbcPagingItemReader;
 import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean;
 import org.springframework.batch.item.support.CompositeItemWriter;
-import org.springframework.batch.item.support.SynchronizedItemStreamReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,7 +20,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.RowMapper;
 import uk.ac.kcl.model.BinaryDocument;
 import uk.ac.kcl.model.Document;
-import uk.ac.kcl.model.ScheduledPartitionParams;
 import uk.ac.kcl.model.TextDocument;
 
 import javax.annotation.Resource;
@@ -58,35 +55,6 @@ public class ItemHandlers {
         return returnString;
     }
 
-
-//    private ItemReader<Document> switchToCursorItemReader(boolean bool, DataSource source){
-//                ItemReader<Document> returnReader;
-//                if(bool) {
-//                    //swapped for threadsafety
-//                    returnReader = new SynchronizedItemStreamReader<>();
-//                    JdbcCursorItemReader<BinaryDocument> innerReader = new JdbcCursorItemReader<>();
-//                    innerReader.setFetchSize(Integer.parseInt(env.getProperty("fetchSize")));
-//                    innerReader.setMaxRows(Integer.parseInt(env.getProperty("maxRows")));
-//                    innerReader.setDataSource(source);
-//                    innerReader.setSql(env.getProperty("source.Sql"));
-//                    innerReader.setFetchSize(Integer.parseInt(env.getProperty("source.pageSize")));
-//                }else{
-//                    JdbcPagingItemReader<Document> reader = new JdbcPagingItemReader<>();
-//                    reader.setDataSource(source);
-//                    SqlPagingQueryProviderFactoryBean qp = new SqlPagingQueryProviderFactoryBean();
-//                    qp.setSelectClause(env.getProperty("source.selectClause"));
-//                    qp.setFromClause(env.getProperty("source.fromClause"));
-//                    qp.setSortKey(env.getProperty("source.sortKey"));
-//                    qp.setWhereClause(getPartitioningLogic(minValue,maxValue, minTimeStamp,maxTimeStamp));
-//                    qp.setDataSource(jdbcDocumentSource);
-//                    reader.setFetchSize(Integer.parseInt(env.getProperty("source.pageSize")));
-//                    reader.setQueryProvider(qp.getObject());
-//                    reader.setRowMapper(documentRowmapper);
-//                }
-//    }
-
-
-
     @Bean
     @StepScope
     @Qualifier("documentItemReader")
@@ -111,7 +79,6 @@ public class ItemHandlers {
         reader.setRowMapper(documentRowmapper);
         return reader;
     }
-
 
     @Bean
     @StepScope
@@ -138,7 +105,6 @@ public class ItemHandlers {
 
         return reader;
     }
-
 
     @Bean
     @StepScope
@@ -168,7 +134,8 @@ public class ItemHandlers {
     @Bean
     @Qualifier("simpleJdbcItemWriter")
     @Profile("jdbc")
-    public ItemWriter<Document> simpleJdbcItemWriter(@Qualifier("targetDataSource") DataSource jdbcDocumentTarget) {
+    public ItemWriter<Document> simpleJdbcItemWriter(
+            @Qualifier("targetDataSource") DataSource jdbcDocumentTarget) {
         JdbcBatchItemWriter<Document> writer = new JdbcBatchItemWriter<>();
         writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
         writer.setSql(env.getProperty("target.Sql"));
@@ -190,16 +157,13 @@ public class ItemHandlers {
     public ItemWriter<Document> compositeESandJdbcItemWriter() {
         CompositeItemWriter writer = new CompositeItemWriter<>();
         ArrayList<ItemWriter<Document>> delegates = new ArrayList<>();
-
         if(esItemWriter !=null) {
             delegates.add(esItemWriter);
         }
         if(jdbcItemWriter !=null) {
             delegates.add(jdbcItemWriter);
         }
-
         writer.setDelegates(delegates);
         return writer;
     }
-
 }

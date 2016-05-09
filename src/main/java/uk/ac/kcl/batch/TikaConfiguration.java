@@ -30,6 +30,9 @@ import uk.ac.kcl.model.BinaryDocument;
 import uk.ac.kcl.model.Document;
 
 import javax.annotation.Resource;
+import java.net.NoRouteToHostException;
+import java.sql.SQLException;
+import java.util.concurrent.TimeoutException;
 
 /**
  *
@@ -81,6 +84,9 @@ public class TikaConfiguration {
                 .faultTolerant()
                 .skipLimit(Integer.valueOf(env.getProperty("skipLimit")))
                 .skip(Exception.class)
+                 .noSkip(SQLException.class)
+                 .noSkip(TimeoutException.class)
+                 .noSkip(NoRouteToHostException.class)
                 .taskExecutor(taskExecutor)                 
                 .build();
          return step;
