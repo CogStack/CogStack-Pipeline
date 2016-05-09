@@ -1,5 +1,7 @@
 package uk.ac.kcl.itemHandlers;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
@@ -32,6 +34,7 @@ import java.util.ArrayList;
  */
 @Configuration
 public class ItemHandlers {
+    private static final Logger LOG = LoggerFactory.getLogger(ItemHandlers.class);
 
     @Resource
     Environment env;
@@ -51,7 +54,7 @@ public class ItemHandlers {
             returnString = ("WHERE " + env.getProperty("columnToProcess")
                     + " BETWEEN " + minValue + " AND " + maxValue) ;
         }
-
+        LOG.info("This step where clause: " + returnString);
         return returnString;
     }
 
@@ -95,7 +98,6 @@ public class ItemHandlers {
             @Qualifier("documentRowMapper")RowMapper<Document> documentRowmapper,
             @Qualifier("sourceDataSource") DataSource jdbcDocumentSource) throws Exception {
 
-
         JdbcPagingItemReader<Document> reader = new JdbcPagingItemReader<>();
         reader.setDataSource(jdbcDocumentSource);
         SqlPagingQueryProviderFactoryBean qp = new SqlPagingQueryProviderFactoryBean();
@@ -104,10 +106,9 @@ public class ItemHandlers {
         qp.setSortKey(env.getProperty("source.sortKey"));
         qp.setWhereClause(getPartitioningLogic(minValue,maxValue, minTimeStamp,maxTimeStamp));
         qp.setDataSource(jdbcDocumentSource);
-        reader.setFetchSize(Integer.parseInt(env.getProperty("source.pageSize")));
+        reader.setPageSize(Integer.parseInt(env.getProperty("source.pageSize")));
         reader.setQueryProvider(qp.getObject());
         reader.setRowMapper(documentRowmapper);
-
         return reader;
     }
 
@@ -131,7 +132,7 @@ public class ItemHandlers {
         qp.setSortKey(env.getProperty("source.sortKey"));
         qp.setWhereClause(getPartitioningLogic(minValue,maxValue, minTimeStamp,maxTimeStamp));
         qp.setDataSource(jdbcDocumentSource);
-        reader.setFetchSize(Integer.parseInt(env.getProperty("source.pageSize")));
+        reader.setPageSize(Integer.parseInt(env.getProperty("source.pageSize")));
         reader.setQueryProvider(qp.getObject());
         reader.setRowMapper(documentRowmapper);
 
@@ -158,7 +159,7 @@ public class ItemHandlers {
         qp.setSortKey(env.getProperty("source.sortKey"));
         qp.setWhereClause(getPartitioningLogic(minValue,maxValue,minTimeStamp,maxTimeStamp));
         qp.setDataSource(jdbcDocumentSource);
-        reader.setFetchSize(Integer.parseInt(env.getProperty("source.pageSize")));
+        reader.setPageSize(Integer.parseInt(env.getProperty("source.pageSize")));
         reader.setQueryProvider(qp.getObject());
         reader.setRowMapper(documentRowmapper);
         return reader;

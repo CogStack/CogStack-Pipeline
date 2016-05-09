@@ -31,7 +31,8 @@ import org.springframework.stereotype.Service;
 import uk.ac.kcl.batch.JobConfiguration;
 import uk.ac.kcl.utils.BatchJobUtils;
 
-import java.util.Date;
+import java.sql.Date;
+
 
 /**
  *
@@ -59,7 +60,7 @@ public class SingleJobLauncher {
 
     public void launchJob()  {
         JobParameters param = new JobParametersBuilder()
-                .addDate("this_attempt_date",new Date())
+                .addDate("this_attempt_date",new Date(System.currentTimeMillis()))
                 .addString("jobClass",env.getProperty("jobClass"))
                 .toJobParameters();
         if(env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("true")) {
