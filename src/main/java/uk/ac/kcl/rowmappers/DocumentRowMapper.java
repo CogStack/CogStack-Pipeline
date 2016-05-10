@@ -15,6 +15,9 @@
  */
 package uk.ac.kcl.rowmappers;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.RowMapper;
@@ -72,8 +75,10 @@ public class DocumentRowMapper implements RowMapper<Document>{
         doc.setSrcColumnFieldName(rs.getString(srcColumnFieldName));
         doc.setPrimaryKeyFieldName(rs.getString(primaryKeyFieldName));
         doc.setPrimaryKeyFieldValue(rs.getString(primaryKeyFieldValue));
-        doc.setTimeStamp(rs.getDate(timeStamp));
+        doc.setTimeStamp(rs.getTimestamp(timeStamp));
 
+
+        DateTimeFormatter fmt = DateTimeFormat.forPattern(env.getProperty("datePatternForES"));
         //add additional query fields for ES export
         ResultSetMetaData meta = rs.getMetaData();
         int colCount = meta.getColumnCount();
@@ -85,19 +90,17 @@ public class DocumentRowMapper implements RowMapper<Document>{
                 {
                     if(meta.getColumnType(col)==91) {
                         Date dt = (Date)value;
-                        Timestamp ts = new Timestamp(dt.getTime());
-                        doc.getAdditionalFields().put(meta.getColumnLabel(col), batchJobUtils.convertTimeStampToESDateFormat(ts));
+                        DateTime dateTime = new DateTime(dt.getTime());
+                        doc.getAdditionalFields().put(meta.getColumnLabel(col), fmt.print(dateTime));
                     }else if (meta.getColumnType(col)==93){
                         Timestamp ts = (Timestamp) value;
-                        doc.getAdditionalFields().put(meta.getColumnLabel(col), batchJobUtils.convertTimeStampToESDateFormat(ts));
+                        DateTime dateTime = new DateTime(ts.getTime());
+                        doc.getAdditionalFields().put(meta.getColumnLabel(col), fmt.print(dateTime));
                     }else {
                         doc.getAdditionalFields().put(meta.getColumnLabel(col), rs.getString(col));
                     }
-
                 }
             }
-
-
     }
 
     @Override

@@ -52,9 +52,9 @@ public class PostGresIntegrationTestsBasic {
 
     @Test
     public void postgresBasicPipelineTest() {
+        utils.initPostGresJobRepository();
         utils.createBasicInputTable();
         utils.createBasicOutputTable();
-        utils.initPostGresJobRepository();
         utils.insertDataIntoBasicTable();
         jobLauncher.launchJob();
     }

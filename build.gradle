@@ -109,6 +109,7 @@ dependencies {
     //compile 'org.slf4j:slf4j-log4j12:1.7.21'
     //compile 'org.slf4j:slf4j-api:1.7.21'
     //compile 'log4j:log4j:1.2.17'
+    compile 'joda-time:joda-time:2.9.3'
     compile "org.elasticsearch.plugin:shield:2.2.0"
     compile 'org.elasticsearch:elasticsearch:2.2.0'
     compile("org.springframework.boot:spring-boot-starter-batch")
