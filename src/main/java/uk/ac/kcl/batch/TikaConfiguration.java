@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.dao.TransientDataAccessResourceException;
 import uk.ac.kcl.itemHandlers.ItemHandlers;
 import uk.ac.kcl.itemProcessors.TikaDocumentItemProcessor;
 import uk.ac.kcl.model.BinaryDocument;
@@ -87,6 +88,7 @@ public class TikaConfiguration {
                  .noSkip(SQLException.class)
                  .noSkip(TimeoutException.class)
                  .noSkip(NoRouteToHostException.class)
+                 .noSkip(TransientDataAccessResourceException.class)
                 .taskExecutor(taskExecutor)                 
                 .build();
          return step;

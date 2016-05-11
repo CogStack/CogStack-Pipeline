@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.dao.TransientDataAccessResourceException;
 import uk.ac.kcl.itemHandlers.ItemHandlers;
 import uk.ac.kcl.itemProcessors.DbLineFixerItemProcessor;
 import uk.ac.kcl.model.Document;
@@ -109,6 +110,7 @@ public class DbLineFixerConfiguration {
                 .noSkip(SQLException.class)
                 .noSkip(TimeoutException.class)
                 .noSkip(NoRouteToHostException.class)
+                .noSkip(TransientDataAccessResourceException.class)
                 .taskExecutor(taskExecutor)
                 .build();
 
