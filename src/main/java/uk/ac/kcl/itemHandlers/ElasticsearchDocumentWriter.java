@@ -108,9 +108,17 @@ public class ElasticsearchDocumentWriter implements ItemWriter<Document> {
 
     private void getResponses(BulkResponse response) {
         if (response.hasFailures()) {
+
             for (int i=0;i<response.getItems().length;i++){
-                LOG.error("failed to index document: " + response.getItems()[i].getFailureMessage());
-                throw new ElasticsearchException("Bulk indexing request failed");
+                //in bulk processing, retry all docs one by one. if one fails, log it. If the entire chunk fails,
+                // raise an exception towards skip limit
+                if(response.getItems().length == 1){
+                    LOG.warn("failed to index document: " + response.getItems()[i].getId() + " failure is: \n"
+                            + response.getItems()[i].getFailureMessage());
+                }else {
+                    LOG.error("failed to index document: " + response.getItems()[i].getFailureMessage());
+                    throw new ElasticsearchException("Bulk indexing request failed");
+                }
             }
         }
         LOG.info("{} documents indexed into ElasticSearch in {} ms", response.getItems().length,

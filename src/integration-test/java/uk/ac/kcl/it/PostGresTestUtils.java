@@ -76,6 +76,7 @@ public class PostGresTestUtils {
     private ResourceDatabasePopulator rdp = new ResourceDatabasePopulator();
     private Resource dropTablesResource;
     private Resource makeTablesResource;
+    private RandomString massiveString = new RandomString(5000000);
 
 
     @PostConstruct
@@ -212,7 +213,7 @@ public class PostGresTestUtils {
                 + ", input"
                 + ") VALUES (?,?,?,?,?,?)";
         for (long ii = 0; ii < docCount; ii++) {
-            jdbcTemplate.update(sql, "fictionalColumnFieldName","fictionalTableName","fictionalPrimaryKeyFieldName", ii,new Date(today),  xhtmlString);
+            jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName", "fictionalPrimaryKeyFieldName", ii, new Date(today), xhtmlString);
             today = nextDay(today);
 
         }
@@ -265,7 +266,14 @@ public class PostGresTestUtils {
                 + ") VALUES (?,?,?,?,?,?)";
 
         for (long i = 0; i <= docCount; i++) {
-            jdbcTemplate.update(sql, "fictionalColumnFieldName","fictionalTableName","fictionalPrimaryKeyFieldName",i,new Timestamp(today),new Timestamp(today));
+            if (i==0) {
+                //test for massive string in ES
+                jdbcTemplate.update(sql, massiveString.nextString(), "fictionalTableName",
+                        "fictionalPrimaryKeyFieldName", i, new Timestamp(today),new Timestamp(today));
+            }else{
+                jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName",
+                        "fictionalPrimaryKeyFieldName", i, new Timestamp(today),new Timestamp(today));
+            }
             today = nextDay(today);
         }
     }
