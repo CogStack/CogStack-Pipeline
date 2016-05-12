@@ -15,6 +15,7 @@
  */
 package uk.ac.kcl.scheduling;
 
+import org.postgresql.util.PSQLException;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.launch.JobLauncher;
@@ -27,6 +28,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
+import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Service;
 import uk.ac.kcl.batch.JobConfiguration;
@@ -85,15 +87,12 @@ public class SingleJobLauncher {
                     LOG.info("Not using timeStampBasedScheduling");
                 }
 
-                try {
                     JobExecution execution = jobLauncher.run(job, param);
                     System.out.println(execution.getStatus().toString());
-                } catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException | JobParametersInvalidException ex) {
-                    LOG.error("Cannot launch job", ex);
-                }
+
             }
-        }catch (SQLException ex){
-            LOG.error("SQL Connection(s) are not valid", ex);
+        } catch (Exception ex){
+            LOG.error("Cannot start job", ex);
         }
     }
 }

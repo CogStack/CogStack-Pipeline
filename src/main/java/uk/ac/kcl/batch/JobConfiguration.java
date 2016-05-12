@@ -18,6 +18,8 @@ package uk.ac.kcl.batch;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.commons.dbcp.BasicDataSource;
+import org.postgresql.util.PSQLException;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.integration.partition.BeanFactoryStepLocator;
@@ -32,10 +34,13 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.integration.config.EnableIntegration;
+import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.support.MetaDataAccessException;
 import org.springframework.jms.connection.CachingConnectionFactory;
+import uk.ac.kcl.scheduling.SingleJobLauncher;
 
 import javax.sql.DataSource;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
@@ -57,7 +62,9 @@ import java.util.ArrayList;
         MasterIntegrationConfiguration.class
 })
 public class JobConfiguration {
-    /* 
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(JobConfiguration.class);
+
+    /*
         
     
     *******************************************COMMON BEANS
@@ -90,16 +97,19 @@ public class JobConfiguration {
     @Value("${source.password}")
     String sourcePassword;
 
+
     @Bean(destroyMethod = "close")
     @Primary
     @Qualifier("sourceDataSource")
-    public DataSource sourceDataSource() {
+    @Scope("prototype")
+    public DataSource refreshableSourceDataSource() {
         BasicDataSource tempDatasource = new BasicDataSource();
+        BasicDataSource mainDatasource = new BasicDataSource();
         tempDatasource.setDriverClassName(env.getProperty("source.Driver"));
         tempDatasource.setUsername(sourceUserName);
         tempDatasource.setPassword(sourcePassword);
         tempDatasource.setUrl(env.getProperty("source.JdbcPath"));
-        BasicDataSource mainDatasource = new BasicDataSource();
+
         executeSessionScripts(tempDatasource, mainDatasource);
         mainDatasource.setTestOnReturn(true);
         mainDatasource.setTestOnBorrow(true);
@@ -109,33 +119,56 @@ public class JobConfiguration {
         mainDatasource.setUrl(env.getProperty("source.JdbcPath"));
         mainDatasource.setUsername(sourceUserName);
         mainDatasource.setPassword(sourcePassword);
+
         return mainDatasource;
     }
+
+
+
+//    @Bean(destroyMethod = "close")
+//    @Primary
+//    @Qualifier("s1ourceDataSource")
+//    public DataSource sourceDataSource
+//            (@Qualifier("refreshableSourceDataSource") DataSource ds) {
+//        return ds;
+//    }
 
     @Bean(destroyMethod = "close")
+    @Scope("prototype")
     @Qualifier("targetDataSource")
-    public DataSource targetDataSource() {
+    public DataSource refreshableTargetDataSource() {
 
         BasicDataSource tempDatasource = new BasicDataSource();
-        tempDatasource.setDriverClassName(env.getProperty("target.Driver"));
-        tempDatasource.setUsername(targetUserName);
-        tempDatasource.setPassword(targetPassword);
-        tempDatasource.setUrl(env.getProperty("target.JdbcPath"));
-
-
         BasicDataSource mainDatasource = new BasicDataSource();
-        executeSessionScripts(tempDatasource, mainDatasource);
-        mainDatasource.setTestOnReturn(true);
-        mainDatasource.setTestOnBorrow(true);
-        //mainDatasource.setDefaultAutoCommit(false);
-        mainDatasource.setValidationQuery(env.getProperty("target.connectionValidationQuery"));
-        mainDatasource.setDriverClassName(env.getProperty("target.Driver"));
-        mainDatasource.setUrl(env.getProperty("target.JdbcPath"));
-        mainDatasource.setUsername(targetUserName);
-        mainDatasource.setPassword(targetPassword);
+
+            tempDatasource.setDriverClassName(env.getProperty("target.Driver"));
+            tempDatasource.setUsername(targetUserName);
+            tempDatasource.setPassword(targetPassword);
+            tempDatasource.setUrl(env.getProperty("target.JdbcPath"));
+
+
+
+            executeSessionScripts(tempDatasource, mainDatasource);
+            mainDatasource.setTestOnReturn(true);
+            mainDatasource.setTestOnBorrow(true);
+            //mainDatasource.setDefaultAutoCommit(false);
+            mainDatasource.setValidationQuery(env.getProperty("target.connectionValidationQuery"));
+            mainDatasource.setDriverClassName(env.getProperty("target.Driver"));
+            mainDatasource.setUrl(env.getProperty("target.JdbcPath"));
+            mainDatasource.setUsername(targetUserName);
+            mainDatasource.setPassword(targetPassword);
 
         return mainDatasource;
     }
+
+
+//    @Bean(destroyMethod = "close")
+//    @Qualifier("t1argetDataSource")
+//    public DataSource targetDataSource(
+//            @Qualifier("refreshableTargetDataSource") DataSource ds) {
+//        return ds;
+//
+//    }
 
 
     private void executeSessionScripts(BasicDataSource tempDatasource, BasicDataSource mainDatasource) {
