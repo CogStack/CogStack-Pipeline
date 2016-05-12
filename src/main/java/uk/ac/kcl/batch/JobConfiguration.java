@@ -101,10 +101,16 @@ public class JobConfiguration {
     @Bean(destroyMethod = "close")
     @Primary
     @Qualifier("sourceDataSource")
-    @Scope("prototype")
+    //@Scope("prototype")
     public DataSource refreshableSourceDataSource() {
         BasicDataSource tempDatasource = new BasicDataSource();
+        setUpReconnectionParams(tempDatasource);
+        tempDatasource.setValidationQuery(env.getProperty("source.connectionValidationQuery"));
         BasicDataSource mainDatasource = new BasicDataSource();
+        setUpReconnectionParams(mainDatasource);
+        mainDatasource.setValidationQuery(env.getProperty("source.connectionValidationQuery"));
+
+
         tempDatasource.setDriverClassName(env.getProperty("source.Driver"));
         tempDatasource.setUsername(sourceUserName);
         tempDatasource.setPassword(sourcePassword);
@@ -113,6 +119,8 @@ public class JobConfiguration {
         executeSessionScripts(tempDatasource, mainDatasource);
         mainDatasource.setTestOnReturn(true);
         mainDatasource.setTestOnBorrow(true);
+        mainDatasource.setTestWhileIdle(true);
+
         //mainDatasource.setDefaultAutoCommit(false);
         mainDatasource.setValidationQuery(env.getProperty("source.connectionValidationQuery"));
         mainDatasource.setDriverClassName(env.getProperty("source.Driver"));
@@ -134,12 +142,16 @@ public class JobConfiguration {
 //    }
 
     @Bean(destroyMethod = "close")
-    @Scope("prototype")
+    //@Scope("prototype")
     @Qualifier("targetDataSource")
     public DataSource refreshableTargetDataSource() {
 
         BasicDataSource tempDatasource = new BasicDataSource();
+        setUpReconnectionParams(tempDatasource);
+        tempDatasource.setValidationQuery(env.getProperty("target.connectionValidationQuery"));
         BasicDataSource mainDatasource = new BasicDataSource();
+        setUpReconnectionParams(mainDatasource);
+        mainDatasource.setValidationQuery(env.getProperty("target.connectionValidationQuery"));
 
             tempDatasource.setDriverClassName(env.getProperty("target.Driver"));
             tempDatasource.setUsername(targetUserName);
@@ -149,8 +161,7 @@ public class JobConfiguration {
 
 
             executeSessionScripts(tempDatasource, mainDatasource);
-            mainDatasource.setTestOnReturn(true);
-            mainDatasource.setTestOnBorrow(true);
+            setUpReconnectionParams(mainDatasource);
             //mainDatasource.setDefaultAutoCommit(false);
             mainDatasource.setValidationQuery(env.getProperty("target.connectionValidationQuery"));
             mainDatasource.setDriverClassName(env.getProperty("target.Driver"));
@@ -161,6 +172,13 @@ public class JobConfiguration {
         return mainDatasource;
     }
 
+
+    private void setUpReconnectionParams(BasicDataSource ds){
+
+        ds.setTestOnReturn(true);
+        ds.setTestOnBorrow(true);
+        ds.setTestWhileIdle(true);
+    }
 
 //    @Bean(destroyMethod = "close")
 //    @Qualifier("t1argetDataSource")
