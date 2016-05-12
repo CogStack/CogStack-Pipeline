@@ -22,6 +22,7 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
@@ -31,7 +32,9 @@ import org.springframework.stereotype.Service;
 import uk.ac.kcl.batch.JobConfiguration;
 import uk.ac.kcl.utils.BatchJobUtils;
 
+import javax.sql.DataSource;
 import java.sql.Date;
+import java.sql.SQLException;
 
 
 /**
@@ -56,25 +59,41 @@ public class SingleJobLauncher {
     @Autowired(required=false)
     BatchJobUtils batchJobUtils;
 
+    @Autowired
+    @Qualifier("targetDataSource")
+    DataSource targetDataSource;
+
+    @Autowired
+    @Qualifier("sourceDataSource")
+    DataSource sourceDataSource;
+
+
+
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(SingleJobLauncher.class);
 
     public void launchJob()  {
-        JobParameters param = new JobParametersBuilder()
-                .addDate("this_attempt_date",new Date(System.currentTimeMillis()))
-                .addString("jobClass",env.getProperty("jobClass"))
-                .toJobParameters();
-        if(env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("true")) {
-            Object lastGoodJob = batchJobUtils.getLastSuccessfulRecordTimestamp();
-            LOG.info("Last good run was " + lastGoodJob + ". Recommencing from then");
-        }else{
-            LOG.info("Not using timeStampBasedScheduling");
-        }
-
         try {
-            JobExecution execution = jobLauncher.run(job, param);
-            System.out.println(execution.getStatus().toString());
-        } catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException | JobParametersInvalidException ex) {
-            LOG.error("Cannot launch job",ex);
+            if (sourceDataSource.getConnection().isValid(10) && targetDataSource.getConnection().isValid(10)) {
+                JobParameters param = new JobParametersBuilder()
+                        .addDate("this_attempt_date", new Date(System.currentTimeMillis()))
+                        .addString("jobClass", env.getProperty("jobClass"))
+                        .toJobParameters();
+                if (env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("true")) {
+                    Object lastGoodJob = batchJobUtils.getLastSuccessfulRecordTimestamp();
+                    LOG.info("Last good run was " + lastGoodJob + ". Recommencing from then");
+                } else {
+                    LOG.info("Not using timeStampBasedScheduling");
+                }
+
+                try {
+                    JobExecution execution = jobLauncher.run(job, param);
+                    System.out.println(execution.getStatus().toString());
+                } catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException | JobParametersInvalidException ex) {
+                    LOG.error("Cannot launch job", ex);
+                }
+            }
+        }catch (SQLException ex){
+            LOG.error("SQL Connection(s) are not valid", ex);
         }
     }
 }
