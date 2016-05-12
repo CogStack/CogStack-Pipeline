@@ -103,7 +103,7 @@ public class JobConfiguration {
         executeSessionScripts(tempDatasource, mainDatasource);
         mainDatasource.setTestOnReturn(true);
         mainDatasource.setTestOnBorrow(true);
-        mainDatasource.setDefaultAutoCommit(false);
+        //mainDatasource.setDefaultAutoCommit(false);
         mainDatasource.setValidationQuery(env.getProperty("source.connectionValidationQuery"));
         mainDatasource.setDriverClassName(env.getProperty("source.Driver"));
         mainDatasource.setUrl(env.getProperty("source.JdbcPath"));
@@ -127,7 +127,7 @@ public class JobConfiguration {
         executeSessionScripts(tempDatasource, mainDatasource);
         mainDatasource.setTestOnReturn(true);
         mainDatasource.setTestOnBorrow(true);
-        mainDatasource.setDefaultAutoCommit(false);
+        //mainDatasource.setDefaultAutoCommit(false);
         mainDatasource.setValidationQuery(env.getProperty("target.connectionValidationQuery"));
         mainDatasource.setDriverClassName(env.getProperty("target.Driver"));
         mainDatasource.setUrl(env.getProperty("target.JdbcPath"));

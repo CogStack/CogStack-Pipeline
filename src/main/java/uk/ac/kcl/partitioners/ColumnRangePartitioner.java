@@ -15,6 +15,9 @@
  */
 package uk.ac.kcl.partitioners;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.partition.support.Partitioner;
@@ -96,17 +99,29 @@ public class ColumnRangePartitioner implements Partitioner {
         if (env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("false")) {
             logger.info("Commencing PK only partition");
             PartitionParams params = getUnscheduledPartitionParams();
-            long targetSize = (params.getMaxId() - params.getMinId()) / gridSize + 1;
-            long start = params.getMinId();
-            long end = start + targetSize - 1;
-            for (int i = 0; i < gridSize; i++) {
+
+            if(params.getMinId() == params.getMaxId()){
+                logger.info("Only one step to generate this job");
                 ExecutionContext value = new ExecutionContext();
-                result.put("partition" + (i + 1), value);
-                value.putLong("minValue", start);
-                value.putLong("maxValue", end);
-                start += targetSize;
-                end += targetSize;
+                result.put("partition " + 1, value);
+                value.putLong("minValue", params.getMinId());
+                value.putLong("maxValue", params.getMaxId());
+                value.putString("note", "this job generated only one slave step");
+            }else {
+                logger.info("Multiple steps to generate this job");
+                long targetSize = (params.getMaxId() - params.getMinId()) / gridSize + 1;
+                long start = params.getMinId();
+                long end = start + targetSize - 1;
+                for (int i = 0; i < gridSize; i++) {
+                    ExecutionContext value = new ExecutionContext();
+                    result.put("partition" + (i + 1), value);
+                    value.putLong("minValue", start);
+                    value.putLong("maxValue", end);
+                    start += targetSize;
+                    end += targetSize;
+                }
             }
+
             logger.info("partitioning complete");
             return result;
         }else{
@@ -133,15 +148,28 @@ public class ColumnRangePartitioner implements Partitioner {
                 long start = params.getMinId();
                 long end = start + targetSize - 1;
                 logger.info("Commencing timestamp ordered PK partitioning");
-                for (int i = 0; i < gridSize; i++) {
+                if(params.getMinId()==params.getMaxId()) {
+                    logger.info("Only one step to generate this job");
                     ExecutionContext value = new ExecutionContext();
-                    result.put("partition" + (i + 1), value);
-                    value.putLong("minValue", start);
-                    value.putLong("maxValue", end);
+                    result.put("partition " + 1, value);
+                    value.putLong("minValue", params.getMinId());
+                    value.putLong("maxValue", params.getMaxId());
                     value.put("min_time_stamp", params.getMinTimeStamp().toString());
                     value.put("max_time_stamp", params.getMaxTimeStamp().toString());
-                    start += targetSize;
-                    end += targetSize;
+                    value.putString("note", "this job generated only one slave step");
+
+                }else{
+                    logger.info("Multiple steps to generate this job");
+                    for (int i = 0; i < gridSize; i++) {
+                        ExecutionContext value = new ExecutionContext();
+                        result.put("partition" + (i + 1), value);
+                        value.putLong("minValue", start);
+                        value.putLong("maxValue", end);
+                        value.put("min_time_stamp", params.getMinTimeStamp().toString());
+                        value.put("max_time_stamp", params.getMaxTimeStamp().toString());
+                        start += targetSize;
+                        end += targetSize;
+                    }
                 }
                 logger.info("partitioning complete");
                 return result;
@@ -172,12 +200,12 @@ public class ColumnRangePartitioner implements Partitioner {
 
     private ScheduledPartitionParams getScheduledPartitionParams() {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-        String sql = " SELECT "   +
-                " MAX(" + column + ") AS max_id , " +
-                " MIN(" + column + ") AS min_id , " +
-                " MAX(" + timeStamp + ") AS max_time_stamp , " +
-                " MIN(" + timeStamp + ") AS min_time_stamp  " +
-                " FROM ( " +
+        String sql = "\n SELECT "   +
+                " MAX(" + column + ") AS max_id , \n" +
+                " MIN(" + column + ") AS min_id , \n" +
+                " MAX(" + timeStamp + ") AS max_time_stamp , \n" +
+                " MIN(" + timeStamp + ") AS min_time_stamp  \n" +
+                " FROM ( \n" +
                 " SELECT " +
                 batchJobUtils.cleanSqlString(env.getProperty("partitionerPreFieldsSQL")) +
                 " " + column + ", " + timeStamp +
@@ -185,12 +213,17 @@ public class ColumnRangePartitioner implements Partitioner {
         if(env.getProperty("firstJobStartDate") !=null && firstRun){
             logger.info ("firstJobStartDate detected in configs. Commencing from " + env.getProperty("firstJobStartDate"));
             lastGoodJob = null;
-            Timestamp earliestRecord = new Timestamp(Long.valueOf(env.getProperty("firstJobStartDate")));
+            DateTimeFormatter formatter = DateTimeFormat.forPattern(env.getProperty("datePatternForSQL"));
+            DateTime dt = formatter.parseDateTime(env.getProperty("firstJobStartDate"));
+            Timestamp earliestRecord = new Timestamp(dt.getMillis());
             processingPeriod = new Timestamp(earliestRecord.getTime() + Long.valueOf(env.getProperty("processingPeriod")));
             sql =	sql +
-                    " WHERE CAST (" + timeStamp + " as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) > CAST ('" + earliestRecord.toString() + "' as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) " +
-                    " AND CAST (" + timeStamp + " as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) <= CAST ('" + processingPeriod.toString() + "' as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) " +
-                    " ORDER BY " + timeStamp +" ASC " +" , " + column +" ASC " +
+                    " WHERE CAST (" + timeStamp + " as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) " +
+                    "\nBETWEEN CAST ('" + env.getProperty("firstJobStartDate") +
+                    "' as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) " +
+                    " AND CAST ('" + processingPeriod.toString() +
+                    "' as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) " +
+                    "\n ORDER BY " + timeStamp +" ASC " +" , " + column +" ASC " +
                     batchJobUtils.cleanSqlString(env.getProperty("partitionerPostOrderByClause")) +
                     " ) t1" ;
             firstRun = false;
@@ -199,9 +232,9 @@ public class ColumnRangePartitioner implements Partitioner {
             logger.info ("last successful batch retrieved from job repository. Commencing from " + lastGoodJob.toString());
             processingPeriod = new Timestamp(lastGoodJob.getTime() + Long.valueOf(env.getProperty("processingPeriod")));
             sql =	sql +
-                    " WHERE CAST (" + timeStamp + " as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) > CAST ('" + lastGoodJob.toString()  + "' as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) " +
-                    " AND CAST ("  + timeStamp +  " as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) <= CAST ('" + processingPeriod.toString() + "' as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) " +
-                    " ORDER BY " + timeStamp  +" ASC " + " , " + column +" ASC " +
+                    "\n WHERE CAST (" + timeStamp + " as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) > CAST ('" + lastGoodJob.toString()  + "' as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) " +
+                    "\n AND CAST ("  + timeStamp +  " as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) <= CAST ('" + processingPeriod.toString() + "' as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) " +
+                    "\n ORDER BY " + timeStamp  +" ASC " + " , " + column +" ASC " +
                     batchJobUtils.cleanSqlString(env.getProperty("partitionerPostOrderByClause")) +
                     " ) t1" ;
         }else{
@@ -213,8 +246,10 @@ public class ColumnRangePartitioner implements Partitioner {
             processingPeriod = new Timestamp(Long.parseLong(test));
             processingPeriod.setTime(earliestRecord.getTime() + processingPeriod.getTime());
             sql =	sql +
-                    " WHERE CAST (" + timeStamp + " as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) >= CAST ('" + earliestRecord.toString()  + "' as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) " +
-                    " AND CAST (" + timeStamp + " as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) <= CAST ('" + processingPeriod.toString()  + "' as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) " +
+                    " WHERE CAST (" + timeStamp + " as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) BETWEEN CAST ('" +
+                    earliestRecord.toString()  +
+                    "' as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) " +
+                    " AND CAST ('" + processingPeriod.toString()  + "' as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) " +
                     " ORDER BY " + timeStamp  +" ASC " + " , " + column +" ASC " +
                     batchJobUtils.cleanSqlString(env.getProperty("partitionerPostOrderByClause")) +
                     " ) t1" ;
