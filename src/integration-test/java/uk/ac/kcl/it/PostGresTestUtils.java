@@ -76,7 +76,7 @@ public class PostGresTestUtils {
     private ResourceDatabasePopulator rdp = new ResourceDatabasePopulator();
     private Resource dropTablesResource;
     private Resource makeTablesResource;
-    private RandomString massiveString = new RandomString(5000000);
+    private RandomString massiveString = new RandomString(5000);
 
 
     @PostConstruct

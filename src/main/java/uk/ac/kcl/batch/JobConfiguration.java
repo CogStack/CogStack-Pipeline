@@ -99,21 +99,44 @@ public class JobConfiguration {
         tempDatasource.setUsername(sourceUserName);
         tempDatasource.setPassword(sourcePassword);
         tempDatasource.setUrl(env.getProperty("source.JdbcPath"));
-
-
         BasicDataSource mainDatasource = new BasicDataSource();
         executeSessionScripts(tempDatasource, mainDatasource);
+        mainDatasource.setTestOnReturn(true);
         mainDatasource.setTestOnBorrow(true);
-        mainDatasource.setValidationQuery("SELECT 1");
+        mainDatasource.setDefaultAutoCommit(false);
+        mainDatasource.setValidationQuery(env.getProperty("source.connectionValidationQuery"));
         mainDatasource.setDriverClassName(env.getProperty("source.Driver"));
         mainDatasource.setUrl(env.getProperty("source.JdbcPath"));
         mainDatasource.setUsername(sourceUserName);
         mainDatasource.setPassword(sourcePassword);
+        return mainDatasource;
+    }
+
+    @Bean(destroyMethod = "close")
+    @Qualifier("targetDataSource")
+    public DataSource targetDataSource() {
+
+        BasicDataSource tempDatasource = new BasicDataSource();
+        tempDatasource.setDriverClassName(env.getProperty("target.Driver"));
+        tempDatasource.setUsername(targetUserName);
+        tempDatasource.setPassword(targetPassword);
+        tempDatasource.setUrl(env.getProperty("target.JdbcPath"));
 
 
+        BasicDataSource mainDatasource = new BasicDataSource();
+        executeSessionScripts(tempDatasource, mainDatasource);
+        mainDatasource.setTestOnReturn(true);
+        mainDatasource.setTestOnBorrow(true);
+        mainDatasource.setDefaultAutoCommit(false);
+        mainDatasource.setValidationQuery(env.getProperty("target.connectionValidationQuery"));
+        mainDatasource.setDriverClassName(env.getProperty("target.Driver"));
+        mainDatasource.setUrl(env.getProperty("target.JdbcPath"));
+        mainDatasource.setUsername(targetUserName);
+        mainDatasource.setPassword(targetPassword);
 
         return mainDatasource;
     }
+
 
     private void executeSessionScripts(BasicDataSource tempDatasource, BasicDataSource mainDatasource) {
         //temp datasource required to get type
@@ -151,9 +174,6 @@ public class JobConfiguration {
         } catch (MetaDataAccessException e) {
             e.printStackTrace();
         }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
     }
 
 
@@ -162,28 +182,7 @@ public class JobConfiguration {
     @Value("${target.password}")
     String targetPassword;
 
-    @Bean(destroyMethod = "close")
-    @Qualifier("targetDataSource")
-    public DataSource targetDataSource() {
 
-        BasicDataSource tempDatasource = new BasicDataSource();
-        tempDatasource.setDriverClassName(env.getProperty("target.Driver"));
-        tempDatasource.setUsername(targetUserName);
-        tempDatasource.setPassword(targetPassword);
-        tempDatasource.setUrl(env.getProperty("target.JdbcPath"));
-
-
-        BasicDataSource mainDatasource = new BasicDataSource();
-        executeSessionScripts(tempDatasource, mainDatasource);
-        mainDatasource.setTestOnBorrow(true);
-        mainDatasource.setValidationQuery("SELECT 1");
-        mainDatasource.setDriverClassName(env.getProperty("target.Driver"));
-        mainDatasource.setUrl(env.getProperty("target.JdbcPath"));
-        mainDatasource.setUsername(targetUserName);
-        mainDatasource.setPassword(targetPassword);
-
-        return mainDatasource;
-    }
 
 
 

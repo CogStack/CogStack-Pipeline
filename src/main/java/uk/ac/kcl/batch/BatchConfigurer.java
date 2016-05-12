@@ -54,6 +54,8 @@ public class BatchConfigurer extends DefaultBatchConfigurer {
         JobRepositoryFactoryBean factory = new JobRepositoryFactoryBean();
         factory.setDataSource(jdbcDocumentTarget);
         factory.setTransactionManager(getTransactionManager());
+        //to avoid deadlocks on the Job repo in SQL SERVER 2008
+        factory.setIsolationLevelForCreate("ISOLATION_REPEATABLE_READ");
         factory.afterPropertiesSet();
         return factory.getObject();
     }
