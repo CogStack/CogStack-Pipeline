@@ -15,28 +15,20 @@
  */
 package uk.ac.kcl.scheduling;
 
-import org.postgresql.util.PSQLException;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
-import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
-import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
-import org.springframework.jdbc.CannotGetJdbcConnectionException;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Service;
 import uk.ac.kcl.batch.JobConfiguration;
 import uk.ac.kcl.utils.BatchJobUtils;
 
 import javax.sql.DataSource;
 import java.sql.Date;
-import java.sql.SQLException;
 
 
 /**
@@ -81,7 +73,7 @@ public class SingleJobLauncher {
                         .addString("jobClass", env.getProperty("jobClass"))
                         .toJobParameters();
                 if (env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("true")) {
-                    Object lastGoodJob = batchJobUtils.getLastSuccessfulRecordTimestamp();
+                    Object lastGoodJob = batchJobUtils.getOldestTimeStampInLastSuccessfulJob();
                     LOG.info("Last good run was " + lastGoodJob + ". Recommencing from then");
                 } else {
                     LOG.info("Not using timeStampBasedScheduling");

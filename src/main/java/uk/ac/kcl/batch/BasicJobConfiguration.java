@@ -41,7 +41,7 @@ import java.util.concurrent.TimeoutException;
 @Import(ItemHandlers.class)
 @Profile("basic")
 @Configuration
-@PropertySource("file:${TURBO_LASER}/basicJob.conf")
+@PropertySource(value ="file:${TURBO_LASER}/basicJob.conf", ignoreResourceNotFound = true)
 public class BasicJobConfiguration {
     @Resource
     Environment env;

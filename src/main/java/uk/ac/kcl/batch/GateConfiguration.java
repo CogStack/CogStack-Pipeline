@@ -45,7 +45,7 @@ import java.util.concurrent.TimeoutException;
 @Import(ItemHandlers.class)
 @Configuration
 @Profile("gate")
-@PropertySource("file:${TURBO_LASER}/gateJob.conf")
+@PropertySource(value="file:${TURBO_LASER}/gateJob.conf" , ignoreResourceNotFound = true)
 public class GateConfiguration {
 
     @Resource

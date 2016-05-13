@@ -33,12 +33,15 @@ public class BatchJobUtils {
 
     public Timestamp checkForNewRecordsBeyondConfiguredProcessingPeriod(
             String tableName,
-            Timestamp lastestTimestamp,
+            Timestamp lastGoodJob,
             String timestampColumnName){
         JdbcTemplate template = new JdbcTemplate(targetDataSource);
         String sql = "SELECT MIN(" + timestampColumnName + ") AS min_time_stamp " +
-                    " FROM " + tableName + " " +
-                    " WHERE CAST(" + timestampColumnName + " AS "+env.getProperty("dbmsToJavaSqlTimestampType")+") >  CAST('" + lastestTimestamp.toString() + "' AS "+env.getProperty("dbmsToJavaSqlTimestampType")+")";
+                " FROM " + tableName + " " +
+                " WHERE CAST(" + timestampColumnName + " AS "+
+                env.getProperty("dbmsToJavaSqlTimestampType")+
+                ") >  CAST('" + lastGoodJob.toString() +
+                "' AS "+env.getProperty("dbmsToJavaSqlTimestampType")+")";
         Timestamp timestampLong = (Timestamp)template.queryForObject(sql, Timestamp.class);
 
         if(timestampLong == null){
@@ -71,25 +74,26 @@ public class BatchJobUtils {
     }
 
 
-    public String convertTimeStampToESDateFormat(Timestamp ts) {
-        SimpleDateFormat format = new SimpleDateFormat(env.getProperty("datePatternForES"));
-        //java.util.Date date = new java.util.Date(ts.getTime());
-        String parseResult = format.format(ts);
-        return parseResult;
-    }
+//    public String convertTimeStampToESDateFormat(Timestamp ts) {
+//        SimpleDateFormat format = new SimpleDateFormat(env.getProperty("datePatternForES"));
+//        //java.util.Date date = new java.util.Date(ts.getTime());
+//        String parseResult = format.format(ts);
+//        return parseResult;
+//    }
 
-    public Timestamp getLastSuccessfulRecordTimestamp(){
+    public Timestamp getOldestTimeStampInLastSuccessfulJob(){
 
-            ExecutionContext ec = getLastSuccessfulJobExecutionContext();
+        ExecutionContext ec = getLastSuccessfulJobExecutionContext();
 //            SimpleDateFormat format = new SimpleDateFormat(env.getProperty("datePatternForScheduling"));
 //            java.util.Date date = convertStringToTimeStamp();
-            if(ec == null){
-                LOG.info("No previous job found in job repository");
-                return null;
-            }else{
-                Timestamp lastGoodDate = new Timestamp(Long.parseLong(ec.get("last_successful_timestamp_from_this_job").toString()));
-                return lastGoodDate;
-            }
+        Timestamp lastGoodDate = null;
+        if(ec == null){
+            LOG.info("No previous job found in job repository");
+            return lastGoodDate;
+        }else{
+            lastGoodDate = new Timestamp(Long.parseLong(ec.get("last_successful_timestamp_from_this_job").toString()));
+            return lastGoodDate;
+        }
     }
 
     public ExecutionContext getLastSuccessfulJobExecutionContext(){

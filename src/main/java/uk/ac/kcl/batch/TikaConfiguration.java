@@ -42,7 +42,7 @@ import java.util.concurrent.TimeoutException;
 @Import(ItemHandlers.class)
 @Configuration
 @Profile("tika")
-@PropertySource("file:${TURBO_LASER}/tikaJob.conf")
+@PropertySource(value="file:${TURBO_LASER}/tikaJob.conf", ignoreResourceNotFound = true)
 public class TikaConfiguration {
     @Resource
     Environment env;

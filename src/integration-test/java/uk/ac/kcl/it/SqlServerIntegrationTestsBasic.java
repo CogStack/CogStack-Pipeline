@@ -48,8 +48,6 @@ import uk.ac.kcl.scheduling.SingleJobLauncher;
         loader = AnnotationConfigContextLoader.class)
 public class SqlServerIntegrationTestsBasic {
 
-    final static Logger logger = Logger.getLogger(PostGresIntegrationTestsBasic.class);
-
     @Autowired
     SingleJobLauncher jobLauncher;
 

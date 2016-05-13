@@ -47,13 +47,7 @@ import static uk.ac.kcl.it.TestUtils.today;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @TestPropertySource({
-        "classpath:postgres_test_config_gate.properties",
-        "classpath:jms.properties",
-        "classpath:gate.properties",
-        "classpath:concurrency.properties",
-        "classpath:sql_server_db.properties",
-        "classpath:elasticsearch.properties",
-        "classpath:jobAndStep.properties"})
+        "classpath:sql_server_db.properties"})
 @Configuration
 @Import({JobConfiguration.class,TestUtils.class})
 public class SqlServerTestUtils {
@@ -136,7 +130,8 @@ public class SqlServerTestUtils {
                 + ", srcTableName VARCHAR(MAX) "
                 + ", primaryKeyFieldName VARCHAR(MAX) "
                 + ", primaryKeyFieldValue BIGINT "
-                + ", updateTime DateTIME )");
+                + ", updateTime DateTIME "
+                + ", anotherTime DateTIME )");
 
     }
 
