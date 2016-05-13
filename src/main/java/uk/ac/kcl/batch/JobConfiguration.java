@@ -178,6 +178,7 @@ public class JobConfiguration {
         ds.setTestOnReturn(true);
         ds.setTestOnBorrow(true);
         ds.setTestWhileIdle(true);
+        ds.setMinEvictableIdleTimeMillis(1000);
     }
 
 //    @Bean(destroyMethod = "close")

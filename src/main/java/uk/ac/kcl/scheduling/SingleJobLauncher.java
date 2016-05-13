@@ -75,7 +75,7 @@ public class SingleJobLauncher {
 
     public void launchJob()  {
         try {
-            if (sourceDataSource.getConnection().isValid(10) && targetDataSource.getConnection().isValid(10)) {
+            //if (sourceDataSource.getConnection().isValid(10) && targetDataSource.getConnection().isValid(10)) {
                 JobParameters param = new JobParametersBuilder()
                         .addDate("this_attempt_date", new Date(System.currentTimeMillis()))
                         .addString("jobClass", env.getProperty("jobClass"))
@@ -90,7 +90,7 @@ public class SingleJobLauncher {
                     JobExecution execution = jobLauncher.run(job, param);
                     System.out.println(execution.getStatus().toString());
 
-            }
+            //}
         } catch (Exception ex){
             LOG.error("Cannot start job", ex);
         }

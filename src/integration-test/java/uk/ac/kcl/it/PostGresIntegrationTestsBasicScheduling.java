@@ -62,9 +62,9 @@ public class PostGresIntegrationTestsBasicScheduling {
     @Before
     public void init(){
         postGresTestUtils.initPostGresJobRepository();
-        postGresTestUtils.createBasicInputTable();
-        postGresTestUtils.createBasicOutputTable();
-        testUtils.insertDataIntoBasicTable("tblInputDocs");
+//        postGresTestUtils.createBasicInputTable();
+//        postGresTestUtils.createBasicOutputTable();
+//        testUtils.insertDataIntoBasicTable("tblInputDocs");
     }
     @Test
     public void postgresBasicSchedulingPipelineTest() {
