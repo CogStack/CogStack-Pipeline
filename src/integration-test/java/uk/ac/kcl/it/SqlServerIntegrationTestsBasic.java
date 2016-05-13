@@ -16,10 +16,12 @@
 package uk.ac.kcl.it;
 
 import org.apache.log4j.Logger;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -40,26 +42,34 @@ import uk.ac.kcl.scheduling.SingleJobLauncher;
     "classpath:elasticsearch.properties",
     "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
-    SingleJobLauncher.class,
-    SqlServerTestUtils.class},
+        SqlServerTestUtils.class,
+        SingleJobLauncher.class,
+        TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 public class SqlServerIntegrationTestsBasic {
 
-    final static Logger logger = Logger.getLogger(SqlServerIntegrationTestsBasic.class);
+    final static Logger logger = Logger.getLogger(PostGresIntegrationTestsBasic.class);
 
     @Autowired
     SingleJobLauncher jobLauncher;
 
     @Autowired
-    SqlServerTestUtils utils;
+    SqlServerTestUtils sqlServerTestUtils;
 
-    @Test
-    public void sqlServerBasicPipelineTest() {
-        utils.createBasicInputTable();
-        utils.createBasicOutputTable();
-        utils.initJobRepository();
-        utils.insertDataIntoBasicTable();
-        jobLauncher.launchJob();
+    @Autowired
+    TestUtils testUtils;
 
+    @Before
+    public void init(){
+        sqlServerTestUtils.initJobRepository();
+        sqlServerTestUtils.createBasicInputTable();
+        sqlServerTestUtils.createBasicOutputTable();
+        testUtils.insertDataIntoBasicTable("dbo.tblInputDocs");
     }
+    @Test
+    @DirtiesContext
+    public void sqlServerBasicPipelineTest() {
+        jobLauncher.launchJob();
+    }
+
 }

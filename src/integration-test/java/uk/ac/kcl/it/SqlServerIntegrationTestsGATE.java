@@ -16,10 +16,13 @@
 package uk.ac.kcl.it;
 
 import org.apache.log4j.Logger;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.batch.core.launch.JobOperator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -33,36 +36,43 @@ import uk.ac.kcl.scheduling.SingleJobLauncher;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
-        "classpath:sqlserver_test_config_line_fixer.properties",
+        "classpath:sql_server_test_config_gate.properties",
         "classpath:jms.properties",
-        "classpath:dBLineFixer.properties",
+        "classpath:gate.properties",
         "classpath:concurrency.properties",
-        "classpath:sql_server_db.properties",
+        "classpath:postgres_db.properties",
         "classpath:elasticsearch.properties",
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
         SingleJobLauncher.class,
-        SqlServerTestUtils.class},
+        SqlServerTestUtils.class,
+        TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
-public class SQLServerIntegrationTestsLineFixer{
+public class SqlServerIntegrationTestsGATE {
 
-    final static Logger logger = Logger.getLogger(SQLServerIntegrationTestsLineFixer.class);
+    final static Logger logger = Logger.getLogger(PostGresIntegrationTestsGATE.class);
 
     @Autowired
     SingleJobLauncher jobLauncher;
+
     @Autowired
-    SqlServerTestUtils utils;
+    SqlServerTestUtils sqlServerTestUtils;
 
+    @Autowired
+    TestUtils testUtils;
+    @Before
+    public void init(){
+        sqlServerTestUtils.initJobRepository();
+        sqlServerTestUtils.initTextualGateTable();
+        testUtils.insertTestXHTMLForGate("dbo.tblInputDocs",false);
+    }
 
-
-    //@Ignore
     @Test
-    public void postgresGatePipelineTest() {
-        utils.initJobRepository();
-        utils.initMultiLineTextTable();
-        utils.insertTestLinesForDBLineFixer();
+    @DirtiesContext
+    public void sqlServerGatePipelineTest() {
         jobLauncher.launchJob();
     }
+
 
 
 }

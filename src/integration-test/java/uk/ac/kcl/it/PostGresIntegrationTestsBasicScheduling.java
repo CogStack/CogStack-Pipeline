@@ -16,6 +16,7 @@
 package uk.ac.kcl.it;
 
 import org.apache.log4j.Logger;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.scheduling.ScheduledJobLauncher;
+import uk.ac.kcl.scheduling.SingleJobLauncher;
 
 /**
  *
@@ -42,23 +44,30 @@ import uk.ac.kcl.scheduling.ScheduledJobLauncher;
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
         PostGresTestUtils.class,
-        ScheduledJobLauncher.class},
+        ScheduledJobLauncher.class,
+        TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 public class PostGresIntegrationTestsBasicScheduling {
 
     final static Logger logger = Logger.getLogger(PostGresIntegrationTestsBasicScheduling.class);
 
     @Autowired
-    PostGresTestUtils utils;
+    SingleJobLauncher jobLauncher;
 
     @Autowired
-    ScheduledJobLauncher launcher;
+    PostGresTestUtils postGresTestUtils;
+
+    @Autowired
+    TestUtils testUtils;
+    @Before
+    public void init(){
+        postGresTestUtils.initPostGresJobRepository();
+        postGresTestUtils.createBasicInputTable();
+        postGresTestUtils.createBasicOutputTable();
+        testUtils.insertDataIntoBasicTable("tblInputDocs");
+    }
     @Test
-    public void postgresGatePipelineTest() {
-        utils.initPostGresJobRepository();
-        utils.createBasicInputTable();
-        utils.createBasicOutputTable();
-        utils.insertDataIntoBasicTable();
+    public void postgresBasicSchedulingPipelineTest() {
         try {
             Thread.sleep(1000000000);
         } catch (InterruptedException e) {

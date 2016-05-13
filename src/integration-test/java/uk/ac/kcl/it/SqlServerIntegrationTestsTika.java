@@ -16,10 +16,12 @@
 package uk.ac.kcl.it;
 
 import org.apache.log4j.Logger;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -44,28 +46,35 @@ import uk.ac.kcl.scheduling.SingleJobLauncher;
     "classpath:elasticsearch.properties",
     "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
-    JobConfiguration.class,
-    BatchConfigurer.class,
-    TikaConfiguration.class,
-    SqlServerTestUtils.class},
+        SingleJobLauncher.class,
+        SqlServerTestUtils.class,
+        TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 public class SqlServerIntegrationTestsTika {
 
-    final static Logger logger = Logger.getLogger(SqlServerIntegrationTestsTika.class);
+    final static Logger logger = Logger.getLogger(PostGresIntegrationTestsTika.class);
 
     @Autowired
     SingleJobLauncher jobLauncher;
 
     @Autowired
-    SqlServerTestUtils utils;
+    SqlServerTestUtils sqlServerTestUtils;
+
+    @Autowired
+    TestUtils testUtils;
+    @Before
+    public void init(){
+        sqlServerTestUtils.initJobRepository();
+        sqlServerTestUtils.initTikaTable();
+        testUtils.insertTestBinariesForTika("dbo.tblInputDocs");
+    }
 
     @Test
-    public void sqlServerTikaPipelineTest() {
-        utils.initTikaTable();
-        utils.initJobRepository();
-        utils.insertTestBinariesForTika();
+    @DirtiesContext
+    public void sqlServerikaPipelineTest() {
         jobLauncher.launchJob();
     }
+
 
 
 }

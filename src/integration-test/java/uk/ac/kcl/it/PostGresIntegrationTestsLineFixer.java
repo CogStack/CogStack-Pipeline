@@ -16,6 +16,7 @@
 package uk.ac.kcl.it;
 
 import org.apache.log4j.Logger;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +44,8 @@ import uk.ac.kcl.scheduling.SingleJobLauncher;
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
         SingleJobLauncher.class,
-        PostGresTestUtils.class},
+        PostGresTestUtils.class,
+        TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 public class PostGresIntegrationTestsLineFixer  {
 
@@ -53,16 +55,26 @@ public class PostGresIntegrationTestsLineFixer  {
     SingleJobLauncher jobLauncher;
 
     @Autowired
-    Environment env;
+    PostGresTestUtils postGresTestUtils;
 
     @Autowired
-    PostGresTestUtils utils;
+    TestUtils testUtils;
+    @Before
+    public void init(){
+        postGresTestUtils.initPostGresJobRepository();
+        postGresTestUtils.createBasicOutputTable();
+        postGresTestUtils.initPostgresMultiLineTextTable();
+        testUtils.insertDataIntoBasicTable("tblInputDocs");
+        testUtils.insertTestLinesForDBLineFixer("tblDocLines");
+    }
 
     @Test
     public void postgresDBLineFixerPipelineTest() {
-        utils.initPostGresJobRepository();
-        utils.initPostgresMultiLineTextTable();
-        utils.insertTestLinesForDBLineFixer();
-        jobLauncher.launchJob();
+        try {
+            Thread.sleep(1000000000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
     }
 }

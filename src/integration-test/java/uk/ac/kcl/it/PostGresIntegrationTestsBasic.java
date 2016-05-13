@@ -16,10 +16,14 @@
 package uk.ac.kcl.it;
 
 import org.apache.log4j.Logger;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -29,16 +33,17 @@ import uk.ac.kcl.scheduling.SingleJobLauncher;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
-    "classpath:postgres_test_config_basic.properties",
-    "classpath:jms.properties",
-    "classpath:concurrency.properties",
-    "classpath:postgres_db.properties",
-    "classpath:elasticsearch.properties",
-    "classpath:basic.properties",
-    "classpath:jobAndStep.properties"})
+        "classpath:jms.properties",
+        "classpath:concurrency.properties",
+        "classpath:postgres_db.properties",
+        "classpath:elasticsearch.properties",
+        "classpath:jobAndStep.properties",
+        "classpath:postgres_test_config_basic.properties",
+        "classpath:basic.properties"})
 @ContextConfiguration(classes = {
-    PostGresTestUtils.class,
-    SingleJobLauncher.class},
+        PostGresTestUtils.class,
+        SingleJobLauncher.class,
+        TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 public class PostGresIntegrationTestsBasic {
 
@@ -48,14 +53,22 @@ public class PostGresIntegrationTestsBasic {
     SingleJobLauncher jobLauncher;
 
     @Autowired
-    PostGresTestUtils utils;
+    PostGresTestUtils postGresTestUtils;
 
+    @Autowired
+    TestUtils testUtils;
+
+    @Before
+    public void init(){
+        postGresTestUtils.initPostGresJobRepository();
+        postGresTestUtils.createBasicInputTable();
+        postGresTestUtils.createBasicOutputTable();
+        testUtils.insertDataIntoBasicTable("tblInputDocs");
+    }
     @Test
+    @DirtiesContext
     public void postgresBasicPipelineTest() {
-        utils.initPostGresJobRepository();
-        utils.createBasicInputTable();
-        utils.createBasicOutputTable();
-        utils.insertDataIntoBasicTable();
         jobLauncher.launchJob();
     }
+
 }

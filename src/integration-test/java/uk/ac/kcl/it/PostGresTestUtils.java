@@ -54,7 +54,7 @@ import java.util.logging.Level;
         "classpath:elasticsearch.properties",
         "classpath:jobAndStep.properties"})
 @Configuration
-@Import(JobConfiguration.class)
+@Import({JobConfiguration.class,TestUtils.class})
 public class PostGresTestUtils {
 
     final static Logger logger = Logger.getLogger(PostGresIntegrationTestsGATE.class);
@@ -76,7 +76,6 @@ public class PostGresTestUtils {
     private ResourceDatabasePopulator rdp = new ResourceDatabasePopulator();
     private Resource dropTablesResource;
     private Resource makeTablesResource;
-    private RandomString massiveString = new RandomString(5000);
 
 
     @PostConstruct
@@ -193,124 +192,5 @@ public class PostGresTestUtils {
         rdp.execute(jdbcTargetDocumentFinder);
     }
 
-    public void insertTestXHTMLForGate( boolean includeGateBreaker) {
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
-        int docCount = 100;
-        byte[] bytes = null;
-        try {
-            bytes = IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream("xhtml_test"));
-        } catch (IOException ex) {
-            java.util.logging.Logger.getLogger(PostGresIntegrationTestsGATE.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        String xhtmlString = new String(bytes, StandardCharsets.UTF_8);
-
-        String sql = "INSERT INTO tblInputDocs "
-                + "( srcColumnFieldName"
-                + ", srcTableName"
-                + ", primaryKeyFieldName"
-                + ", primaryKeyFieldValue"
-                + ", updateTime"
-                + ", input"
-                + ") VALUES (?,?,?,?,?,?)";
-        for (long ii = 0; ii < docCount; ii++) {
-            jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName", "fictionalPrimaryKeyFieldName", ii, new Date(today), xhtmlString);
-            today = nextDay(today);
-
-        }
-        //see what happens with a really long document...
-        if (includeGateBreaker) {
-            try {
-                bytes = IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream("gate_breaker.txt"));
-                xhtmlString = new String(bytes, StandardCharsets.UTF_8);
-                jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName", "fictionalPrimaryKeyFieldName", docCount, null, xhtmlString);
-            } catch (IOException ex) {
-                java.util.logging.Logger.getLogger(PostGresIntegrationTestsGATE.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
-    public void insertTestBinariesForTika() {
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
-        int docCount = 100;
-        byte[] bytes = null;
-        try {
-            bytes = IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream("tika/testdocs/docexample.doc"));
-        } catch (IOException ex) {
-            java.util.logging.Logger.getLogger(PostGresIntegrationTestsTika.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        String sql = "INSERT INTO tblInputDocs "
-                + "( srcColumnFieldName"
-                + ", srcTableName"
-                + ", primaryKeyFieldName"
-                + ", primaryKeyFieldValue"
-                + ", updateTime"
-                + ", input"
-                + ") VALUES (?,?,?,?,?,?)";
-        for (int ii = 0; ii < docCount; ii++) {
-            jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName", "fictionalPrimaryKeyFieldName", ii, new Date(today), bytes);
-            today = nextDay(today);
-        }
-    }
-
-    public void insertDataIntoBasicTable(){
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
-        int docCount = 100;
-        int lineCountIncrementer = 1;
-        String sql = "INSERT INTO tblInputDocs "
-                + "( srcColumnFieldName"
-                + ", srcTableName"
-                + ", primaryKeyFieldName"
-                + ", primaryKeyFieldValue"
-                + ", updateTime"
-                + ", anotherTime"
-                + ") VALUES (?,?,?,?,?,?)";
-
-        for (long i = 0; i <= docCount; i++) {
-            if (i==0) {
-                //test for massive string in ES
-                jdbcTemplate.update(sql, massiveString.nextString(), "fictionalTableName",
-                        "fictionalPrimaryKeyFieldName", i, new Timestamp(today),new Timestamp(today));
-            }else{
-                jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName",
-                        "fictionalPrimaryKeyFieldName", i, new Timestamp(today),new Timestamp(today));
-            }
-            today = nextDay(today);
-        }
-    }
-
-
-    public void insertTestLinesForDBLineFixer(){
-        insertDataIntoBasicTable();
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
-        int lineCountIncrementer = 1;
-        int docCount = 100;
-        String sql = "INSERT INTO tblDocLines "
-                + "( primaryKeyFieldValue"
-                + ", updateTime"
-                + ", LINE_ID"
-                + ", LINE_TEXT"
-                + ") VALUES (?,?,?,?)";
-        for (int i = 0; i <= docCount; i++) {
-            for(int j = 0;j < lineCountIncrementer; j++){
-                String text = "This is DOC_ID:" + i + " and LINE_ID:" + j ;
-                jdbcTemplate.update(sql,i,new Timestamp(today),j,text);
-                today = nextDay(today);
-            }
-            lineCountIncrementer++;
-            if(lineCountIncrementer % 50 == 0){
-                lineCountIncrementer = 0;
-            }
-        }
-    }
-    private long nextDay(Long today) {
-        // error checking and 2^x checking removed for simplicity.
-        long bits, val;
-        do {
-            bits = (random.nextLong() << 1L) >>> 1L;
-            val = bits % 20000L;
-        } while (bits-val+(20000L-1L) < 0L);
-        today = today + 86400000L +val;
-        return today;
-    }
 
 }

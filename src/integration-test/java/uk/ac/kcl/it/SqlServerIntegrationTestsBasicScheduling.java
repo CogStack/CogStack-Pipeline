@@ -16,6 +16,7 @@
 package uk.ac.kcl.it;
 
 import org.apache.log4j.Logger;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,30 +39,39 @@ import uk.ac.kcl.scheduling.SingleJobLauncher;
     "classpath:elasticsearch.properties",
     "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
-    ScheduledJobLauncher.class,
-    SqlServerTestUtils.class},
+        SqlServerTestUtils.class,
+        ScheduledJobLauncher.class,
+        TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 public class SqlServerIntegrationTestsBasicScheduling {
 
-    final static Logger logger = Logger.getLogger(SqlServerIntegrationTestsBasicScheduling.class);
+    final static Logger logger = Logger.getLogger(PostGresIntegrationTestsBasicScheduling.class);
 
     @Autowired
-    ScheduledJobLauncher jobLauncher;
+    SingleJobLauncher jobLauncher;
 
     @Autowired
-    SqlServerTestUtils utils;
+    SqlServerTestUtils sqlServerTestUtils;
 
+    @Autowired
+    TestUtils testUtils;
+    @Before
+    public void init(){
+        sqlServerTestUtils.initJobRepository();
+        sqlServerTestUtils.createBasicInputTable();
+        sqlServerTestUtils.createBasicOutputTable();
+        testUtils.insertDataIntoBasicTable("dbo.tblInputDocs");
+    }
     @Test
-    public void sqlServerBasicPipelineTest() {
-        utils.createBasicInputTable();
-        utils.createBasicOutputTable();
-        utils.initJobRepository();
-        utils.insertDataIntoBasicTable();
+    public void sqlServerBasicSchedulingPipelineTest() {
         try {
             Thread.sleep(1000000000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
+
+
     }
+
 }

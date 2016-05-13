@@ -16,11 +16,13 @@
 package uk.ac.kcl.it;
 
 import org.apache.log4j.Logger;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.batch.core.launch.JobOperator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -43,7 +45,8 @@ import uk.ac.kcl.scheduling.SingleJobLauncher;
                 "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
     SingleJobLauncher.class,
-    PostGresTestUtils.class},
+    PostGresTestUtils.class,
+        TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 public class PostGresIntegrationTestsGATE {
 
@@ -51,20 +54,25 @@ public class PostGresIntegrationTestsGATE {
 
     @Autowired
     SingleJobLauncher jobLauncher;
-    @Autowired
-    PostGresTestUtils utils;
 
     @Autowired
-    JobOperator jobOperator;
+    PostGresTestUtils postGresTestUtils;
 
-    //@Ignore
+    @Autowired
+    TestUtils testUtils;
+    @Before
+    public void init(){
+        postGresTestUtils.initPostGresJobRepository();
+        postGresTestUtils.initTextualPostgresGateTable();
+        testUtils.insertTestXHTMLForGate("tblInputDocs",false);
+    }
+
     @Test
+    @DirtiesContext
     public void postgresGatePipelineTest() {
-        utils.initTextualPostgresGateTable();
-        utils.initPostGresJobRepository();
-        utils.insertTestXHTMLForGate( false);
         jobLauncher.launchJob();
     }
+
 
 
 }

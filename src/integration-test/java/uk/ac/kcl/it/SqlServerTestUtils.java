@@ -20,7 +20,10 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.logging.Level;
+
+import static uk.ac.kcl.it.TestUtils.today;
 
 /*
  * Copyright 2016 King's College London, Richard Jackson <richgjackson@gmail.com>.
@@ -52,7 +55,7 @@ import java.util.logging.Level;
         "classpath:elasticsearch.properties",
         "classpath:jobAndStep.properties"})
 @Configuration
-@Import(JobConfiguration.class)
+@Import({JobConfiguration.class,TestUtils.class})
 public class SqlServerTestUtils {
 
     final static Logger logger = Logger.getLogger(PostGresIntegrationTestsGATE.class);
@@ -102,8 +105,7 @@ public class SqlServerTestUtils {
                 + ", output text )");
     }
 
-    public void initTextualPostgresGateTable() {
-////        for postgres
+    public void initTextualGateTable() {
         sourceTemplate.execute("IF OBJECT_ID('dbo.tblInputDocs', 'U') IS NOT NULL DROP TABLE  dbo.tblInputDocs");
         sourceTemplate.execute("CREATE TABLE dbo.tblInputDocs"
                 + "( ID  BIGINT IDENTITY(1,1) PRIMARY KEY"
@@ -161,8 +163,6 @@ public class SqlServerTestUtils {
                 + ", LINE_ID BIGINT "
                 + ", LINE_TEXT VARCHAR(MAX) )"
         );
-
-
         targetTemplate.execute("IF OBJECT_ID('dbo.tblOutputDocs', 'U') IS NOT NULL DROP TABLE  dbo.tblOutputDocs");
         targetTemplate.execute("CREATE TABLE dbo.tblOutputDocs "
                 + "( ID  BIGINT IDENTITY(1,1) PRIMARY KEY"
@@ -179,114 +179,11 @@ public class SqlServerTestUtils {
     public void initJobRepository(){
         dropTablesResource = new ClassPathResource("org/springframework/batch/core/schema-drop-sqlserver.sql");
         makeTablesResource = new ClassPathResource("org/springframework/batch/core/schema-sqlserver.sql");
-//        try {
-            rdp.addScript(dropTablesResource);
-//            rdp.execute(jdbcTargetDocumentFinder);
-//        }catch(ScriptStatementFailedException ex){
-//            logger.info("Job repository not deleted. It might not exist");
-//        }
+        rdp.addScript(dropTablesResource);
         rdp.addScript(makeTablesResource);
-
         rdp.setIgnoreFailedDrops(true);
         rdp.setContinueOnError(true);
         rdp.execute(jdbcTargetDocumentFinder);
     }
 
-    public void insertTestXHTMLForGate( boolean includeGateBreaker) {
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
-        int docCount = 100000;
-        byte[] bytes = null;
-        try {
-            bytes = IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream("xhtml_test"));
-        } catch (IOException ex) {
-            java.util.logging.Logger.getLogger(PostGresIntegrationTestsGATE.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        String xhtmlString = new String(bytes, StandardCharsets.UTF_8);
-
-        String sql = "INSERT INTO dbo.tblInputDocs "
-                + "( srcColumnFieldName"
-                + ", srcTableName"
-                + ", primaryKeyFieldName"
-                + ", primaryKeyFieldValue"
-                + ", updateTime"
-                + ", input"
-                + ") VALUES (?,?,?,?,?,?)";
-        for (long ii = 0; ii < docCount; ii++) {
-            jdbcTemplate.update(sql, "fictionalColumnFieldName","fictionalTableName","fictionalPrimaryKeyFieldName", ii,new Date((ii*1000L*60L*60L*24L)),  xhtmlString);
-
-        }
-        //see what happens with a really long document...
-        if (includeGateBreaker) {
-            try {
-                bytes = IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream("gate_breaker.txt"));
-                xhtmlString = new String(bytes, StandardCharsets.UTF_8);
-                jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName", "fictionalPrimaryKeyFieldName", docCount, null, xhtmlString);
-            } catch (IOException ex) {
-                java.util.logging.Logger.getLogger(PostGresIntegrationTestsGATE.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
-    public void insertTestBinariesForTika() {
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
-        int docCount = 100;
-        byte[] bytes = null;
-        try {
-            bytes = IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream("tika/testdocs/docexample.doc"));
-        } catch (IOException ex) {
-            java.util.logging.Logger.getLogger(PostGresIntegrationTestsTika.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        String sql = "INSERT INTO dbo.tblInputDocs "
-                + "( srcColumnFieldName"
-                + ", srcTableName"
-                + ", primaryKeyFieldName"
-                + ", primaryKeyFieldValue"
-                + ", updateTime"
-                + ", input"
-                + ") VALUES (?,?,?,?,?,?)";
-        for (long ii = 0; ii < docCount; ii++) {
-            jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName", "fictionalPrimaryKeyFieldName", ii, new Date((ii*1000L*60L*60L*24L)), bytes);
-        }
-    }
-
-    public void insertDataIntoBasicTable(){
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
-        int docCount = 34;
-        int lineCountIncrementer = 1;
-        String sql = "INSERT INTO dbo.tblInputDocs "
-                + "( srcColumnFieldName"
-                + ", srcTableName"
-                + ", primaryKeyFieldName"
-                + ", primaryKeyFieldValue"
-                + ", updateTime"
-                + ") VALUES (?,?,?,?,?)";
-        for (int i = 0; i <= docCount; i++) {
-            jdbcTemplate.update(sql, "fictionalColumnFieldName","fictionalTableName","fictionalPrimaryKeyFieldName",i,new Date((i*1000*60*60*24)));
-        }
-    }
-
-
-    public void insertTestLinesForDBLineFixer(){
-        insertDataIntoBasicTable();
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
-        int lineCountIncrementer = 1;
-        int docCount = 100;
-        String sql = "INSERT INTO dbo.tblDocLines "
-                + "( primaryKeyFieldValue"
-                + ", updateTime"
-                + ", LINE_ID"
-                + ", LINE_TEXT"
-                + ") VALUES (?,?,?,?)";
-        for (int i = 0; i <= docCount; i++) {
-            for(int j = 0;j < lineCountIncrementer; j++){
-                String text = "This is DOC_ID:" + i + " and LINE_ID:" + j ;
-                jdbcTemplate.update(sql,i,new Date((i*1000*60*60*24)),j,text);
-            }
-            lineCountIncrementer++;
-            if(lineCountIncrementer % 50 == 0){
-                lineCountIncrementer = 0;
-            }
-        }
-
-    }
 }

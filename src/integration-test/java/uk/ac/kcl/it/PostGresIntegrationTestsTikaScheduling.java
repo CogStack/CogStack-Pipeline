@@ -16,14 +16,17 @@
 package uk.ac.kcl.it;
 
 import org.apache.log4j.Logger;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.scheduling.ScheduledJobLauncher;
+import uk.ac.kcl.scheduling.SingleJobLauncher;
 
 /**
  *
@@ -39,18 +42,36 @@ import uk.ac.kcl.scheduling.ScheduledJobLauncher;
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
         ScheduledJobLauncher.class,
-        PostGresTestUtils.class},
+        PostGresTestUtils.class,
+        TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 public class PostGresIntegrationTestsTikaScheduling {
 
     final static Logger logger = Logger.getLogger(PostGresIntegrationTestsTikaScheduling.class);
 
     @Autowired
-    PostGresTestUtils utils;
-    @Test
-    public void postgresGatePipelineTest() {
-        utils.initPostgresTikaTable();
-        utils.initPostGresJobRepository();
-        utils.insertTestBinariesForTika();
+    SingleJobLauncher jobLauncher;
+
+    @Autowired
+    PostGresTestUtils postGresTestUtils;
+
+    @Autowired
+    TestUtils testUtils;
+    @Before
+    public void init(){
+        postGresTestUtils.initPostGresJobRepository();
+        postGresTestUtils.initPostgresTikaTable();
+        testUtils.insertTestBinariesForTika("tblInputDocs");
     }
+
+    @Test
+    @DirtiesContext
+    public void postgresTikaPipelineTest() {
+        try {
+            Thread.sleep(1000000000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

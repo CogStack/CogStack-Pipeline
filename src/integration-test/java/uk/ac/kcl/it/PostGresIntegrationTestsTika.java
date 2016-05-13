@@ -16,10 +16,12 @@
 package uk.ac.kcl.it;
 
 import org.apache.log4j.Logger;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -42,7 +44,8 @@ import uk.ac.kcl.scheduling.SingleJobLauncher;
     "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
         SingleJobLauncher.class,
-    PostGresTestUtils.class},
+    PostGresTestUtils.class,
+        TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 public class PostGresIntegrationTestsTika {
 
@@ -52,15 +55,23 @@ public class PostGresIntegrationTestsTika {
     SingleJobLauncher jobLauncher;
 
     @Autowired
-    PostGresTestUtils utils;
+    PostGresTestUtils postGresTestUtils;
+
+    @Autowired
+    TestUtils testUtils;
+    @Before
+    public void init(){
+        postGresTestUtils.initPostGresJobRepository();
+        postGresTestUtils.initPostgresTikaTable();
+        testUtils.insertTestBinariesForTika("tblInputDocs");
+    }
 
     @Test
+    @DirtiesContext
     public void postgresTikaPipelineTest() {
-        utils.initPostgresTikaTable();
-        utils.initPostGresJobRepository();
-        utils.insertTestBinariesForTika();
         jobLauncher.launchJob();
     }
+
 
 
 }
