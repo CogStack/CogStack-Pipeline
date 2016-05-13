@@ -64,6 +64,7 @@ public class SqlServerIntegrationTestsBasic {
         sqlServerTestUtils.createBasicOutputTable();
         testUtils.insertDataIntoBasicTable("dbo.tblInputDocs");
     }
+
     @Test
     @DirtiesContext
     public void sqlServerBasicPipelineTest() {

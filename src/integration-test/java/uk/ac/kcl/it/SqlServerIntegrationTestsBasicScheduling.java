@@ -60,7 +60,7 @@ public class SqlServerIntegrationTestsBasicScheduling {
         sqlServerTestUtils.initJobRepository();
 //        sqlServerTestUtils.createBasicInputTable();
 //        sqlServerTestUtils.createBasicOutputTable();
-        testUtils.insertDataIntoBasicTable("dbo.tblInputDocs");
+        //testUtils.insertDataIntoBasicTable("dbo.tblInputDocs");
     }
     @Test
     public void sqlServerBasicSchedulingPipelineTest() {

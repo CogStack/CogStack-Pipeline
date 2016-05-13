@@ -2,26 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8fa4ce33-e860-41c6-a6d6-4cf8986d4df1" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/exampleConfigs/basicJob.conf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/exampleConfigs/dBLineFixerJob.conf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/exampleConfigs/gateJob.conf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/exampleConfigs/tikaJob.conf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/test/resources/tika/testdocs/tika_config.properties" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build.gradle" afterPath="$PROJECT_DIR$/build.gradle" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerIntegrationTestsBasic.java" afterPath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerIntegrationTestsBasic.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerIntegrationTestsBasicScheduling.java" afterPath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerIntegrationTestsBasicScheduling.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerTestUtils.java" afterPath="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerTestUtils.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/resources/jobAndStep.properties" afterPath="$PROJECT_DIR$/src/integration-test/resources/jobAndStep.properties" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/resources/sql_server_db.properties" afterPath="$PROJECT_DIR$/src/integration-test/resources/sql_server_db.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/resources/sqlserver_test_config_basic.properties" afterPath="$PROJECT_DIR$/src/integration-test/resources/sqlserver_test_config_basic.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/BasicJobConfiguration.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/BasicJobConfiguration.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/DbLineFixerConfiguration.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/DbLineFixerConfiguration.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/GateConfiguration.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/GateConfiguration.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/TikaConfiguration.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/TikaConfiguration.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/partitioners/ColumnRangePartitioner.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/partitioners/ColumnRangePartitioner.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/scheduling/SingleJobLauncher.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/scheduling/SingleJobLauncher.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/utils/BatchJobUtils.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/utils/BatchJobUtils.java" />
     </list>
     <ignored path="turbo-laser.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -130,11 +113,31 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="SqlServerIntegrationTestsBasic.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="SqlServerIntegrationTestsBasic.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerIntegrationTestsBasic.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="136">
-              <caret line="57" column="24" selection-start-line="57" selection-start-column="24" selection-end-line="57" selection-end-column="24" />
+            <state relative-caret-position="468">
+              <caret line="65" column="5" selection-start-line="65" selection-start-column="5" selection-end-line="65" selection-end-column="5" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SqlServerIntegrationTestsBasicScheduling.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerIntegrationTestsBasicScheduling.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="376">
+              <caret line="56" column="24" selection-start-line="56" selection-start-column="24" selection-end-line="56" selection-end-column="24" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="sql_server_db.properties" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/integration-test/resources/sql_server_db.properties">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="255">
+              <caret line="15" column="57" selection-start-line="15" selection-start-column="57" selection-end-line="15" selection-end-column="57" />
               <folding />
             </state>
           </provider>
@@ -588,13 +591,13 @@
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/DbLineFixerConfiguration.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/GateConfiguration.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/TikaConfiguration.java" />
-        <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerIntegrationTestsBasicScheduling.java" />
         <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerTestUtils.java" />
         <option value="$PROJECT_DIR$/src/test/resources/logback-test.xml" />
         <option value="$PROJECT_DIR$/src/main/resources/logback.xml" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/partitioners/ColumnRangePartitioner.java" />
-        <option value="$PROJECT_DIR$/src/integration-test/resources/sql_server_db.properties" />
         <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerIntegrationTestsBasic.java" />
+        <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerIntegrationTestsBasicScheduling.java" />
+        <option value="$PROJECT_DIR$/src/integration-test/resources/sql_server_db.properties" />
       </list>
     </option>
   </component>
@@ -614,7 +617,7 @@
     <treeState />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="1985" />
+    <option name="x" value="65" />
     <option name="y" value="-4" />
     <option name="width" value="1855" />
     <option name="height" value="1084" />
@@ -1003,7 +1006,7 @@
       <recent name="$PROJECT_DIR$/src/main/resources" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.SqlServerIntegrationTestsBasic">
+  <component name="RunManager" selected="JUnit.SqlServerIntegrationTestsBasicScheduling">
     <configuration default="false" name="PostGresIntegrationTestsBasic" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
@@ -1605,8 +1608,8 @@
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="JUnit.SqlServerIntegrationTestsBasic" />
-        <item index="1" class="java.lang.String" itemvalue="JUnit.SqlServerIntegrationTestsBasicScheduling" />
+        <item index="0" class="java.lang.String" itemvalue="JUnit.SqlServerIntegrationTestsBasicScheduling" />
+        <item index="1" class="java.lang.String" itemvalue="JUnit.SqlServerIntegrationTestsBasic" />
         <item index="2" class="java.lang.String" itemvalue="JUnit.PostGresIntegrationTestsBasicScheduling" />
         <item index="3" class="java.lang.String" itemvalue="JUnit.PostGresIntegrationTestsDBLineFixerScheduling" />
         <item index="4" class="java.lang.String" itemvalue="JUnit.PostGresIntegrationTestsBasic" />
@@ -1690,17 +1693,11 @@
       <workItem from="1463043666190" duration="16628000" />
       <workItem from="1463129134814" duration="4991000" />
       <workItem from="1463136651742" duration="19000" />
-      <workItem from="1463138816092" duration="9918000" />
+      <workItem from="1463138816092" duration="12934000" />
     </task>
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="SqlServerIntegrationTestsBasic - 2016.05.13 at 17h 00m 18s.xml">
-      <configuration name="SqlServerIntegrationTestsBasic" configurationId="JUnit" />
-    </history-entry>
-    <history-entry file="SqlServerIntegrationTestsBasic - 2016.05.13 at 17h 01m 43s.xml">
-      <configuration name="SqlServerIntegrationTestsBasic" configurationId="JUnit" />
-    </history-entry>
     <history-entry file="SqlServerIntegrationTestsBasic - 2016.05.13 at 17h 03m 00s.xml">
       <configuration name="SqlServerIntegrationTestsBasic" configurationId="JUnit" />
     </history-entry>
@@ -1719,18 +1716,24 @@
     <history-entry file="SqlServerIntegrationTestsBasic - 2016.05.13 at 17h 10m 39s.xml">
       <configuration name="SqlServerIntegrationTestsBasic" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="SqlServerIntegrationTestsBasicScheduling - 2016.05.13 at 16h 49m 54s.xml">
+    <history-entry file="SqlServerIntegrationTestsBasicScheduling - 2016.05.13 at 17h 20m 34s.xml">
       <configuration name="SqlServerIntegrationTestsBasicScheduling" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="SqlServerIntegrationTestsBasicScheduling - 2016.05.13 at 16h 57m 38s.xml">
+    <history-entry file="SqlServerIntegrationTestsBasicScheduling - 2016.05.13 at 17h 23m 43s.xml">
+      <configuration name="SqlServerIntegrationTestsBasicScheduling" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="SqlServerIntegrationTestsBasicScheduling - 2016.05.13 at 17h 36m 04s.xml">
+      <configuration name="SqlServerIntegrationTestsBasicScheduling" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="SqlServerIntegrationTestsBasicScheduling - 2016.05.13 at 18h 01m 54s.xml">
       <configuration name="SqlServerIntegrationTestsBasicScheduling" configurationId="JUnit" />
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="385449000" />
+    <option name="totallyTimeSpent" value="388465000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1985" y="-4" width="1855" height="1084" extended-state="6" />
+    <frame x="65" y="-4" width="1855" height="1084" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1741,7 +1744,7 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25940996" sideWeight="0.37304583" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32988048" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.6276704" sideWeight="0.6269542" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.46286878" sideWeight="0.6269542" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Spring" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32937685" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -2203,14 +2206,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerIntegrationTestsBasicScheduling.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="189">
-          <caret line="45" column="13" selection-start-line="45" selection-start-column="13" selection-end-line="45" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/TestUtils.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-168">
@@ -2290,18 +2285,26 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/integration-test/resources/sql_server_db.properties">
+    <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerIntegrationTestsBasic.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="8" column="70" selection-start-line="8" selection-start-column="70" selection-end-line="8" selection-end-column="70" />
+        <state relative-caret-position="468">
+          <caret line="65" column="5" selection-start-line="65" selection-start-column="5" selection-end-line="65" selection-end-column="5" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerIntegrationTestsBasic.java">
+    <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerIntegrationTestsBasicScheduling.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="57" column="24" selection-start-line="57" selection-start-column="24" selection-end-line="57" selection-end-column="24" />
+        <state relative-caret-position="376">
+          <caret line="56" column="24" selection-start-line="56" selection-start-column="24" selection-end-line="56" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/integration-test/resources/sql_server_db.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="15" column="57" selection-start-line="15" selection-start-column="57" selection-end-line="15" selection-end-column="57" />
           <folding />
         </state>
       </provider>
