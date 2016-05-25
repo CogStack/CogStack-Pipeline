@@ -18,7 +18,6 @@ package uk.ac.kcl.batch;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.commons.dbcp.BasicDataSource;
-import org.postgresql.util.PSQLException;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.explore.JobExplorer;
@@ -34,13 +33,11 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.integration.config.EnableIntegration;
-import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.support.MetaDataAccessException;
 import org.springframework.jms.connection.CachingConnectionFactory;
-import uk.ac.kcl.scheduling.SingleJobLauncher;
+import uk.ac.kcl.itemProcessors.NullItemProcessor;
 
 import javax.sql.DataSource;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
@@ -132,15 +129,6 @@ public class JobConfiguration {
     }
 
 
-
-//    @Bean(destroyMethod = "close")
-//    @Primary
-//    @Qualifier("s1ourceDataSource")
-//    public DataSource sourceDataSource
-//            (@Qualifier("refreshableSourceDataSource") DataSource ds) {
-//        return ds;
-//    }
-
     @Bean(destroyMethod = "close")
     //@Scope("prototype")
     @Qualifier("targetDataSource")
@@ -180,14 +168,6 @@ public class JobConfiguration {
         ds.setTestWhileIdle(true);
         ds.setMinEvictableIdleTimeMillis(1000);
     }
-
-//    @Bean(destroyMethod = "close")
-//    @Qualifier("t1argetDataSource")
-//    public DataSource targetDataSource(
-//            @Qualifier("refreshableTargetDataSource") DataSource ds) {
-//        return ds;
-//
-//    }
 
 
     private void executeSessionScripts(BasicDataSource tempDatasource, BasicDataSource mainDatasource) {
@@ -270,5 +250,11 @@ public class JobConfiguration {
         handler.setJobExplorer(jobExplorer);
         handler.setStepLocator(stepLocator);
         return handler;
+    }
+
+    @Bean
+    @Qualifier("nullItemProcessor")
+    public NullItemProcessor nullItemProcessor(){
+        return new NullItemProcessor();
     }
 }

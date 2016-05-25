@@ -20,7 +20,6 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.support.CompositeItemProcessor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
@@ -34,7 +33,6 @@ import uk.ac.kcl.model.Document;
 import javax.annotation.Resource;
 import java.net.NoRouteToHostException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -60,23 +58,11 @@ public class TikaConfiguration {
     */
 
 
-    @Bean
-    @Qualifier("compositeItemProcessorr")
-    public ItemProcessor<Document,Document> compositeItemProcessor() {
-        CompositeItemProcessor writer = new CompositeItemProcessor<>();
-        ArrayList<ItemProcessor<Document, Document>> delegates = new ArrayList<>();
-        if (dBLineFixerItemProcessor != null) {
-            delegates.add(dBLineFixerItemProcessor);
-        }
-        if (tikaItemProcessor != null) {
-            delegates.add(tikaItemProcessor);
-        }
 
-    }
     
     @Bean
     @Qualifier("tikaItemProcessor")
-    public ItemProcessor<BinaryDocument, BinaryDocument> tikaDocumentItemProcessor() {
+    public ItemProcessor<Document, Document> tikaDocumentItemProcessor() {
         TikaDocumentItemProcessor proc = new TikaDocumentItemProcessor();
         proc.setKeepTags(Boolean.valueOf(env.getProperty("keepTags")));
         return new TikaDocumentItemProcessor();
@@ -87,12 +73,12 @@ public class TikaConfiguration {
     public Step tikaSlaveStep(    
             @Qualifier("binaryDocumentItemReader")ItemReader<BinaryDocument> reader,
             @Qualifier("compositeESandJdbcItemWriter")  ItemWriter<Document> writer,
-            @Qualifier("tikaItemProcessor")   ItemProcessor<BinaryDocument, BinaryDocument> processor,
+            @Qualifier("compositeItemProcessor")   ItemProcessor<Document,Document> processor,
             @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor,
             StepBuilderFactory stepBuilderFactory
             ) {
          Step step = stepBuilderFactory.get("tikaSlaveStep")
-                .<BinaryDocument, BinaryDocument> chunk(Integer.parseInt(env.getProperty("chunkSize")))
+                .<Document, Document> chunk(Integer.parseInt(env.getProperty("chunkSize")))
                 .reader(reader)
                 .processor(processor)                 
                 .writer(writer)

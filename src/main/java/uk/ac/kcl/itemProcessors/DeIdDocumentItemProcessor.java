@@ -16,6 +16,8 @@
 package uk.ac.kcl.itemProcessors;
 
 import gate.Factory;
+import gate.creole.ExecutionException;
+import gate.creole.ResourceInstantiationException;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,9 @@ import org.springframework.core.env.Environment;
 import uk.ac.kcl.model.Document;
 import uk.ac.kcl.model.TextDocument;
 import uk.ac.kcl.service.GateService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class DeIdDocumentItemProcessor implements ItemProcessor<Document, Document> {
@@ -35,28 +40,28 @@ public class DeIdDocumentItemProcessor implements ItemProcessor<Document, Docume
     @Autowired
     private Environment env;
 
-    public void setGateService(GateService gateService) {
-        this.gateService = gateService;
+
+    private List<String> fieldsToDeId;
+
+    public void setFieldsToDeId(List<String> fields){
+        this.fieldsToDeId = fields;
     }
 
-    public GateService getGateService() {
-        return gateService;
-    }
 
     @Override
-    public TextDocument process(final TextDocument doc) throws Exception {
-        gate.Document gateDoc = Factory.newDocument(doc.getBody());
-        try {
+    public Document process(final Document doc) throws Exception {
 
-            gateService.processDoc(gateDoc);
-            if(env.getProperty("gateJSON", "true").equalsIgnoreCase("true")){
-                doc.setOutputData(gateService.convertDocToJSON(gateDoc));
-            }else{
-                doc.setOutputData(gateDoc.toXml());
+        doc.getAdditionalFields().forEach((k,v)->{
+            if(fieldsToDeId.contains(k)) {
+                String newString = "unable to de-id";
+                try {
+                    newString = gateService.deIdentifyString(v.toString());
+                } catch (ExecutionException|ResourceInstantiationException e) {
+                    LOG.warn("Unable to deid field " + k + " in document " + doc.getDocName());
+                }
+                doc.getAdditionalFields().put(k,newString);
             }
-            return doc;
-        }finally{
-            Factory.deleteResource(gateDoc);
-        }
+        });
+        return doc;
     }
 }

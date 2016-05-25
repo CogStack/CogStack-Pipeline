@@ -22,13 +22,15 @@ import gate.persist.PersistenceException;
 import gate.util.GateException;
 import gate.util.persistence.PersistenceManager;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 
@@ -36,6 +38,11 @@ import java.util.logging.Level;
  *
  * @author rich
  */
+
+
+
+@Service
+@Profile("gate")
 public class GateService {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(GateService.class);
@@ -43,34 +50,53 @@ public class GateService {
 
     File gateHome;
     File gateApp;
-    LinkedBlockingQueue<CorpusController> queue;
+    LinkedBlockingQueue<CorpusController> genericQueue;
     private int poolSize;
     private Iterable<String> annotationSets;
 
+    File deidApp;
+    LinkedBlockingQueue<CorpusController> deIdQueue;
+
+
+    @Autowired
+    private Environment env;
+
     public GateService() {
     }
-    public GateService(File gateHome, 
-            File gateApp, 
-            int poolSize, 
-            List<String> annotationSets) {
-        this.gateApp = gateApp;
-        this.gateHome = gateHome;
-        this.poolSize = poolSize;
-        this.annotationSets = annotationSets;
-    }
 
+    @PostConstruct
     public void init() throws ResourceInstantiationException, GateException, PersistenceException, IOException {
-        if(gateHome !=null){ 
-            Gate.setGateHome(gateHome);
-            Gate.init();
-            queue = new LinkedBlockingQueue<>();
+
+        gateHome = new File(env.getProperty("gateHome"));
+        poolSize = Integer.parseInt(env.getProperty("poolSize"));
+        Gate.setGateHome(gateHome);
+        Gate.init();
+
+
+        if(env.getProperty("gateApp")!=null) {
+            gateApp = new File(env.getProperty("gateApp"));
+            annotationSets = Arrays.asList(env.getProperty("gateAnnotationSets").split(","));
+            genericQueue = new LinkedBlockingQueue<>();
             Corpus corpus = gate.Factory.newCorpus("Corpus");
             CorpusController pipeline = (CorpusController) PersistenceManager
                     .loadObjectFromFile(gateApp);
             pipeline.setCorpus(corpus);
-            queue.add(pipeline);
-            while(queue.size() != poolSize) {
-                queue.add((CorpusController) Factory.duplicate(pipeline));
+            genericQueue.add(pipeline);
+            while (genericQueue.size() != poolSize) {
+                genericQueue.add((CorpusController) Factory.duplicate(pipeline));
+            }
+        }
+
+        if(env.getProperty("enableDeId").equalsIgnoreCase("true")){
+            deidApp = new File(env.getProperty("deIdApp"));
+            deIdQueue = new LinkedBlockingQueue<>();
+            Corpus corpus = gate.Factory.newCorpus("Corpus");
+            CorpusController pipeline = (CorpusController) PersistenceManager
+                    .loadObjectFromFile(deidApp);
+            pipeline.setCorpus(corpus);
+            deIdQueue.add(pipeline);
+            while (deIdQueue.size() != poolSize) {
+                deIdQueue.add((CorpusController) Factory.duplicate(pipeline));
             }
         }
     }
@@ -78,23 +104,45 @@ public class GateService {
     public gate.Document processDoc(gate.Document doc) throws ExecutionException {
         CorpusController controller = null;
         try {
-            controller = queue.take();
+            controller = genericQueue.take();
         } catch (InterruptedException ex) {
-            java.util.logging.Logger.getLogger(GateService.class.getName()).log(Level.SEVERE, null, ex);
+            LOG.warn("GATE app execution interrupted", ex);
         }
         controller.getCorpus().add(doc);
         controller.execute();
         controller.getCorpus().clear();
         try {
-            queue.put(controller);
+            genericQueue.put(controller);
         } catch (InterruptedException ex) {
             LOG.info("Interrupted", ex);
         }
         return doc;
     }
 
+    public String deIdentifyString(String text) throws ExecutionException, ResourceInstantiationException {
+        gate.Document doc = Factory.newDocument(text);
+        CorpusController controller = null;
+        try {
+            controller = deIdQueue.take();
+        } catch (InterruptedException ex) {
+            LOG.warn("GATE app execution interrupted", ex);
+        }
+        controller.getCorpus().add(doc);
+        controller.execute();
+        controller.getCorpus().clear();
+        try {
+            deIdQueue.put(controller);
+        } catch (InterruptedException ex) {
+            LOG.info("Interrupted", ex);
+        }
+        text = doc.getContent().toString();
+        Factory.deleteResource(doc);
+        return text;
+    }
+
+
     public String convertDocToJSON(gate.Document doc) throws IOException {
-        Map<String, Collection<Annotation>> map = new HashMap<>();        
+        Map<String, Collection<Annotation>> map = new HashMap<>();
         //code to retrive specific annotation sets. revisit later        
         for (String ASName : annotationSets) {
             if (ASName != null) {

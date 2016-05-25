@@ -93,7 +93,7 @@ public class DbLineFixerConfiguration {
     @Bean
     public Step dBLineFixerSlaveStep(
             @Qualifier("documentItemReader") ItemReader<Document> reader,
-            @Qualifier("dBLineFixerItemProcessor") ItemProcessor<Document, Document> processor,
+            @Qualifier("compositeItemProcessor") ItemProcessor<Document, Document> processor,
             @Qualifier("compositeESandJdbcItemWriter")  ItemWriter<Document> writer,
             @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor,
             StepBuilderFactory stepBuilderFactory

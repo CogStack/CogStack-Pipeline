@@ -57,10 +57,10 @@ public class SqlServerIntegrationTestsBasicScheduling {
     TestUtils testUtils;
     @Before
     public void init(){
-        sqlServerTestUtils.initJobRepository();
-        sqlServerTestUtils.createBasicInputTable();
-        sqlServerTestUtils.createBasicOutputTable();
-        testUtils.insertDataIntoBasicTable("dbo.tblInputDocs");
+//        sqlServerTestUtils.initJobRepository();
+//        sqlServerTestUtils.createBasicInputTable();
+//        sqlServerTestUtils.createBasicOutputTable();
+        //testUtils.insertDataIntoBasicTable("dbo.tblInputDocs");
     }
     @Test
     public void sqlServerBasicSchedulingPipelineTest() {

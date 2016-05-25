@@ -66,7 +66,7 @@ public class SqlServerIntegrationTestsBasic {
     }
 
     @Test
-    @DirtiesContext
+    //@DirtiesContext
     public void sqlServerBasicPipelineTest() {
         jobLauncher.launchJob();
     }

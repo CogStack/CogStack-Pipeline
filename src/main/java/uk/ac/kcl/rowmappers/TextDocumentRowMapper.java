@@ -16,7 +16,8 @@ public class TextDocumentRowMapper<T extends Document> extends DocumentRowMapper
     public TextDocumentRowMapper(){};
     @Override
     public Document mapRow(ResultSet rs, int i) throws SQLException {
-        Document doc = new TextDocument(rs.getString(env.getProperty("textFieldName")));
+        Document doc = new Document();
+        doc.setTextContent(rs.getString(env.getProperty("textFieldName")));
         mapFields(doc,rs);
         return doc;
     }

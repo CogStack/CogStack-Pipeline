@@ -18,6 +18,7 @@ package uk.ac.kcl.batch;
 
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -55,6 +56,7 @@ public class BasicJobConfiguration {
     @Bean
     public Step basicSlaveStep(
             @Qualifier("documentItemReader") ItemReader<Document> reader,
+            @Qualifier("compositeItemProcessor") ItemProcessor<Document, Document> processor,
             @Qualifier("compositeESandJdbcItemWriter")  ItemWriter<Document> writer,
             @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor,
             StepBuilderFactory stepBuilderFactory
@@ -63,6 +65,7 @@ public class BasicJobConfiguration {
                 .<Document, Document> chunk(
                         Integer.parseInt(env.getProperty("chunkSize")))
                 .reader(reader)
+                .processor(processor)
                 .writer(writer)
                 .faultTolerant()
                 .skipLimit(Integer.parseInt(env.getProperty("skipLimit")))

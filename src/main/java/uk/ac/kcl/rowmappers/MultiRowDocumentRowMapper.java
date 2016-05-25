@@ -65,7 +65,7 @@ public class MultiRowDocumentRowMapper <B extends Document> extends DocumentRowM
         for (MultilineDocument doc : docs) {
             map.put(Integer.valueOf(doc.getLineKey()), doc.getLineContents());
         }
-        Document doc = new MultilineDocument();
+        Document doc = new Document();
         mapFields(doc,rs);
 
         StringBuilder sb2 = new StringBuilder();

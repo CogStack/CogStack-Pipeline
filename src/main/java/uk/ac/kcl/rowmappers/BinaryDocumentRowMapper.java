@@ -17,7 +17,8 @@ public class BinaryDocumentRowMapper<B extends Document> extends DocumentRowMapp
     @Override
     public Document mapRow(ResultSet rs, int i) throws SQLException {
         //ResultSetMetaData meta = rs.getMetaData();
-        Document doc = new BinaryDocument(rs.getBytes(env.getProperty("binaryFieldName")));
+        Document doc = new Document();
+        doc.setBinaryContent(rs.getBytes(env.getProperty("binaryFieldName")));
         mapFields(doc,rs);
         return doc;
     }

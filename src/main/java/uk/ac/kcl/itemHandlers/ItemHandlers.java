@@ -145,26 +145,6 @@ public class ItemHandlers {
         return writer;
     }
 
-    @Autowired(required = false)
-    @Qualifier("esDocumentWriter")
-    ItemWriter<Document> esItemWriter;
-
-    @Autowired(required = false)
-    @Qualifier("simpleJdbcItemWriter")
-    ItemWriter<Document> jdbcItemWriter;
-
-    @Autowired(required = false)
-    @Qualifier("gateItemProcessor")
-    ItemProcessor<TextDocument, TextDocument> gateItemProcessor;
-
-    @Autowired(required = false)
-    @Qualifier("dBLineFixerItemProcessor")
-    ItemProcessor<Document, Document> dBLineFixerItemProcessor;
-
-    @Autowired(required = false)
-    @Qualifier("tikaItemProcessor")
-    ItemProcessor<BinaryDocument, BinaryDocument> tikaItemProcessor;
-
     @Bean
     @Qualifier("compositeESandJdbcItemWriter")
     public ItemWriter<Document> compositeESandJdbcItemWriter() {
@@ -180,4 +160,60 @@ public class ItemHandlers {
         return writer;
     }
 
+
+    @Autowired(required = false)
+    @Qualifier("esDocumentWriter")
+    ItemWriter<Document> esItemWriter;
+
+    @Autowired(required = false)
+    @Qualifier("simpleJdbcItemWriter")
+    ItemWriter<Document> jdbcItemWriter;
+
+    @Autowired(required = false)
+    @Qualifier("gateItemProcessor")
+    ItemProcessor<Document, Document> gateItemProcessor;
+
+    @Autowired(required = false)
+    @Qualifier("dBLineFixerItemProcessor")
+    ItemProcessor<Document, Document> dBLineFixerItemProcessor;
+
+    @Autowired(required = false)
+    @Qualifier("tikaItemProcessor")
+    ItemProcessor<Document, Document> tikaItemProcessor;
+
+    @Autowired(required = false)
+    @Qualifier("deIdDocumentItemProcessor")
+    ItemProcessor<Document, Document> deIdDocumentItemProcessor;
+
+    @Autowired
+    @Qualifier("nullItemProcessor")
+    ItemProcessor<Document, Document> nullItemProcessor;
+
+    @Bean
+    @Qualifier("compositeItemProcessorr")
+    public ItemProcessor<Document,Document> compositeItemProcessor() {
+        CompositeItemProcessor processor = new CompositeItemProcessor<>();
+        ArrayList<ItemProcessor<Document,Document>> delegates = new ArrayList<>();
+
+        if(deIdDocumentItemProcessor !=null) {
+            delegates.add(deIdDocumentItemProcessor);
+        }
+
+        if(dBLineFixerItemProcessor !=null) {
+            delegates.add(dBLineFixerItemProcessor);
+        }
+        if(tikaItemProcessor !=null) {
+            delegates.add(tikaItemProcessor);
+        }
+        if(gateItemProcessor !=null) {
+            delegates.add(gateItemProcessor);
+        }
+
+        if(delegates.size()==0){
+            delegates.add(nullItemProcessor);
+        }
+
+        processor.setDelegates(delegates);
+        return processor;
+    }
 }

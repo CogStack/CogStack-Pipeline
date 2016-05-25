@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.xml.sax.ContentHandler;
 import uk.ac.kcl.model.BinaryDocument;
+import uk.ac.kcl.model.Document;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -31,7 +32,7 @@ import java.io.InputStream;
  *
  * @author rich
  */
-public class TikaDocumentItemProcessor implements ItemProcessor<BinaryDocument, BinaryDocument> {
+public class TikaDocumentItemProcessor implements ItemProcessor<Document, Document> {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(TikaDocumentItemProcessor.class);
 
@@ -46,7 +47,7 @@ public class TikaDocumentItemProcessor implements ItemProcessor<BinaryDocument, 
     }
 
     @Override
-    public BinaryDocument process(final BinaryDocument doc) throws Exception {
+    public Document process(final Document doc) throws Exception {
         ContentHandler handler;
         LOG.debug("processing doc ID: " + doc.getPrimaryKeyFieldValue());
         if (keepTags) {
@@ -56,7 +57,7 @@ public class TikaDocumentItemProcessor implements ItemProcessor<BinaryDocument, 
         }
         AutoDetectParser parser = new AutoDetectParser();
         Metadata metadata = new Metadata();
-        try (InputStream stream = new ByteArrayInputStream(doc.getBody())) {
+        try (InputStream stream = new ByteArrayInputStream(doc.getBinaryContent())) {
             parser.parse(stream, handler, metadata);
             doc.setOutputData(handler.toString());
         } catch (Exception ex) {

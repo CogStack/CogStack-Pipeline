@@ -23,6 +23,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.batch.JobConfiguration;
+import uk.ac.kcl.model.Document;
 import uk.ac.kcl.model.TextDocument;
 
 import java.nio.charset.StandardCharsets;
@@ -68,8 +69,9 @@ public class GateDocumentItemProcessorTest {
         System.out.println("process");        
         byte[] bytes = IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream("xhtml_test"));
         String xhtmlString = new String(bytes,StandardCharsets.UTF_8);
-        TextDocument doc = new TextDocument(xhtmlString);
-        TextDocument result = instance.process(doc);
+        Document doc = new Document();
+        doc.setTextContent(xhtmlString);
+        Document result = instance.process(doc);
         System.out.println(result.getOutputData());
         assertNotNull(result.getOutputData());
         // TODO review the generated test code and remove the default call to fail.

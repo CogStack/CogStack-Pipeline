@@ -26,6 +26,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.dao.TransientDataAccessResourceException;
 import uk.ac.kcl.itemHandlers.ItemHandlers;
+import uk.ac.kcl.itemProcessors.DeIdDocumentItemProcessor;
 import uk.ac.kcl.itemProcessors.GateDocumentItemProcessor;
 import uk.ac.kcl.model.Document;
 import uk.ac.kcl.model.TextDocument;
@@ -60,35 +61,31 @@ public class GateConfiguration {
 
     @Bean
     @Qualifier("gateItemProcessor")
-    public ItemProcessor<TextDocument, TextDocument> gateDocumentItemProcessor() {
+    public ItemProcessor<Document, Document> gateDocumentItemProcessor() {
         return new GateDocumentItemProcessor();
     }
 
-    @Bean(initMethod = "init")
-    public GateService gateService() {
-        if (env.getProperty("gateHome") != null) {
-            return new GateService(
-                    new File(env.getProperty("gateHome")),
-                    new File(env.getProperty("gateApp")),
-                    Integer.parseInt(env.getProperty("poolSize")),
-                    Arrays.asList(env.getProperty("gateAnnotationSets").split(",")));
-        } else {
-            return new GateService();
-        }
-    }
 
+
+    @Bean
+    @Qualifier("deIdDocumentItemProcessor")
+    public ItemProcessor<Document,Document> deIdDocumentItemProcessor(){
+        DeIdDocumentItemProcessor processor = new DeIdDocumentItemProcessor();
+        processor.setFieldsToDeId(Arrays.asList(env.getProperty("fieldsToDeId").split(",")));
+        return processor;
+    }
 
 
     @Bean
     public Step gateSlaveStep(
             @Qualifier("textDocumentItemReader") ItemReader<TextDocument> reader,
             @Qualifier("compositeESandJdbcItemWriter") ItemWriter<Document> writer,
-            @Qualifier("gateItemProcessor") ItemProcessor<TextDocument, TextDocument> processor,
+            @Qualifier("compositeItemProcessor") ItemProcessor<Document, Document> processor,
             StepBuilderFactory stepBuilderFactory,
             @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor
     ) {
         Step step = stepBuilderFactory.get("gateSlaveStep")
-                .<TextDocument, TextDocument>chunk(Integer.parseInt(env.getProperty("chunkSize")))
+                .<Document, Document>chunk(Integer.parseInt(env.getProperty("chunkSize")))
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)

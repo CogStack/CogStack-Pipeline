@@ -20,11 +20,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import uk.ac.kcl.model.Document;
 import uk.ac.kcl.model.TextDocument;
 import uk.ac.kcl.service.GateService;
 
 
-public class GateDocumentItemProcessor implements ItemProcessor<TextDocument, TextDocument> {
+public class GateDocumentItemProcessor implements ItemProcessor<Document, Document> {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(GateDocumentItemProcessor.class);
 
@@ -43,10 +44,9 @@ public class GateDocumentItemProcessor implements ItemProcessor<TextDocument, Te
     }
 
     @Override
-    public TextDocument process(final TextDocument doc) throws Exception {
-        gate.Document gateDoc = Factory.newDocument(doc.getBody());
+    public Document process(final Document doc) throws Exception {
+        gate.Document gateDoc = Factory.newDocument(doc.getTextContent());
         try {
-
             gateService.processDoc(gateDoc);
             if(env.getProperty("gateJSON", "true").equalsIgnoreCase("true")){
                 doc.setOutputData(gateService.convertDocToJSON(gateDoc));
