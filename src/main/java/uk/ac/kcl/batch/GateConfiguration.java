@@ -45,7 +45,7 @@ import java.util.concurrent.TimeoutException;
  */
 @Import(ItemHandlers.class)
 @Configuration
-@Profile("gate")
+@ComponentScan("uk.ac.kcl.service")
 @PropertySource(value="file:${TURBO_LASER}/gateJob.conf" , ignoreResourceNotFound = true)
 public class GateConfiguration {
 
@@ -60,14 +60,18 @@ public class GateConfiguration {
 
 
     @Bean
+    @Profile("gate")
     @Qualifier("gateItemProcessor")
     public ItemProcessor<Document, Document> gateDocumentItemProcessor() {
-        return new GateDocumentItemProcessor();
+        GateDocumentItemProcessor proc = new  GateDocumentItemProcessor();
+        proc.setFieldName(env.getProperty("gateFieldName"));
+        return proc;
     }
 
 
 
     @Bean
+    @Profile("deid")
     @Qualifier("deIdDocumentItemProcessor")
     public ItemProcessor<Document,Document> deIdDocumentItemProcessor(){
         DeIdDocumentItemProcessor processor = new DeIdDocumentItemProcessor();
@@ -77,6 +81,7 @@ public class GateConfiguration {
 
 
     @Bean
+    @Profile("gate")
     public Step gateSlaveStep(
             @Qualifier("textDocumentItemReader") ItemReader<TextDocument> reader,
             @Qualifier("compositeESandJdbcItemWriter") ItemWriter<Document> writer,

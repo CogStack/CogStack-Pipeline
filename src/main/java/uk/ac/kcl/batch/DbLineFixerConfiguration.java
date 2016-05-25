@@ -28,6 +28,7 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.dao.TransientDataAccessResourceException;
 import uk.ac.kcl.itemHandlers.ItemHandlers;
 import uk.ac.kcl.itemProcessors.DbLineFixerItemProcessor;
+import uk.ac.kcl.itemProcessors.GateDocumentItemProcessor;
 import uk.ac.kcl.model.Document;
 
 import javax.annotation.Resource;
@@ -56,37 +57,13 @@ public class DbLineFixerConfiguration {
     
     */
 
-//    @Bean
-//    @StepScope
-//    @Qualifier("dBLineFixerItemReader")
-//    public ItemReader<MultilineDocument> dBLineFixerItemReader(
-//            @Value("#{stepExecutionContext[minValue]}") String minValue,
-//            @Value("#{stepExecutionContext[maxValue]}") String maxValue,
-//            @Value("#{stepExecutionContext[min_time_stamp]}") String minTimeStamp,
-//            @Value("#{stepExecutionContext[max_time_stamp]}") String maxTimeStamp,
-//            @Qualifier("multiRowDocumentRowmapper")RowMapper<MultilineDocument> multiRowDocumentRowmapper,
-//            @Qualifier("sourceDataSource") DataSource jdbcDocumentSource) throws Exception {
-//        JdbcPagingItemReader<MultilineDocument> reader = new JdbcPagingItemReader<>();
-//        reader.setDataSource(jdbcDocumentSource);
-//        SqlPagingQueryProviderFactoryBean qp = new SqlPagingQueryProviderFactoryBean();
-//        qp.setSelectClause(env.getProperty("source.selectClause"));
-//        qp.setFromClause(env.getProperty("source.fromClause"));
-//        qp.setSortKey(env.getProperty("source.sortKey"));
-//        qp.setWhereClause("WHERE " + env.getProperty("columntoPartition") +
-//        " BETWEEN " + minValue + " AND " + maxValue + " ");
-////        " AND " + env.getProperty("timeStamp") +
-////        " BETWEEN '" +minTimeStamp + "' AND '" + maxTimeStamp + "'");
-//        qp.setDataSource(jdbcDocumentSource);
-//        reader.setFetchSize(Integer.parseInt(env.getProperty("source.pageSize")));
-//        reader.setQueryProvider(qp.getObject());
-//        reader.setRowMapper(multiRowDocumentRowmapper);
-//        return reader;
-//    }
 
     @Bean
     @Qualifier("dBLineFixerItemProcessor")
     public ItemProcessor<Document, Document> dBLineFixerItemProcessor() {
-        return new DbLineFixerItemProcessor();
+        DbLineFixerItemProcessor proc = new  DbLineFixerItemProcessor();
+        proc.setFieldName(env.getProperty("dbLineFixerFieldName"));
+        return proc;
     }
 
 

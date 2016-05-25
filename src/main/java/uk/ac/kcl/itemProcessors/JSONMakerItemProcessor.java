@@ -15,6 +15,7 @@
  */
 package uk.ac.kcl.itemProcessors;
 
+import com.google.gson.Gson;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import uk.ac.kcl.model.Document;
@@ -25,12 +26,15 @@ import uk.ac.kcl.model.Document;
  *
  * a null item processor to meet composite requirements if no processing is required
  */
-public class NullItemProcessor implements ItemProcessor<Document, Document> {
+public class JSONMakerItemProcessor implements ItemProcessor<Document, Document> {
 
-    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(NullItemProcessor.class);
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(JSONMakerItemProcessor.class);
 
     @Override
     public Document process(final Document doc) throws Exception {
+        Gson gson = new Gson();
+        String json = gson.toJson(doc.getAdditionalFields());
+        doc.setOutputData(json);
 
         return doc;
     }

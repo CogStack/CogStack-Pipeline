@@ -35,6 +35,7 @@ import uk.ac.kcl.scheduling.SingleJobLauncher;
     "classpath:jms.properties",
     "classpath:concurrency.properties",
     "classpath:basic.properties",
+        "classpath:gate.properties",
     "classpath:sql_server_db.properties",
     "classpath:elasticsearch.properties",
     "classpath:jobAndStep.properties"})
@@ -57,10 +58,10 @@ public class SqlServerIntegrationTestsBasicScheduling {
     TestUtils testUtils;
     @Before
     public void init(){
-//        sqlServerTestUtils.initJobRepository();
-//        sqlServerTestUtils.createBasicInputTable();
-//        sqlServerTestUtils.createBasicOutputTable();
-        //testUtils.insertDataIntoBasicTable("dbo.tblInputDocs");
+        sqlServerTestUtils.initJobRepository();
+        sqlServerTestUtils.createBasicInputTable();
+        sqlServerTestUtils.createBasicOutputTable();
+        testUtils.insertDataIntoBasicTable("dbo.tblInputDocs");
     }
     @Test
     public void sqlServerBasicSchedulingPipelineTest() {

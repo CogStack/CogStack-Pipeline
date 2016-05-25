@@ -36,7 +36,7 @@ import java.util.TreeMap;
  *
  * @author rich
  */
-public class DbLineFixerItemProcessor implements ItemProcessor<Document, Document> {
+public class DbLineFixerItemProcessor extends TLItemProcessor implements ItemProcessor<Document, Document> {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(DbLineFixerItemProcessor.class);
 
@@ -88,8 +88,8 @@ public class DbLineFixerItemProcessor implements ItemProcessor<Document, Documen
         for (Map.Entry<Integer, String> entry : map.entrySet()) {
             sb2.append(entry.getValue());
         }
-        doc.setOutputData(sb2.toString());
 
+        addField(doc,sb2.toString());
         return doc;
     }
 

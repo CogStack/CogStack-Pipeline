@@ -35,7 +35,7 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.integration.config.EnableIntegration;
 import org.springframework.jdbc.support.MetaDataAccessException;
 import org.springframework.jms.connection.CachingConnectionFactory;
-import uk.ac.kcl.itemProcessors.NullItemProcessor;
+import uk.ac.kcl.itemProcessors.JSONMakerItemProcessor;
 
 import javax.sql.DataSource;
 import java.util.ArrayList;
@@ -253,8 +253,8 @@ public class JobConfiguration {
     }
 
     @Bean
-    @Qualifier("nullItemProcessor")
-    public NullItemProcessor nullItemProcessor(){
-        return new NullItemProcessor();
+    @Qualifier("jsonMakerItemProcessor")
+    public JSONMakerItemProcessor jsonMakerItemProcessor(){
+        return new JSONMakerItemProcessor();
     }
 }

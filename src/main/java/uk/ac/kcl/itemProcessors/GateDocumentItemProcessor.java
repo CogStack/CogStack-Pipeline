@@ -25,7 +25,7 @@ import uk.ac.kcl.model.TextDocument;
 import uk.ac.kcl.service.GateService;
 
 
-public class GateDocumentItemProcessor implements ItemProcessor<Document, Document> {
+public class GateDocumentItemProcessor extends TLItemProcessor implements ItemProcessor<Document, Document> {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(GateDocumentItemProcessor.class);
 
@@ -49,9 +49,9 @@ public class GateDocumentItemProcessor implements ItemProcessor<Document, Docume
         try {
             gateService.processDoc(gateDoc);
             if(env.getProperty("gateJSON", "true").equalsIgnoreCase("true")){
-                doc.setOutputData(gateService.convertDocToJSON(gateDoc));
+                addField(doc, gateService.convertDocToJSON(gateDoc));
             }else{
-                doc.setOutputData(gateDoc.toXml());
+                addField(doc, gateDoc.toXml());
             }
             return doc;
         }finally{

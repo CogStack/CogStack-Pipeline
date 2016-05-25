@@ -39,6 +39,7 @@ import uk.ac.kcl.scheduling.SingleJobLauncher;
         "classpath:concurrency.properties",
         "classpath:sql_server_db.properties",
         "classpath:tika.properties",
+        "classpath:gate.properties",
         "classpath:elasticsearch.properties",
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {

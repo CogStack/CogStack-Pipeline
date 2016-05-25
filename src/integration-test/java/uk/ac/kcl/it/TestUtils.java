@@ -94,7 +94,7 @@ public class TestUtils {
                 + ", primaryKeyFieldName"
                 + ", primaryKeyFieldValue"
                 + ", updateTime"
-                + ", input"
+                + ", binaryContent"
                 + ") VALUES (?,?,?,?,?,?)";
         for (int ii = 0; ii < docCount; ii++) {
             jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName", "fictionalPrimaryKeyFieldName", ii, new Timestamp(today), bytes);
@@ -112,17 +112,20 @@ public class TestUtils {
                 + ", primaryKeyFieldName"
                 + ", primaryKeyFieldValue"
                 + ", updateTime"
+                + ", someText"
                 + ", anotherTime"
-                + ") VALUES (?,?,?,?,?,?)";
+                + ") VALUES (?,?,?,?,?,?,?)";
 
+
+        String string1 = "Fictional patient John Smith came to the Clinic today and was diagnosed with gigantic toe syndrome";
         for (long i = 0; i <= docCount; i++) {
             if (i==0) {
                 //test for massive string in ES
                 jdbcTemplate.update(sql, RandomString.nextString(50), "fictionalTableName",
-                        "fictionalPrimaryKeyFieldName", i, new Timestamp(today),new Timestamp(today));
+                        "fictionalPrimaryKeyFieldName", i, new Timestamp(today),string1,new Timestamp(today));
             }else{
                 jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName",
-                        "fictionalPrimaryKeyFieldName", i, new Timestamp(today),new Timestamp(today));
+                        "fictionalPrimaryKeyFieldName", i, new Timestamp(today),string1, new Timestamp(today));
             }
             today = TestUtils.nextDay();
         }

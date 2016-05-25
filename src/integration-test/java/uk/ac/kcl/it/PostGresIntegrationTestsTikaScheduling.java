@@ -36,6 +36,8 @@ import uk.ac.kcl.scheduling.SingleJobLauncher;
 @TestPropertySource({
         "classpath:postgres_test_config_basic.properties",
         "classpath:jms.properties",
+        "classpath:tika.properties",
+        "classpath:gate.properties",
         "classpath:concurrency.properties",
         "classpath:postgres_db.properties",
         "classpath:elasticsearch.properties",

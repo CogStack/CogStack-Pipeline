@@ -41,6 +41,7 @@ import uk.ac.kcl.scheduling.SingleJobLauncher;
     "classpath:sql_server_test_config_tika.properties",
     "classpath:jms.properties",
     "classpath:tika.properties",
+        "classpath:gate.properties",
     "classpath:concurrency.properties",
     "classpath:sql_server_db.properties",
     "classpath:elasticsearch.properties",

@@ -95,7 +95,7 @@ public class PostGresTestUtils {
                 + ", primaryKeyFieldName text "
                 + ", primaryKeyFieldValue integer "
                 + ", updateTime TIMESTAMP "
-                + ", input bytea )");
+                + ", binaryContent bytea )");
 
         targetTemplate.execute("DROP TABLE IF EXISTS tblOutputDocs");
         targetTemplate.execute("CREATE TABLE tblOutputDocs "
@@ -141,6 +141,7 @@ public class PostGresTestUtils {
                 + ", primaryKeyFieldName text "
                 + ", primaryKeyFieldValue integer "
                 + ", updateTime TIMESTAMP "
+                + ", someText TEXT"
                 + ", anotherTime TIMESTAMP )");
 
 

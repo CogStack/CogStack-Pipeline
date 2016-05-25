@@ -39,6 +39,7 @@ import uk.ac.kcl.scheduling.SingleJobLauncher;
         "classpath:jms.properties",
         "classpath:concurrency.properties",
         "classpath:dBLineFixer.properties",
+        "classpath:gate.properties",
         "classpath:elasticsearch.properties",
         "classpath:postgres_db.properties",
         "classpath:jobAndStep.properties"})

@@ -42,7 +42,7 @@ import java.util.logging.Level;
 
 
 @Service
-@Profile("gate")
+@Profile({"gate","deid"})
 public class GateService {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(GateService.class);
@@ -71,9 +71,9 @@ public class GateService {
         poolSize = Integer.parseInt(env.getProperty("poolSize"));
         Gate.setGateHome(gateHome);
         Gate.init();
+        List<String> activeProfiles = Arrays.asList(env.getActiveProfiles());
 
-
-        if(env.getProperty("gateApp")!=null) {
+        if(activeProfiles.contains("gate")){
             gateApp = new File(env.getProperty("gateApp"));
             annotationSets = Arrays.asList(env.getProperty("gateAnnotationSets").split(","));
             genericQueue = new LinkedBlockingQueue<>();
@@ -87,7 +87,8 @@ public class GateService {
             }
         }
 
-        if(env.getProperty("enableDeId").equalsIgnoreCase("true")){
+
+        if(activeProfiles.contains("deid")){
             deidApp = new File(env.getProperty("deIdApp"));
             deIdQueue = new LinkedBlockingQueue<>();
             Corpus corpus = gate.Factory.newCorpus("Corpus");

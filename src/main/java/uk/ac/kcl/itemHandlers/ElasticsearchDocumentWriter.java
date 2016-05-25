@@ -90,10 +90,6 @@ public class ElasticsearchDocumentWriter implements ItemWriter<Document> {
         BulkRequestBuilder bulkRequest = client.prepareBulk();
 
         for (Document doc : documents) {
-            //include outputs of processing
-            if(doc.getOutputData()!=null) {
-                doc.getAdditionalFields().put(env.getProperty("elasticsearch.processedFieldName"), doc.getOutputData());
-            }
             IndexRequestBuilder request = client.prepareIndex(
                     env.getProperty("elasticsearch.index.name"),
                     env.getProperty("elasticsearch.type")).setSource(

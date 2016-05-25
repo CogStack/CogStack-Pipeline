@@ -32,7 +32,7 @@ import java.io.InputStream;
  *
  * @author rich
  */
-public class TikaDocumentItemProcessor implements ItemProcessor<Document, Document> {
+public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemProcessor<Document, Document> {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(TikaDocumentItemProcessor.class);
 
@@ -59,9 +59,9 @@ public class TikaDocumentItemProcessor implements ItemProcessor<Document, Docume
         Metadata metadata = new Metadata();
         try (InputStream stream = new ByteArrayInputStream(doc.getBinaryContent())) {
             parser.parse(stream, handler, metadata);
-            doc.setOutputData(handler.toString());
+            addField(doc, handler.toString());
         } catch (Exception ex) {
-            doc.setOutputData(ex.getMessage());
+            addField(doc,ex.getMessage());
         }
         return doc;
     }

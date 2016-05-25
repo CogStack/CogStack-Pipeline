@@ -186,8 +186,8 @@ public class ItemHandlers {
     ItemProcessor<Document, Document> deIdDocumentItemProcessor;
 
     @Autowired
-    @Qualifier("nullItemProcessor")
-    ItemProcessor<Document, Document> nullItemProcessor;
+    @Qualifier("jsonMakerItemProcessor")
+    ItemProcessor<Document, Document> jsonMakerItemProcessor;
 
     @Bean
     @Qualifier("compositeItemProcessorr")
@@ -208,11 +208,7 @@ public class ItemHandlers {
         if(gateItemProcessor !=null) {
             delegates.add(gateItemProcessor);
         }
-
-        if(delegates.size()==0){
-            delegates.add(nullItemProcessor);
-        }
-
+        delegates.add(jsonMakerItemProcessor);
         processor.setDelegates(delegates);
         return processor;
     }

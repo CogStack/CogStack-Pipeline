@@ -38,6 +38,7 @@ import uk.ac.kcl.scheduling.SingleJobLauncher;
         "classpath:sqlserver_test_config_line_fixer.properties",
         "classpath:jms.properties",
         "classpath:dBLineFixer.properties",
+        "classpath:gate.properties",
         "classpath:concurrency.properties",
         "classpath:sql_server_db.properties",
         "classpath:elasticsearch.properties",

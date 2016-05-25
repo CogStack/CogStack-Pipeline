@@ -64,8 +64,9 @@ public class TikaConfiguration {
     @Qualifier("tikaItemProcessor")
     public ItemProcessor<Document, Document> tikaDocumentItemProcessor() {
         TikaDocumentItemProcessor proc = new TikaDocumentItemProcessor();
+        proc.setFieldName(env.getProperty("tikaFieldName"));
         proc.setKeepTags(Boolean.valueOf(env.getProperty("keepTags")));
-        return new TikaDocumentItemProcessor();
+        return proc;
     }
 
 

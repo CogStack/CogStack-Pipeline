@@ -86,7 +86,7 @@ public class SqlServerTestUtils {
                 + ", primaryKeyFieldName VARCHAR(MAX) "
                 + ", primaryKeyFieldValue BIGINT "
                 + ", updateTime DateTIME "
-                + ", input VARBINARY(max) )");
+                + ", binaryContent VARBINARY(max) )");
 
         targetTemplate.execute("IF OBJECT_ID('dbo.tblOutputDocs', 'U') IS NOT NULL DROP TABLE  dbo.tblOutputDocs");
         targetTemplate.execute("CREATE TABLE dbo.tblOutputDocs "
@@ -131,7 +131,9 @@ public class SqlServerTestUtils {
                 + ", primaryKeyFieldName VARCHAR(MAX) "
                 + ", primaryKeyFieldValue BIGINT "
                 + ", updateTime DateTIME "
+                + ", someText VARCHAR (MAX)"
                 + ", anotherTime DateTIME )");
+
 
     }
 
@@ -143,7 +145,8 @@ public class SqlServerTestUtils {
                 + ", srcTableName VARCHAR(MAX) "
                 + ", primaryKeyFieldName VARCHAR(MAX) "
                 + ", primaryKeyFieldValue BIGINT "
-                + ", updateTime DateTIME )");
+                + ", updateTime DateTIME "
+                + ", output text )");
 
 
     }
