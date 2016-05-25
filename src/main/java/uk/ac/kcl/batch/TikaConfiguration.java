@@ -20,6 +20,7 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.support.CompositeItemProcessor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
@@ -33,6 +34,7 @@ import uk.ac.kcl.model.Document;
 import javax.annotation.Resource;
 import java.net.NoRouteToHostException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -56,9 +58,21 @@ public class TikaConfiguration {
     
     
     */
-    
 
 
+    @Bean
+    @Qualifier("compositeItemProcessorr")
+    public ItemProcessor<Document,Document> compositeItemProcessor() {
+        CompositeItemProcessor writer = new CompositeItemProcessor<>();
+        ArrayList<ItemProcessor<Document, Document>> delegates = new ArrayList<>();
+        if (dBLineFixerItemProcessor != null) {
+            delegates.add(dBLineFixerItemProcessor);
+        }
+        if (tikaItemProcessor != null) {
+            delegates.add(tikaItemProcessor);
+        }
+
+    }
     
     @Bean
     @Qualifier("tikaItemProcessor")
@@ -84,11 +98,8 @@ public class TikaConfiguration {
                 .writer(writer)
                 .faultTolerant()
                 .skipLimit(Integer.valueOf(env.getProperty("skipLimit")))
-                .skip(Exception.class)
-                 .noSkip(SQLException.class)
-                 .noSkip(TimeoutException.class)
-                 .noSkip(NoRouteToHostException.class)
-                 .noSkip(TransientDataAccessResourceException.class)
+                 .noSkip(Exception.class)
+                 //add acceptable exceptions here
                 .taskExecutor(taskExecutor)                 
                 .build();
          return step;

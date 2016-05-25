@@ -3,12 +3,14 @@ package uk.ac.kcl.itemHandlers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.JdbcPagingItemReader;
 import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean;
+import org.springframework.batch.item.support.CompositeItemProcessor;
 import org.springframework.batch.item.support.CompositeItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -151,6 +153,17 @@ public class ItemHandlers {
     @Qualifier("simpleJdbcItemWriter")
     ItemWriter<Document> jdbcItemWriter;
 
+    @Autowired(required = false)
+    @Qualifier("gateItemProcessor")
+    ItemProcessor<TextDocument, TextDocument> gateItemProcessor;
+
+    @Autowired(required = false)
+    @Qualifier("dBLineFixerItemProcessor")
+    ItemProcessor<Document, Document> dBLineFixerItemProcessor;
+
+    @Autowired(required = false)
+    @Qualifier("tikaItemProcessor")
+    ItemProcessor<BinaryDocument, BinaryDocument> tikaItemProcessor;
 
     @Bean
     @Qualifier("compositeESandJdbcItemWriter")
@@ -166,4 +179,5 @@ public class ItemHandlers {
         writer.setDelegates(delegates);
         return writer;
     }
+
 }

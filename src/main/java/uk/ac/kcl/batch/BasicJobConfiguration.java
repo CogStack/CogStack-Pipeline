@@ -66,11 +66,8 @@ public class BasicJobConfiguration {
                 .writer(writer)
                 .faultTolerant()
                 .skipLimit(Integer.parseInt(env.getProperty("skipLimit")))
-                .skip(Exception.class)
-                .noSkip(SQLException.class)
-                .noSkip(TimeoutException.class)
-                .noSkip(NoRouteToHostException.class)
-                .noSkip(TransientDataAccessResourceException.class)
+                .noSkip(Exception.class)
+                //add acceptable exceptions here
                 .taskExecutor(taskExecutor)
                 .build();
         return step;
