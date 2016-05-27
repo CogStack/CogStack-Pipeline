@@ -195,19 +195,21 @@ public class ItemHandlers {
         CompositeItemProcessor processor = new CompositeItemProcessor<>();
         ArrayList<ItemProcessor<Document,Document>> delegates = new ArrayList<>();
 
-        if(deIdDocumentItemProcessor !=null) {
-            delegates.add(deIdDocumentItemProcessor);
+        if(tikaItemProcessor !=null) {
+            delegates.add(tikaItemProcessor);
         }
 
         if(dBLineFixerItemProcessor !=null) {
             delegates.add(dBLineFixerItemProcessor);
         }
-        if(tikaItemProcessor !=null) {
-            delegates.add(tikaItemProcessor);
-        }
+
         if(gateItemProcessor !=null) {
             delegates.add(gateItemProcessor);
         }
+        if(deIdDocumentItemProcessor !=null) {
+            delegates.add(deIdDocumentItemProcessor);
+        }
+
         delegates.add(jsonMakerItemProcessor);
         processor.setDelegates(delegates);
         return processor;
