@@ -55,7 +55,7 @@ public class DeIdDocumentItemProcessor implements ItemProcessor<Document, Docume
             if(fieldsToDeId.contains(k)) {
                 String newString = "unable to de-id";
                 try {
-                    newString = gateService.deIdentifyString(v.toString());
+                    newString = gateService.deIdentifyString(v.toString(),doc.getPrimaryKeyFieldValue());
                 } catch (ExecutionException|ResourceInstantiationException e) {
                     LOG.warn("Unable to deid field " + k + " in document " + doc.getDocName());
                 }

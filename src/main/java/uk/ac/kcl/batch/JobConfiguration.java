@@ -16,8 +16,9 @@
 package uk.ac.kcl.batch;
 
 
+import com.zaxxer.hikari.HikariDataSource;
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.explore.JobExplorer;
@@ -89,41 +90,19 @@ public class JobConfiguration {
 
 
 
-    @Value("${source.username}")
-    String sourceUserName;
-    @Value("${source.password}")
-    String sourcePassword;
-
-
     @Bean(destroyMethod = "close")
     @Primary
     @Qualifier("sourceDataSource")
     //@Scope("prototype")
-    public DataSource refreshableSourceDataSource() {
-        BasicDataSource tempDatasource = new BasicDataSource();
-        setUpReconnectionParams(tempDatasource);
-        tempDatasource.setValidationQuery(env.getProperty("source.connectionValidationQuery"));
-        BasicDataSource mainDatasource = new BasicDataSource();
-        setUpReconnectionParams(mainDatasource);
-        mainDatasource.setValidationQuery(env.getProperty("source.connectionValidationQuery"));
-
-
-        tempDatasource.setDriverClassName(env.getProperty("source.Driver"));
-        tempDatasource.setUsername(sourceUserName);
-        tempDatasource.setPassword(sourcePassword);
-        tempDatasource.setUrl(env.getProperty("source.JdbcPath"));
-
-        executeSessionScripts(tempDatasource, mainDatasource);
-        mainDatasource.setTestOnReturn(true);
-        mainDatasource.setTestOnBorrow(true);
-        mainDatasource.setTestWhileIdle(true);
-
-        //mainDatasource.setDefaultAutoCommit(false);
-        mainDatasource.setValidationQuery(env.getProperty("source.connectionValidationQuery"));
+    public DataSource sourceDataSource() {
+        HikariDataSource mainDatasource = new HikariDataSource();
+        executeSessionScripts(mainDatasource,env.getProperty("source.Driver"));
         mainDatasource.setDriverClassName(env.getProperty("source.Driver"));
-        mainDatasource.setUrl(env.getProperty("source.JdbcPath"));
-        mainDatasource.setUsername(sourceUserName);
-        mainDatasource.setPassword(sourcePassword);
+        mainDatasource.setJdbcUrl(env.getProperty("source.JdbcPath"));
+        mainDatasource.setUsername(env.getProperty(env.getProperty("source.username")));
+        mainDatasource.setPassword(env.getProperty("source.password"));
+        mainDatasource.setIdleTimeout(Long.valueOf(env.getProperty("source.idleTimeout")));
+        mainDatasource.setMaxLifetime(Long.valueOf(env.getProperty("source.maxLifetime")));
 
         return mainDatasource;
     }
@@ -132,32 +111,17 @@ public class JobConfiguration {
     @Bean(destroyMethod = "close")
     //@Scope("prototype")
     @Qualifier("targetDataSource")
-    public DataSource refreshableTargetDataSource() {
-
-        BasicDataSource tempDatasource = new BasicDataSource();
-        setUpReconnectionParams(tempDatasource);
-        tempDatasource.setValidationQuery(env.getProperty("target.connectionValidationQuery"));
-        BasicDataSource mainDatasource = new BasicDataSource();
-        setUpReconnectionParams(mainDatasource);
-        mainDatasource.setValidationQuery(env.getProperty("target.connectionValidationQuery"));
-
-            tempDatasource.setDriverClassName(env.getProperty("target.Driver"));
-            tempDatasource.setUsername(targetUserName);
-            tempDatasource.setPassword(targetPassword);
-            tempDatasource.setUrl(env.getProperty("target.JdbcPath"));
-
-
-
-            executeSessionScripts(tempDatasource, mainDatasource);
-            setUpReconnectionParams(mainDatasource);
-            //mainDatasource.setDefaultAutoCommit(false);
-            mainDatasource.setValidationQuery(env.getProperty("target.connectionValidationQuery"));
-            mainDatasource.setDriverClassName(env.getProperty("target.Driver"));
-            mainDatasource.setUrl(env.getProperty("target.JdbcPath"));
-            mainDatasource.setUsername(targetUserName);
-            mainDatasource.setPassword(targetPassword);
-
+    public DataSource targetDataSource() {
+        HikariDataSource mainDatasource = new HikariDataSource();
+        executeSessionScripts(mainDatasource,env.getProperty("target.Driver"));
+        mainDatasource.setDriverClassName(env.getProperty("target.Driver"));
+        mainDatasource.setJdbcUrl(env.getProperty("target.JdbcPath"));
+        mainDatasource.setUsername(env.getProperty(env.getProperty("target.username")));
+        mainDatasource.setPassword(env.getProperty("target.password"));
+        mainDatasource.setIdleTimeout(Long.valueOf(env.getProperty("target.idleTimeout")));
+        mainDatasource.setMaxLifetime(Long.valueOf(env.getProperty("target.maxLifetime")));
         return mainDatasource;
+
     }
 
 
@@ -170,44 +134,37 @@ public class JobConfiguration {
     }
 
 
-    private void executeSessionScripts(BasicDataSource tempDatasource, BasicDataSource mainDatasource) {
+    private void executeSessionScripts(HikariDataSource mainDatasource, String driver) {
         //temp datasource required to get type
-        ArrayList<String> sqlStatements = new ArrayList<>();
         DatabaseType type = null;
-        try {
-            type = DatabaseType.fromMetaData(tempDatasource);
 
-            switch (type) {
-                case DERBY:
+            switch (driver) {
+                case "DERBY":
                     break;
-                case DB2:
+                case "DB2":
                     break;
-                case DB2ZOS:
+                case "DB2ZOS":
                     break;
-                case HSQL:
+                case "HSQL":
                     break;
-                case SQLSERVER:
-                    sqlStatements.add("SET DATEFORMAT ymd;");
-                    mainDatasource.setConnectionInitSqls(sqlStatements);
+                case "com.microsoft.sqlserver.jdbc.SQLServerDriver":
+                    mainDatasource.setConnectionInitSql("SET DATEFORMAT ymd;");
                     break;
-                case MYSQL:
+                case "MYSQL":
                     break;
-                case ORACLE:
+                case "ORACLE":
                     break;
-                case POSTGRES:
+                case "POSTGRES":
                     break;
-                case SYBASE:
+                case "SYBASE":
                     break;
-                case H2:
+                case "H2":
                     break;
-                case SQLITE:
+                case "SQLITE":
                     break;
             }
-        } catch (MetaDataAccessException e) {
-            e.printStackTrace();
-        }
-    }
 
+    }
 
     @Value("${target.username}")
     String targetUserName;

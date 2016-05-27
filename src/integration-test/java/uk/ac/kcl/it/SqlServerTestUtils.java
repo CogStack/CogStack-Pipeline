@@ -146,7 +146,8 @@ public class SqlServerTestUtils {
                 + ", primaryKeyFieldName VARCHAR(MAX) "
                 + ", primaryKeyFieldValue BIGINT "
                 + ", updateTime DateTIME "
-                + ", output text )");
+                + ", output text "
+                + ", anotherTime DateTIME  )" );
 
 
     }

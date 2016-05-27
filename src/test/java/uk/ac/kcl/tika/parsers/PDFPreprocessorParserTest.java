@@ -20,6 +20,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -41,9 +42,6 @@ import static uk.ac.kcl.tika.parsers.PDFPreprocessorParser.getImageMagickProg;
  *
  * @author rich
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@TestPropertySource("classpath:tika/testdocs/tika_config.properties")
-@ContextConfiguration(classes = TikaConfiguration.class, loader = AnnotationConfigContextLoader.class)
 public class PDFPreprocessorParserTest {
 
     TikaConfig config;

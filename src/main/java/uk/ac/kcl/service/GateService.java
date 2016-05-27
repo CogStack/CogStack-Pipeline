@@ -120,8 +120,9 @@ public class GateService {
         return doc;
     }
 
-    public String deIdentifyString(String text) throws ExecutionException, ResourceInstantiationException {
+    public String deIdentifyString(String text, String primaryKeyFieldValue) throws ExecutionException, ResourceInstantiationException {
         gate.Document doc = Factory.newDocument(text);
+        doc.getFeatures().put("primaryKeyFieldValue",primaryKeyFieldValue);
         CorpusController controller = null;
         try {
             controller = deIdQueue.take();
