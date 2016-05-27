@@ -99,7 +99,7 @@ public class JobConfiguration {
         executeSessionScripts(mainDatasource,env.getProperty("source.Driver"));
         mainDatasource.setDriverClassName(env.getProperty("source.Driver"));
         mainDatasource.setJdbcUrl(env.getProperty("source.JdbcPath"));
-        mainDatasource.setUsername(env.getProperty(env.getProperty("source.username")));
+        mainDatasource.setUsername(env.getProperty("source.username"));
         mainDatasource.setPassword(env.getProperty("source.password"));
         mainDatasource.setIdleTimeout(Long.valueOf(env.getProperty("source.idleTimeout")));
         mainDatasource.setMaxLifetime(Long.valueOf(env.getProperty("source.maxLifetime")));
@@ -116,7 +116,7 @@ public class JobConfiguration {
         executeSessionScripts(mainDatasource,env.getProperty("target.Driver"));
         mainDatasource.setDriverClassName(env.getProperty("target.Driver"));
         mainDatasource.setJdbcUrl(env.getProperty("target.JdbcPath"));
-        mainDatasource.setUsername(env.getProperty(env.getProperty("target.username")));
+        mainDatasource.setUsername(env.getProperty("target.username"));
         mainDatasource.setPassword(env.getProperty("target.password"));
         mainDatasource.setIdleTimeout(Long.valueOf(env.getProperty("target.idleTimeout")));
         mainDatasource.setMaxLifetime(Long.valueOf(env.getProperty("target.maxLifetime")));

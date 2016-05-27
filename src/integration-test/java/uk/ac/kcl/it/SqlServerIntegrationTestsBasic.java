@@ -61,9 +61,9 @@ public class SqlServerIntegrationTestsBasic {
     @Before
     public void init(){
         sqlServerTestUtils.initJobRepository();
-        sqlServerTestUtils.createBasicInputTable();
+        //sqlServerTestUtils.createBasicInputTable();
         sqlServerTestUtils.createBasicOutputTable();
-        testUtils.insertDataIntoBasicTable("dbo.tblInputDocs");
+        //testUtils.insertDataIntoBasicTable("dbo.tblInputDocs");
     }
 
     @Test
