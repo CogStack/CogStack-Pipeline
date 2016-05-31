@@ -34,7 +34,7 @@ import uk.ac.kcl.scheduling.SingleJobLauncher;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
-    "classpath:sqlserver_test_config_basic.properties",
+    "classpath:sql_server_test_config_basic.properties",
     "classpath:jms.properties",
     "classpath:concurrency.properties",
     "classpath:basic.properties",
@@ -61,9 +61,9 @@ public class SqlServerIntegrationTestsBasic {
     @Before
     public void init(){
         sqlServerTestUtils.initJobRepository();
-        //sqlServerTestUtils.createBasicInputTable();
+        sqlServerTestUtils.createBasicInputTable();
         sqlServerTestUtils.createBasicOutputTable();
-        //testUtils.insertDataIntoBasicTable("dbo.tblInputDocs");
+        testUtils.insertDataIntoBasicTable("dbo.tblInputDocs");
     }
 
     @Test

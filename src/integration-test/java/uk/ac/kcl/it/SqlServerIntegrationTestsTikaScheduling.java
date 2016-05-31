@@ -70,7 +70,7 @@ public class SqlServerIntegrationTestsTikaScheduling {
     @DirtiesContext
     public void sqlServerTikaPipelineTest() {
         try {
-            Thread.sleep(1000000000);
+            Thread.sleep(300000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

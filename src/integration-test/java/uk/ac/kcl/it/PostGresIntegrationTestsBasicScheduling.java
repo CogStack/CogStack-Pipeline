@@ -70,7 +70,7 @@ public class PostGresIntegrationTestsBasicScheduling {
     @Test
     public void postgresBasicSchedulingPipelineTest() {
         try {
-            Thread.sleep(1000000000);
+            Thread.sleep(300000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

@@ -62,7 +62,7 @@ public class PostGresIntegrationTestsDBLineFixerScheduling {
     public void init(){
         postGresTestUtils.initPostGresJobRepository();
         postGresTestUtils.createBasicOutputTable();
-        postGresTestUtils.initPostgresMultiLineTextTable();
+        postGresTestUtils.initMultiLineTextTable();
         testUtils.insertDataIntoBasicTable("tblInputDocs");
         testUtils.insertTestLinesForDBLineFixer("tblDocLines");
     }
@@ -70,7 +70,7 @@ public class PostGresIntegrationTestsDBLineFixerScheduling {
     @Test
     public void postgresDBLineFixerPipelineTest() {
         try {
-            Thread.sleep(1000000000);
+            Thread.sleep(300000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

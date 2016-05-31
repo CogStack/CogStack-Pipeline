@@ -25,6 +25,10 @@ public class BatchJobUtils {
     Environment env;
 
     @Autowired
+    @Qualifier("jobRepositoryDataSource")
+    DataSource jobRepositoryDataSource;
+
+    @Autowired
     @Qualifier("targetDataSource")
     DataSource targetDataSource;
 
@@ -62,7 +66,7 @@ public class BatchJobUtils {
 //    }
 
     public Long getLastSuccessfulJobExecutionID(){
-        JdbcTemplate template = new JdbcTemplate(targetDataSource);
+        JdbcTemplate template = new JdbcTemplate(jobRepositoryDataSource);
         String sql = "SELECT MAX(bje.job_execution_id) FROM batch_job_execution bje \n" +
                 " JOIN batch_job_instance bji ON bje.job_instance_id = bji.job_instance_id \n" +
                 " JOIN batch_job_execution_params bjep ON bje.job_execution_id = bjep.job_execution_id" +

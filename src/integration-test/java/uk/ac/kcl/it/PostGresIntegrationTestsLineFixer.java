@@ -21,7 +21,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.core.env.Environment;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -64,18 +64,15 @@ public class PostGresIntegrationTestsLineFixer  {
     public void init(){
         postGresTestUtils.initPostGresJobRepository();
         postGresTestUtils.createBasicOutputTable();
-        postGresTestUtils.initPostgresMultiLineTextTable();
+        postGresTestUtils.initMultiLineTextTable();
         testUtils.insertDataIntoBasicTable("tblInputDocs");
         testUtils.insertTestLinesForDBLineFixer("tblDocLines");
     }
 
     @Test
+    @DirtiesContext
     public void postgresDBLineFixerPipelineTest() {
-        try {
-            Thread.sleep(1000000000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        jobLauncher.launchJob();
 
     }
 }

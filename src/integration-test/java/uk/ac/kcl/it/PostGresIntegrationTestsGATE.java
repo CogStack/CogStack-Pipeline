@@ -19,7 +19,6 @@ import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.batch.core.launch.JobOperator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.annotation.DirtiesContext;
@@ -63,7 +62,7 @@ public class PostGresIntegrationTestsGATE {
     @Before
     public void init(){
         postGresTestUtils.initPostGresJobRepository();
-        postGresTestUtils.initTextualPostgresGateTable();
+        postGresTestUtils.initTextualGateTable();
         testUtils.insertTestXHTMLForGate("tblInputDocs",false);
     }
 

@@ -62,7 +62,7 @@ public class PostGresIntegrationTestsTikaScheduling {
     @Before
     public void init(){
         postGresTestUtils.initPostGresJobRepository();
-        postGresTestUtils.initPostgresTikaTable();
+        postGresTestUtils.initTikaTable();
         testUtils.insertTestBinariesForTika("tblInputDocs");
     }
 
@@ -70,7 +70,7 @@ public class PostGresIntegrationTestsTikaScheduling {
     @DirtiesContext
     public void postgresTikaPipelineTest() {
         try {
-            Thread.sleep(1000000000);
+            Thread.sleep(300000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

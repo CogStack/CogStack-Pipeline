@@ -15,6 +15,7 @@
  */
 package uk.ac.kcl.batch;
 
+import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.configuration.annotation.DefaultBatchConfigurer;
 import org.springframework.batch.core.configuration.support.JobRegistryBeanPostProcessor;
@@ -31,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -45,14 +47,18 @@ import java.util.logging.Logger;
 @Configuration
 public class BatchConfigurer extends DefaultBatchConfigurer {
 
+    @Autowired
+    Environment env;
 
+    @Autowired
+    @Qualifier("jobRepositoryDataSource")
+    DataSource jobRepositoryDataSource;
 
-    public DataSource jdbcDocumentTarget;
 
     @Override
     protected JobRepository createJobRepository() throws Exception {
         JobRepositoryFactoryBean factory = new JobRepositoryFactoryBean();
-        factory.setDataSource(jdbcDocumentTarget);
+        factory.setDataSource(jobRepositoryDataSource);
         factory.setTransactionManager(getTransactionManager());
         //to avoid deadlocks on the Job repo in SQL SERVER 2008
         factory.setIsolationLevelForCreate("ISOLATION_REPEATABLE_READ");
@@ -62,22 +68,22 @@ public class BatchConfigurer extends DefaultBatchConfigurer {
     
     @Override
     @Autowired
-    public void setDataSource(@Qualifier("targetDataSource")DataSource dataSource) {
+    public void setDataSource(@Qualifier("jobRepositoryDataSource")DataSource dataSource) {
         if (dataSource != null) {
             super.setDataSource(dataSource);
         }
-        this.jdbcDocumentTarget = dataSource;
     }
 
 
     @Autowired
     public PlatformTransactionManager getTransactionManager(
-            @Qualifier("targetDataSource")
+            @Qualifier("jobRepositoryDataSource")
             DataSource jdbcDocumentTarget) {
         DataSourceTransactionManager tx = new DataSourceTransactionManager();
         tx.setDataSource(jdbcDocumentTarget);
         return tx;
     }
+
 
     
     @Bean
@@ -87,7 +93,8 @@ public class BatchConfigurer extends DefaultBatchConfigurer {
     
     @Bean
     @Autowired
-    public JobExplorer jobExplorer(@Qualifier("targetDataSource")DataSource dataSource) throws Exception{
+    public JobExplorer jobExplorer(@Qualifier("jobRepositoryDataSource")
+                                               DataSource dataSource) throws Exception{
         JobExplorerFactoryBean factory = new JobExplorerFactoryBean();
         factory.setDataSource(dataSource);
         

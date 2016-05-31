@@ -1,6 +1,5 @@
 package uk.ac.kcl.it;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +16,6 @@ import uk.ac.kcl.batch.JobConfiguration;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.util.logging.Level;
-
-import static uk.ac.kcl.it.TestUtils.today;
 
 /*
  * Copyright 2016 King's College London, Richard Jackson <richgjackson@gmail.com>.
@@ -60,10 +52,16 @@ public class SqlServerTestUtils {
 
     @Autowired
     @Qualifier("targetDataSource")
-    public DataSource jdbcTargetDocumentFinder;
+    public DataSource targetDataSource;
+
+    @Autowired
+    @Qualifier("jobRepositoryDataSource")
+    public DataSource jobRepositoryDataSource;
+
 
     private JdbcTemplate sourceTemplate;
     private JdbcTemplate targetTemplate;
+    private JdbcTemplate jobRepoTemplate;
     private ResourceDatabasePopulator rdp = new ResourceDatabasePopulator();
     private Resource dropTablesResource;
     private Resource makeTablesResource;
@@ -72,7 +70,8 @@ public class SqlServerTestUtils {
     @PostConstruct
     public void init(){
         this.sourceTemplate = new JdbcTemplate(sourceDataSource);
-        this.targetTemplate = new JdbcTemplate(jdbcTargetDocumentFinder);
+        this.targetTemplate = new JdbcTemplate(targetDataSource);
+        this.jobRepoTemplate = new JdbcTemplate(jobRepositoryDataSource);
     }
 
 
@@ -146,7 +145,7 @@ public class SqlServerTestUtils {
                 + ", primaryKeyFieldName VARCHAR(MAX) "
                 + ", primaryKeyFieldValue BIGINT "
                 + ", updateTime DateTIME "
-                + ", output text "
+                + ", output VARCHAR(MAX) "
                 + ", anotherTime DateTIME  )" );
 
 
@@ -182,7 +181,7 @@ public class SqlServerTestUtils {
         rdp.addScript(makeTablesResource);
         rdp.setIgnoreFailedDrops(true);
         rdp.setContinueOnError(true);
-        rdp.execute(jdbcTargetDocumentFinder);
+        rdp.execute(jobRepositoryDataSource);
     }
 
 }

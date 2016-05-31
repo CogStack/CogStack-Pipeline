@@ -1,6 +1,5 @@
 package uk.ac.kcl.it;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +16,7 @@ import uk.ac.kcl.batch.JobConfiguration;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.sql.Date;
-import java.sql.Timestamp;
 import java.util.Random;
-import java.util.logging.Level;
 
 /*
  * Copyright 2016 King's College London, Richard Jackson <richgjackson@gmail.com>.
@@ -69,23 +63,29 @@ public class PostGresTestUtils {
 
     @Autowired
     @Qualifier("targetDataSource")
-    public DataSource jdbcTargetDocumentFinder;
+    public DataSource targetDataSource;
+
+    @Autowired
+    @Qualifier("jobRepositoryDataSource")
+    public DataSource jobRepositoryDataSource;
 
     private JdbcTemplate sourceTemplate;
     private JdbcTemplate targetTemplate;
     private ResourceDatabasePopulator rdp = new ResourceDatabasePopulator();
     private Resource dropTablesResource;
     private Resource makeTablesResource;
+    private JdbcTemplate jobRepoTemplate;
 
 
     @PostConstruct
     public void init(){
         this.sourceTemplate = new JdbcTemplate(sourceDataSource);
-        this.targetTemplate = new JdbcTemplate(jdbcTargetDocumentFinder);
+        this.targetTemplate = new JdbcTemplate(targetDataSource);
+        this.jobRepoTemplate = new JdbcTemplate(jobRepositoryDataSource);
     }
 
 
-    public void initPostgresTikaTable() {
+    public void initTikaTable() {
 ////        for postgres
         sourceTemplate.execute("DROP TABLE IF EXISTS tblInputDocs");
         sourceTemplate.execute("CREATE TABLE tblInputDocs"
@@ -108,7 +108,7 @@ public class PostGresTestUtils {
                 + ", output text )");
     }
 
-    public void initTextualPostgresGateTable() {
+    public void initTextualGateTable() {
 ////        for postgres
         sourceTemplate.execute("DROP TABLE IF EXISTS tblInputDocs");
         sourceTemplate.execute("CREATE TABLE tblInputDocs"
@@ -155,12 +155,15 @@ public class PostGresTestUtils {
                 + ", srcTableName text "
                 + ", primaryKeyFieldName text "
                 + ", primaryKeyFieldValue integer "
-                + ", updateTime TIMESTAMP )");
+                + ", updateTime TIMESTAMP "
+                + ", output text "
+                + ", anotherTime TIMESTAMP)"
+        );
 
 
     }
 
-    public void initPostgresMultiLineTextTable(){
+    public void initMultiLineTextTable(){
         createBasicInputTable();
         sourceTemplate.execute("DROP TABLE IF EXISTS tblDocLines");
         sourceTemplate.execute("CREATE TABLE tblDocLines"
@@ -190,7 +193,7 @@ public class PostGresTestUtils {
         makeTablesResource = new ClassPathResource("org/springframework/batch/core/schema-postgresql.sql");
         rdp.addScript(dropTablesResource);
         rdp.addScript(makeTablesResource);
-        rdp.execute(jdbcTargetDocumentFinder);
+        rdp.execute(jobRepositoryDataSource);
     }
 
 

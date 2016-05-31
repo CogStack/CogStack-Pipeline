@@ -124,6 +124,19 @@ public class JobConfiguration {
 
     }
 
+    @Bean(destroyMethod = "close")
+    @Qualifier("jobRepositoryDataSource")
+    public DataSource jobRepositoryDataSource() {
+        HikariDataSource mainDatasource = new HikariDataSource();
+        mainDatasource.setDriverClassName(env.getProperty("jobRepository.Driver"));
+        mainDatasource.setJdbcUrl(env.getProperty("jobRepository.JdbcPath"));
+        mainDatasource.setUsername(env.getProperty("jobRepository.username"));
+        mainDatasource.setPassword(env.getProperty("jobRepository.password"));
+        mainDatasource.setIdleTimeout(Long.valueOf(env.getProperty("jobRepository.idleTimeout")));
+        mainDatasource.setMaxLifetime(Long.valueOf(env.getProperty("jobRepository.maxLifetime")));
+        return mainDatasource;
+    }
+
 
     private void setUpReconnectionParams(BasicDataSource ds){
 

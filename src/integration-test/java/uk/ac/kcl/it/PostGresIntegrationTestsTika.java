@@ -63,7 +63,7 @@ public class PostGresIntegrationTestsTika {
     @Before
     public void init(){
         postGresTestUtils.initPostGresJobRepository();
-        postGresTestUtils.initPostgresTikaTable();
+        postGresTestUtils.initTikaTable();
         testUtils.insertTestBinariesForTika("tblInputDocs");
     }
 
