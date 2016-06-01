@@ -1,0 +1,1123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+  <head>
+    <title>Logback Log Messages</title>
+<style  type="text/css">
+table { margin-left: 2em; margin-right: 2em; border-left: 2px solid #AAA; }
+TR.even { background: #FFFFFF; }
+TR.odd { background: #EAEAEA; }
+TR.warn TD.Level, TR.error TD.Level, TR.fatal TD.Level {font-weight: bold; color: #FF4040 }
+TD { padding-right: 1ex; padding-left: 1ex; border-right: 2px solid #AAA; }
+TD.Time, TD.Date { text-align: right; font-family: courier, monospace; font-size: smaller; }
+TD.Thread { text-align: left; }
+TD.Level { text-align: right; }
+TD.Logger { text-align: left; }
+TR.header { background: #596ED5; color: #FFF; font-weight: bold; font-size: larger; }
+TD.Exception { background: #A2AEE8; font-family: courier, monospace;}
+</style>
+
+  </head>
+<body>
+<hr/>
+<p>Log session start time Wed Jun 01 14:14:28 BST 2016</p><p></p>
+
+<table cellspacing="0">
+<tr class="header">
+<td class="Date">Date</td>
+<td class="Thread">Thread</td>
+<td class="Level">Level</td>
+<td class="Logger">Logger</td>
+<td class="LineOfCaller">LineOfCaller</td>
+<td class="Message">Message</td>
+</tr>
+
+
+<tr class="info even">
+<td class="Date">14:14:29.116</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.test.context.support.DefaultTestContextBootstrapper</td>
+<td class="LineOfCaller">259</td>
+<td class="Message">Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener]</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:29.130</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.test.context.support.DefaultTestContextBootstrapper</td>
+<td class="LineOfCaller">207</td>
+<td class="Message">Could not instantiate TestExecutionListener [org.springframework.test.context.web.ServletTestExecutionListener]. Specify custom listener classes or make the default listener classes (and their required dependencies) available. Offending class: [javax/servlet/ServletContext]</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:29.149</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.test.context.support.DefaultTestContextBootstrapper</td>
+<td class="LineOfCaller">185</td>
+<td class="Message">Using TestExecutionListeners: [org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@4b0b0854, org.springframework.test.context.support.DependencyInjectionTestExecutionListener@19bb07ed, org.springframework.test.context.support.DirtiesContextTestExecutionListener@10e41621, org.springframework.test.context.transaction.TransactionalTestExecutionListener@353d0772, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@2667f029]</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:29.505</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.context.support.GenericApplicationContext</td>
+<td class="LineOfCaller">577</td>
+<td class="Message">Refreshing org.springframework.context.support.GenericApplicationContext@1aa7ecca: startup date [Wed Jun 01 14:14:29 BST 2016]; root of context hierarchy</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:30.075</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.beans.factory.support.DefaultListableBeanFactory</td>
+<td class="LineOfCaller">839</td>
+<td class="Message">Overriding bean definition for bean &#39;jobLauncher&#39; with a different definition: replacing [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springframework.batch.core.configuration.annotation.SimpleBatchConfiguration; factoryMethodName=jobLauncher; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springframework/batch/core/configuration/annotation/SimpleBatchConfiguration.class]] with [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=uk.ac.kcl.batch.BatchConfigurer; factoryMethodName=jobLauncher; initMethodName=null; destroyMethodName=(inferred); defined in class uk.ac.kcl.batch.BatchConfigurer]</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:30.079</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.beans.factory.support.DefaultListableBeanFactory</td>
+<td class="LineOfCaller">839</td>
+<td class="Message">Overriding bean definition for bean &#39;jobExplorer&#39; with a different definition: replacing [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springframework.batch.core.configuration.annotation.SimpleBatchConfiguration; factoryMethodName=jobExplorer; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springframework/batch/core/configuration/annotation/SimpleBatchConfiguration.class]] with [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=uk.ac.kcl.batch.BatchConfigurer; factoryMethodName=jobExplorer; initMethodName=null; destroyMethodName=(inferred); defined in class uk.ac.kcl.batch.BatchConfigurer]</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:30.082</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.beans.factory.support.DefaultListableBeanFactory</td>
+<td class="LineOfCaller">839</td>
+<td class="Message">Overriding bean definition for bean &#39;jobRegistry&#39; with a different definition: replacing [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springframework.batch.core.configuration.annotation.SimpleBatchConfiguration; factoryMethodName=jobRegistry; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springframework/batch/core/configuration/annotation/SimpleBatchConfiguration.class]] with [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=uk.ac.kcl.batch.BatchConfigurer; factoryMethodName=jobRegistry; initMethodName=null; destroyMethodName=(inferred); defined in class uk.ac.kcl.batch.BatchConfigurer]</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:30.103</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.beans.factory.xml.XmlBeanDefinitionReader</td>
+<td class="LineOfCaller">317</td>
+<td class="Message">Loading XML bean definitions from class path resource [spring-slave.xml]</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:30.628</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.beans.factory.config.PropertiesFactoryBean</td>
+<td class="LineOfCaller">172</td>
+<td class="Message">Loading properties file from URL [jar:file:/home/rich/.gradle/caches/modules-2/files-2.1/org.springframework.integration/spring-integration-core/4.2.3.RELEASE/379a93c0d5ed9b3ff44f1d9d435095e76a4566a3/spring-integration-core-4.2.3.RELEASE.jar!/META-INF/spring.integration.default.properties]</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:30.640</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.config.IntegrationRegistrar</td>
+<td class="LineOfCaller">337</td>
+<td class="Message">No bean named &#39;integrationHeaderChannelRegistry&#39; has been explicitly defined. Therefore, a default DefaultHeaderChannelRegistry will be created.</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:30.679</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.beans.factory.xml.XmlBeanDefinitionReader</td>
+<td class="LineOfCaller">317</td>
+<td class="Message">Loading XML bean definitions from class path resource [spring-master.xml]</td>
+</tr>
+
+<tr class="warn odd">
+<td class="Date">14:14:31.045</td>
+<td class="Thread">main</td>
+<td class="Level">WARN</td>
+<td class="Logger">org.springframework.context.annotation.ConfigurationClassEnhancer</td>
+<td class="LineOfCaller">310</td>
+<td class="Message">@Bean method ScopeConfiguration.stepScope is non-static and returns an object assignable to Spring&#39;s BeanFactoryPostProcessor interface. This will result in a failure to process annotations such as @Autowired, @Resource and @PostConstruct within the method&#39;s declaring @Configuration class. Add the &#39;static&#39; modifier to this method to avoid these container lifecycle issues; see @Bean javadoc for complete details.</td>
+</tr>
+
+<tr class="warn even">
+<td class="Date">14:14:31.062</td>
+<td class="Thread">main</td>
+<td class="Level">WARN</td>
+<td class="Logger">org.springframework.context.annotation.ConfigurationClassEnhancer</td>
+<td class="LineOfCaller">310</td>
+<td class="Message">@Bean method ScopeConfiguration.jobScope is non-static and returns an object assignable to Spring&#39;s BeanFactoryPostProcessor interface. This will result in a failure to process annotations such as @Autowired, @Resource and @PostConstruct within the method&#39;s declaring @Configuration class. Add the &#39;static&#39; modifier to this method to avoid these container lifecycle issues; see @Bean javadoc for complete details.</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:31.081</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.config.DefaultConfiguringBeanFactoryPostProcessor</td>
+<td class="LineOfCaller">130</td>
+<td class="Message">No bean named &#39;errorChannel&#39; has been explicitly defined. Therefore, a default PublishSubscribeChannel will be created.</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:31.084</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.config.DefaultConfiguringBeanFactoryPostProcessor</td>
+<td class="LineOfCaller">158</td>
+<td class="Message">No bean named &#39;taskScheduler&#39; has been explicitly defined. Therefore, a default ThreadPoolTaskScheduler will be created.</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:31.151</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker</td>
+<td class="LineOfCaller">328</td>
+<td class="Message">Bean &#39;uk.ac.kcl.batch.JobConfiguration&#39; of type [class uk.ac.kcl.batch.JobConfiguration$$EnhancerBySpringCGLIB$$6b2c5963] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:31.295</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker</td>
+<td class="LineOfCaller">328</td>
+<td class="Message">Bean &#39;jobRepositoryDataSource&#39; of type [class com.zaxxer.hikari.HikariDataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:31.321</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">com.zaxxer.hikari.HikariDataSource</td>
+<td class="LineOfCaller">93</td>
+<td class="Message">HikariPool-1 - Started.</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:31.384</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">com.zaxxer.hikari.pool.PoolBase</td>
+<td class="LineOfCaller">444</td>
+<td class="Message">HikariPool-1 - Driver does not support get/set network timeout for connections. (Method org.postgresql.jdbc42.Jdbc42Connection.getNetworkTimeout() is not yet implemented.)</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:31.440</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.batch.core.repository.support.JobRepositoryFactoryBean</td>
+<td class="LineOfCaller">183</td>
+<td class="Message">No database type set, using meta data indicating: POSTGRES</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:31.677</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.batch.core.launch.support.SimpleJobLauncher</td>
+<td class="LineOfCaller">195</td>
+<td class="Message">No TaskExecutor has been set, defaulting to synchronous executor.</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:31.679</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker</td>
+<td class="LineOfCaller">328</td>
+<td class="Message">Bean &#39;uk.ac.kcl.batch.BatchConfigurer&#39; of type [class uk.ac.kcl.batch.BatchConfigurer$$EnhancerBySpringCGLIB$$5e15fe4c] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:31.698</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker</td>
+<td class="LineOfCaller">328</td>
+<td class="Message">Bean &#39;jobRegistry&#39; of type [class org.springframework.batch.core.configuration.support.MapJobRegistry] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:31.779</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.batch.core.launch.support.SimpleJobLauncher</td>
+<td class="LineOfCaller">195</td>
+<td class="Message">No TaskExecutor has been set, defaulting to synchronous executor.</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:31.923</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.beans.factory.config.PropertiesFactoryBean</td>
+<td class="LineOfCaller">172</td>
+<td class="Message">Loading properties file from URL [jar:file:/home/rich/.gradle/caches/modules-2/files-2.1/org.springframework.integration/spring-integration-core/4.2.3.RELEASE/379a93c0d5ed9b3ff44f1d9d435095e76a4566a3/spring-integration-core-4.2.3.RELEASE.jar!/META-INF/spring.integration.default.properties]</td>
+</tr>
+
+<tr class="warn odd">
+<td class="Date">14:14:33.103</td>
+<td class="Thread">main</td>
+<td class="Level">WARN</td>
+<td class="Logger">org.springframework.batch.core.listener.AbstractListenerFactoryBean</td>
+<td class="LineOfCaller">222</td>
+<td class="Message">org.springframework.batch.item.ItemReader is an interface.  The implementing class will not be queried for annotation based listener configurations.  If using @StepScope on a @Bean method, be sure to return the implementing class so listner annotations can be used.</td>
+</tr>
+
+<tr class="warn even">
+<td class="Date">14:14:33.120</td>
+<td class="Thread">main</td>
+<td class="Level">WARN</td>
+<td class="Logger">org.springframework.batch.core.listener.AbstractListenerFactoryBean</td>
+<td class="LineOfCaller">222</td>
+<td class="Message">org.springframework.batch.item.ItemReader is an interface.  The implementing class will not be queried for annotation based listener configurations.  If using @StepScope on a @Bean method, be sure to return the implementing class so listner annotations can be used.</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:33.254</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler</td>
+<td class="LineOfCaller">165</td>
+<td class="Message">Initializing ExecutorService  &#39;taskScheduler&#39;</td>
+</tr>
+
+<tr class="warn even">
+<td class="Date">14:14:33.444</td>
+<td class="Thread">main</td>
+<td class="Level">WARN</td>
+<td class="Logger">org.springframework.integration.config.ReleaseStrategyFactoryBean</td>
+<td class="LineOfCaller">76</td>
+<td class="Message">No ReleaseStrategy annotated method found on MessageChannelPartitionHandler; falling back to SequenceSizeReleaseStrategy, target:org.springframework.batch.integration.partition.MessageChannelPartitionHandler@4337afd, methodName:null</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:33.578</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.context.support.DefaultLifecycleProcessor</td>
+<td class="LineOfCaller">341</td>
+<td class="Message">Starting beans in phase 0</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:33.579</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.endpoint.EventDrivenConsumer</td>
+<td class="LineOfCaller">83</td>
+<td class="Message">Adding {jms:outbound-channel-adapter} as a subscriber to the &#39;replyChannel&#39; channel</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:33.580</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.channel.DirectChannel</td>
+<td class="LineOfCaller">69</td>
+<td class="Message">Channel &#39;org.springframework.context.support.GenericApplicationContext@1aa7ecca.replyChannel&#39; has 1 subscriber(s).</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:33.580</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.endpoint.EventDrivenConsumer</td>
+<td class="LineOfCaller">97</td>
+<td class="Message">started org.springframework.integration.config.ConsumerEndpointFactoryBean#0</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:33.581</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.endpoint.EventDrivenConsumer</td>
+<td class="LineOfCaller">83</td>
+<td class="Message">Adding {service-activator} as a subscriber to the &#39;requestChannel&#39; channel</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:33.582</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.channel.DirectChannel</td>
+<td class="LineOfCaller">69</td>
+<td class="Message">Channel &#39;org.springframework.context.support.GenericApplicationContext@1aa7ecca.requestChannel&#39; has 1 subscriber(s).</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:33.582</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.endpoint.EventDrivenConsumer</td>
+<td class="LineOfCaller">97</td>
+<td class="Message">started org.springframework.integration.config.ConsumerEndpointFactoryBean#1</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:33.583</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.endpoint.EventDrivenConsumer</td>
+<td class="LineOfCaller">83</td>
+<td class="Message">Adding {jms:outbound-channel-adapter} as a subscriber to the &#39;requestChannel&#39; channel</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:33.584</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.channel.DirectChannel</td>
+<td class="LineOfCaller">69</td>
+<td class="Message">Channel &#39;org.springframework.context.support.GenericApplicationContext@1aa7ecca.requestChannel&#39; has 2 subscriber(s).</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:33.584</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.endpoint.EventDrivenConsumer</td>
+<td class="LineOfCaller">97</td>
+<td class="Message">started org.springframework.integration.config.ConsumerEndpointFactoryBean#2</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:33.585</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.endpoint.EventDrivenConsumer</td>
+<td class="LineOfCaller">83</td>
+<td class="Message">Adding {aggregator} as a subscriber to the &#39;replyChannel&#39; channel</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:33.585</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.channel.DirectChannel</td>
+<td class="LineOfCaller">69</td>
+<td class="Message">Channel &#39;org.springframework.context.support.GenericApplicationContext@1aa7ecca.replyChannel&#39; has 2 subscriber(s).</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:33.586</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.endpoint.EventDrivenConsumer</td>
+<td class="LineOfCaller">97</td>
+<td class="Message">started org.springframework.integration.config.ConsumerEndpointFactoryBean#3</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:33.587</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.endpoint.EventDrivenConsumer</td>
+<td class="LineOfCaller">83</td>
+<td class="Message">Adding {logging-channel-adapter:_org.springframework.integration.errorLogger} as a subscriber to the &#39;errorChannel&#39; channel</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:33.587</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.channel.PublishSubscribeChannel</td>
+<td class="LineOfCaller">69</td>
+<td class="Message">Channel &#39;org.springframework.context.support.GenericApplicationContext@1aa7ecca.errorChannel&#39; has 1 subscriber(s).</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:33.588</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.endpoint.EventDrivenConsumer</td>
+<td class="LineOfCaller">97</td>
+<td class="Message">started _org.springframework.integration.errorLogger</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:33.588</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.context.support.DefaultLifecycleProcessor</td>
+<td class="LineOfCaller">341</td>
+<td class="Message">Starting beans in phase 1073741823</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:33.589</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.jms.ChannelPublishingJmsMessageListener$GatewayDelegate</td>
+<td class="LineOfCaller">97</td>
+<td class="Message">started org.springframework.integration.jms.ChannelPublishingJmsMessageListener$GatewayDelegate@62cba181</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:33.898</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.jms.connection.CachingConnectionFactory</td>
+<td class="LineOfCaller">311</td>
+<td class="Message">Established shared JMS Connection: ActiveMQConnection {id=ID:rich-Lenovo-IdeaPad-U410-Touch-47951-1464786873781-1:1,clientId=null,started=false}</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:33.925</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.jms.JmsMessageDrivenEndpoint</td>
+<td class="LineOfCaller">97</td>
+<td class="Message">started org.springframework.integration.jms.JmsMessageDrivenEndpoint#0</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:33.930</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.jms.ChannelPublishingJmsMessageListener$GatewayDelegate</td>
+<td class="LineOfCaller">97</td>
+<td class="Message">started org.springframework.integration.jms.ChannelPublishingJmsMessageListener$GatewayDelegate@2693c618</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:33.931</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.jms.JmsMessageDrivenEndpoint</td>
+<td class="LineOfCaller">97</td>
+<td class="Message">started org.springframework.integration.jms.JmsMessageDrivenEndpoint#1</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:33.960</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.jdbc.datasource.init.ScriptUtils</td>
+<td class="LineOfCaller">443</td>
+<td class="Message">Executing SQL script from class path resource [org/springframework/batch/core/schema-drop-postgresql.sql]</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:34.040</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.jdbc.datasource.init.ScriptUtils</td>
+<td class="LineOfCaller">502</td>
+<td class="Message">Executed SQL script from class path resource [org/springframework/batch/core/schema-drop-postgresql.sql] in 79 ms.</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:34.041</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.jdbc.datasource.init.ScriptUtils</td>
+<td class="LineOfCaller">443</td>
+<td class="Message">Executing SQL script from class path resource [org/springframework/batch/core/schema-postgresql.sql]</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:34.177</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.jdbc.datasource.init.ScriptUtils</td>
+<td class="LineOfCaller">502</td>
+<td class="Message">Executed SQL script from class path resource [org/springframework/batch/core/schema-postgresql.sql] in 136 ms.</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:34.178</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">com.zaxxer.hikari.HikariDataSource</td>
+<td class="LineOfCaller">93</td>
+<td class="Message">HikariPool-2 - Started.</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:34.184</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">com.zaxxer.hikari.pool.PoolBase</td>
+<td class="LineOfCaller">444</td>
+<td class="Message">HikariPool-2 - Driver does not support get/set network timeout for connections. (Method org.postgresql.jdbc42.Jdbc42Connection.getNetworkTimeout() is not yet implemented.)</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:34.216</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">com.zaxxer.hikari.HikariDataSource</td>
+<td class="LineOfCaller">93</td>
+<td class="Message">HikariPool-3 - Started.</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:34.220</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">com.zaxxer.hikari.pool.PoolBase</td>
+<td class="LineOfCaller">444</td>
+<td class="Message">HikariPool-3 - Driver does not support get/set network timeout for connections. (Method org.postgresql.jdbc42.Jdbc42Connection.getNetworkTimeout() is not yet implemented.)</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:35.924</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">uk.ac.kcl.utils.BatchJobUtils</td>
+<td class="LineOfCaller">75</td>
+<td class="Message">Looking for last previous job with query SELECT MAX(bje.job_execution_id) FROM batch_job_execution bje 
+ JOIN batch_job_instance bji ON bje.job_instance_id = bji.job_instance_id 
+ JOIN batch_job_execution_params bjep ON bje.job_execution_id = bjep.job_execution_id WHERE bje.exit_code = &#39;COMPLETED&#39; AND bji.job_name = &#39;basicJob&#39; AND bjep.key_name = &#39;jobClass&#39; AND bjep.string_val= &#39;testBasicExecution&#39;</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:35.951</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">uk.ac.kcl.utils.BatchJobUtils</td>
+<td class="LineOfCaller">95</td>
+<td class="Message">No previous job found in job repository</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:35.952</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">uk.ac.kcl.scheduling.SingleJobLauncher</td>
+<td class="LineOfCaller">77</td>
+<td class="Message">Last good run was null. Recommencing from then</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:36.029</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.batch.core.launch.support.SimpleJobLauncher</td>
+<td class="LineOfCaller">133</td>
+<td class="Message">Job: [FlowJob: [name=basicJob]] launched with the following parameters: [{this_attempt_date=1464786875922, jobClass=testBasicExecution}]</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:36.056</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.batch.core.job.SimpleStepHandler</td>
+<td class="LineOfCaller">146</td>
+<td class="Message">Executing step: [basicMasterStep]</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:36.073</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">uk.ac.kcl.partitioners.ColumnRangePartitioner</td>
+<td class="LineOfCaller">127</td>
+<td class="Message">commencing timestamp based partitioning</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:36.073</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">uk.ac.kcl.utils.BatchJobUtils</td>
+<td class="LineOfCaller">75</td>
+<td class="Message">Looking for last previous job with query SELECT MAX(bje.job_execution_id) FROM batch_job_execution bje 
+ JOIN batch_job_instance bji ON bje.job_instance_id = bji.job_instance_id 
+ JOIN batch_job_execution_params bjep ON bje.job_execution_id = bjep.job_execution_id WHERE bje.exit_code = &#39;COMPLETED&#39; AND bji.job_name = &#39;basicJob&#39; AND bjep.key_name = &#39;jobClass&#39; AND bjep.string_val= &#39;testBasicExecution&#39;</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:36.075</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">uk.ac.kcl.utils.BatchJobUtils</td>
+<td class="LineOfCaller">95</td>
+<td class="Message">No previous job found in job repository</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:36.076</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">uk.ac.kcl.partitioners.ColumnRangePartitioner</td>
+<td class="LineOfCaller">250</td>
+<td class="Message">No previous successful batches detected. Commencing from first timestamp: 2016-06-01 14:14:32.01</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:36.077</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">uk.ac.kcl.partitioners.ColumnRangePartitioner</td>
+<td class="LineOfCaller">262</td>
+<td class="Message">This job SQL: 
+ SELECT  MAX(primaryKeyFieldValue) AS max_id , 
+ MIN(primaryKeyFieldValue) AS min_id , 
+ MAX(updateTime) AS max_time_stamp , 
+ MIN(updateTime) AS min_time_stamp  
+ FROM ( 
+ SELECT  primaryKeyFieldValue, updateTime FROM tblInputDocs  WHERE CAST (updateTime as TIMESTAMP ) BETWEEN CAST (&#39;2016-06-01 14:14:32.01&#39; as TIMESTAMP )  AND CAST (&#39;2016-09-09 14:14:32.01&#39; as TIMESTAMP )  ORDER BY updateTime ASC  , primaryKeyFieldValue ASC  ) t1</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:36.353</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">uk.ac.kcl.partitioners.ColumnRangePartitioner</td>
+<td class="LineOfCaller">145</td>
+<td class="Message">Database not yet synched. Synching as far as  2016-09-08 14:30:21.702 this job</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:36.353</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">uk.ac.kcl.partitioners.ColumnRangePartitioner</td>
+<td class="LineOfCaller">152</td>
+<td class="Message">Commencing timestamp ordered PK partitioning</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:36.354</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">uk.ac.kcl.partitioners.ColumnRangePartitioner</td>
+<td class="LineOfCaller">163</td>
+<td class="Message">Multiple steps to generate this job</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:36.354</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">uk.ac.kcl.partitioners.ColumnRangePartitioner</td>
+<td class="LineOfCaller">175</td>
+<td class="Message">partitioning complete</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:36.540</td>
+<td class="Thread">SimpleAsyncTaskExecutor-1</td>
+<td class="Level">INFO</td>
+<td class="Logger">uk.ac.kcl.itemHandlers.ItemHandlers</td>
+<td class="LineOfCaller">56</td>
+<td class="Message">This step where clause: WHERE updateTime BETWEEN CAST(&#39;2016-06-01 14:14:32.01&#39; AS TIMESTAMP)  AND CAST(&#39;2016-09-08 14:30:21.702&#39; AS TIMESTAMP)  AND primaryKeyFieldValue BETWEEN &#39;34&#39; AND &#39;67&#39;</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:36.913</td>
+<td class="Thread">SimpleAsyncTaskExecutor-2</td>
+<td class="Level">INFO</td>
+<td class="Logger">uk.ac.kcl.itemHandlers.ElasticsearchDocumentWriter</td>
+<td class="LineOfCaller">120</td>
+<td class="Message">9 documents indexed into ElasticSearch in 41 ms</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:36.918</td>
+<td class="Thread">SimpleAsyncTaskExecutor-3</td>
+<td class="Level">INFO</td>
+<td class="Logger">uk.ac.kcl.itemHandlers.ElasticsearchDocumentWriter</td>
+<td class="LineOfCaller">120</td>
+<td class="Message">8 documents indexed into ElasticSearch in 50 ms</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:36.936</td>
+<td class="Thread">SimpleAsyncTaskExecutor-4</td>
+<td class="Level">INFO</td>
+<td class="Logger">uk.ac.kcl.itemHandlers.ElasticsearchDocumentWriter</td>
+<td class="LineOfCaller">120</td>
+<td class="Message">10 documents indexed into ElasticSearch in 64 ms</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:36.941</td>
+<td class="Thread">SimpleAsyncTaskExecutor-1</td>
+<td class="Level">INFO</td>
+<td class="Logger">uk.ac.kcl.itemHandlers.ElasticsearchDocumentWriter</td>
+<td class="LineOfCaller">120</td>
+<td class="Message">7 documents indexed into ElasticSearch in 68 ms</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:37.070</td>
+<td class="Thread">SimpleAsyncTaskExecutor-7</td>
+<td class="Level">INFO</td>
+<td class="Logger">uk.ac.kcl.itemHandlers.ItemHandlers</td>
+<td class="LineOfCaller">56</td>
+<td class="Message">This step where clause: WHERE updateTime BETWEEN CAST(&#39;2016-06-01 14:14:32.01&#39; AS TIMESTAMP)  AND CAST(&#39;2016-09-08 14:30:21.702&#39; AS TIMESTAMP)  AND primaryKeyFieldValue BETWEEN &#39;68&#39; AND &#39;101&#39;</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:37.100</td>
+<td class="Thread">SimpleAsyncTaskExecutor-8</td>
+<td class="Level">INFO</td>
+<td class="Logger">uk.ac.kcl.itemHandlers.ElasticsearchDocumentWriter</td>
+<td class="LineOfCaller">120</td>
+<td class="Message">3 documents indexed into ElasticSearch in 9 ms</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:37.115</td>
+<td class="Thread">SimpleAsyncTaskExecutor-9</td>
+<td class="Level">INFO</td>
+<td class="Logger">uk.ac.kcl.itemHandlers.ElasticsearchDocumentWriter</td>
+<td class="LineOfCaller">120</td>
+<td class="Message">4 documents indexed into ElasticSearch in 20 ms</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:37.138</td>
+<td class="Thread">SimpleAsyncTaskExecutor-6</td>
+<td class="Level">INFO</td>
+<td class="Logger">uk.ac.kcl.itemHandlers.ElasticsearchDocumentWriter</td>
+<td class="LineOfCaller">120</td>
+<td class="Message">6 documents indexed into ElasticSearch in 39 ms</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:37.145</td>
+<td class="Thread">SimpleAsyncTaskExecutor-7</td>
+<td class="Level">INFO</td>
+<td class="Logger">uk.ac.kcl.itemHandlers.ElasticsearchDocumentWriter</td>
+<td class="LineOfCaller">120</td>
+<td class="Message">19 documents indexed into ElasticSearch in 42 ms</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:37.202</td>
+<td class="Thread">SimpleAsyncTaskExecutor-11</td>
+<td class="Level">INFO</td>
+<td class="Logger">uk.ac.kcl.itemHandlers.ItemHandlers</td>
+<td class="LineOfCaller">56</td>
+<td class="Message">This step where clause: WHERE updateTime BETWEEN CAST(&#39;2016-06-01 14:14:32.01&#39; AS TIMESTAMP)  AND CAST(&#39;2016-09-08 14:30:21.702&#39; AS TIMESTAMP)  AND primaryKeyFieldValue BETWEEN &#39;0&#39; AND &#39;33&#39;</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:37.242</td>
+<td class="Thread">SimpleAsyncTaskExecutor-11</td>
+<td class="Level">INFO</td>
+<td class="Logger">uk.ac.kcl.itemHandlers.ElasticsearchDocumentWriter</td>
+<td class="LineOfCaller">120</td>
+<td class="Message">5 documents indexed into ElasticSearch in 9 ms</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:37.261</td>
+<td class="Thread">SimpleAsyncTaskExecutor-12</td>
+<td class="Level">INFO</td>
+<td class="Logger">uk.ac.kcl.itemHandlers.ElasticsearchDocumentWriter</td>
+<td class="LineOfCaller">120</td>
+<td class="Message">13 documents indexed into ElasticSearch in 25 ms</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:37.284</td>
+<td class="Thread">SimpleAsyncTaskExecutor-13</td>
+<td class="Level">INFO</td>
+<td class="Logger">uk.ac.kcl.itemHandlers.ElasticsearchDocumentWriter</td>
+<td class="LineOfCaller">120</td>
+<td class="Message">10 documents indexed into ElasticSearch in 48 ms</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:37.291</td>
+<td class="Thread">SimpleAsyncTaskExecutor-14</td>
+<td class="Level">INFO</td>
+<td class="Logger">uk.ac.kcl.itemHandlers.ElasticsearchDocumentWriter</td>
+<td class="LineOfCaller">120</td>
+<td class="Message">6 documents indexed into ElasticSearch in 53 ms</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:37.345</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">uk.ac.kcl.listeners.JobCompleteNotificationListener</td>
+<td class="LineOfCaller">49</td>
+<td class="Message">!!! JOB FINISHED! promoting last good record date to JobExecutionContext</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:37.358</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.batch.core.launch.support.SimpleJobLauncher</td>
+<td class="LineOfCaller">136</td>
+<td class="Message">Job: [FlowJob: [name=basicJob]] completed with the following parameters: [{this_attempt_date=1464786875922, jobClass=testBasicExecution}] and the following status: [COMPLETED]</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:37.359</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.context.support.GenericApplicationContext</td>
+<td class="LineOfCaller">957</td>
+<td class="Message">Closing org.springframework.context.support.GenericApplicationContext@1aa7ecca: startup date [Wed Jun 01 14:14:29 BST 2016]; root of context hierarchy</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:37.362</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.context.support.DefaultLifecycleProcessor</td>
+<td class="LineOfCaller">356</td>
+<td class="Message">Stopping beans in phase 2147483647</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:37.363</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.jms.ChannelPublishingJmsMessageListener$GatewayDelegate</td>
+<td class="LineOfCaller">114</td>
+<td class="Message">stopped org.springframework.integration.jms.ChannelPublishingJmsMessageListener$GatewayDelegate@62cba181</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:37.363</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.jms.JmsMessageDrivenEndpoint</td>
+<td class="LineOfCaller">131</td>
+<td class="Message">stopped org.springframework.integration.jms.JmsMessageDrivenEndpoint#0</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:37.364</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.jms.ChannelPublishingJmsMessageListener$GatewayDelegate</td>
+<td class="LineOfCaller">114</td>
+<td class="Message">stopped org.springframework.integration.jms.ChannelPublishingJmsMessageListener$GatewayDelegate@2693c618</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:37.364</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.jms.JmsMessageDrivenEndpoint</td>
+<td class="LineOfCaller">131</td>
+<td class="Message">stopped org.springframework.integration.jms.JmsMessageDrivenEndpoint#1</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:37.364</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.context.support.DefaultLifecycleProcessor</td>
+<td class="LineOfCaller">356</td>
+<td class="Message">Stopping beans in phase 1073741823</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:37.365</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.context.support.DefaultLifecycleProcessor</td>
+<td class="LineOfCaller">356</td>
+<td class="Message">Stopping beans in phase 0</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:37.365</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.endpoint.EventDrivenConsumer</td>
+<td class="LineOfCaller">83</td>
+<td class="Message">Removing {jms:outbound-channel-adapter} as a subscriber to the &#39;replyChannel&#39; channel</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:37.365</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.channel.DirectChannel</td>
+<td class="LineOfCaller">69</td>
+<td class="Message">Channel &#39;org.springframework.context.support.GenericApplicationContext@1aa7ecca.replyChannel&#39; has 1 subscriber(s).</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:37.365</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.endpoint.EventDrivenConsumer</td>
+<td class="LineOfCaller">131</td>
+<td class="Message">stopped org.springframework.integration.config.ConsumerEndpointFactoryBean#0</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:37.366</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.endpoint.EventDrivenConsumer</td>
+<td class="LineOfCaller">83</td>
+<td class="Message">Removing {service-activator} as a subscriber to the &#39;requestChannel&#39; channel</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:37.366</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.channel.DirectChannel</td>
+<td class="LineOfCaller">69</td>
+<td class="Message">Channel &#39;org.springframework.context.support.GenericApplicationContext@1aa7ecca.requestChannel&#39; has 1 subscriber(s).</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:37.366</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.endpoint.EventDrivenConsumer</td>
+<td class="LineOfCaller">131</td>
+<td class="Message">stopped org.springframework.integration.config.ConsumerEndpointFactoryBean#1</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:37.366</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.endpoint.EventDrivenConsumer</td>
+<td class="LineOfCaller">83</td>
+<td class="Message">Removing {jms:outbound-channel-adapter} as a subscriber to the &#39;requestChannel&#39; channel</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:37.366</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.channel.DirectChannel</td>
+<td class="LineOfCaller">69</td>
+<td class="Message">Channel &#39;org.springframework.context.support.GenericApplicationContext@1aa7ecca.requestChannel&#39; has 0 subscriber(s).</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:37.367</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.endpoint.EventDrivenConsumer</td>
+<td class="LineOfCaller">131</td>
+<td class="Message">stopped org.springframework.integration.config.ConsumerEndpointFactoryBean#2</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:37.367</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.endpoint.EventDrivenConsumer</td>
+<td class="LineOfCaller">83</td>
+<td class="Message">Removing {aggregator} as a subscriber to the &#39;replyChannel&#39; channel</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:37.367</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.channel.DirectChannel</td>
+<td class="LineOfCaller">69</td>
+<td class="Message">Channel &#39;org.springframework.context.support.GenericApplicationContext@1aa7ecca.replyChannel&#39; has 0 subscriber(s).</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:37.367</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.endpoint.EventDrivenConsumer</td>
+<td class="LineOfCaller">131</td>
+<td class="Message">stopped org.springframework.integration.config.ConsumerEndpointFactoryBean#3</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:37.368</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.endpoint.EventDrivenConsumer</td>
+<td class="LineOfCaller">83</td>
+<td class="Message">Removing {logging-channel-adapter:_org.springframework.integration.errorLogger} as a subscriber to the &#39;errorChannel&#39; channel</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:37.368</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.channel.PublishSubscribeChannel</td>
+<td class="LineOfCaller">69</td>
+<td class="Message">Channel &#39;org.springframework.context.support.GenericApplicationContext@1aa7ecca.errorChannel&#39; has 0 subscriber(s).</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:37.368</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.integration.endpoint.EventDrivenConsumer</td>
+<td class="LineOfCaller">131</td>
+<td class="Message">stopped _org.springframework.integration.errorLogger</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:38.360</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler</td>
+<td class="LineOfCaller">203</td>
+<td class="Message">Shutting down ExecutorService &#39;taskScheduler&#39;</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:38.362</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">com.zaxxer.hikari.pool.HikariPool</td>
+<td class="LineOfCaller">214</td>
+<td class="Message">HikariPool-3 - Close initiated...</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:38.371</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">com.zaxxer.hikari.pool.HikariPool</td>
+<td class="LineOfCaller">254</td>
+<td class="Message">HikariPool-3 - Closed.</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:38.372</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">com.zaxxer.hikari.pool.HikariPool</td>
+<td class="LineOfCaller">214</td>
+<td class="Message">HikariPool-2 - Close initiated...</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:38.378</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">com.zaxxer.hikari.pool.HikariPool</td>
+<td class="LineOfCaller">254</td>
+<td class="Message">HikariPool-2 - Closed.</td>
+</tr>
+
+<tr class="info even">
+<td class="Date">14:14:38.379</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">com.zaxxer.hikari.pool.HikariPool</td>
+<td class="LineOfCaller">214</td>
+<td class="Message">HikariPool-1 - Close initiated...</td>
+</tr>
+
+<tr class="info odd">
+<td class="Date">14:14:38.384</td>
+<td class="Thread">main</td>
+<td class="Level">INFO</td>
+<td class="Logger">com.zaxxer.hikari.pool.HikariPool</td>
+<td class="LineOfCaller">254</td>
+<td class="Message">HikariPool-1 - Closed.</td>
+</tr>

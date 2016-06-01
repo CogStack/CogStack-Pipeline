@@ -115,8 +115,8 @@ dependencies {
 
     //compile 'log4j:log4j:1.2.17'
     compile 'joda-time:joda-time:2.9.3'
-    compile "org.elasticsearch.plugin:shield:2.2.0"
-    compile 'org.elasticsearch:elasticsearch:2.2.0'
+    compile "org.elasticsearch.plugin:shield:2.3.1"
+    compile 'org.elasticsearch:elasticsearch:2.3.1'
     compile("org.springframework.boot:spring-boot-starter-batch")
     compile("org.hsqldb:hsqldb")
     compile 'org.hsqldb:hsqldb:2.3.3'
