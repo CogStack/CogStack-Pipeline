@@ -29,8 +29,8 @@ public class BatchJobUtils {
     DataSource jobRepositoryDataSource;
 
     @Autowired
-    @Qualifier("targetDataSource")
-    DataSource targetDataSource;
+    @Qualifier("sourceDataSource")
+    DataSource sourceDataSource;
 
     @Autowired
     private JobExplorer jobExplorer;
@@ -39,7 +39,7 @@ public class BatchJobUtils {
             String tableName,
             Timestamp lastGoodJob,
             String timestampColumnName){
-        JdbcTemplate template = new JdbcTemplate(targetDataSource);
+        JdbcTemplate template = new JdbcTemplate(sourceDataSource);
         String sql = "SELECT MIN(" + timestampColumnName + ") AS min_time_stamp " +
                 " FROM " + tableName + " " +
                 " WHERE CAST(" + timestampColumnName + " AS "+
