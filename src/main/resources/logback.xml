@@ -9,10 +9,10 @@
 
 
     <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>turbolaser-log.html</file>
+        <file>logs/turbolaser-log.html</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- daily rollover -->
-            <fileNamePattern>turbo-laser-log${LOG_FILE_NAME}-date.%d{yyyy-MM-dd}.html</fileNamePattern>
+            <fileNamePattern>turbo-laser-log-${LOG_FILE_NAME}-date.%d{yyyy-MM-dd}.html</fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy
                     class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
             <!-- or whenever the file size reaches 50MB -->

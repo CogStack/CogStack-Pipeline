@@ -2,17 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8fa4ce33-e860-41c6-a6d6-4cf8986d4df1" name="Default" comment="added hikari support and switched to MS sql server official driver. JTDS too old">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules/turbo-laser_main.iml" afterPath="$PROJECT_DIR$/.idea/modules/turbo-laser_main.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules/turbo-laser_test.iml" afterPath="$PROJECT_DIR$/.idea/modules/turbo-laser_test.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build.gradle" afterPath="$PROJECT_DIR$/build.gradle" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/exampleConfigs/basicJob.conf" afterPath="$PROJECT_DIR$/exampleConfigs/basicJob.conf" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/exampleConfigs/dBLineFixerJob.conf" afterPath="$PROJECT_DIR$/exampleConfigs/dBLineFixerJob.conf" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/exampleConfigs/gateJob.conf" afterPath="$PROJECT_DIR$/exampleConfigs/gateJob.conf" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/exampleConfigs/tikaJob.conf" afterPath="$PROJECT_DIR$/exampleConfigs/tikaJob.conf" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/JobConfiguration.java" afterPath="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/JobConfiguration.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/integration-test/resources/logback-test.xml" afterPath="$PROJECT_DIR$/src/integration-test/resources/logback-test.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/resources/logback.xml" afterPath="$PROJECT_DIR$/src/main/resources/logback.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/turbolaser-integration-test-log.html" afterPath="$PROJECT_DIR$/turbolaser-integration-test-log.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/resources/logback-test.xml" afterPath="$PROJECT_DIR$/src/test/resources/logback-test.xml" />
     </list>
     <ignored path="turbo-laser.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -140,16 +132,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="sql_server_test_config_basic.properties" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/integration-test/resources/sql_server_test_config_basic.properties">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="612">
-              <caret line="34" column="65" selection-start-line="34" selection-start-column="65" selection-end-line="34" selection-end-column="65" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="SqlServerIntegrationTestsBasicScheduling.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerIntegrationTestsBasicScheduling.java">
           <provider selected="true" editor-type-id="text-editor">
@@ -163,7 +145,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="build.gradle" pinned="false" current-in-tab="true">
+      <file leaf-file-name="build.gradle" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/build.gradle">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="108">
@@ -173,11 +155,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="logback.xml" pinned="false" current-in-tab="false">
+      <file leaf-file-name="logback.xml" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/resources/logback.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="378">
-              <caret line="21" column="25" selection-start-line="21" selection-start-column="25" selection-end-line="21" selection-end-column="25" />
+            <state relative-caret-position="180">
+              <caret line="14" column="45" selection-start-line="14" selection-start-column="45" selection-end-line="14" selection-end-column="45" />
               <folding />
             </state>
           </provider>
@@ -198,8 +180,18 @@
       <file leaf-file-name="logback-test.xml" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/test/resources/logback-test.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="252">
-              <caret line="14" column="72" selection-start-line="14" selection-start-column="72" selection-end-line="14" selection-end-column="72" />
+            <state relative-caret-position="198">
+              <caret line="11" column="19" selection-start-line="11" selection-start-column="19" selection-end-line="11" selection-end-column="19" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="logback-test.xml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/integration-test/resources/logback-test.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="198">
+              <caret line="11" column="19" selection-start-line="11" selection-start-column="19" selection-end-line="11" selection-end-column="19" />
               <folding />
             </state>
           </provider>
@@ -649,17 +641,17 @@
         <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsBasicScheduling.java" />
         <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/PostGresIntegrationTestsDBLineFixerScheduling.java" />
         <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerIntegrationTestsTikaScheduling.java" />
-        <option value="$PROJECT_DIR$/src/integration-test/resources/logback-test.xml" />
-        <option value="$PROJECT_DIR$/src/test/resources/logback-test.xml" />
         <option value="$PROJECT_DIR$/src/integration-test/resources/sql_server_test_config_basic.properties" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/exception/DeIdentificationFailedException.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/exception/GateProcessingFailedException.java" />
         <option value="$PROJECT_DIR$/src/integration-test/java/uk/ac/kcl/it/SqlServerIntegrationTestsBasicScheduling.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/itemProcessors/DeIdDocumentItemProcessor.java" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/service/GateService.java" />
-        <option value="$PROJECT_DIR$/src/main/resources/logback.xml" />
         <option value="$PROJECT_DIR$/src/main/java/uk/ac/kcl/batch/JobConfiguration.java" />
         <option value="$PROJECT_DIR$/build.gradle" />
+        <option value="$PROJECT_DIR$/src/test/resources/logback-test.xml" />
+        <option value="$PROJECT_DIR$/src/integration-test/resources/logback-test.xml" />
+        <option value="$PROJECT_DIR$/src/main/resources/logback.xml" />
       </list>
     </option>
   </component>
@@ -773,6 +765,24 @@
             <PATH_ELEMENT>
               <option name="myItemId" value="turbo-laser" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleGroupNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser_test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleGroupNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="turbo-laser_main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
             </PATH_ELEMENT>
           </PATH>
           <PATH>
@@ -1567,7 +1577,7 @@
       <workItem from="1464632706864" duration="629000" />
       <workItem from="1464720674981" duration="14425000" />
       <workItem from="1464779402734" duration="815000" />
-      <workItem from="1464780277856" duration="1290000" />
+      <workItem from="1464780277856" duration="2579000" />
     </task>
     <task id="LOCAL-00001" summary="added hikari properties">
       <created>1464353565723</created>
@@ -1606,14 +1616,14 @@
     <history-entry file="PostGresIntegrationTestsBasic - 2016.06.01 at 12h 46m 06s.xml">
       <configuration name="PostGresIntegrationTestsBasic" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="PostGresIntegrationTestsTika - 2016.05.31 at 23h 48m 18s.xml">
-      <configuration name="PostGresIntegrationTestsTika" configurationId="JUnit" />
+    <history-entry file="PostGresIntegrationTestsBasic - 2016.06.01 at 13h 03m 08s.xml">
+      <configuration name="PostGresIntegrationTestsBasic" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="PostGresIntegrationTestsTikaScheduling - 2016.05.31 at 23h 49m 12s.xml">
-      <configuration name="PostGresIntegrationTestsTikaScheduling" configurationId="JUnit" />
+    <history-entry file="PostGresIntegrationTestsBasic - 2016.06.01 at 13h 03m 29s.xml">
+      <configuration name="PostGresIntegrationTestsBasic" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="SqlServerIntegrationTestsBasicScheduling - 2016.06.01 at 00h 17m 00s.xml">
-      <configuration name="SqlServerIntegrationTestsBasicScheduling" configurationId="JUnit" />
+    <history-entry file="PostGresIntegrationTestsBasic - 2016.06.01 at 13h 05m 58s.xml">
+      <configuration name="PostGresIntegrationTestsBasic" configurationId="JUnit" />
     </history-entry>
     <history-entry file="SqlServerIntegrationTestsBasicScheduling - 2016.06.01 at 00h 22m 12s.xml">
       <configuration name="SqlServerIntegrationTestsBasicScheduling" configurationId="JUnit" />
@@ -1626,7 +1636,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="472236000" />
+    <option name="totallyTimeSpent" value="473525000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="65" y="24" width="1301" height="744" extended-state="6" />
@@ -1640,12 +1650,12 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25940996" sideWeight="0.37304583" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32988048" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.4792285" sideWeight="0.6269542" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.13946587" sideWeight="0.6269542" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Spring" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32937685" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2756972" sideWeight="0.49213484" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16095617" sideWeight="0.49213484" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.17131475" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.14661355" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24940239" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -1987,22 +1997,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/integration-test/resources/logback-test.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="14" column="79" selection-start-line="14" selection-start-column="79" selection-end-line="14" selection-end-column="79" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/resources/logback-test.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="14" column="72" selection-start-line="14" selection-start-column="72" selection-end-line="14" selection-end-column="72" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/integration-test/resources/sql_server_test_config_basic.properties">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="612">
@@ -2058,14 +2052,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/logback.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="378">
-          <caret line="21" column="25" selection-start-line="21" selection-start-column="25" selection-end-line="21" selection-end-column="25" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/uk/ac/kcl/itemProcessors/DeIdDocumentItemProcessor.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="576">
@@ -2093,6 +2079,30 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="108">
           <caret line="113" column="2" selection-start-line="113" selection-start-column="2" selection-end-line="113" selection-end-column="2" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/resources/logback-test.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="11" column="19" selection-start-line="11" selection-start-column="19" selection-end-line="11" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/integration-test/resources/logback-test.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="11" column="19" selection-start-line="11" selection-start-column="19" selection-end-line="11" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/logback.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="14" column="45" selection-start-line="14" selection-start-column="45" selection-end-line="14" selection-end-column="45" />
           <folding />
         </state>
       </provider>

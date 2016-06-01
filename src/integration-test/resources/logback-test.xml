@@ -9,7 +9,7 @@
 
 
     <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>turbolaser-integration-test-log.html</file>
+        <file>logs/turbolaser-integration-test-log.html</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- daily rollover -->
             <fileNamePattern>turbolaser-integration-test-log%d{yyyy-MM-dd}.html</fileNamePattern>
