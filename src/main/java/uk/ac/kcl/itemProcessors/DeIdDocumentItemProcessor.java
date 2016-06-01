@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import uk.ac.kcl.exception.DeIdentificationFailedException;
 import uk.ac.kcl.model.Document;
 import uk.ac.kcl.model.TextDocument;
 import uk.ac.kcl.service.GateService;
@@ -49,7 +50,7 @@ public class DeIdDocumentItemProcessor implements ItemProcessor<Document, Docume
 
 
     @Override
-    public Document process(final Document doc) throws Exception {
+    public Document process(final Document doc)  {
 
         doc.getAdditionalFields().forEach((k,v)->{
             if(fieldsToDeId.contains(k)) {
@@ -58,6 +59,7 @@ public class DeIdDocumentItemProcessor implements ItemProcessor<Document, Docume
                     newString = gateService.deIdentifyString(v.toString(),doc.getPrimaryKeyFieldValue());
                 } catch (ExecutionException|ResourceInstantiationException e) {
                     LOG.warn("Unable to deid field " + k + " in document " + doc.getDocName());
+                    throw new DeIdentificationFailedException();
                 }
                 doc.getAdditionalFields().put(k,newString);
             }

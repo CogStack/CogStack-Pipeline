@@ -70,6 +70,7 @@ public class GateService {
         gateHome = new File(env.getProperty("gateHome"));
         poolSize = Integer.parseInt(env.getProperty("poolSize"));
         Gate.setGateHome(gateHome);
+        Gate.runInSandbox(true);
         Gate.init();
         List<String> activeProfiles = Arrays.asList(env.getActiveProfiles());
 
@@ -120,7 +121,7 @@ public class GateService {
         return doc;
     }
 
-    public String deIdentifyString(String text, String primaryKeyFieldValue) throws ExecutionException, ResourceInstantiationException {
+    public String deIdentifyString(String text, String primaryKeyFieldValue) throws ResourceInstantiationException, ExecutionException {
         gate.Document doc = Factory.newDocument(text);
         doc.getFeatures().put("primaryKeyFieldValue",primaryKeyFieldValue);
         CorpusController controller = null;
