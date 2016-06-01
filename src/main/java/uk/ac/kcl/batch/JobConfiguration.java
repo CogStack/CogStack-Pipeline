@@ -18,7 +18,6 @@ package uk.ac.kcl.batch;
 
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.commons.dbcp2.BasicDataSource;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.explore.JobExplorer;
@@ -137,14 +136,6 @@ public class JobConfiguration {
         return mainDatasource;
     }
 
-
-    private void setUpReconnectionParams(BasicDataSource ds){
-
-        ds.setTestOnReturn(true);
-        ds.setTestOnBorrow(true);
-        ds.setTestWhileIdle(true);
-        ds.setMinEvictableIdleTimeMillis(1000);
-    }
 
 
     private void executeSessionScripts(HikariDataSource mainDatasource, String driver) {

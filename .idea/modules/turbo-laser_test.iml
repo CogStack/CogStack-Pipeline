@@ -10,6 +10,7 @@
     <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="turbo-laser_main" />
+    <orderEntry type="library" name="Gradle: org.slf4j:slf4j-api:1.7.21" level="project" />
     <orderEntry type="library" name="Gradle: joda-time:joda-time:2.9.3" level="project" />
     <orderEntry type="library" name="Gradle: org.elasticsearch.plugin:shield:2.2.0" level="project" />
     <orderEntry type="library" name="Gradle: org.elasticsearch:elasticsearch:2.2.0" level="project" />
@@ -27,7 +28,6 @@
     <orderEntry type="library" name="Gradle: org.springframework:spring-jms:4.2.3.RELEASE" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework.integration:spring-integration-core:4.2.3.RELEASE" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework.integration:spring-integration-jms:4.2.3.RELEASE" level="project" />
-    <orderEntry type="library" name="Gradle: org.apache.commons:commons-dbcp2:2.1.1" level="project" />
     <orderEntry type="library" name="Gradle: com.zaxxer:HikariCP:2.4.6" level="project" />
     <orderEntry type="library" name="Gradle: commons-io:commons-io:2.4" level="project" />
     <orderEntry type="library" name="Gradle: org.postgresql:postgresql:9.4-1205-jdbc42" level="project" />
@@ -79,8 +79,6 @@
     <orderEntry type="library" name="Gradle: org.springframework:spring-messaging:4.2.3.RELEASE" level="project" />
     <orderEntry type="library" name="Gradle: commons-logging:commons-logging:1.2" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework:spring-expression:4.2.3.RELEASE" level="project" />
-    <orderEntry type="library" name="Gradle: org.apache.commons:commons-pool2:2.4.2" level="project" />
-    <orderEntry type="library" name="Gradle: org.slf4j:slf4j-api:1.7.13" level="project" />
     <orderEntry type="library" name="Gradle: org.reactivestreams:reactive-streams:1.0.0" level="project" />
     <orderEntry type="library" name="Gradle: org.apache.geronimo.specs:geronimo-jms_1.1_spec:1.1.1" level="project" />
     <orderEntry type="library" name="Gradle: org.apache.activemq:kahadb:5.7.0" level="project" />
@@ -93,6 +91,7 @@
     <orderEntry type="library" name="Gradle: org.apache.activemq:activemq-broker:5.12.1" level="project" />
     <orderEntry type="library" name="Gradle: org.apache.activemq:activemq-pool:5.12.1" level="project" />
     <orderEntry type="library" name="Gradle: org.apache.geronimo.specs:geronimo-jta_1.0.1B_spec:1.0.1" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.commons:commons-pool2:2.4.2" level="project" />
     <orderEntry type="library" name="Gradle: org.gagravarr:vorbis-java-tika:0.6" level="project" />
     <orderEntry type="library" name="Gradle: com.healthmarketscience.jackcess:jackcess:2.1.2" level="project" />
     <orderEntry type="library" name="Gradle: com.healthmarketscience.jackcess:jackcess-encrypt:2.1.1" level="project" />
