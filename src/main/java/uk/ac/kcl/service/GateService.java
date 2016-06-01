@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import uk.ac.kcl.exception.DeIdentificationFailedException;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
@@ -72,13 +73,23 @@ public class GateService {
         Gate.setGateHome(gateHome);
         Gate.runInSandbox(true);
         Gate.init();
+
+
+        loadresources();
+    }
+
+    private void loadresources() throws GateException, IOException {
         List<String> activeProfiles = Arrays.asList(env.getActiveProfiles());
+        //if called assume resources are either new/damaged/stale etc and delete all
+        for(Resource resource : Gate.getCreoleRegister().getAllInstances("gate.Resource")){
+            Factory.deleteResource(resource);
+        }
 
         if(activeProfiles.contains("gate")){
             gateApp = new File(env.getProperty("gateApp"));
             annotationSets = Arrays.asList(env.getProperty("gateAnnotationSets").split(","));
             genericQueue = new LinkedBlockingQueue<>();
-            Corpus corpus = gate.Factory.newCorpus("Corpus");
+            Corpus corpus = Factory.newCorpus("Corpus");
             CorpusController pipeline = (CorpusController) PersistenceManager
                     .loadObjectFromFile(gateApp);
             pipeline.setCorpus(corpus);
@@ -92,7 +103,7 @@ public class GateService {
         if(activeProfiles.contains("deid")){
             deidApp = new File(env.getProperty("deIdApp"));
             deIdQueue = new LinkedBlockingQueue<>();
-            Corpus corpus = gate.Factory.newCorpus("Corpus");
+            Corpus corpus = Factory.newCorpus("Corpus");
             CorpusController pipeline = (CorpusController) PersistenceManager
                     .loadObjectFromFile(deidApp);
             pipeline.setCorpus(corpus);
@@ -121,25 +132,33 @@ public class GateService {
         return doc;
     }
 
-    public String deIdentifyString(String text, String primaryKeyFieldValue) throws ResourceInstantiationException, ExecutionException {
-        gate.Document doc = Factory.newDocument(text);
-        doc.getFeatures().put("primaryKeyFieldValue",primaryKeyFieldValue);
-        CorpusController controller = null;
+    public String deIdentifyString(String text, String primaryKeyFieldValue)  {
+        Document doc = null;
         try {
+            doc = Factory.newDocument(text);
+
+            doc.getFeatures().put("primaryKeyFieldValue", primaryKeyFieldValue);
+            CorpusController controller = null;
+
             controller = deIdQueue.take();
-        } catch (InterruptedException ex) {
-            LOG.warn("GATE app execution interrupted", ex);
-        }
-        controller.getCorpus().add(doc);
-        controller.execute();
-        controller.getCorpus().clear();
-        try {
+
+            controller.getCorpus().add(doc);
+            controller.execute();
+            controller.getCorpus().clear();
+
             deIdQueue.put(controller);
-        } catch (InterruptedException ex) {
-            LOG.info("Interrupted", ex);
+
+            text = doc.getContent().toString();
+            Factory.deleteResource(doc);
+        }catch (Exception ex) {
+            LOG.error("GATE app execution error", ex);
+            try {
+                loadresources();
+            } catch (GateException|IOException e) {
+                LOG.error("could not reload resources", ex);
+            }
+            throw new DeIdentificationFailedException();
         }
-        text = doc.getContent().toString();
-        Factory.deleteResource(doc);
         return text;
     }
 

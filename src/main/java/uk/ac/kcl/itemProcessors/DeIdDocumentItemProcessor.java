@@ -55,12 +55,12 @@ public class DeIdDocumentItemProcessor implements ItemProcessor<Document, Docume
         doc.getAdditionalFields().forEach((k,v)->{
             if(fieldsToDeId.contains(k)) {
                 String newString = "unable to de-id";
-                try {
+//                try {
                     newString = gateService.deIdentifyString(v.toString(),doc.getPrimaryKeyFieldValue());
-                } catch (ExecutionException|ResourceInstantiationException e) {
-                    LOG.warn("Unable to deid field " + k + " in document " + doc.getDocName());
-                    throw new DeIdentificationFailedException();
-                }
+//                } catch (ResourceInstantiationException e) {
+//                    LOG.error("Unable to deid field " + k + " in document " + doc.getDocName());
+//                    throw new RuntimeException();
+//                }
                 doc.getAdditionalFields().put(k,newString);
             }
         });
