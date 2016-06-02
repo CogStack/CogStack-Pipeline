@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.sql.DataSource;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 /**
@@ -116,4 +117,5 @@ public class BatchJobUtils {
             return string;
         }
     }
+
 }

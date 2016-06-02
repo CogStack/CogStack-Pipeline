@@ -29,6 +29,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.integration.core.MessagingTemplate;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.PollableChannel;
+import uk.ac.kcl.jobParametersIncrementers.TLJobParametersIncrementer;
 import uk.ac.kcl.listeners.JobCompleteNotificationListener;
 
 /**
@@ -37,7 +38,7 @@ import uk.ac.kcl.listeners.JobCompleteNotificationListener;
  */
 @Profile("master")
 @ImportResource("classpath:spring-master.xml")
-@ComponentScan({"uk.ac.kcl.partitioners","uk.ac.kcl.listeners"})
+@ComponentScan({"uk.ac.kcl.partitioners","uk.ac.kcl.listeners","uk.ac.kcl.jobParametersIncrementers"})
 @Configuration
 public class MasterIntegrationConfiguration {
 
@@ -65,7 +66,7 @@ public class MasterIntegrationConfiguration {
                    @Qualifier("columnRangePartitioner") Partitioner partitioner,
                    @Qualifier("partitionHandler") PartitionHandler gatePartitionHandler,
                    JobCompleteNotificationListener jobCompleteNotificationListener,
-                   @Qualifier("runIdIncrementer") RunIdIncrementer runIdIncrementer
+                   @Qualifier("tLJobParametersIncrementer") TLJobParametersIncrementer runIdIncrementer
 
     ) {
         Job job = jobs.get(env.getProperty("jobClass"))

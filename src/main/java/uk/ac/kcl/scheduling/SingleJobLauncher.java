@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.launch.JobOperator;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRepository;
@@ -73,56 +74,57 @@ public class SingleJobLauncher {
     @Autowired
     JobExplorer jobExplorer;
 
+    @Autowired
+    JobOperator jobOperator;
+
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(SingleJobLauncher.class);
 
 
     public void launchJob()  {
-        JobParameters param;
         try {
-            param = new JobParametersBuilder()
-                    .addDate("this_attempt_date", new Date(System.currentTimeMillis()))
-                    .addString("jobClass", env.getProperty("jobClass"))
-                    .toJobParameters();
-
-
-            if (env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("true")) {
-
-                Timestamp lastGoodJob = batchJobUtils.getOldestTimeStampInLastSuccessfulJob();
-                ///Get last job EXECUTION ID. NEEDS TESTING! instance !=execution ID.
-                JobExecution lastJobExecution = jobExplorer.getJobExecution(((long) jobExplorer.getJobInstanceCount(env.getProperty("jobClass"))));
-                switch(lastJobExecution.getExitStatus().toString()){
-                    case "COMPLETED":
-                        LOG.info("Last good run was " + lastJobExecution.getJobParameters().getDate("last_successful_timestamp_from_this_job") + ". Recommencing from then");
-                        param = new JobParametersBuilder()
-                                .addDate("last_timestamp_from_last_successful_job", lastJobExecution.getJobParameters()
-                                        .getDate("last_successful_timestamp_from_this_job"))
-                                .addString("jobClass", env.getProperty("jobClass"))
-                                .toJobParameters();
-                        break;
-                    case "EXECUTING":
-                        LOG.info("Job is already running");
-                        break;
-                    case "FAILED":
-                        LOG.info("Last job failed. Attempting restart");
-                        param = lastJobExecution.getJobParameters();
-                        break;
-                    case "NOOP":
-                        break;
-                    case "STOPPED":
-                        LOG.info("Last job stopped. Attempting to restart incomplete steps");
-                        break;
-                    case "UNKNOWN":
-                        LOG.info("Last job has unknown status. Attempting restart from beginning");
-                        break;
-                    default:
-                        LOG.info("No previous jobs found. Launching first job");
-                        break;
+                JobExecution lastJobExecution = null;
+                ExitStatus lastJobExitStatus = null;
+                try {
+                    lastJobExecution = jobExplorer.getJobExecution(((long) jobExplorer.getJobInstanceCount(env.getProperty("jobClass"))));
+                    lastJobExitStatus = lastJobExecution.getExitStatus();
+                }catch(NullPointerException ex){
+                    LOG.info("No previous jobs found");
                 }
-            } else {
-                LOG.info("Not using timeStampBasedScheduling");
+                if(env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("false")){
+                    LOG.info("Not using timeStampBasedScheduling");
+                }else if(lastJobExitStatus == null){
+
+                }else if (env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("true")){
+                        switch (lastJobExitStatus.getExitCode()) {
+                            case "COMPLETED":
+                                jobOperator.startNextInstance(job.getName());
+                                break;
+                            case "EXECUTING":
+                                LOG.info("Job is already running");
+                                break;
+                            case "FAILED":
+                                LOG.info("Last job failed. Attempting restart");
+                                jobOperator.restart(lastJobExecution.getId());
+                                break;
+                            case "NOOP":
+                                break;
+                            case "STOPPED":
+                                LOG.info("Last job stopped. Attempting to restart incomplete steps");
+                                jobOperator.restart(lastJobExecution.getId());
+                                break;
+                            case "UNKNOWN":
+                                LOG.info("Last job has unknown status. Attempting restart from last job with known status");
+                                throw new RuntimeException("unknown restarts not currently implemented");
+//                                jobRepository.createJobExecution(job.getName(), )
+//                                jobOperator.restart(lastJobExecution.getId());
+//                                break;
+                            default:
+                                LOG.info("Should never be reached");
+                                break;
+                        }
+                    }else {
+                throw new RuntimeException("Cannot determine intended JobParameters");
             }
-            JobExecution execution = jobLauncher.run(job, param);
-            LOG.info(execution.getStatus().toString());
         } catch (JobInstanceAlreadyCompleteException|
                 JobExecutionAlreadyRunningException|
                 JobParametersInvalidException|

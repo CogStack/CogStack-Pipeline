@@ -30,10 +30,10 @@ public class JobCompleteNotificationListener implements JobExecutionListener {
 
 	private static final Logger log = LoggerFactory.getLogger(JobCompleteNotificationListener.class);
 
-	private String lastDateInthisJob;
+	private long lastDateInthisJob;
 
-	public void setLastDateInthisJob(String string){
-		this.lastDateInthisJob = string;
+	public void setLastDateInthisJob(long l){
+		this.lastDateInthisJob = l;
 	}
 
 	@Autowired
