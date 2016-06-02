@@ -59,113 +59,145 @@ public class MasterIntegrationConfiguration {
         return handler;
     }
 
-    @Configuration
-    @Profile("gate")
-    public static class GateJobMaster {
+    @Bean
+    public Job job(JobBuilderFactory jobs,
+                   StepBuilderFactory steps,
+                   @Qualifier("columnRangePartitioner") Partitioner partitioner,
+                   @Qualifier("partitionHandler") PartitionHandler gatePartitionHandler,
+                   JobCompleteNotificationListener jobCompleteNotificationListener,
+                   @Qualifier("runIdIncrementer") RunIdIncrementer runIdIncrementer
 
-        @Bean
-        public Job gateJob(JobBuilderFactory jobs,
-                           StepBuilderFactory steps,
-                           @Qualifier("columnRangePartitioner") Partitioner partitioner,
-                           @Qualifier("partitionHandler") PartitionHandler gatePartitionHandler,
-                           JobCompleteNotificationListener jobCompleteNotificationListener
-        ) {
-            Job job = jobs.get("gateJob")
-                    .incrementer(new RunIdIncrementer())
-                    .listener(jobCompleteNotificationListener)
-                    .flow(
-                            steps
-                                    .get("gateMasterStep")
-                                    .partitioner("gateSlaveStep", partitioner)
-                                    .partitionHandler(gatePartitionHandler)
-                                    .build()
-                    )
-                    .end()
-                    .build();
-            return job;
-
-        }
-    }
-
-    @Configuration
-    @Profile("basic")
-    public static class BasicJobMaster {
-
-        @Bean
-        public Job basicJob(JobBuilderFactory jobs,
-                           StepBuilderFactory steps,
-                           @Qualifier("columnRangePartitioner") Partitioner partitioner,
-                           @Qualifier("partitionHandler") PartitionHandler gatePartitionHandler,
-                           JobCompleteNotificationListener jobCompleteNotificationListener
-        ) {
-            Job job = jobs.get("basicJob")
-                    .incrementer(new RunIdIncrementer())
-                    .listener(jobCompleteNotificationListener)
-                    .flow(
-                            steps
-                                    .get("basicMasterStep")
-                                    .partitioner("basicSlaveStep", partitioner)
-                                    .partitionHandler(gatePartitionHandler)
-                                    .build()
-                    )
-                    .end()
-                    .build();
-            return job;
-
-        }
+    ) {
+        Job job = jobs.get(env.getProperty("jobClass"))
+                .incrementer(runIdIncrementer)
+                .listener(jobCompleteNotificationListener)
+                .flow(
+                        steps
+                                .get(env.getProperty("jobClass") + "MasterStep")
+                                .partitioner((env.getProperty("jobClass")+"SlaveStep"), partitioner)
+                                .partitionHandler(gatePartitionHandler)
+                                .build()
+                )
+                .end()
+                .build();
+        return job;
 
     }
 
-    @Configuration
-    @Profile("tika")
-    public static class TikaJobMaster {
-        @Bean
-        public Job tikaJob(JobBuilderFactory jobs,
-                           StepBuilderFactory steps,
-                           @Qualifier("columnRangePartitioner")Partitioner partitioner,
-                           @Qualifier("partitionHandler") PartitionHandler partitionHandler,
-                           JobCompleteNotificationListener jobCompleteNotificationListener
-        ) {
-            Job job = jobs.get("tikaJob")
-                    .incrementer(new RunIdIncrementer())
-                    .listener(jobCompleteNotificationListener)
-                    .flow(
-                            steps
-                                    .get("tikaMasterStep")
-                                    .partitioner("tikaSlaveStep", partitioner)
-                                    .partitionHandler(partitionHandler)
-                                    .build()
-                    )
-                    .end()
-                    .build();
-            return job;
+//    @Configuration
+//    public static class GateJobMaster {
+//
 
-        }
 
-    }
 
-    @Configuration
-    @Profile("dBLineFixer")
-    public static class DBLineFixerMaster {
-        @Bean
-        public Job dBLineFixerJob(JobBuilderFactory jobs,
-                                  StepBuilderFactory steps,
-                                  @Qualifier("columnRangePartitioner")Partitioner partitioner,
-                                  @Qualifier("partitionHandler") PartitionHandler gatePartitionHandler,
-                                  JobCompleteNotificationListener jobCompleteNotificationListener    ) {
-            Job job = jobs.get("dBLineFixerJob")
-                    .incrementer(new RunIdIncrementer())
-                    .listener(jobCompleteNotificationListener)
-                    .flow(
-                            steps
-                                    .get("dBLineFixerMasterStep")
-                                    .partitioner("dBLineFixerSlaveStep", partitioner)
-                                    .partitionHandler(gatePartitionHandler)
-                                    .build()
-                    )
-                    .end()
-                    .build();
-            return job;
-        }
-    }
+//
+//    @Configuration
+//    @Profile("gate")
+//    public static class GateJobMaster {
+//
+//        @Bean
+//        public Job gateJob(JobBuilderFactory jobs,
+//                           StepBuilderFactory steps,
+//                           @Qualifier("columnRangePartitioner") Partitioner partitioner,
+//                           @Qualifier("partitionHandler") PartitionHandler gatePartitionHandler,
+//                           JobCompleteNotificationListener jobCompleteNotificationListener
+//        ) {
+//            Job job = jobs.get("gateJob")
+//                    .incrementer(new RunIdIncrementer())
+//                    .listener(jobCompleteNotificationListener)
+//                    .flow(
+//                            steps
+//                                    .get("gateMasterStep")
+//                                    .partitioner("gateSlaveStep", partitioner)
+//                                    .partitionHandler(gatePartitionHandler)
+//                                    .build()
+//                    )
+//                    .end()
+//                    .build();
+//            return job;
+//
+//        }
+//    }
+//
+//    @Configuration
+//    @Profile("basic")
+//    public static class BasicJobMaster {
+//
+//        @Bean
+//        public Job basicJob(JobBuilderFactory jobs,
+//                           StepBuilderFactory steps,
+//                           @Qualifier("columnRangePartitioner") Partitioner partitioner,
+//                           @Qualifier("partitionHandler") PartitionHandler gatePartitionHandler,
+//                           JobCompleteNotificationListener jobCompleteNotificationListener
+//        ) {
+//            Job job = jobs.get("basicJob")
+//                    .incrementer(new RunIdIncrementer())
+//                    .listener(jobCompleteNotificationListener)
+//                    .flow(
+//                            steps
+//                                    .get("basicMasterStep")
+//                                    .partitioner("basicSlaveStep", partitioner)
+//                                    .partitionHandler(gatePartitionHandler)
+//                                    .build()
+//                    )
+//                    .end()
+//                    .build();
+//            return job;
+//
+//        }
+//
+//    }
+//
+//    @Configuration
+//    @Profile("tika")
+//    public static class TikaJobMaster {
+//        @Bean
+//        public Job tikaJob(JobBuilderFactory jobs,
+//                           StepBuilderFactory steps,
+//                           @Qualifier("columnRangePartitioner")Partitioner partitioner,
+//                           @Qualifier("partitionHandler") PartitionHandler partitionHandler,
+//                           JobCompleteNotificationListener jobCompleteNotificationListener
+//        ) {
+//            Job job = jobs.get("tikaJob")
+//                    .incrementer(new RunIdIncrementer())
+//                    .listener(jobCompleteNotificationListener)
+//                    .flow(
+//                            steps
+//                                    .get("tikaMasterStep")
+//                                    .partitioner("tikaSlaveStep", partitioner)
+//                                    .partitionHandler(partitionHandler)
+//                                    .build()
+//                    )
+//                    .end()
+//                    .build();
+//            return job;
+//
+//        }
+//
+//    }
+//
+//    @Configuration
+//    @Profile("dBLineFixer")
+//    public static class DBLineFixerMaster {
+//        @Bean
+//        public Job dBLineFixerJob(JobBuilderFactory jobs,
+//                                  StepBuilderFactory steps,
+//                                  @Qualifier("columnRangePartitioner")Partitioner partitioner,
+//                                  @Qualifier("partitionHandler") PartitionHandler gatePartitionHandler,
+//                                  JobCompleteNotificationListener jobCompleteNotificationListener    ) {
+//            Job job = jobs.get("dBLineFixerJob")
+//                    .incrementer(new RunIdIncrementer())
+//                    .listener(jobCompleteNotificationListener)
+//                    .flow(
+//                            steps
+//                                    .get("dBLineFixerMasterStep")
+//                                    .partitioner("dBLineFixerSlaveStep", partitioner)
+//                                    .partitionHandler(gatePartitionHandler)
+//                                    .build()
+//                    )
+//                    .end()
+//                    .build();
+//            return job;
+//        }
+//    }
 }

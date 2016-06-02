@@ -2,6 +2,7 @@ package uk.ac.kcl.utils;
 
 
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +66,7 @@ public class BatchJobUtils {
 //        return startTime;
 //    }
 
-    public Long getLastSuccessfulJobExecutionID(){
+    public JobExecution getLastSuccessfulJobExecutionID(){
         JdbcTemplate template = new JdbcTemplate(jobRepositoryDataSource);
         String sql = "SELECT MAX(bje.job_execution_id) FROM batch_job_execution bje \n" +
                 " JOIN batch_job_instance bji ON bje.job_instance_id = bji.job_instance_id \n" +
@@ -74,7 +75,7 @@ public class BatchJobUtils {
                 " AND bjep.key_name = 'jobClass' AND bjep.string_val= '" + env.getProperty("jobClass") + "'";
         LOG.info("Looking for last previous job with query " + sql);
         Long id = (Long)template.queryForObject(sql, Long.class);
-        return id;
+        return jobExplorer.getJobExecution(id);
     }
 
 
@@ -85,28 +86,28 @@ public class BatchJobUtils {
 //        return parseResult;
 //    }
 
-    public Timestamp getOldestTimeStampInLastSuccessfulJob(){
+//    public Timestamp getOldestTimeStampInLastSuccessfulJob(){
+//
+//        ExecutionContext ec = getLastSuccessfulJobExecutionContext();
+////            SimpleDateFormat format = new SimpleDateFormat(env.getProperty("datePatternForScheduling"));
+////            java.util.Date date = convertStringToTimeStamp();
+//        Timestamp lastGoodDate = null;
+//        if(ec == null){
+//            LOG.info("No previous job found in job repository");
+//            return lastGoodDate;
+//        }else{
+//            lastGoodDate = new Timestamp(Long.parseLong(ec.get("last_successful_timestamp_from_this_job").toString()));
+//            return lastGoodDate;
+//        }
+//    }
 
-        ExecutionContext ec = getLastSuccessfulJobExecutionContext();
-//            SimpleDateFormat format = new SimpleDateFormat(env.getProperty("datePatternForScheduling"));
-//            java.util.Date date = convertStringToTimeStamp();
-        Timestamp lastGoodDate = null;
-        if(ec == null){
-            LOG.info("No previous job found in job repository");
-            return lastGoodDate;
-        }else{
-            lastGoodDate = new Timestamp(Long.parseLong(ec.get("last_successful_timestamp_from_this_job").toString()));
-            return lastGoodDate;
-        }
-    }
-
-    public ExecutionContext getLastSuccessfulJobExecutionContext(){
-        try {
-            return jobExplorer.getJobExecution(getLastSuccessfulJobExecutionID()).getExecutionContext();
-        }catch(NullPointerException ex){
-            return null;
-        }
-    }
+//    public ExecutionContext getLastSuccessfulJobExecutionContext(){
+//        try {
+//            return jobExplorer.getJobExecution(getLastSuccessfulJobExecutionID()).getExecutionContext();
+//        }catch(NullPointerException ex){
+//            return null;
+//        }
+//    }
 
     public String cleanSqlString(String string){
         if (string == null ){

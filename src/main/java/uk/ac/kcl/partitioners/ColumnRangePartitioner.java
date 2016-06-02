@@ -21,6 +21,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,11 +73,10 @@ public class ColumnRangePartitioner implements Partitioner {
     @Autowired
     private  BatchJobUtils batchJobUtils;
 
-    //private JdbcTemplate jdbcTemplate;
-    private DataSource dataSource;
-//    private Timestamp jobStartTimeStamp;
-//    private  Timestamp jobEndTimeStamp;
 
+    private DataSource dataSource;
+
+    private JobExecution jobExecution;
 
     private String table;
 
@@ -125,7 +125,12 @@ public class ColumnRangePartitioner implements Partitioner {
             return result;
         }else{
             logger.info("commencing timestamp based partitioning");
-            Timestamp jobStartTimeStamp = batchJobUtils.getOldestTimeStampInLastSuccessfulJob();
+            ///TEST TOMORROW
+            Timestamp jobStartTimeStamp  = new Timestamp(jobExecution.getJobParameters()
+                    .getDate("last_timestamp_from_last_successful_job").getTime());
+            //Timestamp jobStartTimeStamp = batchJobUtils.getOldestTimeStampInLastSuccessfulJob();
+            ///
+
             ScheduledPartitionParams params = getScheduledPartitionParams(jobStartTimeStamp);
             if (noRecordsFoundInProcessingPeriod(params)) {
 
@@ -229,7 +234,7 @@ public class ColumnRangePartitioner implements Partitioner {
                     " ) t1" ;
             firstRun = false;
         } else if(startTimeStamp != null) {
-            logger.info ("last successful batch retrieved from job repository. Commencing from " + startTimeStamp.toString());
+            logger.info ("last successful batch retrieved from job repository. Commencing from after " + startTimeStamp.toString());
             jobEndTimeStamp = getEndTimeStamp(startTimeStamp);
             sql =	sql +
                     "\n WHERE CAST (" + timeStamp + " as "+
@@ -245,9 +250,9 @@ public class ColumnRangePartitioner implements Partitioner {
                     batchJobUtils.cleanSqlString(env.getProperty("partitionerPostOrderByClause")) +
                     " ) t1" ;
         }else{
+            logger.info ("No previous successful batches detected. Commencing from first timestamp: " + startTimeStamp.toString());
             String tsSql = "SELECT MIN(" + timeStamp + ")  FROM " + table;
             startTimeStamp = jdbcTemplate.queryForObject(tsSql,Timestamp.class);
-            logger.info ("No previous successful batches detected. Commencing from first timestamp: " + startTimeStamp.toString());
             jobEndTimeStamp = getEndTimeStamp(startTimeStamp);
             sql =	sql +
                     " WHERE CAST (" + timeStamp + " as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) BETWEEN CAST ('" +
@@ -266,5 +271,9 @@ public class ColumnRangePartitioner implements Partitioner {
 
     private Timestamp getEndTimeStamp(Timestamp startTimeStamp ){
         return new Timestamp(startTimeStamp.getTime() + Long.valueOf(env.getProperty("processingPeriod")));
+    }
+
+    public void setJobExecution(JobExecution jobExecution) {
+        this.jobExecution = jobExecution;
     }
 }

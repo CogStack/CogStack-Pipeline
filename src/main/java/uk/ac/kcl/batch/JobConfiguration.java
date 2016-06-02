@@ -21,6 +21,7 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.explore.JobExplorer;
+import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.integration.partition.BeanFactoryStepLocator;
 import org.springframework.batch.integration.partition.StepExecutionRequestHandler;
 import org.springframework.batch.support.DatabaseType;
@@ -218,4 +219,8 @@ public class JobConfiguration {
     public JSONMakerItemProcessor jsonMakerItemProcessor(){
         return new JSONMakerItemProcessor();
     }
+
+    @Bean
+    @Qualifier("runIdIncrementer")
+    public RunIdIncrementer runIdIncrementer(){return new RunIdIncrementer();};
 }
