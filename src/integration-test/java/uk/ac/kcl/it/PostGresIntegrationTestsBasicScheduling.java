@@ -38,7 +38,6 @@ import uk.ac.kcl.scheduling.SingleJobLauncher;
         "classpath:postgres_test_config_basic.properties",
         "classpath:jms.properties",
         "classpath:concurrency.properties",
-        "classpath:basic.properties",
         "classpath:gate.properties",
         "classpath:postgres_db.properties",
         "classpath:elasticsearch.properties",

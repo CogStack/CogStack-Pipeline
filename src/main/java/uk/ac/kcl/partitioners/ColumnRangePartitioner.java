@@ -92,15 +92,15 @@ public class ColumnRangePartitioner implements Partitioner {
         Map<String, ExecutionContext> result = new HashMap<String, ExecutionContext>();
         if (env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("false")) {
             logger.info("Commencing PK only partition");
-            PartitionParams params = getUnscheduledPartitionParams();
-            if(params.getMinId() == params.getMaxId()){
+            ScheduledPartitionParams params = getUnscheduledPartitionParams();
+            if (params.getMinId() == params.getMaxId()) {
                 logger.info("Only one step to generate this job");
                 ExecutionContext value = new ExecutionContext();
                 result.put("partition " + 1, value);
                 value.putLong("minValue", params.getMinId());
                 value.putLong("maxValue", params.getMaxId());
                 value.putString("note", "this job generated only one slave step");
-            }else {
+            } else {
                 logger.info("Multiple steps to generate this job");
                 long targetSize = (params.getMaxId() - params.getMinId()) / gridSize + 1;
                 long start = params.getMinId();
@@ -113,6 +113,9 @@ public class ColumnRangePartitioner implements Partitioner {
                     start += targetSize;
                     end += targetSize;
                 }
+            }
+            if (params.getMaxTimeStamp() !=null){
+                jobCompleteNotificationListener.setLastDateInthisJob(params.getMaxTimeStamp().getTime());
             }
             logger.info("partitioning complete");
             return result;
@@ -180,17 +183,17 @@ public class ColumnRangePartitioner implements Partitioner {
         }
     }
 
-    private PartitionParams getUnscheduledPartitionParams() {
+    private ScheduledPartitionParams getUnscheduledPartitionParams() {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
-        String sql = " SELECT "   +
-                " MAX(" + column + ") AS max_id , " +
-                " MIN(" + column + ") AS min_id  " +
-                " FROM " + table + " ";
+        String sql = "\n SELECT "   +
+                " MAX(" + column + ") AS max_id , \n" +
+                " MIN(" + column + ") AS min_id , \n" +
+                " MAX(" + timeStamp + ") AS max_time_stamp , \n" +
+                " MIN(" + timeStamp + ") AS min_time_stamp  \n" +
+                " FROM " + table ;
 
-        return (PartitionParams) jdbcTemplate.queryForObject(
+        return (ScheduledPartitionParams) jdbcTemplate.queryForObject(
                 sql, new PartitionParamsRowMapper());
-
-
     }
 
     private boolean noRecordsFoundInProcessingPeriod(ScheduledPartitionParams scheduledPartitionParams){

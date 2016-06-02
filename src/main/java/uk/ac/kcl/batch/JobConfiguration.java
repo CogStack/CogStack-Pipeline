@@ -19,11 +19,16 @@ package uk.ac.kcl.batch;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.integration.partition.BeanFactoryStepLocator;
 import org.springframework.batch.integration.partition.StepExecutionRequestHandler;
+import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.support.DatabaseType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -37,6 +42,7 @@ import org.springframework.integration.config.EnableIntegration;
 import org.springframework.jdbc.support.MetaDataAccessException;
 import org.springframework.jms.connection.CachingConnectionFactory;
 import uk.ac.kcl.itemProcessors.JSONMakerItemProcessor;
+import uk.ac.kcl.model.Document;
 
 import javax.sql.DataSource;
 import java.util.ArrayList;
@@ -223,4 +229,27 @@ public class JobConfiguration {
     @Bean
     @Qualifier("runIdIncrementer")
     public RunIdIncrementer runIdIncrementer(){return new RunIdIncrementer();};
+
+    @Bean
+    public Step compositeSlaveStep(
+            @Qualifier("documentItemReader") ItemReader<Document> reader,
+            @Qualifier("compositeItemProcessor") ItemProcessor<Document, Document> processor,
+            @Qualifier("compositeESandJdbcItemWriter") ItemWriter<Document> writer,
+            @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor,
+            StepBuilderFactory stepBuilderFactory
+    ) {
+        Step step = stepBuilderFactory.get("compositeSlaveStep")
+                .<Document, Document> chunk(
+                        Integer.parseInt(env.getProperty("chunkSize")))
+                .reader(reader)
+                .processor(processor)
+                .writer(writer)
+                .faultTolerant()
+                .skipLimit(Integer.parseInt(env.getProperty("skipLimit")))
+                .noSkip(Exception.class)
+                //add acceptable exceptions here
+                .taskExecutor(taskExecutor)
+                .build();
+        return step;
+    }
 }

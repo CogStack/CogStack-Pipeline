@@ -86,7 +86,7 @@ public class SingleJobLauncher {
                 JobExecution lastJobExecution = null;
                 ExitStatus lastJobExitStatus = null;
                 try {
-                    lastJobExecution = batchJobUtils.getLastCompletedFailedOrStoppedJobExecution();
+                    lastJobExecution = batchJobUtils.getLastJobExecution();
                     lastJobExitStatus = lastJobExecution.getExitStatus();
                 }catch(NullPointerException ex){
                     LOG.info("No previous completed jobs found");
@@ -116,10 +116,8 @@ public class SingleJobLauncher {
                                 break;
                             case "UNKNOWN":
                                 LOG.info("Last job has unknown status. Attempting restart from last job with known status");
-                                throw new RuntimeException("unknown restarts not currently implemented");
-//                                jobRepository.createJobExecution(job.getName(), )
-//                                jobOperator.restart(lastJobExecution.getId());
-//                                break;
+                                jobOperator.startNextInstance(job.getName());
+                                break;
                             default:
                                 LOG.info("Should never be reached");
                                 break;

@@ -3,9 +3,8 @@ package uk.ac.kcl.jobParametersIncrementers;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.batch.core.launch.JobOperator;
-import org.springframework.batch.core.launch.NoSuchJobException;
+import org.springframework.batch.core.launch.*;
+import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -15,6 +14,7 @@ import uk.ac.kcl.utils.BatchJobUtils;
 
 import javax.sql.DataSource;
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  * Created by rich on 02/06/16.
@@ -28,6 +28,9 @@ public class TLJobParametersIncrementer implements JobParametersIncrementer {
 
     @Autowired
     JobExplorer jobExplorer;
+
+    @Autowired
+    JobOperator jobOperator;
 
     private static String RUN_ID_KEY = "run.id";
 
@@ -70,17 +73,8 @@ public class TLJobParametersIncrementer implements JobParametersIncrementer {
         }else if (env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("true")){
             switch (lastJobExitStatus.getExitCode()) {
                 case "COMPLETED":
-                    Timestamp lastSuccessfulItemTimestamp = new Timestamp(
-                            Long.valueOf(lastJobExecution
-                                    .getExecutionContext()
-                                    .get("last_successful_timestamp_from_this_job")
-                                    .toString()));
-
-                    LOG.info("Last good run was " + lastSuccessfulItemTimestamp.toString() + ". Recommencing from then");
-                    params = new JobParametersBuilder()
-                            .addDate("last_timestamp_from_last_successful_job", lastSuccessfulItemTimestamp)
-                            .addLong(key, id)
-                            .toJobParameters();
+                    LOG.info("Last job execution was successful");
+                    params = getNewJobParameters(id, lastJobExecution);
                     break;
                 case "EXECUTING":
                     LOG.info("Job is already running");
@@ -96,8 +90,9 @@ public class TLJobParametersIncrementer implements JobParametersIncrementer {
                     params = lastJobExecution.getJobParameters();
                     break;
                 case "UNKNOWN":
-                    LOG.info("Last job has unknown status. Attempting restart from beginning");
-                    params = batchJobUtils.getLastCompletedFailedOrStoppedJobExecution().getJobParameters();
+                    LOG.info("Last job has unknown status. Marking as abandoned and attempting restart from last successful job");
+                    abandonAllJobsStartedAfterLastSuccessfulJob(lastJobExecution);
+                    params = getNewJobParameters(id, batchJobUtils.getLastSuccessfulJobExecution());
                     break;
                 default:
                     LOG.error("Should never be reached");
@@ -108,4 +103,44 @@ public class TLJobParametersIncrementer implements JobParametersIncrementer {
         }
         return params;
     }
+
+    private void abandonAllJobsStartedAfterLastSuccessfulJob(JobExecution lastJobExecution) {
+        List<Long> idsToAbandon = batchJobUtils.getExecutionIdsOfFailedOrUnknownJobsAfterLastSuccessfulJob();
+
+        for (Long id : idsToAbandon) {
+            try {
+                try {
+
+                    jobOperator.stop(id);
+                } catch (JobExecutionNotRunningException e) {
+                    LOG.info("Cannot stop job execution ID " + id +
+                            " as it is already stopped. Attempting to mark as abandoned");
+                }
+                try {
+                    jobOperator.abandon(id);
+                } catch (JobExecutionAlreadyRunningException e) {
+                    throw new RuntimeException("Cannot abandon job execution ID " + id + " as it appears to be running. "+
+                            "JobRepository may require inspection",e);
+                }
+            } catch (NoSuchJobExecutionException e) {
+                throw new RuntimeException("Cannot mark job execution ID " + id + " as abandoned as it doesn't exist." +
+                        " JobRepository may require inspection)", e);
+            }
+        }
+    }
+
+    private JobParameters getNewJobParameters(long id, JobExecution lastJobExecution) {
+        JobParameters params;Timestamp lastSuccessfulItemTimestamp = new Timestamp(
+                Long.valueOf(lastJobExecution
+                        .getExecutionContext()
+                        .get("last_successful_timestamp_from_this_job")
+                        .toString()));
+        LOG.info("Last good run was " + lastSuccessfulItemTimestamp.toString() + ". Recommencing from then");
+        params = new JobParametersBuilder()
+                .addDate("last_timestamp_from_last_successful_job", lastSuccessfulItemTimestamp)
+                .addLong(key, id)
+                .toJobParameters();
+        return params;
+    }
+
 }

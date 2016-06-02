@@ -17,8 +17,6 @@ import java.util.ArrayList;
  */
 @Service("partitionParamsRowMapper")
 public class PartitionParamsRowMapper implements RowMapper<PartitionParams>{
-    @Autowired
-    Environment env;
     @Override
     public PartitionParams mapRow(ResultSet rs, int rowNum) throws SQLException {
         ResultSetMetaData meta = rs.getMetaData();

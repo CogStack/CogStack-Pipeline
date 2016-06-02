@@ -16,21 +16,27 @@
 package uk.ac.kcl.batch;
 
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.partition.PartitionHandler;
 import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.integration.partition.MessageChannelPartitionHandler;
+import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.integration.core.MessagingTemplate;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.PollableChannel;
 import uk.ac.kcl.jobParametersIncrementers.TLJobParametersIncrementer;
 import uk.ac.kcl.listeners.JobCompleteNotificationListener;
+import uk.ac.kcl.model.Document;
 
 /**
  *
@@ -51,7 +57,8 @@ public class MasterIntegrationConfiguration {
             @Qualifier("aggregatedReplyChannel") PollableChannel repChannel) {
         MessageChannelPartitionHandler handler = new MessageChannelPartitionHandler();
         handler.setGridSize(Integer.parseInt(env.getProperty("gridSize")));
-        handler.setStepName(env.getProperty("stepName"));
+        //handler.setStepName(env.getProperty("stepName"));
+        handler.setStepName("compositeSlaveStep");
         handler.setReplyChannel(repChannel);
         MessagingTemplate template = new MessagingTemplate();
         template.setDefaultChannel(reqChannel);
@@ -84,7 +91,7 @@ public class MasterIntegrationConfiguration {
         return job;
 
     }
-
+   
 //    @Configuration
 //    public static class GateJobMaster {
 //

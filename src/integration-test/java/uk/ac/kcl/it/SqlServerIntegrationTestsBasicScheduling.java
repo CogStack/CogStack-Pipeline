@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -34,7 +35,6 @@ import uk.ac.kcl.scheduling.SingleJobLauncher;
     "classpath:sql_server_test_config_basic.properties",
     "classpath:jms.properties",
     "classpath:concurrency.properties",
-    "classpath:basic.properties",
         "classpath:gate.properties",
     "classpath:sql_server_db.properties",
     "classpath:elasticsearch.properties",
@@ -46,7 +46,7 @@ import uk.ac.kcl.scheduling.SingleJobLauncher;
         loader = AnnotationConfigContextLoader.class)
 public class SqlServerIntegrationTestsBasicScheduling {
 
-    final static Logger logger = Logger.getLogger(PostGresIntegrationTestsBasicScheduling.class);
+    final static Logger logger = Logger.getLogger(SqlServerIntegrationTestsBasicScheduling.class);
 
     @Autowired
     SingleJobLauncher jobLauncher;
@@ -59,11 +59,12 @@ public class SqlServerIntegrationTestsBasicScheduling {
     @Before
     public void init(){
         sqlServerTestUtils.initJobRepository();
-        //sqlServerTestUtils.createBasicInputTable();
-        sqlServerTestUtils.createBasicOutputTable();
-        //testUtils.insertDataIntoBasicTable("dbo.tblInputDocs");
+//        sqlServerTestUtils.createBasicInputTable();
+//        sqlServerTestUtils.createBasicOutputTable();
+//        testUtils.insertDataIntoBasicTable("dbo.tblInputDocs");
     }
     @Test
+    @DirtiesContext
     public void sqlServerBasicSchedulingPipelineTest() {
         try {
             Thread.sleep(300000);

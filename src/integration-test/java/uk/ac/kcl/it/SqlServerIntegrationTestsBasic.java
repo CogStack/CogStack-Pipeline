@@ -37,7 +37,6 @@ import uk.ac.kcl.scheduling.SingleJobLauncher;
     "classpath:sql_server_test_config_basic.properties",
     "classpath:jms.properties",
     "classpath:concurrency.properties",
-    "classpath:basic.properties",
     "classpath:gate.properties",
     "classpath:sql_server_db.properties",
     "classpath:elasticsearch.properties",
@@ -61,13 +60,13 @@ public class SqlServerIntegrationTestsBasic {
     @Before
     public void init(){
         sqlServerTestUtils.initJobRepository();
-        //sqlServerTestUtils.createBasicInputTable();
+        sqlServerTestUtils.createBasicInputTable();
         sqlServerTestUtils.createBasicOutputTable();
-        //testUtils.insertDataIntoBasicTable("dbo.tblInputDocs");
+        testUtils.insertDataIntoBasicTable("dbo.tblInputDocs");
     }
 
     @Test
-    //@DirtiesContext
+    @DirtiesContext
     public void sqlServerBasicPipelineTest() {
         jobLauncher.launchJob();
     }

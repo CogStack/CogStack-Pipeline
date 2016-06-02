@@ -53,26 +53,5 @@ public class BasicJobConfiguration {
 
 
 
-    @Bean
-    public Step basicSlaveStep(
-            @Qualifier("documentItemReader") ItemReader<Document> reader,
-            @Qualifier("compositeItemProcessor") ItemProcessor<Document, Document> processor,
-            @Qualifier("compositeESandJdbcItemWriter")  ItemWriter<Document> writer,
-            @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor,
-            StepBuilderFactory stepBuilderFactory
-    ) {
-        Step step = stepBuilderFactory.get("basicSlaveStep")
-                .<Document, Document> chunk(
-                        Integer.parseInt(env.getProperty("chunkSize")))
-                .reader(reader)
-                .processor(processor)
-                .writer(writer)
-                .faultTolerant()
-                .skipLimit(Integer.parseInt(env.getProperty("skipLimit")))
-                .noSkip(Exception.class)
-                //add acceptable exceptions here
-                .taskExecutor(taskExecutor)
-                .build();
-        return step;
-    }
+
 }

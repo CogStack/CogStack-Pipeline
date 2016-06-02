@@ -15,6 +15,7 @@ import javax.sql.DataSource;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -167,4 +168,15 @@ public class BatchJobUtils {
         }
     }
 
+    public List<Long> getExecutionIdsOfFailedOrUnknownJobsAfterLastSuccessfulJob() {
+        JdbcTemplate template = new JdbcTemplate(jobRepositoryDataSource);
+        String sql = "SELECT bje.job_execution_id FROM batch_job_execution bje \n" +
+                " JOIN batch_job_instance bji ON bje.job_instance_id = bji.job_instance_id \n" +
+                " WHERE (bje.exit_code = 'FAILED' OR bje.exit_code = 'UNKNOWN' OR bje.exit_code = 'STOPPED') AND bji.job_name = '" +
+                env.getProperty("jobName") + "'";
+        LOG.info("retrieving list of job executions to mark as abandoned " + sql);
+        return template.queryForList(sql, Long.class);
+
+
+    }
 }
