@@ -91,7 +91,7 @@ public class MasterIntegrationConfiguration {
         return job;
 
     }
-   
+
 //    @Configuration
 //    public static class GateJobMaster {
 //

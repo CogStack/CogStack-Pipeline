@@ -59,9 +59,9 @@ public class SqlServerIntegrationTestsBasicScheduling {
     @Before
     public void init(){
         sqlServerTestUtils.initJobRepository();
-//        sqlServerTestUtils.createBasicInputTable();
-//        sqlServerTestUtils.createBasicOutputTable();
-//        testUtils.insertDataIntoBasicTable("dbo.tblInputDocs");
+        sqlServerTestUtils.createBasicInputTable();
+        sqlServerTestUtils.createBasicOutputTable();
+        testUtils.insertDataIntoBasicTable("dbo.tblInputDocs");
     }
     @Test
     @DirtiesContext

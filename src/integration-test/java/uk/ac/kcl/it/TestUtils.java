@@ -104,7 +104,7 @@ public class TestUtils {
 
     public void insertDataIntoBasicTable( String tableName){
         JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
-        int docCount = 5000;
+        int docCount = 25000;
         int lineCountIncrementer = 1;
         String sql = "INSERT INTO  " + tableName
                 + "( srcColumnFieldName"
