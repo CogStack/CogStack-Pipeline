@@ -32,6 +32,8 @@ public class TLJobParametersIncrementer implements JobParametersIncrementer {
     private static String RUN_ID_KEY = "run.id";
 
     private String key = RUN_ID_KEY;
+    @Autowired
+    private BatchJobUtils batchJobUtils;
 
     /**
      * The name of the run id in the job parameters.  Defaults to "run.id".
@@ -49,22 +51,20 @@ public class TLJobParametersIncrementer implements JobParametersIncrementer {
         ExitStatus lastJobExitStatus = null;
         JobExecution lastJobExecution = null;
         try {
-            lastJobExecution = jobExplorer.getJobExecution(((long) jobExplorer.getJobInstanceCount(env.getProperty("jobClass"))));
+            lastJobExecution = batchJobUtils.getLastJobExecution();
             lastJobExitStatus = lastJobExecution.getExitStatus();
-        } catch (NoSuchJobException e) {
+        } catch (NullPointerException e) {
             LOG.info("No previous jobs found");
         }
 
         if(env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("false")){
             LOG.info("Not using timeStampBasedScheduling");
             params = new JobParametersBuilder(params)
-                    .addString("jobClass", env.getProperty("jobClass"))
                     .addLong(key, id)
                     .toJobParameters();
         }else if(lastJobExitStatus == null){
             params = new JobParametersBuilder()
                     .addString("first_run_of_job","true")
-                    .addString("jobClass", env.getProperty("jobClass"))
                     .addLong(key, id)
                     .toJobParameters();
         }else if (env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("true")){
@@ -79,7 +79,6 @@ public class TLJobParametersIncrementer implements JobParametersIncrementer {
                     LOG.info("Last good run was " + lastSuccessfulItemTimestamp.toString() + ". Recommencing from then");
                     params = new JobParametersBuilder()
                             .addDate("last_timestamp_from_last_successful_job", lastSuccessfulItemTimestamp)
-                            .addString("jobClass", env.getProperty("jobClass"))
                             .addLong(key, id)
                             .toJobParameters();
                     break;
@@ -98,7 +97,7 @@ public class TLJobParametersIncrementer implements JobParametersIncrementer {
                     break;
                 case "UNKNOWN":
                     LOG.info("Last job has unknown status. Attempting restart from beginning");
-                    params = lastJobExecution.getJobParameters();
+                    params = batchJobUtils.getLastCompletedFailedOrStoppedJobExecution().getJobParameters();
                     break;
                 default:
                     LOG.error("Should never be reached");

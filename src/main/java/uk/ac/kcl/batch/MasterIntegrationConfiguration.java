@@ -69,13 +69,13 @@ public class MasterIntegrationConfiguration {
                    @Qualifier("tLJobParametersIncrementer") TLJobParametersIncrementer runIdIncrementer
 
     ) {
-        Job job = jobs.get(env.getProperty("jobClass"))
+        Job job = jobs.get(env.getProperty("jobName"))
                 .incrementer(runIdIncrementer)
                 .listener(jobCompleteNotificationListener)
                 .flow(
                         steps
-                                .get(env.getProperty("jobClass") + "MasterStep")
-                                .partitioner((env.getProperty("jobClass")+"SlaveStep"), partitioner)
+                                .get(env.getProperty("jobName") + "MasterStep")
+                                .partitioner((env.getProperty("jobName")+"SlaveStep"), partitioner)
                                 .partitionHandler(gatePartitionHandler)
                                 .build()
                 )

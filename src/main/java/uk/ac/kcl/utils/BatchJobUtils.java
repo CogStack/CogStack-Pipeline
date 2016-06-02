@@ -67,18 +67,67 @@ public class BatchJobUtils {
 //        return startTime;
 //    }
 
-    public JobExecution getLastSuccessfulJobExecutionID(){
+
+    public JobExecution getLastJobExecution(){
         JdbcTemplate template = new JdbcTemplate(jobRepositoryDataSource);
         String sql = "SELECT MAX(bje.job_execution_id) FROM batch_job_execution bje \n" +
                 " JOIN batch_job_instance bji ON bje.job_instance_id = bji.job_instance_id \n" +
                 " JOIN batch_job_execution_params bjep ON bje.job_execution_id = bjep.job_execution_id" +
-                " WHERE bje.exit_code = 'COMPLETED' AND bji.job_name = '" + env.getProperty("jobName") + "'" +
-                " AND bjep.key_name = 'jobClass' AND bjep.string_val= '" + env.getProperty("jobClass") + "'";
+                " WHERE bji.job_name = '" + env.getProperty("jobName") + "'";
         LOG.info("Looking for last previous job with query " + sql);
-        Long id = (Long)template.queryForObject(sql, Long.class);
+        Long id = template.queryForObject(sql, Long.class);
         return jobExplorer.getJobExecution(id);
     }
 
+    public JobExecution getLastSuccessfulJobExecution(){
+        JdbcTemplate template = new JdbcTemplate(jobRepositoryDataSource);
+        String sql = "SELECT MAX(bje.job_execution_id) FROM batch_job_execution bje \n" +
+                " JOIN batch_job_instance bji ON bje.job_instance_id = bji.job_instance_id \n" +
+                " JOIN batch_job_execution_params bjep ON bje.job_execution_id = bjep.job_execution_id" +
+                " WHERE bje.exit_code = 'COMPLETED' \n" +
+                " AND bji.job_name = '" + env.getProperty("jobName") + "'";
+        LOG.info("Looking for last previous job with query " + sql);
+        Long id = template.queryForObject(sql, Long.class);
+        return jobExplorer.getJobExecution(id);
+    }
+
+    public JobExecution getLastCompletedFailedOrStoppedJobExecution() {
+        JdbcTemplate template = new JdbcTemplate(jobRepositoryDataSource);
+        String sql = "SELECT MAX(bje.job_execution_id) FROM batch_job_execution bje \n" +
+                " JOIN batch_job_instance bji ON bje.job_instance_id = bji.job_instance_id \n" +
+                " JOIN batch_job_execution_params bjep ON bje.job_execution_id = bjep.job_execution_id" +
+                " WHERE (bje.exit_code = 'COMPLETED' OR bje.exit_code = 'FAILED' OR bje.exit_code = 'STOPPED') \n" +
+                " AND bji.job_name = '" + env.getProperty("jobName") + "'";
+        LOG.info("Looking for last previous job with query " + sql);
+        Long id =  template.queryForObject(sql, Long.class);
+        return jobExplorer.getJobExecution(id);
+
+    }
+//// OLD JobClass style DAO
+//    public JobExecution getLastSuccessfulJobExecution(){
+//        JdbcTemplate template = new JdbcTemplate(jobRepositoryDataSource);
+//        String sql = "SELECT MAX(bje.job_execution_id) FROM batch_job_execution bje \n" +
+//                " JOIN batch_job_instance bji ON bje.job_instance_id = bji.job_instance_id \n" +
+//                " JOIN batch_job_execution_params bjep ON bje.job_execution_id = bjep.job_execution_id" +
+//                " WHERE bje.exit_code = 'COMPLETED' AND bji.job_name = '" + env.getProperty("jobName") + "'" +
+//                " AND bjep.key_name = 'jobClass' AND bjep.string_val= '" + env.getProperty("jobClass") + "'";
+//        LOG.info("Looking for last previous job with query " + sql);
+//        Long id = (Long)template.queryForObject(sql, Long.class);
+//        return jobExplorer.getJobExecution(id);
+//    }
+//
+//    public JobExecution getLastCompletedFailedOrStoppedJobExecution(){
+//        JdbcTemplate template = new JdbcTemplate(jobRepositoryDataSource);
+//        String sql = "SELECT MAX(bje.job_execution_id) FROM batch_job_execution bje \n" +
+//                " JOIN batch_job_instance bji ON bje.job_instance_id = bji.job_instance_id \n" +
+//                " JOIN batch_job_execution_params bjep ON bje.job_execution_id = bjep.job_execution_id" +
+//                " WHERE (bje.exit_code = 'COMPLETED' OR bje.exit_code = 'FAILED' OR bje.exit_code = 'STOPPED') AND bji.job_name = '" + env.getProperty("jobName") + "'" +
+//                " AND bjep.key_name = 'jobClass' AND bjep.string_val= '" + env.getProperty("jobClass") + "'";
+//        LOG.info("Looking for last previous job with query " + sql);
+//        Long id = (Long)template.queryForObject(sql, Long.class);
+//        return jobExplorer.getJobExecution(id);
+//
+// /////////////////
 
 //    public String convertTimeStampToESDateFormat(Timestamp ts) {
 //        SimpleDateFormat format = new SimpleDateFormat(env.getProperty("datePatternForES"));

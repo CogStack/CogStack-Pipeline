@@ -43,7 +43,7 @@ import java.util.concurrent.TimeoutException;
 @Configuration
 @Import(ItemHandlers.class)
 @Profile("dBLineFixer")
-@PropertySource(value ="file:${TURBO_LASER}/dBLineFixerJob.conf", ignoreResourceNotFound = true)
+//@PropertySource(value ="file:${TURBO_LASER}/dBLineFixerJob.conf", ignoreResourceNotFound = true)
 public class DbLineFixerConfiguration {
     @Resource
     Environment env;

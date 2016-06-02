@@ -46,7 +46,7 @@ import java.util.concurrent.TimeoutException;
 @Import(ItemHandlers.class)
 @Configuration
 @ComponentScan("uk.ac.kcl.service")
-@PropertySource(value="file:${TURBO_LASER}/gateJob.conf" , ignoreResourceNotFound = true)
+//@PropertySource(value="file:${TURBO_LASER}/gateJob.conf" , ignoreResourceNotFound = true)
 public class GateConfiguration {
 
     @Resource

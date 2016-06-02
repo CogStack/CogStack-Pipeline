@@ -36,6 +36,7 @@ import uk.ac.kcl.utils.BatchJobUtils;
 import javax.sql.DataSource;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.List;
 
 
 /**
@@ -85,10 +86,11 @@ public class SingleJobLauncher {
                 JobExecution lastJobExecution = null;
                 ExitStatus lastJobExitStatus = null;
                 try {
-                    lastJobExecution = jobExplorer.getJobExecution(((long) jobExplorer.getJobInstanceCount(env.getProperty("jobClass"))));
+                    lastJobExecution = batchJobUtils.getLastCompletedFailedOrStoppedJobExecution();
                     lastJobExitStatus = lastJobExecution.getExitStatus();
                 }catch(NullPointerException ex){
-                    LOG.info("No previous jobs found");
+                    LOG.info("No previous completed jobs found");
+                    jobOperator.startNextInstance(job.getName());
                 }
                 if(env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("false")){
                     LOG.info("Not using timeStampBasedScheduling");
