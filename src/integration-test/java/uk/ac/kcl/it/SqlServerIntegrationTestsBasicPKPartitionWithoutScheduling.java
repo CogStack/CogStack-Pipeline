@@ -15,64 +15,47 @@
  */
 package uk.ac.kcl.it;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import uk.ac.kcl.scheduling.ScheduledJobLauncher;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
+import uk.ac.uk.it.TestExecutionListeners.SqlServerBasicTestExecutionListener;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
-        "classpath:sql_server_test_config_basic.properties",
-        "classpath:jms.properties",
-        "classpath:concurrency.properties",
-        "classpath:gate.properties",
-        "classpath:sql_server_db.properties",
-        "classpath:elasticsearch.properties",
-        "classpath:jobAndStep_partition_only_with_scheduling.properties"})
+    "classpath:sql_server_test_config_basic.properties",
+    "classpath:jms.properties",
+    "classpath:concurrency.properties",
+    "classpath:gate.properties",
+    "classpath:sql_server_db.properties",
+    "classpath:elasticsearch.properties",
+    "classpath:jobAndStep_PK_partition_without_scheduling.properties"})
 @ContextConfiguration(classes = {
         SqlServerTestUtils.class,
-        ScheduledJobLauncher.class,
+        SingleJobLauncher.class,
         TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
-public class SqlServerIntegrationTestsBasicPartitionOnlyWithScheduling {
+@TestExecutionListeners(
+        listeners = SqlServerBasicTestExecutionListener.class,
+        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
+public class SqlServerIntegrationTestsBasicPKPartitionWithoutScheduling {
 
     @Autowired
     SingleJobLauncher jobLauncher;
 
-    @Autowired
-    SqlServerTestUtils sqlServerTestUtils;
-
-    @Autowired
-    TestUtils testUtils;
-
-    @Before
-    public void init(){
-        sqlServerTestUtils.initJobRepository();
-        sqlServerTestUtils.createBasicInputTable();
-        sqlServerTestUtils.createBasicOutputTable();
-        testUtils.insertDataIntoBasicTable("dbo.tblInputDocs");
-    }
-
     @Test
     @DirtiesContext
-    public void SqlServerIntegrationTestsBasicPartitionOnlyWithSchedulingTest() {
-        try {
-            Thread.sleep(300000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-
-
+    public void SqlServerIntegrationTestsBasicPKPartitionWithoutSchedulingTest() {
+        jobLauncher.launchJob();
     }
 
 }

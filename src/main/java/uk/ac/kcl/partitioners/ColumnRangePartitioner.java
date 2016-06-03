@@ -63,7 +63,7 @@ public class ColumnRangePartitioner implements Partitioner {
     public void init(){
         setColumn(env.getProperty("pkColumnNameToPartition"));
         setTable(env.getProperty("tableToPartition"));
-        setTimeStampColumnName(env.getProperty("timeStampColumnNameToPartition"));
+        setTimeStampColumnName(env.getProperty("timeStampColumnNameToPersistInJobRepository"));
     }
 
     @Autowired
@@ -97,7 +97,7 @@ public class ColumnRangePartitioner implements Partitioner {
                 jobStartTimeStamp = new Timestamp(jobExecution.getJobParameters()
                         .getDate("last_timestamp_from_last_successful_job").getTime());
             }catch(NullPointerException ex){};
-            ScheduledPartitionParams params = getPartitionOnlyBasedParams(jobStartTimeStamp);
+            ScheduledPartitionParams params = getPKOnlyBasedParams(jobStartTimeStamp);
             if(noRecordsFoundInProcessingPeriod(params)){
                 return handleNoNewRecords(result, jobStartTimeStamp);
             } else if ((params.getMaxId() -params.getMinId()) < (long) gridSize) {
@@ -137,7 +137,7 @@ public class ColumnRangePartitioner implements Partitioner {
                         .getDate("last_timestamp_from_last_successful_job").getTime());
             }catch(NullPointerException ex){};
 
-            ScheduledPartitionParams params = getPartitionAndTimestampBasedParams(jobStartTimeStamp);
+            ScheduledPartitionParams params = getPKAndTimestampBasedParams(jobStartTimeStamp);
 
 
             if (noRecordsFoundInProcessingPeriod(params)) {
@@ -199,7 +199,7 @@ public class ColumnRangePartitioner implements Partitioner {
         return result;
     }
 
-    private ScheduledPartitionParams getPartitionOnlyBasedParams(Timestamp startTimeStamp) {
+    private ScheduledPartitionParams getPKOnlyBasedParams(Timestamp startTimeStamp) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
         String sql = "\n SELECT "   +
                 " MAX(" + column + ") AS max_id , \n" +
@@ -239,7 +239,7 @@ public class ColumnRangePartitioner implements Partitioner {
         }
     }
 
-    private ScheduledPartitionParams getPartitionAndTimestampBasedParams(Timestamp startTimeStamp) {
+    private ScheduledPartitionParams getPKAndTimestampBasedParams(Timestamp startTimeStamp) {
         Timestamp jobEndTimeStamp;
         JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
         String sql = "\n SELECT "   +

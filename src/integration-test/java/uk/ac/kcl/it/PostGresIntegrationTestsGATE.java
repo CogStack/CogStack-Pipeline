@@ -61,7 +61,7 @@ public class PostGresIntegrationTestsGATE {
     TestUtils testUtils;
     @Before
     public void init(){
-        postGresTestUtils.initPostGresJobRepository();
+        postGresTestUtils.initJobRepository();
         postGresTestUtils.initTextualGateTable();
         testUtils.insertTestXHTMLForGate("tblInputDocs",false);
     }

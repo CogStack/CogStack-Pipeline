@@ -1,4 +1,4 @@
-/*
+/* 
  * Copyright 2016 King's College London, Richard Jackson <richgjackson@gmail.com>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,11 +15,9 @@
  */
 package uk.ac.kcl.it;
 
-import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.batch.core.launch.JobOperator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.annotation.DirtiesContext;
@@ -28,46 +26,42 @@ import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import uk.ac.kcl.scheduling.ScheduledJobLauncher;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
 import uk.ac.uk.it.TestExecutionListeners.SqlServerBasicTestExecutionListener;
-import uk.ac.uk.it.TestExecutionListeners.SqlServerGateTestExecutionListener;
 
-/**
- *
- * @author rich
- */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
-        "classpath:sql_server_test_config_gate.properties",
+        "classpath:sql_server_test_config_basic.properties",
         "classpath:jms.properties",
-        "classpath:gate.properties",
         "classpath:concurrency.properties",
+        "classpath:gate.properties",
         "classpath:sql_server_db.properties",
         "classpath:elasticsearch.properties",
-        "classpath:jobAndStep_partition_only_without_scheduling.properties"})
+        "classpath:jobAndStep_partition_only_with_scheduling.properties"})
 @ContextConfiguration(classes = {
-        SingleJobLauncher.class,
         SqlServerTestUtils.class,
+        ScheduledJobLauncher.class,
         TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 @TestExecutionListeners(
-        listeners = SqlServerGateTestExecutionListener.class,
+        listeners = SqlServerBasicTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-public class SqlServerIntegrationTestsGATE {
-
-    final static Logger logger = Logger.getLogger(PostGresIntegrationTestsGATE.class);
-
-    @Autowired
-    SingleJobLauncher jobLauncher;
+public class SqlServerIntegrationTestsBasicPKPartitionWithScheduling {
 
 
     @Test
     @DirtiesContext
-    public void sqlServerGatePipelineTest() {
-        jobLauncher.launchJob();
+    public void SqlServerIntegrationTestsBasicPartitionOnlyWithSchedulingTest() {
+        try {
+            Thread.sleep(300000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+
     }
-
-
 
 }

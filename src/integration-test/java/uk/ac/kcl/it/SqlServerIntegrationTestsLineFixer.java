@@ -23,10 +23,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
+import uk.ac.uk.it.TestExecutionListeners.SqlServerBasicTestExecutionListener;
+import uk.ac.uk.it.TestExecutionListeners.SqlServerDbLineFixerTestExecutionListener;
 
 /**
  *
@@ -42,12 +45,15 @@ import uk.ac.kcl.scheduling.SingleJobLauncher;
         "classpath:concurrency.properties",
         "classpath:sql_server_db.properties",
         "classpath:elasticsearch.properties",
-        "classpath:jobAndStep.properties"})
+        "classpath:jobAndStep_partition_only_without_scheduling.properties"})
 @ContextConfiguration(classes = {
         SingleJobLauncher.class,
         SqlServerTestUtils.class,
         TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
+@TestExecutionListeners(
+        listeners = SqlServerDbLineFixerTestExecutionListener.class,
+        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 public class SqlServerIntegrationTestsLineFixer  {
 
     final static Logger logger = Logger.getLogger(PostGresIntegrationTestsLineFixer.class);
@@ -55,19 +61,6 @@ public class SqlServerIntegrationTestsLineFixer  {
     @Autowired
     SingleJobLauncher jobLauncher;
 
-    @Autowired
-    SqlServerTestUtils sqlServerTestUtils;
-
-    @Autowired
-    TestUtils testUtils;
-    @Before
-    public void init(){
-        sqlServerTestUtils.initJobRepository();
-        sqlServerTestUtils.createBasicOutputTable();
-        sqlServerTestUtils.initMultiLineTextTable();
-        testUtils.insertDataIntoBasicTable("dbo.tblInputDocs");
-        testUtils.insertTestLinesForDBLineFixer("dbo.tblDocLines");
-    }
 
     @Test
     @DirtiesContext

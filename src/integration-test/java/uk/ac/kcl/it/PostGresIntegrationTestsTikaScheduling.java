@@ -61,7 +61,7 @@ public class PostGresIntegrationTestsTikaScheduling {
     TestUtils testUtils;
     @Before
     public void init(){
-        postGresTestUtils.initPostGresJobRepository();
+        postGresTestUtils.initJobRepository();
         postGresTestUtils.initTikaTable();
         testUtils.insertTestBinariesForTika("tblInputDocs");
     }

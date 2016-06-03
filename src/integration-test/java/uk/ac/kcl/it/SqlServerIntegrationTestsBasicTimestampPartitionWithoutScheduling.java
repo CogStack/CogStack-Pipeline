@@ -22,10 +22,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
+import uk.ac.uk.it.TestExecutionListeners.SqlServerBasicTestExecutionListener;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
@@ -42,24 +44,13 @@ import uk.ac.kcl.scheduling.SingleJobLauncher;
         SingleJobLauncher.class,
         TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
-public class SqlServerIntegrationTestsBasic {
+@TestExecutionListeners(
+        listeners = SqlServerBasicTestExecutionListener.class,
+        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
+public class SqlServerIntegrationTestsBasicTimestampPartitionWithoutScheduling {
 
     @Autowired
     SingleJobLauncher jobLauncher;
-
-    @Autowired
-    SqlServerTestUtils sqlServerTestUtils;
-
-    @Autowired
-    TestUtils testUtils;
-
-    @Before
-    public void init(){
-        sqlServerTestUtils.initJobRepository();
-        sqlServerTestUtils.createBasicInputTable();
-        sqlServerTestUtils.createBasicOutputTable();
-        testUtils.insertDataIntoBasicTable("dbo.tblInputDocs");
-    }
 
     @Test
     @DirtiesContext

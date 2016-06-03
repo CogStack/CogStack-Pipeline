@@ -60,7 +60,7 @@ public class PostGresIntegrationTestsDBLineFixerScheduling {
     TestUtils testUtils;
     @Before
     public void init(){
-        postGresTestUtils.initPostGresJobRepository();
+        postGresTestUtils.initJobRepository();
         postGresTestUtils.createBasicOutputTable();
         postGresTestUtils.initMultiLineTextTable();
         testUtils.insertDataIntoBasicTable("tblInputDocs");

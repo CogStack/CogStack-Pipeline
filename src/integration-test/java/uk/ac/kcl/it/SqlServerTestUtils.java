@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -42,7 +43,7 @@ import javax.sql.DataSource;
         "classpath:sql_server_db.properties"})
 @Configuration
 @Import({JobConfiguration.class,TestUtils.class})
-public class SqlServerTestUtils {
+public class SqlServerTestUtils implements DbmsTestUtils {
 
     final static Logger logger = Logger.getLogger(PostGresIntegrationTestsGATE.class);
 
@@ -67,6 +68,7 @@ public class SqlServerTestUtils {
     private Resource makeTablesResource;
 
 
+    @Override
     @PostConstruct
     public void init(){
         this.sourceTemplate = new JdbcTemplate(sourceDataSource);
@@ -75,6 +77,7 @@ public class SqlServerTestUtils {
     }
 
 
+    @Override
     public void initTikaTable() {
 ////        for postgres
         sourceTemplate.execute("IF OBJECT_ID('dbo.tblInputDocs', 'U') IS NOT NULL DROP TABLE  dbo.tblInputDocs");
@@ -98,6 +101,7 @@ public class SqlServerTestUtils {
                 + ", output text )");
     }
 
+    @Override
     public void initTextualGateTable() {
         sourceTemplate.execute("IF OBJECT_ID('dbo.tblInputDocs', 'U') IS NOT NULL DROP TABLE  dbo.tblInputDocs");
         sourceTemplate.execute("CREATE TABLE dbo.tblInputDocs"
@@ -121,6 +125,7 @@ public class SqlServerTestUtils {
     }
 
 
+    @Override
     public void createBasicInputTable(){
         sourceTemplate.execute("IF OBJECT_ID('dbo.tblInputDocs', 'U') IS NOT NULL DROP TABLE  dbo.tblInputDocs");
         sourceTemplate.execute("CREATE TABLE dbo.tblInputDocs"
@@ -136,6 +141,7 @@ public class SqlServerTestUtils {
 
     }
 
+    @Override
     public void createBasicOutputTable(){
         targetTemplate.execute("IF OBJECT_ID('dbo.tblOutputDocs', 'U') IS NOT NULL DROP TABLE  dbo.tblOutputDocs");
         targetTemplate.execute("CREATE TABLE dbo.tblOutputDocs "
@@ -151,6 +157,7 @@ public class SqlServerTestUtils {
 
     }
 
+    @Override
     public void initMultiLineTextTable(){
         createBasicInputTable();
         sourceTemplate.execute("IF OBJECT_ID('dbo.tblDocLines', 'U') IS NOT NULL DROP TABLE  dbo.tblDocLines");
@@ -174,6 +181,7 @@ public class SqlServerTestUtils {
 
 
 
+    @Override
     public void initJobRepository(){
         dropTablesResource = new ClassPathResource("org/springframework/batch/core/schema-drop-sqlserver.sql");
         makeTablesResource = new ClassPathResource("org/springframework/batch/core/schema-sqlserver.sql");

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -49,7 +50,8 @@ import java.util.Random;
         "classpath:jobAndStep.properties"})
 @Configuration
 @Import({JobConfiguration.class,TestUtils.class})
-public class PostGresTestUtils {
+@Profile("postgres")
+public class PostGresTestUtils implements DbmsTestUtils{
 
     final static Logger logger = Logger.getLogger(PostGresIntegrationTestsGATE.class);
     long today = System.currentTimeMillis();
@@ -188,7 +190,7 @@ public class PostGresTestUtils {
 
 
 
-    public void initPostGresJobRepository(){
+    public void initJobRepository(){
         dropTablesResource = new ClassPathResource("org/springframework/batch/core/schema-drop-postgresql.sql");
         makeTablesResource = new ClassPathResource("org/springframework/batch/core/schema-postgresql.sql");
         rdp.addScript(dropTablesResource);

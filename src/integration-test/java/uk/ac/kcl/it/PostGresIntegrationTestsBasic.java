@@ -60,7 +60,7 @@ public class PostGresIntegrationTestsBasic {
 
     @Before
     public void init(){
-        postGresTestUtils.initPostGresJobRepository();
+        postGresTestUtils.initJobRepository();
         postGresTestUtils.createBasicInputTable();
         postGresTestUtils.createBasicOutputTable();
         testUtils.insertDataIntoBasicTable("tblInputDocs");

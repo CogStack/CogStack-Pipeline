@@ -18,7 +18,7 @@ import java.util.logging.Level;
  * Created by rich on 13/05/16.
  */
 @Service
-public class TestUtils {
+public class TestUtils  {
     static Random random = new Random();
     static long today = System.currentTimeMillis();
 
@@ -104,7 +104,7 @@ public class TestUtils {
 
     public void insertDataIntoBasicTable( String tableName){
         JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
-        int docCount = 5000;
+        int docCount = 100;
         int lineCountIncrementer = 1;
         String sql = "INSERT INTO  " + tableName
                 + "( srcColumnFieldName"

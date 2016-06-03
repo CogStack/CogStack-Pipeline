@@ -22,11 +22,13 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.scheduling.ScheduledJobLauncher;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
+import uk.ac.uk.it.TestExecutionListeners.SqlServerTikaTestExecutionListener;
 
 /**
  *
@@ -41,30 +43,19 @@ import uk.ac.kcl.scheduling.SingleJobLauncher;
         "classpath:tika.properties",
         "classpath:gate.properties",
         "classpath:elasticsearch.properties",
-        "classpath:jobAndStep.properties"})
+        "classpath:jobAndStep_partition_only_with_scheduling.properties"})
 @ContextConfiguration(classes = {
         ScheduledJobLauncher.class,
         SqlServerTestUtils.class,
         TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
+@TestExecutionListeners(
+        listeners = SqlServerTikaTestExecutionListener.class,
+        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 public class SqlServerIntegrationTestsTikaScheduling {
 
     final static Logger logger = Logger.getLogger(PostGresIntegrationTestsTikaScheduling.class);
 
-    @Autowired
-    SingleJobLauncher jobLauncher;
-
-    @Autowired
-    SqlServerTestUtils sqlServerTestUtils;
-
-    @Autowired
-    TestUtils testUtils;
-    @Before
-    public void init(){
-        sqlServerTestUtils.initJobRepository();
-        sqlServerTestUtils.initTikaTable();
-        testUtils.insertTestBinariesForTika("dbo.tblInputDocs");
-    }
 
     @Test
     @DirtiesContext
