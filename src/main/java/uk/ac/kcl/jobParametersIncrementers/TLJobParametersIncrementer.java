@@ -70,6 +70,7 @@ public class TLJobParametersIncrementer implements JobParametersIncrementer {
         if(lastJobExitStatus == null){
             params = new JobParametersBuilder()
                     .addString("first_run_of_job","true")
+                    .addString("jobName",env.getProperty("jobName"))
                     .addLong(key, id)
                     .toJobParameters();
         }else if (env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("true")){
@@ -140,6 +141,7 @@ public class TLJobParametersIncrementer implements JobParametersIncrementer {
         LOG.info("Last good run was " + lastSuccessfulItemTimestamp.toString() + ". Recommencing from then");
         params = new JobParametersBuilder()
                 .addDate("last_timestamp_from_last_successful_job", lastSuccessfulItemTimestamp)
+                .addString("jobName",env.getProperty("jobName"))
                 .addLong(key, id)
                 .toJobParameters();
         return params;
