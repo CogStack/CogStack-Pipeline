@@ -1,6 +1,7 @@
 package uk.ac.kcl.it;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -21,7 +22,7 @@ import java.util.logging.Level;
 public class TestUtils  {
     static Random random = new Random();
     static long today = System.currentTimeMillis();
-
+    final static Logger logger = Logger.getLogger(TestUtils.class);
     @Autowired
     @Qualifier("sourceDataSource")
     public DataSource sourceDataSource;
@@ -50,7 +51,7 @@ public class TestUtils  {
         try {
             bytes = IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream("xhtml_test"));
         } catch (IOException ex) {
-            java.util.logging.Logger.getLogger(PostGresIntegrationTestsGATE.class.getName()).log(Level.SEVERE, null, ex);
+            logger.fatal(ex);
         }
         String xhtmlString = new String(bytes, StandardCharsets.UTF_8);
 
@@ -85,7 +86,7 @@ public class TestUtils  {
         try {
             bytes = IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream("tika/testdocs/docexample.doc"));
         } catch (IOException ex) {
-            java.util.logging.Logger.getLogger(PostGresIntegrationTestsTika.class.getName()).log(Level.SEVERE, null, ex);
+            logger.fatal(ex);
         }
 
         String sql = "INSERT INTO  " + tableName
@@ -155,6 +156,15 @@ public class TestUtils  {
         }
     }
 
-
+    public void insertFreshDataIntoBasicTableAfterDelay(String tablename,long delay) {
+        try {
+            Thread.sleep(delay);
+            logger.info("********************* INSERTING FRESH DATA*******************");
+            insertDataIntoBasicTable(tablename);
+            Thread.sleep(delay);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

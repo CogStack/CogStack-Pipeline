@@ -15,8 +15,6 @@
  */
 package uk.ac.kcl.it;
 
-import org.apache.log4j.Logger;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,19 +26,18 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.scheduling.ScheduledJobLauncher;
-import uk.ac.kcl.scheduling.SingleJobLauncher;
 import uk.ac.uk.it.TestExecutionListeners.SqlServerBasicTestExecutionListener;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
-    "classpath:sql_server_test_config_basic.properties",
-    "classpath:jms.properties",
-    "classpath:concurrency.properties",
+        "classpath:sql_server_test_config_basic.properties",
+        "classpath:jms.properties",
+        "classpath:concurrency.properties",
         "classpath:gate.properties",
-    "classpath:sql_server_db.properties",
-    "classpath:elasticsearch.properties",
-    "classpath:jobAndStep.properties"})
+        "classpath:sql_server_db.properties",
+        "classpath:elasticsearch.properties",
+        "classpath:jobAndStep_configured_start_PK_partition_with_scheduling.properties"})
 @ContextConfiguration(classes = {
         SqlServerTestUtils.class,
         ScheduledJobLauncher.class,
@@ -49,36 +46,15 @@ import uk.ac.uk.it.TestExecutionListeners.SqlServerBasicTestExecutionListener;
 @TestExecutionListeners(
         listeners = SqlServerBasicTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-public class SqlServerIntegrationTestsBasicScheduling {
-
-    final static Logger logger = Logger.getLogger(SqlServerIntegrationTestsBasicScheduling.class);
+public class SqlServerIntegrationTestsBasicConfigurerdStartPkPartitionWithScheduling {
 
     @Autowired
-    SingleJobLauncher jobLauncher;
+    private TestUtils testUtils;
 
-    @Autowired
-    SqlServerTestUtils sqlServerTestUtils;
-
-    @Autowired
-    TestUtils testUtils;
-    @Before
-    public void init(){
-        sqlServerTestUtils.initJobRepository();
-        sqlServerTestUtils.createBasicInputTable();
-        sqlServerTestUtils.createBasicOutputTable();
-        testUtils.insertDataIntoBasicTable("dbo.tblInputDocs");
-    }
     @Test
     @DirtiesContext
-    public void sqlServerBasicSchedulingPipelineTest() {
-        try {
-            Thread.sleep(300000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-
-
+    public void SqlServerIntegrationTestsBasicTimestampPartitionWithSchedulingTest() {
+        testUtils.insertFreshDataIntoBasicTableAfterDelay("dbo.tblInputDocs",15000);
     }
 
 }

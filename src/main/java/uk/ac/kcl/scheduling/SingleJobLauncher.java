@@ -88,43 +88,44 @@ public class SingleJobLauncher {
                 try {
                     lastJobExecution = batchJobUtils.getLastJobExecution();
                     lastJobExitStatus = lastJobExecution.getExitStatus();
+                    switch (lastJobExitStatus.getExitCode()) {
+                        case "COMPLETED":
+                            jobOperator.startNextInstance(job.getName());
+                            break;
+                        case "EXECUTING":
+                            LOG.info("Job is already running");
+                            break;
+                        case "FAILED":
+                            LOG.info("Last job failed. Attempting restart");
+                            jobOperator.restart(lastJobExecution.getId());
+                            break;
+                        case "NOOP":
+                            break;
+                        case "STOPPED":
+                            LOG.info("Last job stopped. Attempting to restart incomplete steps");
+                            jobOperator.restart(lastJobExecution.getId());
+                            break;
+                        case "UNKNOWN":
+                            LOG.info("Last job has unknown status. Attempting restart from last job with known status");
+                            jobOperator.startNextInstance(job.getName());
+                            break;
+                        default:
+                            LOG.info("Should never be reached");
+                            break;
+                    }
                 }catch(NullPointerException ex){
                     LOG.info("No previous completed jobs found");
                     jobOperator.startNextInstance(job.getName());
                 }
-                if(env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("false")){
-                    LOG.info("Not using timeStampBasedScheduling");
-                }else if(lastJobExitStatus == null){
+//                if(env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("false")){
+//                    LOG.info("Not using timeStampBasedScheduling");
+//                }else if(lastJobExitStatus == null){
+//
+//                }else if (env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("true")){
 
-                }else if (env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("true")){
-                        switch (lastJobExitStatus.getExitCode()) {
-                            case "COMPLETED":
-                                jobOperator.startNextInstance(job.getName());
-                                break;
-                            case "EXECUTING":
-                                LOG.info("Job is already running");
-                                break;
-                            case "FAILED":
-                                LOG.info("Last job failed. Attempting restart");
-                                jobOperator.restart(lastJobExecution.getId());
-                                break;
-                            case "NOOP":
-                                break;
-                            case "STOPPED":
-                                LOG.info("Last job stopped. Attempting to restart incomplete steps");
-                                jobOperator.restart(lastJobExecution.getId());
-                                break;
-                            case "UNKNOWN":
-                                LOG.info("Last job has unknown status. Attempting restart from last job with known status");
-                                jobOperator.startNextInstance(job.getName());
-                                break;
-                            default:
-                                LOG.info("Should never be reached");
-                                break;
-                        }
-                    }else {
-                throw new RuntimeException("Cannot determine intended JobParameters");
-            }
+//                    }else {
+//                throw new RuntimeException("Cannot determine intended JobParameters");
+//            }
         } catch (JobInstanceAlreadyCompleteException|
                 JobExecutionAlreadyRunningException|
                 JobParametersInvalidException|

@@ -45,7 +45,7 @@ import javax.sql.DataSource;
 @Import({JobConfiguration.class,TestUtils.class})
 public class SqlServerTestUtils implements DbmsTestUtils {
 
-    final static Logger logger = Logger.getLogger(PostGresIntegrationTestsGATE.class);
+    final static Logger logger = Logger.getLogger(SqlServerTestUtils.class);
 
     @Autowired
     @Qualifier("sourceDataSource")

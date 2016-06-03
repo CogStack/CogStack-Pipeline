@@ -26,19 +26,20 @@ import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import uk.ac.kcl.scheduling.ScheduledJobLauncher;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
 import uk.ac.uk.it.TestExecutionListeners.SqlServerBasicTestExecutionListener;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
-    "classpath:sql_server_test_config_basic.properties",
-    "classpath:jms.properties",
-    "classpath:concurrency.properties",
-    "classpath:gate.properties",
-    "classpath:sql_server_db.properties",
-    "classpath:elasticsearch.properties",
-    "classpath:jobAndStep.properties"})
+        "classpath:sql_server_test_config_basic.properties",
+        "classpath:jms.properties",
+        "classpath:concurrency.properties",
+        "classpath:gate.properties",
+        "classpath:sql_server_db.properties",
+        "classpath:elasticsearch.properties",
+        "classpath:jobAndStep_timestamp_without_scheduling.properties"})
 @ContextConfiguration(classes = {
         SqlServerTestUtils.class,
         SingleJobLauncher.class,

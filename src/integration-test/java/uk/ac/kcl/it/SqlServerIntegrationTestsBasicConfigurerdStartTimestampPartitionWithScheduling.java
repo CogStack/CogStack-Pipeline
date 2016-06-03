@@ -15,8 +15,6 @@
  */
 package uk.ac.kcl.it;
 
-import org.elasticsearch.shield.authz.Privilege;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +26,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.scheduling.ScheduledJobLauncher;
-import uk.ac.kcl.scheduling.SingleJobLauncher;
 import uk.ac.uk.it.TestExecutionListeners.SqlServerBasicTestExecutionListener;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -40,7 +37,7 @@ import uk.ac.uk.it.TestExecutionListeners.SqlServerBasicTestExecutionListener;
         "classpath:gate.properties",
         "classpath:sql_server_db.properties",
         "classpath:elasticsearch.properties",
-        "classpath:jobAndStep_partition_only_with_scheduling.properties"})
+        "classpath:jobAndStep_configured_start_timestamp_partition_with_scheduling.properties"})
 @ContextConfiguration(classes = {
         SqlServerTestUtils.class,
         ScheduledJobLauncher.class,
@@ -49,14 +46,14 @@ import uk.ac.uk.it.TestExecutionListeners.SqlServerBasicTestExecutionListener;
 @TestExecutionListeners(
         listeners = SqlServerBasicTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-public class SqlServerIntegrationTestsBasicPKPartitionWithScheduling {
+public class SqlServerIntegrationTestsBasicConfigurerdStartTimestampPartitionWithScheduling {
 
     @Autowired
-    TestUtils testUtils;
+    private TestUtils testUtils;
 
     @Test
     @DirtiesContext
-    public void SqlServerIntegrationTestsBasicPartitionOnlyWithSchedulingTest() {
+    public void SqlServerIntegrationTestsBasicTimestampPartitionWithSchedulingTest() {
         testUtils.insertFreshDataIntoBasicTableAfterDelay("dbo.tblInputDocs",15000);
     }
 

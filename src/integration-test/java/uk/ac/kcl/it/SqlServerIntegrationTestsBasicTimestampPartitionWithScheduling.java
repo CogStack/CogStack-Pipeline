@@ -39,7 +39,7 @@ import uk.ac.uk.it.TestExecutionListeners.SqlServerBasicTestExecutionListener;
         "classpath:gate.properties",
         "classpath:sql_server_db.properties",
         "classpath:elasticsearch.properties",
-        "classpath:jobAndStep_partition_only_with_scheduling.properties"})
+        "classpath:jobAndStep_timestamp_with_scheduling.properties"})
 @ContextConfiguration(classes = {
         SqlServerTestUtils.class,
         ScheduledJobLauncher.class,
@@ -50,19 +50,13 @@ import uk.ac.uk.it.TestExecutionListeners.SqlServerBasicTestExecutionListener;
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 public class SqlServerIntegrationTestsBasicTimestampPartitionWithScheduling {
 
-
+    @Autowired
+    private TestUtils testUtils;
 
     @Test
     @DirtiesContext
-    public void SqlServerIntegrationTestsBasicPartitionOnlyWithSchedulingTest() {
-        try {
-            Thread.sleep(300000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-
-
+    public void SqlServerIntegrationTestsBasicTimestampPartitionWithSchedulingTest() {
+        testUtils.insertFreshDataIntoBasicTableAfterDelay("dbo.tblInputDocs",30000);
     }
 
 }

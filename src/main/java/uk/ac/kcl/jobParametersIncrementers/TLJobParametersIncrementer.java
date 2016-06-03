@@ -67,13 +67,13 @@ public class TLJobParametersIncrementer implements JobParametersIncrementer {
 //                    .toJobParameters();
 //        }else
 
-        if(lastJobExitStatus == null){
+        if(lastJobExitStatus == null) {
             params = new JobParametersBuilder()
-                    .addString("first_run_of_job","true")
-                    .addString("jobName",env.getProperty("jobName"))
+                    .addString("first_run_of_job", "true")
+                    .addString("jobName", env.getProperty("jobName"))
                     .addLong(key, id)
                     .toJobParameters();
-        }else if (env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("true")){
+        }else{
             switch (lastJobExitStatus.getExitCode()) {
                 case "COMPLETED":
                     LOG.info("Last job execution was successful");
@@ -101,8 +101,6 @@ public class TLJobParametersIncrementer implements JobParametersIncrementer {
                     LOG.error("Should never be reached");
                     break;
             }
-        }else {
-            throw new RuntimeException("Cannot determine intended JobParameters");
         }
         return params;
     }

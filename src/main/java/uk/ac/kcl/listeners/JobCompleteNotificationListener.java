@@ -23,7 +23,7 @@ import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.ac.kcl.partitioners.ColumnRangePartitioner;
+import uk.ac.kcl.partitioners.RealtimePKOnlyRangePartitioner;
 
 @Component
 public class JobCompleteNotificationListener implements JobExecutionListener {
@@ -37,7 +37,7 @@ public class JobCompleteNotificationListener implements JobExecutionListener {
 	}
 
 	@Autowired
-	ColumnRangePartitioner columnRangePartitioner;
+	RealtimePKOnlyRangePartitioner columnRangePartitioner;
 
 	@Override
 	public void beforeJob(JobExecution jobExecution) {
