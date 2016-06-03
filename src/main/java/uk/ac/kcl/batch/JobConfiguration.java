@@ -57,11 +57,7 @@ import java.util.ArrayList;
 @ComponentScan({"uk.ac.kcl.rowmappers","uk.ac.kcl.utils", "uk.ac.kcl.itemHandlers"})
 @EnableBatchProcessing
 @Import({
-        DbLineFixerConfiguration.class,
-        GateConfiguration.class,
-        BasicJobConfiguration.class,
         BatchConfigurer.class,
-        TikaConfiguration.class,
         SlaveIntegrationConfiguration.class,
         MasterIntegrationConfiguration.class
 })

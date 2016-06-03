@@ -19,14 +19,7 @@ import org.apache.tika.sax.BodyContentHandler;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.xml.sax.SAXException;
-import uk.ac.kcl.batch.TikaConfiguration;
 import uk.ac.kcl.tika.config.ImageMagickConfig;
 
 import java.io.IOException;

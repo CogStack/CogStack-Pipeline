@@ -171,7 +171,6 @@ task writeExampleConfig  {
     String elasticsearch = new File("src/integration-test/resources/elasticsearch.properties").text
     String gate = new File("src/integration-test/resources/gate.properties").text
     String tika = new File("src/integration-test/resources/tika.properties").text
-    String basic = new File("src/integration-test/resources/basic.properties").text
     String dBLineFixer = new File("src/integration-test/resources/dBLineFixer.properties").text
     String jms = new File("src/integration-test/resources/jms.properties").text
     String jobAndStep = new File("src/integration-test/resources/jobAndStep.properties").text
@@ -182,7 +181,7 @@ task writeExampleConfig  {
     String postgres_test_config_dBLineFixer = new File("src/integration-test/resources/postgres_test_config_line_fixer.properties").text
 
     new File("exampleConfigs").mkdir()
-    def gateExample = new File("exampleConfigs/gateJob.conf")
+    def gateExample = new File("exampleConfigs/gateJob.properties")
     gateExample.withWriter("UTF-8") { writer ->
         writer.write(  "# EXAMPLE CONFIG FOR gateJob \n" +
                 elasticsearch
@@ -194,7 +193,7 @@ task writeExampleConfig  {
                         + "\n" + postgres_test_config_gate
         )
     }
-        def tikaExample = new File("exampleConfigs/tikaJob.conf")
+        def tikaExample = new File("exampleConfigs/tikaJob.properties")
     tikaExample.withWriter("UTF-8"){ writer ->
             writer.write ("# EXAMPLE CONFIG FOR tikaJob \n" +
                     elasticsearch
@@ -206,26 +205,24 @@ task writeExampleConfig  {
                             +"\n" + postgres_test_config_tika
             )
     }
-    def basicExample = new File("exampleConfigs/basicJob.conf")
+    def basicExample = new File("exampleConfigs/basicJob.properties")
     basicExample.withWriter("UTF-8"){ writer ->
         writer.write("# EXAMPLE CONFIG FOR basicJob \n" +
                 elasticsearch
                         +"\n" + jms
                         +"\n" + elasticsearch
-                        +"\n" + basic
                         +"\n" + jobAndStep
                         +"\n" + postgres_db
                         +"\n" + postgres_test_config_basic
         )
     }
-    def dBLineFixerExample = new File("exampleConfigs/dBLineFixerJob.conf")
+    def dBLineFixerExample = new File("exampleConfigs/dBLineFixerJob.properties")
     dBLineFixerExample.withWriter("UTF-8"){ writer ->
         writer.write("# EXAMPLE CONFIG FOR dBLineFixerJob \n" +
                 elasticsearch
                 +"\n" + dBLineFixer
                 +"\n" + jms
                 +"\n" + elasticsearch
-                +"\n" + basic
                 +"\n" + jobAndStep
                 +"\n" + postgres_db
                 +"\n" + postgres_test_config_dBLineFixer
