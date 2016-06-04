@@ -131,18 +131,37 @@ public class TLJobParametersIncrementer implements JobParametersIncrementer {
     }
 
     private JobParameters getNewJobParameters(long id, JobExecution lastJobExecution) {
-        JobParameters params;Timestamp lastSuccessfulItemTimestamp = new Timestamp(
-                Long.valueOf(lastJobExecution
-                        .getExecutionContext()
-                        .get("last_successful_timestamp_from_this_job")
-                        .toString()));
-        LOG.info("Last good run was " + lastSuccessfulItemTimestamp.toString() + ". Recommencing from then");
-        params = new JobParametersBuilder()
-                .addDate("last_timestamp_from_last_successful_job", lastSuccessfulItemTimestamp)
-                .addString("jobName",env.getProperty("jobName"))
-                .addLong(key, id)
-                .toJobParameters();
-        return params;
-    }
 
+        JobParameters params;
+        Timestamp newJobTimeStamp;
+        if(lastJobExecution.getExecutionContext().get("first_timestamp_for_next_job")!=null){
+            newJobTimeStamp = new Timestamp(
+                    Long.valueOf(lastJobExecution
+                            .getExecutionContext()
+                            .get("first_timestamp_for_next_job")
+                            .toString()));
+            LOG.info("Last run had no data. This run commencing from " + newJobTimeStamp.toString() + ". Recommencing from then");
+            params = new JobParametersBuilder()
+                    .addDate("first_timestamp_for_next_job", newJobTimeStamp)
+                    .addString("jobName",env.getProperty("jobName"))
+                    .addLong(key, id)
+                    .toJobParameters();
+            return params;
+        }else if(lastJobExecution.getExecutionContext().get("last_successful_timestamp_from_this_job")!=null){
+            newJobTimeStamp = new Timestamp(
+                    Long.valueOf(lastJobExecution
+                            .getExecutionContext()
+                            .get("last_successful_timestamp_from_this_job")
+                            .toString()));
+            LOG.info("Last good run was " + newJobTimeStamp.toString() + ". Recommencing from then");
+            params = new JobParametersBuilder()
+                    .addDate("last_timestamp_from_last_successful_job", newJobTimeStamp)
+                    .addString("jobName",env.getProperty("jobName"))
+                    .addLong(key, id)
+                    .toJobParameters();
+            return params;
+        }else{
+            throw new RuntimeException("Cannot get new parameters from Job Repository");
+        }
+    }
 }

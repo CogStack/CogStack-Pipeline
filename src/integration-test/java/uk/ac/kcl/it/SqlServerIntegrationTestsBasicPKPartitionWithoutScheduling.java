@@ -32,13 +32,13 @@ import uk.ac.uk.it.TestExecutionListeners.SqlServerBasicTestExecutionListener;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
-    "classpath:sql_server_test_config_basic.properties",
-    "classpath:jms.properties",
-    "classpath:concurrency.properties",
-    "classpath:gate.properties",
-    "classpath:sql_server_db.properties",
-    "classpath:elasticsearch.properties",
-    "classpath:jobAndStep_PK_partition_without_scheduling.properties"})
+        "classpath:sql_server_test_config_basic.properties",
+        "classpath:jms.properties",
+        "classpath:concurrency.properties",
+        "classpath:gate.properties",
+        "classpath:sql_server_db.properties",
+        "classpath:elasticsearch.properties",
+        "classpath:jobAndStep_PK_partition_without_scheduling.properties"})
 @ContextConfiguration(classes = {
         SqlServerTestUtils.class,
         SingleJobLauncher.class,

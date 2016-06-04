@@ -70,7 +70,7 @@ public class MasterIntegrationConfiguration {
     @Bean
     public Job job(JobBuilderFactory jobs,
                    StepBuilderFactory steps,
-                   @Qualifier("columnRangePartitioner") Partitioner partitioner,
+                    Partitioner partitioner,
                    @Qualifier("partitionHandler") PartitionHandler gatePartitionHandler,
                    JobCompleteNotificationListener jobCompleteNotificationListener,
                    @Qualifier("tLJobParametersIncrementer") TLJobParametersIncrementer runIdIncrementer

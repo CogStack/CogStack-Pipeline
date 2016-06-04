@@ -6,40 +6,41 @@ import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Service;
 import uk.ac.kcl.listeners.JobCompleteNotificationListener;
 import uk.ac.kcl.model.ScheduledPartitionParams;
-import uk.ac.kcl.rowmappers.PartitionParamsRowMapper;
 import uk.ac.kcl.utils.BatchJobUtils;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by rich on 03/06/16.
  */
-public abstract class AbstractRealTimeRangePartitioner implements RealtimeRangePartitioner {
+@Service("abstractRealTimeRangePartitioner")
+@ComponentScan("uk.ac.kcl.listeners")
+public abstract class AbstractRealTimeRangePartitioner {
 
-    final static Logger logger = LoggerFactory.getLogger(RealtimeTimeStampAndPKRangePartitioner.class);
+    final static Logger logger = LoggerFactory.getLogger(AbstractRealTimeRangePartitioner.class);
 
+    @Autowired
+    JobCompleteNotificationListener jobCompleteNotificationListener;
     @Autowired
     @Qualifier("sourceDataSource")
-     DataSource sourceDataSource;
+    protected DataSource sourceDataSource;
 
     @Autowired
-     Environment env;
+    protected Environment env;
 
-    @Autowired
-     JobCompleteNotificationListener jobCompleteNotificationListener;
+    protected String timeStamp;
 
-     String timeStamp;
+    protected JdbcTemplate jdbcTemplate;
 
     @PostConstruct
     public void init(){
@@ -47,20 +48,21 @@ public abstract class AbstractRealTimeRangePartitioner implements RealtimeRangeP
         setTable(env.getProperty("tableToPartition"));
         setTimeStampColumnName(env.getProperty("timeStampColumnNameToPersistInJobRepository"));
         if(env.getProperty("firstJobStartDate") !=null){
-            firstRun = true;
+            configuredRunFirstRun = true;
         }else{
-            firstRun = false;
+            configuredRunFirstRun = false;
         }
+        this.jdbcTemplate = new JdbcTemplate(sourceDataSource);
     }
 
     @Autowired
-     BatchJobUtils batchJobUtils;
+    protected BatchJobUtils batchJobUtils;
 
-    JobExecution jobExecution;
+    protected JobExecution jobExecution;
 
-    String table;
+    protected String table;
 
-    String column;
+    protected String column;
 
     public void setTable(String table) {
         this.table = table;
@@ -72,17 +74,10 @@ public abstract class AbstractRealTimeRangePartitioner implements RealtimeRangeP
 
     public void setTimeStampColumnName(String timeStamp) {this.timeStamp = timeStamp;}
 
-    boolean firstRun;
+    protected boolean configuredRunFirstRun;
 
 
-    abstract Map<String, ExecutionContext> getExecutionContextMap(int gridSize, Map<String, ExecutionContext> result);
-
-
-    abstract Map<String, ExecutionContext> handleNoNewRecords(Map<String, ExecutionContext> map);
-
-    abstract Map<String, ExecutionContext> getNextExecutionContextMapIfNoneFoundInPeriod(Map<String, ExecutionContext> result, Timestamp newestTimestampInDB);
-
-    boolean noRecordsFoundInProcessingPeriod(ScheduledPartitionParams scheduledPartitionParams){
+    protected boolean noRecordsFoundInProcessingPeriod(ScheduledPartitionParams scheduledPartitionParams){
         if(scheduledPartitionParams.getMinTimeStamp() == null){
             return true;
         }else{
@@ -90,23 +85,20 @@ public abstract class AbstractRealTimeRangePartitioner implements RealtimeRangeP
         }
     }
 
-    abstract ScheduledPartitionParams getParams(Timestamp timestamp);
-
-
-    Timestamp getFirstTimestampInTable(JdbcTemplate jdbcTemplate) {
+    protected Timestamp getFirstTimestampInTable(JdbcTemplate jdbcTemplate) {
         Timestamp startTimeStamp;
         String tsSql = "SELECT MIN(" + timeStamp + ")  FROM " + table;
         startTimeStamp = jdbcTemplate.queryForObject(tsSql,Timestamp.class);
         return startTimeStamp;
     }
 
-    Timestamp getFirstRunAsTimestamp() {
+    protected Timestamp getConfiguredRunAsTimestamp() {
         DateTimeFormatter formatter = DateTimeFormat.forPattern(env.getProperty("datePatternForSQL"));
         DateTime dt = formatter.parseDateTime(env.getProperty("firstJobStartDate"));
         return new Timestamp(dt.getMillis());
     }
 
-    Timestamp getEndTimeStamp(Timestamp startTimeStamp ){
+    protected Timestamp getEndTimeStamp(Timestamp startTimeStamp ){
         return new Timestamp(startTimeStamp.getTime() + Long.valueOf(env.getProperty("processingPeriod")));
     }
 

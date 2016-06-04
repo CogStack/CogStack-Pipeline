@@ -15,27 +15,16 @@
  */
 package uk.ac.kcl.partitioners;
 
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.item.ExecutionContext;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
-import uk.ac.kcl.listeners.JobCompleteNotificationListener;
 import uk.ac.kcl.model.ScheduledPartitionParams;
 import uk.ac.kcl.rowmappers.PartitionParamsRowMapper;
-import uk.ac.kcl.utils.BatchJobUtils;
 
-import javax.annotation.PostConstruct;
-import javax.sql.DataSource;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,12 +32,12 @@ import java.util.Map;
 
 @Service("realtimePKOnlyRangePartitioner")
 @ComponentScan("uk.ac.kcl.listeners")
-public class RealtimePKOnlyRangePartitioner extends AbstractRealTimeRangePartitioner {
+@org.springframework.context.annotation.Profile("primaryKeyPartition")
+public class RealtimePKRangePartitioner extends AbstractRealTimeRangePartitioner implements Partitioner {
 
-    final static Logger logger = LoggerFactory.getLogger(RealtimePKOnlyRangePartitioner.class);
+    final static Logger logger = LoggerFactory.getLogger(RealtimePKRangePartitioner.class);
 
-    @Override
-    Map<String, ExecutionContext> getExecutionContextMap(int gridSize, Map<String, ExecutionContext> result) {
+    public Map<String, ExecutionContext> getExecutionContextMap(int gridSize, Map<String, ExecutionContext> result) {
         Timestamp jobStartTimeStamp  = null;
         try {
             jobStartTimeStamp = new Timestamp(jobExecution.getJobParameters()
@@ -88,32 +77,21 @@ public class RealtimePKOnlyRangePartitioner extends AbstractRealTimeRangePartiti
         return result;
     }
 
-    @Override
-    Map<String, ExecutionContext> handleNoNewRecords(Map<String, ExecutionContext> map) {
-        return null;
-    }
-
-    @Override
-    Map<String, ExecutionContext> getNextExecutionContextMapIfNoneFoundInPeriod(Map<String, ExecutionContext> result, Timestamp newestTimestampInDB) {
-        return null;
-    }
-
 
     @Override
     public Map<String, ExecutionContext> partition(int gridSize) {
         Map<String, ExecutionContext> result = new HashMap<String, ExecutionContext>();
             logger.info("Commencing PK only partition");
             result = getExecutionContextMap(gridSize, result);
-        if(firstRun){
-            firstRun=false;
+        if(configuredRunFirstRun){
+            configuredRunFirstRun =false;
         }
         return result;
     }
 
 
-
     private Map<String, ExecutionContext> handleNoNewRecords(Map<String, ExecutionContext> result, Timestamp jobStartTimeStamp) {
-        if(firstRun) {
+        if(configuredRunFirstRun) {
             logger.info("No new data found from configured start time " + String.valueOf(jobStartTimeStamp.toString()));
             jobCompleteNotificationListener.setLastDateInthisJob(jobStartTimeStamp.getTime());
         }else {
@@ -125,8 +103,7 @@ public class RealtimePKOnlyRangePartitioner extends AbstractRealTimeRangePartiti
     }
 
 
-    @Override
-    ScheduledPartitionParams getParams(Timestamp startTimeStamp) {
+    private ScheduledPartitionParams getParams(Timestamp startTimeStamp) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
         String sql = "\n SELECT "   +
                 " MAX(" + column + ") AS max_id , \n" +
@@ -134,9 +111,9 @@ public class RealtimePKOnlyRangePartitioner extends AbstractRealTimeRangePartiti
                 " MAX(" + timeStamp + ") AS max_time_stamp , \n" +
                 " MIN(" + timeStamp + ") AS min_time_stamp  \n" +
                 " FROM " + table ;
-        if(env.getProperty("firstJobStartDate") !=null && firstRun){
+        if(env.getProperty("firstJobStartDate") !=null && configuredRunFirstRun){
             logger.info ("firstJobStartDate detected in configs. Commencing from " + env.getProperty("firstJobStartDate"));
-            Timestamp firstRunAsTimestamp = getFirstRunAsTimestamp();
+            Timestamp firstRunAsTimestamp = getConfiguredRunAsTimestamp();
             sql = sql + " WHERE " + timeStamp + " >= CAST ('" + firstRunAsTimestamp.toString() +
                     "' as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) " ;
         } else if(startTimeStamp != null) {
@@ -156,4 +133,5 @@ public class RealtimePKOnlyRangePartitioner extends AbstractRealTimeRangePartiti
         return (ScheduledPartitionParams) jdbcTemplate.queryForObject(
                 sql, new PartitionParamsRowMapper());
     }
+
 }

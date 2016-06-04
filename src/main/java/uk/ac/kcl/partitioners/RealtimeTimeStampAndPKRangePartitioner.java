@@ -15,27 +15,16 @@
  */
 package uk.ac.kcl.partitioners;
 
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.item.ExecutionContext;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
-import uk.ac.kcl.listeners.JobCompleteNotificationListener;
 import uk.ac.kcl.model.ScheduledPartitionParams;
 import uk.ac.kcl.rowmappers.PartitionParamsRowMapper;
-import uk.ac.kcl.utils.BatchJobUtils;
 
-import javax.annotation.PostConstruct;
-import javax.sql.DataSource;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,33 +32,24 @@ import java.util.Map;
 
 @Service("columnRangePartitioner")
 @ComponentScan("uk.ac.kcl.listeners")
-public class RealtimeTimeStampAndPKRangePartitioner extends AbstractRealTimeRangePartitioner{
+@org.springframework.context.annotation.Profile("primaryKeyAndTimeStampPartition")
+public class RealtimeTimeStampAndPKRangePartitioner extends AbstractRealTimeRangePartitioner implements Partitioner{
 
     final static Logger logger = LoggerFactory.getLogger(RealtimeTimeStampAndPKRangePartitioner.class);
-    private ScheduledPartitionParams params;
-    private Timestamp jobStartTimeStamp;
 
     @Override
     public Map<String, ExecutionContext> partition(int gridSize) {
-        Map<String, ExecutionContext> result = new HashMap<String, ExecutionContext>();
+        Map<String, ExecutionContext> result = null;
         logger.info("commencing timestamp and PK based partitioning");
-        jobStartTimeStamp  = null;
-        if(firstRun){
-            jobStartTimeStamp = getFirstRunAsTimestamp();
-        }else {
-            try {
-                jobStartTimeStamp = new Timestamp(jobExecution.getJobParameters()
-                        .getDate("last_timestamp_from_last_successful_job").getTime());
-            } catch (NullPointerException ex) {}
-        }
-        params = getParams(jobStartTimeStamp);
+
+        ScheduledPartitionParams params = getParams();
         if (noRecordsFoundInProcessingPeriod(params)) {
-            result = handleNoNewRecords(result);
+            result = handleNoNewRecords(params);
         } else {
-            result = getExecutionContextMap(gridSize, result);
+            result = getExecutionContextMap(gridSize, params);
         }
-        if(firstRun){
-            firstRun=false;
+        if(configuredRunFirstRun){
+            configuredRunFirstRun =false;
         }
         return result;
     }
@@ -77,43 +57,32 @@ public class RealtimeTimeStampAndPKRangePartitioner extends AbstractRealTimeRang
 
 //////////////////////////////////    TEST THIS BLOCK
 
-    @Override
-    Map<String, ExecutionContext> handleNoNewRecords(Map<String, ExecutionContext> map) {
-        Map<String, ExecutionContext> result = new HashMap<String, ExecutionContext>();
-        Timestamp newestTimestampInDB;
-        if(firstRun){
-            newestTimestampInDB = getFirstRunAsTimestamp();
+    Map<String, ExecutionContext> handleNoNewRecords(ScheduledPartitionParams params) {
+        Map<String, ExecutionContext> result = new HashMap<>();
+        Timestamp jobStartTimeStamp = null;
+        if(configuredRunFirstRun){
+            jobStartTimeStamp = getConfiguredRunAsTimestamp();
+            logger.info("No data found in specified processing period of configured start date");
         }else{
-            newestTimestampInDB = batchJobUtils.checkForNewRecordsBeyondConfiguredProcessingPeriod(
-                    table, jobStartTimeStamp, timeStamp);
+            jobStartTimeStamp = batchJobUtils.checkForNewRecordsBeyondConfiguredProcessingPeriod(
+                    table, params.getMinTimeStamp(), timeStamp);
         }
-
-        if(newestTimestampInDB==null){
-            logger.info("Database appears to be synched as far as " +jobStartTimeStamp.toString()+ ". " +
+        if(jobStartTimeStamp==null){
+            logger.info("Database appears to be synched as far as " +params.getMaxTimeStamp().getTime()+ ". " +
                     "Checking again on next run");
-            jobCompleteNotificationListener.setLastDateInthisJob(jobStartTimeStamp.getTime());
+            jobCompleteNotificationListener.setLastDateInthisJob(params.getMaxTimeStamp().getTime());
         }else {
-            logger.info("New data found");
-            result = getNextExecutionContextMapIfNoneFoundInPeriod(result, newestTimestampInDB);
+            logger.info("New data found! Next job will start from " + jobStartTimeStamp.toString());
+            jobCompleteNotificationListener.setFirstDateInNextJob(jobStartTimeStamp.getTime());
         }
-        return result;
-    }
-
-    @Override
-    Map<String, ExecutionContext> getNextExecutionContextMapIfNoneFoundInPeriod(Map<String, ExecutionContext> result, Timestamp newestTimestampInDB) {
-        ScheduledPartitionParams params = getParams(newestTimestampInDB);
-        result = getExecutionContextMap(Integer.valueOf(env.getProperty("gridSize")),result);
-
-        logger.info("No data found this job. Next earliest timestamp is " + String.valueOf(newestTimestampInDB.toString()));
-        jobCompleteNotificationListener.setLastDateInthisJob(params.getMaxTimeStamp().getTime()-1L);
         return result;
     }
 
 
 ////////////////////////////
 
-    @Override
-    Map<String, ExecutionContext> getExecutionContextMap(int gridSize, Map<String, ExecutionContext> result) {
+    Map<String, ExecutionContext> getExecutionContextMap(int gridSize, ScheduledPartitionParams params) {
+        Map<String,ExecutionContext> result = new HashMap<>();
         logger.info("Database not yet synched. Synching as far as  "
                 + params.getMaxTimeStamp().toString() + " this job");
         jobCompleteNotificationListener.setLastDateInthisJob(params.getMaxTimeStamp().getTime());
@@ -154,10 +123,7 @@ public class RealtimeTimeStampAndPKRangePartitioner extends AbstractRealTimeRang
 
 
 
-    @Override
-    ScheduledPartitionParams getParams(Timestamp timestamp) {
-        Timestamp jobEndTimeStamp;
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
+    ScheduledPartitionParams getParams() {
         String sql = "\n SELECT "   +
                 " MAX(" + column + ") AS max_id , \n" +
                 " MIN(" + column + ") AS min_id , \n" +
@@ -168,53 +134,75 @@ public class RealtimeTimeStampAndPKRangePartitioner extends AbstractRealTimeRang
                 batchJobUtils.cleanSqlString(env.getProperty("partitionerPreFieldsSQL")) +
                 " " + column + ", " + timeStamp +
                 " FROM " + table + " ";
-        if(env.getProperty("firstJobStartDate") !=null && firstRun){
-            logger.info ("firstJobStartDate detected in configs. Commencing from " + env.getProperty("firstJobStartDate"));
-            Timestamp earliestRecord = getFirstRunAsTimestamp();
-            jobEndTimeStamp = new Timestamp(earliestRecord.getTime() + Long.valueOf(env.getProperty("processingPeriod")));
+
+        Timestamp jobStartTimeStamp  = null;
+        Timestamp jobEndTimeStamp;
+        if(env.getProperty("configuredJobStartDate") !=null && configuredRunFirstRun){
+            jobStartTimeStamp = getConfiguredRunAsTimestamp();
+            logger.info ("configuredJobStartDate detected in configs. Commencing from " + env.getProperty("firstJobStartDate"));
+            jobStartTimeStamp = getConfiguredRunAsTimestamp();
+            jobEndTimeStamp =getEndTimeStamp(jobStartTimeStamp);
             sql =	sql +
                     " WHERE CAST (" + timeStamp + " as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) " +
-                    "\nBETWEEN CAST ('" + earliestRecord.toString() +
+                    "\nBETWEEN CAST ('" + jobStartTimeStamp.toString() +
                     "' as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) " +
                     " AND CAST ('" + jobEndTimeStamp.toString() +
                     "' as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) " +
                     "\n ORDER BY " + timeStamp +" ASC " +" , " + column +" ASC " +
                     batchJobUtils.cleanSqlString(env.getProperty("partitionerPostOrderByClause")) +
                     " ) t1" ;
-        } else if(timestamp != null) {
-            logger.info ("last successful batch retrieved from job repository. Commencing from after " + timestamp.toString());
-            jobEndTimeStamp = getEndTimeStamp(timestamp);
-            sql =	sql +
-                    "\n WHERE CAST (" + timeStamp + " as "+
-                    env.getProperty("dbmsToJavaSqlTimestampType")+
-                    " ) > CAST ('" + timestamp.toString()  +
-                    "' as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) " +
-                    "\n AND CAST ("  + timeStamp +  " as "+
-                    env.getProperty("dbmsToJavaSqlTimestampType")+
-                    " ) <= CAST ('" + jobEndTimeStamp.toString() +
-                    "' as "+env.getProperty("dbmsToJavaSqlTimestampType")+
-                    " ) " +
-                    "\n ORDER BY " + timeStamp  +" ASC " + " , " + column +" ASC " +
-                    batchJobUtils.cleanSqlString(env.getProperty("partitionerPostOrderByClause")) +
-                    " ) t1" ;
-        }else if(jobExecution.getJobParameters().getString("first_run_of_job").equalsIgnoreCase("true")){
-            timestamp = getFirstTimestampInTable(jdbcTemplate);
-            jobEndTimeStamp = getEndTimeStamp(timestamp);
+        } else {
+            try {
+                jobStartTimeStamp = new Timestamp(jobExecution.getJobParameters()
+                        .getDate("first_timestamp_for_next_job").getTime());
+            } catch (NullPointerException ex) {}
+
+            if(jobStartTimeStamp !=null) {
+                logger.info("Next timestamp detected in DB. Commencing from " + jobStartTimeStamp.toString());
+                jobEndTimeStamp = getEndTimeStamp(jobStartTimeStamp);
+                sql = sql +
+                        " WHERE CAST (" + timeStamp + " as " + env.getProperty("dbmsToJavaSqlTimestampType") + " ) BETWEEN CAST ('" +
+                        jobStartTimeStamp.toString() +
+                        "' as " + env.getProperty("dbmsToJavaSqlTimestampType") + " ) " +
+                        " AND CAST ('" + jobEndTimeStamp.toString() +
+                        "' as " + env.getProperty("dbmsToJavaSqlTimestampType") + " ) ) t1 " ;
+            }else {
+                try {
+                    jobStartTimeStamp = new Timestamp(jobExecution.getJobParameters()
+                            .getDate("last_timestamp_from_last_successful_job").getTime());
+                } catch (NullPointerException ex) {
+                }
+                if (jobStartTimeStamp != null) {
+                    jobStartTimeStamp = getFirstTimestampInTable(jdbcTemplate);
+                    jobEndTimeStamp = getEndTimeStamp(jobStartTimeStamp);
+                    sql = sql +
+                            " WHERE CAST (" + timeStamp + " as " + env.getProperty("dbmsToJavaSqlTimestampType") + " ) " +
+                            "> CAST ('" +
+                            jobStartTimeStamp.toString() +
+                            "' as " + env.getProperty("dbmsToJavaSqlTimestampType") + " ) " +
+                            " AND CAST (" + timeStamp + " as " + env.getProperty("dbmsToJavaSqlTimestampType") + " ) " +
+                            " <= CAST ('" + jobEndTimeStamp.toString() +
+                            "' as " + env.getProperty("dbmsToJavaSqlTimestampType") + " ) ) t1";
+                }
+            }
+        }
+        if(jobStartTimeStamp ==null) {
+            logger.info("No previous successful batches detected. Commencing from beginning of table");
+            String tsSql = "SELECT MIN(" + timeStamp + ")  FROM " + table;
+            jobStartTimeStamp = jdbcTemplate.queryForObject(tsSql,Timestamp.class);
+            jobEndTimeStamp = getEndTimeStamp(jobStartTimeStamp);
             sql =	sql +
                     " WHERE CAST (" + timeStamp + " as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) BETWEEN CAST ('" +
-                    timestamp.toString()  +
+                    jobStartTimeStamp.toString()  +
                     "' as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) " +
                     " AND CAST ('" + jobEndTimeStamp.toString()  +
                     "' as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) " +
-                    " ORDER BY " + timeStamp  +" ASC " + " , " + column +" ASC " +
                     batchJobUtils.cleanSqlString(env.getProperty("partitionerPostOrderByClause")) +
                     " ) t1" ;
-            logger.info ("No previous successful batches detected. Commencing from first timestamp: " + timestamp.toString());
-        }else{
-            logger.error("unable to determine partition requirement");
         }
         logger.info ("This job SQL: " + sql);
         return (ScheduledPartitionParams) jdbcTemplate.queryForObject(
                 sql, new PartitionParamsRowMapper());
+
     }
 }

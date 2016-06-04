@@ -40,7 +40,7 @@ import uk.ac.uk.it.TestExecutionListeners.SqlServerBasicTestExecutionListener;
         "classpath:gate.properties",
         "classpath:sql_server_db.properties",
         "classpath:elasticsearch.properties",
-        "classpath:jobAndStep_partition_only_with_scheduling.properties"})
+        "classpath:jobAndStep_PK_partition_with_scheduling.properties"})
 @ContextConfiguration(classes = {
         SqlServerTestUtils.class,
         ScheduledJobLauncher.class,

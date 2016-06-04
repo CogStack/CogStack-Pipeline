@@ -22,22 +22,34 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import uk.ac.kcl.partitioners.RealtimePKOnlyRangePartitioner;
+import uk.ac.kcl.partitioners.AbstractRealTimeRangePartitioner;
+import uk.ac.kcl.partitioners.RealtimePKRangePartitioner;
 
 @Component
+@Scope("prototype")
 public class JobCompleteNotificationListener implements JobExecutionListener {
 
 	private static final Logger log = LoggerFactory.getLogger(JobCompleteNotificationListener.class);
+	private long timeOfNextJob;
 
-	private long lastDateInthisJob;
+	public void setUseLastSuccessful(boolean useLastSuccessful) {
+		this.useLastSuccessful = useLastSuccessful;
+	}
+
+	public void setFirstDateInNextJob(long time) {
+		this.timeOfNextJob = time;
+	}
+
+	boolean useLastSuccessful;
 
 	public void setLastDateInthisJob(long l){
-		this.lastDateInthisJob = l;
+		this.timeOfNextJob = l;
 	}
 
 	@Autowired
-	RealtimePKOnlyRangePartitioner columnRangePartitioner;
+	AbstractRealTimeRangePartitioner columnRangePartitioner;
 
 	@Override
 	public void beforeJob(JobExecution jobExecution) {
@@ -46,13 +58,19 @@ public class JobCompleteNotificationListener implements JobExecutionListener {
 
 	@Autowired
 	JobRepository jobRepository;
+
 	@Override
-	public void afterJob(JobExecution jobExecution) {
+	public synchronized void afterJob(JobExecution jobExecution) {
 		if(jobExecution.getStatus() == BatchStatus.COMPLETED) {
 			log.info("!!! JOB FINISHED! promoting last good record date to JobExecutionContext");
-			jobExecution.getExecutionContext().put("last_successful_timestamp_from_this_job", lastDateInthisJob);
+			if(useLastSuccessful) {
+				jobExecution.getExecutionContext().put("last_successful_timestamp_from_this_job", timeOfNextJob);
+			}else{
+				jobExecution.getExecutionContext().put("first_timestamp_for_next_job", timeOfNextJob);
+			}
 			jobRepository.updateExecutionContext(jobExecution);
 		}
 	}
+
 
 }
