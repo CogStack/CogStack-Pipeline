@@ -56,7 +56,7 @@ public class SqlServerIntegrationTestsBasicTimestampPartitionWithScheduling {
     @Test
     @DirtiesContext
     public void SqlServerIntegrationTestsBasicTimestampPartitionWithSchedulingTest() {
-        testUtils.insertFreshDataIntoBasicTableAfterDelay("dbo.tblInputDocs",300000);
+        testUtils.insertFreshDataIntoBasicTableAfterDelay("dbo.tblInputDocs",15000);
     }
 
 }

@@ -51,8 +51,11 @@ public class RealtimeTimeStampAndPKRangePartitioner extends AbstractRealTimeRang
         if(noRecordsFoundInProcessingPeriod(params)){
             params = scanForNewRecords(startTimestamp);
         }
-
-        result = getExecutionContextMap(gridSize,params);
+        if(params!=null) {
+            result = getExecutionContextMap(gridSize, params);
+        }else{
+            result = new HashMap<>();
+        }
         if(firstRun){
             firstRun =false;
         }
@@ -98,16 +101,16 @@ public class RealtimeTimeStampAndPKRangePartitioner extends AbstractRealTimeRang
         ScheduledPartitionParams result = null;
         logger.info("No new data found in processing period " + String.valueOf(jobStartTimeStamp.toString())
                 +" to " +getEndTimeStamp(jobStartTimeStamp).toString()+". Commencing scan ahead");
-        jobStartTimeStamp = batchJobUtils.checkForNewRecordsBeyondConfiguredProcessingPeriod(
+        Timestamp newJobStartTimeStamp = batchJobUtils.checkForNewRecordsBeyondConfiguredProcessingPeriod(
                 table, jobStartTimeStamp, timeStamp);
 
-        if(jobStartTimeStamp == null){
+        if(newJobStartTimeStamp == null){
             logger.info("Database appears to be synched as far as " +jobStartTimeStamp.toString()+ ". " +
                     "Checking again on next run");
             jobCompleteNotificationListener.setLastDateInthisJob(jobStartTimeStamp.getTime());
         }else{
-            logger.info("New data found! Next job will start from " + jobStartTimeStamp.toString());
-            result =  getParams(jobStartTimeStamp,true);
+            logger.info("New data found! Generating partitions from " + newJobStartTimeStamp.toString() +" inclusive.");
+            result =  getParams(newJobStartTimeStamp,true);
         }
         return result;
     }

@@ -105,7 +105,7 @@ public class TestUtils  {
 
     public void insertDataIntoBasicTable( String tableName){
         JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
-        int docCount = 100;
+        int docCount = 75;
         int lineCountIncrementer = 1;
         String sql = "INSERT INTO  " + tableName
                 + "( srcColumnFieldName"
@@ -119,15 +119,18 @@ public class TestUtils  {
 
 
         String string1 = "Fictional patient John Smith came to the Clinic today and was diagnosed with gigantic toe syndrome";
-        for (long i = 0; i <= docCount; i++) {
-            if (i==0) {
-                //test for massive string in ES
-                jdbcTemplate.update(sql, RandomString.nextString(50), "fictionalTableName",
-                        "fictionalPrimaryKeyFieldName", i, new Timestamp(today),string1,new Timestamp(today));
-            }else{
+        for (long i = 1; i <= docCount; i++) {
+
                 jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName",
                         "fictionalPrimaryKeyFieldName", i, new Timestamp(today),string1, new Timestamp(today));
-            }
+//            if (i==0) {
+//                //test for massive string in ES
+//                jdbcTemplate.update(sql, RandomString.nextString(50), "fictionalTableName",
+//                        "fictionalPrimaryKeyFieldName", i, new Timestamp(today),string1,new Timestamp(today));
+//            }else{
+//                jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName",
+//                        "fictionalPrimaryKeyFieldName", i, new Timestamp(today),string1, new Timestamp(today));
+//            }
             today = TestUtils.nextDay();
         }
     }
