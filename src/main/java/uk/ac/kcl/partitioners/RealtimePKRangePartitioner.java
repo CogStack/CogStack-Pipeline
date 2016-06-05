@@ -37,17 +37,27 @@ public class RealtimePKRangePartitioner extends AbstractRealTimeRangePartitioner
 
     final static Logger logger = LoggerFactory.getLogger(RealtimePKRangePartitioner.class);
 
-    public Map<String, ExecutionContext> getExecutionContextMap(int gridSize, Map<String, ExecutionContext> result) {
-        Timestamp jobStartTimeStamp  = null;
-        try {
-            jobStartTimeStamp = new Timestamp(jobExecution.getJobParameters()
-                    .getDate("last_timestamp_from_last_successful_job").getTime());
-        }catch(NullPointerException ex){}
-        ;
-        ScheduledPartitionParams params = getParams(jobStartTimeStamp);
+    @Override
+    public Map<String, ExecutionContext> partition(int gridSize) {
+        Map<String, ExecutionContext> result;
+        Timestamp startTimestamp = getStartTimeStampIfConfiguredOrFirstRun();
+        ScheduledPartitionParams params = getParams(startTimestamp);
         if(noRecordsFoundInProcessingPeriod(params)){
-            return handleNoNewRecords(result, jobStartTimeStamp);
-        } else if ((params.getMaxId() -params.getMinId()) < (long) gridSize) {
+            result = handleNoNewRecords(getLastTimestampFromLastSuccessfulJob());
+        }else{
+            result = getExecutionContextMap(gridSize,params);
+        }
+        if(firstRun){
+            firstRun =false;
+        }
+        return result;
+    }
+
+
+    private Map<String, ExecutionContext> getExecutionContextMap(int gridSize, ScheduledPartitionParams params) {
+        logger.info("Commencing PK only partition");
+        Map<String, ExecutionContext> result = new HashMap<String, ExecutionContext>();
+        if ((params.getMaxId() -params.getMinId()) < (long) gridSize) {
             long partitionCount = (params.getMaxId() -params.getMaxId());
             logger.info("There are fewer new records than the grid size. Expect only " + partitionCount+ "partitions this execution") ;
             for(long i = 0;i<(partitionCount);i++) {
@@ -78,27 +88,19 @@ public class RealtimePKRangePartitioner extends AbstractRealTimeRangePartitioner
     }
 
 
-    @Override
-    public Map<String, ExecutionContext> partition(int gridSize) {
-        Map<String, ExecutionContext> result = new HashMap<String, ExecutionContext>();
-            logger.info("Commencing PK only partition");
-            result = getExecutionContextMap(gridSize, result);
-        if(configuredRunFirstRun){
-            configuredRunFirstRun =false;
-        }
-        return result;
-    }
 
 
-    private Map<String, ExecutionContext> handleNoNewRecords(Map<String, ExecutionContext> result, Timestamp jobStartTimeStamp) {
-        if(configuredRunFirstRun) {
-            logger.info("No new data found from configured start time " + String.valueOf(jobStartTimeStamp.toString()));
-            jobCompleteNotificationListener.setLastDateInthisJob(jobStartTimeStamp.getTime());
+
+    private Map<String, ExecutionContext> handleNoNewRecords (Timestamp startTimeStamp) {
+        if(firstRun) {
+            logger.info("No new data found from configured start time " + startTimeStamp.toString());
+            jobCompleteNotificationListener.setLastDateInthisJob(startTimeStamp.getTime());
         }else {
-            logger.info("Database appears to be synched as far as " + jobStartTimeStamp.toString() + ". " +
+            logger.info("Database appears to be synched as far as " + startTimeStamp.toString() + ". " +
                     "Checking again on next run");
-            jobCompleteNotificationListener.setLastDateInthisJob(jobStartTimeStamp.getTime());
+            jobCompleteNotificationListener.setLastDateInthisJob(startTimeStamp.getTime());
         }
+        Map<String, ExecutionContext> result = new HashMap<String, ExecutionContext>();
         return result;
     }
 
@@ -111,23 +113,22 @@ public class RealtimePKRangePartitioner extends AbstractRealTimeRangePartitioner
                 " MAX(" + timeStamp + ") AS max_time_stamp , \n" +
                 " MIN(" + timeStamp + ") AS min_time_stamp  \n" +
                 " FROM " + table ;
-        if(env.getProperty("firstJobStartDate") !=null && configuredRunFirstRun){
-            logger.info ("firstJobStartDate detected in configs. Commencing from " + env.getProperty("firstJobStartDate"));
-            Timestamp firstRunAsTimestamp = getConfiguredRunAsTimestamp();
-            sql = sql + " WHERE " + timeStamp + " >= CAST ('" + firstRunAsTimestamp.toString() +
+        if(configuredFirstRunTimestamp !=null && firstRun){
+            sql = sql + " WHERE " + timeStamp + " >= CAST ('" + startTimeStamp.toString() +
                     "' as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) " ;
-        } else if(startTimeStamp != null) {
-            logger.info ("last successful batch retrieved from job repository. Commencing from after " + startTimeStamp.toString());
+        }else if(startTimeStamp == null) {
+            Timestamp newStartTimeStamp = getLastTimestampFromLastSuccessfulJob();
+            logger.info ("last successful batch retrieved from job repository. Commencing from after " +
+                    newStartTimeStamp.toString());
             sql =	sql +
                     "\n WHERE CAST (" + timeStamp + " as "+
                     env.getProperty("dbmsToJavaSqlTimestampType")+
-                    " ) > CAST ('" + startTimeStamp.toString()  +
+                    " ) > CAST ('" + newStartTimeStamp.toString()  +
                     "' as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) ";
-        }else if(jobExecution.getJobParameters().getString("first_run_of_job").equalsIgnoreCase("true")){
-            startTimeStamp = getFirstTimestampInTable(jdbcTemplate);
-            logger.info ("No previous successful batches detected. Commencing from first timestamp: " + startTimeStamp.toString());
+        }else if(firstRun) {
+        //no new SQL required - process all data for first run
         }else{
-            logger.error("unable to determine partition requirement");
+            throw new RuntimeException("unable to determine partition requirement");
         }
         logger.info ("This job SQL: " + sql);
         return (ScheduledPartitionParams) jdbcTemplate.queryForObject(

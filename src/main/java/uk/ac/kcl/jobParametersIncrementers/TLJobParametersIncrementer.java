@@ -134,20 +134,7 @@ public class TLJobParametersIncrementer implements JobParametersIncrementer {
 
         JobParameters params;
         Timestamp newJobTimeStamp;
-        if(lastJobExecution.getExecutionContext().get("first_timestamp_for_next_job")!=null){
-            newJobTimeStamp = new Timestamp(
-                    Long.valueOf(lastJobExecution
-                            .getExecutionContext()
-                            .get("first_timestamp_for_next_job")
-                            .toString()));
-            LOG.info("Last run had no data. This run commencing from " + newJobTimeStamp.toString() + ". Recommencing from then");
-            params = new JobParametersBuilder()
-                    .addDate("first_timestamp_for_next_job", newJobTimeStamp)
-                    .addString("jobName",env.getProperty("jobName"))
-                    .addLong(key, id)
-                    .toJobParameters();
-            return params;
-        }else if(lastJobExecution.getExecutionContext().get("last_successful_timestamp_from_this_job")!=null){
+        if(lastJobExecution.getExecutionContext().get("last_successful_timestamp_from_this_job")!=null){
             newJobTimeStamp = new Timestamp(
                     Long.valueOf(lastJobExecution
                             .getExecutionContext()

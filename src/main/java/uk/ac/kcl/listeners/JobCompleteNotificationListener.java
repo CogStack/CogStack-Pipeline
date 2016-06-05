@@ -28,19 +28,11 @@ import uk.ac.kcl.partitioners.AbstractRealTimeRangePartitioner;
 import uk.ac.kcl.partitioners.RealtimePKRangePartitioner;
 
 @Component
-@Scope("prototype")
+//@Scope("prototype")
 public class JobCompleteNotificationListener implements JobExecutionListener {
 
 	private static final Logger log = LoggerFactory.getLogger(JobCompleteNotificationListener.class);
 	private long timeOfNextJob;
-
-	public void setUseLastSuccessful(boolean useLastSuccessful) {
-		this.useLastSuccessful = useLastSuccessful;
-	}
-
-	public void setFirstDateInNextJob(long time) {
-		this.timeOfNextJob = time;
-	}
 
 	boolean useLastSuccessful;
 
@@ -63,11 +55,7 @@ public class JobCompleteNotificationListener implements JobExecutionListener {
 	public synchronized void afterJob(JobExecution jobExecution) {
 		if(jobExecution.getStatus() == BatchStatus.COMPLETED) {
 			log.info("!!! JOB FINISHED! promoting last good record date to JobExecutionContext");
-			if(useLastSuccessful) {
-				jobExecution.getExecutionContext().put("last_successful_timestamp_from_this_job", timeOfNextJob);
-			}else{
-				jobExecution.getExecutionContext().put("first_timestamp_for_next_job", timeOfNextJob);
-			}
+			jobExecution.getExecutionContext().put("last_successful_timestamp_from_this_job", timeOfNextJob);
 			jobRepository.updateExecutionContext(jobExecution);
 		}
 	}

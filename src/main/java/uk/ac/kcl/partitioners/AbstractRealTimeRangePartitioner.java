@@ -41,6 +41,7 @@ public abstract class AbstractRealTimeRangePartitioner {
     protected String timeStamp;
 
     protected JdbcTemplate jdbcTemplate;
+    protected Timestamp configuredFirstRunTimestamp;
 
     @PostConstruct
     public void init(){
@@ -48,9 +49,10 @@ public abstract class AbstractRealTimeRangePartitioner {
         setTable(env.getProperty("tableToPartition"));
         setTimeStampColumnName(env.getProperty("timeStampColumnNameToPersistInJobRepository"));
         if(env.getProperty("firstJobStartDate") !=null){
-            configuredRunFirstRun = true;
+            configuredFirstRunTimestamp = getConfiguredRunAsTimestamp();
+            firstRun = true;
         }else{
-            configuredRunFirstRun = false;
+            firstRun = false;
         }
         this.jdbcTemplate = new JdbcTemplate(sourceDataSource);
     }
@@ -74,7 +76,7 @@ public abstract class AbstractRealTimeRangePartitioner {
 
     public void setTimeStampColumnName(String timeStamp) {this.timeStamp = timeStamp;}
 
-    protected boolean configuredRunFirstRun;
+    protected boolean firstRun;
 
 
     protected boolean noRecordsFoundInProcessingPeriod(ScheduledPartitionParams scheduledPartitionParams){
@@ -85,21 +87,57 @@ public abstract class AbstractRealTimeRangePartitioner {
         }
     }
 
-    protected Timestamp getFirstTimestampInTable(JdbcTemplate jdbcTemplate) {
-        Timestamp startTimeStamp;
-        String tsSql = "SELECT MIN(" + timeStamp + ")  FROM " + table;
-        startTimeStamp = jdbcTemplate.queryForObject(tsSql,Timestamp.class);
+    protected Timestamp getFirstTimestampInTable() {
+        Timestamp startTimeStamp = null;
+        try{
+            if (jobExecution.getJobParameters().getString("first_run_of_job").equalsIgnoreCase("true")) {
+                String tsSql = "SELECT MIN(" + timeStamp + ")  FROM " + table;
+                startTimeStamp = jdbcTemplate.queryForObject(tsSql, Timestamp.class);
+                firstRun = true;
+            }
+        }catch (NullPointerException ex){}
+
         return startTimeStamp;
     }
 
     protected Timestamp getConfiguredRunAsTimestamp() {
-        DateTimeFormatter formatter = DateTimeFormat.forPattern(env.getProperty("datePatternForSQL"));
-        DateTime dt = formatter.parseDateTime(env.getProperty("firstJobStartDate"));
-        return new Timestamp(dt.getMillis());
+        Timestamp timestamp = null;
+        try {
+            DateTimeFormatter formatter = DateTimeFormat.forPattern(env.getProperty("datePatternForSQL"));
+            DateTime dt = formatter.parseDateTime(env.getProperty("firstJobStartDate"));
+            timestamp = new Timestamp(dt.getMillis());
+        }catch(NullPointerException ex){}
+        return timestamp;
     }
+
+
 
     protected Timestamp getEndTimeStamp(Timestamp startTimeStamp ){
         return new Timestamp(startTimeStamp.getTime() + Long.valueOf(env.getProperty("processingPeriod")));
+    }
+
+    protected Timestamp getLastTimestampFromLastSuccessfulJob(){
+        Timestamp jobStartTimeStamp  = null;
+        try {
+            jobStartTimeStamp = new Timestamp(jobExecution.getJobParameters()
+                    .getDate("last_timestamp_from_last_successful_job").getTime());
+        }catch(NullPointerException ex){}
+        return jobStartTimeStamp;
+    }
+
+    protected Timestamp getStartTimeStampIfConfiguredOrFirstRun(){
+        Timestamp startTimestamp;
+        if(configuredFirstRunTimestamp !=null && firstRun){
+            startTimestamp =  configuredFirstRunTimestamp;
+            logger.info ("firstJobStartDate detected in configs. Commencing from " + startTimestamp.toString());
+            return startTimestamp;
+        }
+        startTimestamp = getFirstTimestampInTable();
+        if(startTimestamp != null){
+            logger.info ("No previous successful batches detected. Commencing from first timestamp: " + startTimestamp.toString());
+            return startTimestamp;
+        }
+        return startTimestamp;
     }
 
     public void setJobExecution(JobExecution jobExecution) {
