@@ -54,7 +54,7 @@ import java.util.ArrayList;
 
 @EnableIntegration
 @Configuration
-@ComponentScan({"uk.ac.kcl.rowmappers","uk.ac.kcl.utils", "uk.ac.kcl.itemHandlers"})
+@ComponentScan({"uk.ac.kcl.rowmappers","uk.ac.kcl.utils", "uk.ac.kcl.itemHandlers", "uk.ac.kcl.itemProcessors"})
 @EnableBatchProcessing
 @Import({
         BatchConfigurer.class,

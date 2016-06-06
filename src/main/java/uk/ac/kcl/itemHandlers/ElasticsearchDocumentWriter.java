@@ -34,7 +34,6 @@ import java.util.List;
  * Created by rich on 20/04/16.
  */
 @Service("esDocumentWriter")
-@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Profile("elasticsearch")
 public class ElasticsearchDocumentWriter implements ItemWriter<Document> {
     private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchDocumentWriter.class);

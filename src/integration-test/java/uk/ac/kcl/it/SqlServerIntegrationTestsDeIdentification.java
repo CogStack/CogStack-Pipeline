@@ -15,47 +15,58 @@
  */
 package uk.ac.kcl.it;
 
+import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
-import uk.ac.uk.it.TestExecutionListeners.SqlServerBasicTestExecutionListener;
+import uk.ac.uk.it.TestExecutionListeners.SqlServerDeidTestExecutionListener;
+import uk.ac.uk.it.TestExecutionListeners.SqlServerTikaTestExecutionListener;
 
+/**
+ *
+ * @author rich
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
-        "classpath:sql_server_test_config_basic.properties",
+        "classpath:sql_server_test_config_deid.properties",
         "classpath:jms.properties",
-        "classpath:deidentification.properties",
         "classpath:gate.properties",
+        "classpath:deidentification.properties",
         "classpath:sql_server_db.properties",
         "classpath:elasticsearch.properties",
-        "classpath:jobAndStep_PK_partition_without_scheduling.properties"})
+        "classpath:jobAndStep_partition_only_without_scheduling.properties"})
 @ContextConfiguration(classes = {
-        SqlServerTestUtils.class,
         SingleJobLauncher.class,
+        SqlServerTestUtils.class,
         TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 @TestExecutionListeners(
-        listeners = SqlServerBasicTestExecutionListener.class,
+        listeners = SqlServerDeidTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-public class SqlServerIntegrationTestsBasicPKPartitionWithoutScheduling {
+public class SqlServerIntegrationTestsDeIdentification {
+
+    final static Logger logger = Logger.getLogger(SqlServerIntegrationTestsDeIdentification.class);
 
     @Autowired
     SingleJobLauncher jobLauncher;
 
+
+
     @Test
     @DirtiesContext
-    public void SqlServerIntegrationTestsBasicPKPartitionWithoutSchedulingTest() {
+    public void sqlServerikaPipelineTest() {
         jobLauncher.launchJob();
     }
+
+
 
 }

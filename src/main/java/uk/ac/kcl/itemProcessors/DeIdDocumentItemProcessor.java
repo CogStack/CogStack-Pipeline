@@ -21,26 +21,42 @@ import gate.creole.ResourceInstantiationException;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Service;
 import uk.ac.kcl.exception.DeIdentificationFailedException;
 import uk.ac.kcl.model.Document;
 import uk.ac.kcl.model.TextDocument;
+import uk.ac.kcl.service.ElasticGazetteerService;
 import uk.ac.kcl.service.GateService;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-
+@Profile("deid")
+@Service("deIdDocumentItemProcessor")
+@ComponentScan("uk.ac.kcl.service")
 public class DeIdDocumentItemProcessor implements ItemProcessor<Document, Document> {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(DeIdDocumentItemProcessor.class);
 
-    @Autowired
+    @Autowired(required = false)
     private GateService gateService;
+
+    @Autowired(required = false)
+    private ElasticGazetteerService elasticGazetteer;
 
     @Autowired
     private Environment env;
 
+    @PostConstruct
+    private void init(){
+        fieldsToDeId = Arrays.asList(env.getProperty("fieldsToDeId").split(","));
+    }
 
     private List<String> fieldsToDeId;
 
@@ -53,14 +69,14 @@ public class DeIdDocumentItemProcessor implements ItemProcessor<Document, Docume
     public Document process(final Document doc)  {
 
         doc.getAdditionalFields().forEach((k,v)->{
+            String newString = "";
             if(fieldsToDeId.contains(k)) {
-                String newString = "unable to de-id";
-//                try {
-                    newString = gateService.deIdentifyString(v.toString(),doc.getPrimaryKeyFieldValue());
-//                } catch (ResourceInstantiationException e) {
-//                    LOG.error("Unable to deid field " + k + " in document " + doc.getDocName());
-//                    throw new RuntimeException();
-//                }
+                if(env.getProperty("useGateApp").equalsIgnoreCase("true")) {
+                    newString = gateService.deIdentifyString(v.toString(), doc.getPrimaryKeyFieldValue());
+                }else{
+                    newString = elasticGazetteer.deIdentify(v.toString(),doc.getPrimaryKeyFieldValue());
+                }
+
                 doc.getAdditionalFields().put(k,newString);
             }
         });

@@ -37,7 +37,7 @@ import uk.ac.kcl.scheduling.SingleJobLauncher;
 @TestPropertySource({
         "classpath:postgres_test_config_line_fixer.properties",
         "classpath:jms.properties",
-        "classpath:concurrency.properties",
+        "classpath:deidentification.properties",
         "classpath:dBLineFixer.properties",
         "classpath:gate.properties",
         "classpath:elasticsearch.properties",

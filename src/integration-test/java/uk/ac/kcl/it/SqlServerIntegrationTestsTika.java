@@ -42,7 +42,7 @@ import uk.ac.uk.it.TestExecutionListeners.SqlServerTikaTestExecutionListener;
     "classpath:jms.properties",
     "classpath:tika.properties",
         "classpath:gate.properties",
-    "classpath:concurrency.properties",
+    "classpath:deidentification.properties",
     "classpath:sql_server_db.properties",
     "classpath:elasticsearch.properties",
     "classpath:jobAndStep_partition_only_without_scheduling.properties"})

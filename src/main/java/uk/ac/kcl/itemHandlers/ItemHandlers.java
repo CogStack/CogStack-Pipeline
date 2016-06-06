@@ -170,7 +170,7 @@ public class ItemHandlers {
     ItemWriter<Document> jdbcItemWriter;
 
     @Autowired(required = false)
-    @Qualifier("gateItemProcessor")
+    @Qualifier("gateDocumentItemProcessor")
     ItemProcessor<Document, Document> gateItemProcessor;
 
     @Autowired(required = false)
@@ -178,7 +178,7 @@ public class ItemHandlers {
     ItemProcessor<Document, Document> dBLineFixerItemProcessor;
 
     @Autowired(required = false)
-    @Qualifier("tikaItemProcessor")
+    @Qualifier("tikaDocumentItemProcessor")
     ItemProcessor<Document, Document> tikaItemProcessor;
 
     @Autowired(required = false)

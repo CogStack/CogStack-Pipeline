@@ -38,7 +38,7 @@ import uk.ac.uk.it.TestExecutionListeners.SqlServerTikaTestExecutionListener;
 @TestPropertySource({
         "classpath:sql_server_test_config_tika.properties",
         "classpath:jms.properties",
-        "classpath:concurrency.properties",
+        "classpath:deidentification.properties",
         "classpath:sql_server_db.properties",
         "classpath:tika.properties",
         "classpath:gate.properties",

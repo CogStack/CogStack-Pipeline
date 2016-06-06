@@ -109,6 +109,7 @@ targetCompatibility = 1.8
 
 dependencies {
     compile 'org.slf4j:slf4j-api:1.7.21'
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.7'
 //    compile group: 'org.slf4j', name: 'slf4j-jdk14', version: '1.7.21'
 //    compile group: 'org.slf4j', name: 'slf4j-jcl', version: '1.7.21'
 //    compile 'org.slf4j:slf4j-log4j12:1.7.21'
@@ -147,9 +148,14 @@ dependencies {
     compile ('org.apache.tika:tika-parsers:1.11'){
         exclude group: 'commons-logging', module: 'commons-logging' //by both name and group
     }
+
+    //nlp
+    compile group: 'org.apache.commons', name: 'commons-collections4', version: '4.1'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
     compile 'org.codehaus.groovy:groovy-all:2.4.4'
     compile 'uk.ac.gate:gate-core:8.1'
     compile 'xml-apis:xml-apis:1.4.01'
+    //test
     testCompile("junit:junit")
     testCompile('org.mockito:mockito-all:1.10.19');
 }
@@ -173,7 +179,7 @@ task writeExampleConfig  {
     String tika = new File("src/integration-test/resources/tika.properties").text
     String dBLineFixer = new File("src/integration-test/resources/dBLineFixer.properties").text
     String jms = new File("src/integration-test/resources/jms.properties").text
-    String jobAndStep = new File("src/integration-test/resources/jobAndStep.properties").text
+    String jobAndStep = new File("src/integration-test/resources/jobAndStep_PK_partition_with_scheduling.properties").text
     String postgres_db = new File("src/integration-test/resources/postgres_db.properties").text
     String postgres_test_config_gate = new File("src/integration-test/resources/postgres_test_config_gate.properties").text
     String postgres_test_config_tika = new File("src/integration-test/resources/postgres_test_config_tika.properties").text

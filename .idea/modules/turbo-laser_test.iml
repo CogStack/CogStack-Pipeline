@@ -11,6 +11,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="turbo-laser_main" />
     <orderEntry type="library" name="Gradle: org.slf4j:slf4j-api:1.7.21" level="project" />
+    <orderEntry type="library" name="Gradle: ch.qos.logback:logback-classic:1.1.7" level="project" />
     <orderEntry type="library" name="Gradle: joda-time:joda-time:2.9.3" level="project" />
     <orderEntry type="library" name="Gradle: org.elasticsearch.plugin:shield:2.3.1" level="project" />
     <orderEntry type="library" name="Gradle: org.elasticsearch:elasticsearch:2.3.1" level="project" />
@@ -36,11 +37,14 @@
     <orderEntry type="library" name="Gradle: org.apache.activemq:activemq-spring:5.13.0" level="project" />
     <orderEntry type="library" name="Gradle: org.apache.tika:tika-core:1.11" level="project" />
     <orderEntry type="library" name="Gradle: org.apache.tika:tika-parsers:1.11" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.commons:commons-collections4:4.1" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.commons:commons-lang3:3.4" level="project" />
     <orderEntry type="library" name="Gradle: org.codehaus.groovy:groovy-all:2.4.4" level="project" />
     <orderEntry type="library" name="Gradle: uk.ac.gate:gate-core:8.1" level="project" />
     <orderEntry type="library" name="Gradle: xml-apis:xml-apis:1.4.01" level="project" />
     <orderEntry type="library" name="Gradle: junit:junit:4.12" level="project" />
     <orderEntry type="library" name="Gradle: org.mockito:mockito-all:1.10.19" level="project" />
+    <orderEntry type="library" name="Gradle: ch.qos.logback:logback-core:1.1.7" level="project" />
     <orderEntry type="library" name="Gradle: dk.brics.automaton:automaton:1.11-8" level="project" />
     <orderEntry type="library" name="Gradle: com.unboundid:unboundid-ldapsdk:2.3.8" level="project" />
     <orderEntry type="library" name="Gradle: org.apache.lucene:lucene-core:5.5.0" level="project" />
@@ -200,7 +204,6 @@
     <orderEntry type="library" name="Gradle: xerces:xercesImpl:2.11.0" level="project" />
     <orderEntry type="library" name="Gradle: org.apache.ant:ant-launcher:1.9.3" level="project" />
     <orderEntry type="library" name="Gradle: com.fasterxml.jackson.core:jackson-annotations:2.6.3" level="project" />
-    <orderEntry type="library" name="Gradle: ch.qos.logback:logback-classic:1.1.3" level="project" />
     <orderEntry type="library" name="Gradle: org.slf4j:jul-to-slf4j:1.7.13" level="project" />
     <orderEntry type="library" name="Gradle: org.slf4j:log4j-over-slf4j:1.7.13" level="project" />
     <orderEntry type="library" name="Gradle: org.fusesource.hawtdispatch:hawtdispatch:1.11" level="project" />
@@ -212,7 +215,6 @@
     <orderEntry type="library" name="Gradle: javax.ws.rs:javax.ws.rs-api:2.0.1" level="project" />
     <orderEntry type="library" name="Gradle: javax.annotation:javax.annotation-api:1.2" level="project" />
     <orderEntry type="library" name="Gradle: c3p0:c3p0:0.9.1.1" level="project" />
-    <orderEntry type="library" name="Gradle: ch.qos.logback:logback-core:1.1.3" level="project" />
     <orderEntry type="library" name="Gradle: org.codehaus.plexus:plexus-utils:1.5.6" level="project" />
     <orderEntry type="library" name="Gradle: org.apache.maven.scm:maven-scm-provider-svn-commons:1.4" level="project" />
     <orderEntry type="library" name="Gradle: regexp:regexp:1.3" level="project" />

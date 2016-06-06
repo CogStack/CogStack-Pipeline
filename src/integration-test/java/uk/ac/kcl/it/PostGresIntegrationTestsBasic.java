@@ -34,7 +34,7 @@ import uk.ac.kcl.scheduling.SingleJobLauncher;
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
         "classpath:jms.properties",
-        "classpath:concurrency.properties",
+        "classpath:deidentification.properties",
         "classpath:postgres_db.properties",
         "classpath:elasticsearch.properties",
         "classpath:jobAndStep.properties",

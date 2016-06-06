@@ -21,6 +21,8 @@ import org.apache.tika.sax.BodyContentHandler;
 import org.apache.tika.sax.ToXMLContentHandler;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Service;
 import org.xml.sax.ContentHandler;
 import uk.ac.kcl.model.BinaryDocument;
 import uk.ac.kcl.model.Document;
@@ -32,6 +34,8 @@ import java.io.InputStream;
  *
  * @author rich
  */
+@Profile("tika")
+@Service("tikaDocumentItemProcessor")
 public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemProcessor<Document, Document> {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(TikaDocumentItemProcessor.class);

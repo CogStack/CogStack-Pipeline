@@ -19,8 +19,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Service;
 import uk.ac.kcl.model.Document;
 import uk.ac.kcl.model.MultilineDocument;
 import uk.ac.kcl.rowmappers.SimpleDocumentRowMapper;
@@ -36,6 +38,8 @@ import java.util.TreeMap;
  *
  * @author rich
  */
+@Profile("dBLineFixer")
+@Service("dBLineFixerItemProcessor")
 public class DbLineFixerItemProcessor extends TLItemProcessor implements ItemProcessor<Document, Document> {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(DbLineFixerItemProcessor.class);
