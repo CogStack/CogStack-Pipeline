@@ -1,5 +1,6 @@
 package uk.ac.kcl.service;
 
+import org.apache.ivy.plugins.version.Match;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Profile;
@@ -14,6 +15,7 @@ import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,15 +47,30 @@ public class ElasticGazetteerService {
         List<String> strings = getStrings(docPrimaryKey);
         patterns = getPatterns(strings,document,levDistance);
         String str2="";
+        List<MatchResult> results = new ArrayList<>();
         for (Pattern pattern : patterns) {
             Matcher matcher = pattern.matcher(document);
             while (matcher.find()){
-                str2 = matcher.replaceAll(" XXXXX ");
+                results.add(matcher.toMatchResult());
 
             }
 
         }
-        return str2;
+        return replaceStrings(results, document);
+    }
+
+    private String replaceStrings(List<MatchResult> results, String document) {
+        StringBuffer sb = new StringBuffer(document);
+        for(MatchResult m : results) {
+            int startOffset =m.start();
+            int endOffset = m.end();
+            StringBuffer outputBuffer = new StringBuffer();
+            for (int i = 0; i < (endOffset - startOffset); i++) {
+                outputBuffer.append("X");
+            }
+            sb.replace(startOffset, endOffset, outputBuffer.toString());
+        }
+        return sb.toString();
     }
 
     private List<Pattern> getPatterns(List<String> strings, String document, double levDistance) {
@@ -62,15 +79,15 @@ public class ElasticGazetteerService {
 
         for(String string : strings) {
             for (String approximateMatch : StringTools.getApproximatelyMatchingStringList(document, string)){
-                patterns.add(Pattern.compile(Pattern.quote(approximateMatch)));
+                patterns.add(Pattern.compile(Pattern.quote(approximateMatch),Pattern.CASE_INSENSITIVE));
             }
             for ( MatchingWindow window : StringTools.getMatchingWindowsAboveThreshold(document, string, levDistance) ) {
                 if (StringTools.isNotTooShort(string)){
-                    patterns.add(Pattern.compile(Pattern.quote(window.getMatchingText())));
+                    patterns.add(Pattern.compile(Pattern.quote(window.getMatchingText()),Pattern.CASE_INSENSITIVE));
                 }
             }
             for ( String word : StringTools.splitIntoWordsWithLengthHigherThan(string, Integer.valueOf(env.getProperty("minWordLength")))) {
-                patterns.add(Pattern.compile(Pattern.quote(word)));
+                patterns.add(Pattern.compile(Pattern.quote(word),Pattern.CASE_INSENSITIVE));
             }
         }
         return patterns;
