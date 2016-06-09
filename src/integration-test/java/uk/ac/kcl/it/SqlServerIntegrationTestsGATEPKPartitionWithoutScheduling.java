@@ -16,10 +16,8 @@
 package uk.ac.kcl.it;
 
 import org.apache.log4j.Logger;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.batch.core.launch.JobOperator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.annotation.DirtiesContext;
@@ -29,7 +27,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
-import uk.ac.uk.it.TestExecutionListeners.SqlServerBasicTestExecutionListener;
 import uk.ac.uk.it.TestExecutionListeners.SqlServerGateTestExecutionListener;
 
 /**
@@ -54,9 +51,9 @@ import uk.ac.uk.it.TestExecutionListeners.SqlServerGateTestExecutionListener;
 @TestExecutionListeners(
         listeners = SqlServerGateTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-public class SqlServerIntegrationTestsGATE {
+public class SqlServerIntegrationTestsGATEPKPartitionWithoutScheduling {
 
-    final static Logger logger = Logger.getLogger(PostGresIntegrationTestsGATE.class);
+    final static Logger logger = Logger.getLogger(PostGresIntegrationTestsGATEPKPartitionWithoutScheduling.class);
 
     @Autowired
     SingleJobLauncher jobLauncher;

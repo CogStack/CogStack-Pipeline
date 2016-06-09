@@ -35,22 +35,22 @@ import uk.ac.kcl.scheduling.SingleJobLauncher;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
-    "classpath:postgres_test_config_tika.properties",
-    "classpath:jms.properties",
-    "classpath:tika.properties",
+        "classpath:postgres_test_config_line_fixer.properties",
+        "classpath:jms.properties",
+        "classpath:deidentification.properties",
+        "classpath:dBLineFixer.properties",
         "classpath:gate.properties",
-    "classpath:deidentification.properties",
-    "classpath:postgres_db.properties",
-    "classpath:elasticsearch.properties",
-    "classpath:jobAndStep.properties"})
+        "classpath:elasticsearch.properties",
+        "classpath:postgres_db.properties",
+        "classpath:jobAndStep_PK_partition_without_scheduling.properties"})
 @ContextConfiguration(classes = {
         SingleJobLauncher.class,
-    PostGresTestUtils.class,
+        PostGresTestUtils.class,
         TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
-public class PostGresIntegrationTestsTika {
+public class PostGresIntegrationTestsLineFixerPKPartitionWithoutScheduling {
 
-    final static Logger logger = Logger.getLogger(PostGresIntegrationTestsTika.class);
+    final static Logger logger = Logger.getLogger(PostGresIntegrationTestsLineFixerPKPartitionWithoutScheduling.class);
 
     @Autowired
     SingleJobLauncher jobLauncher;
@@ -63,16 +63,16 @@ public class PostGresIntegrationTestsTika {
     @Before
     public void init(){
         postGresTestUtils.initJobRepository();
-        postGresTestUtils.initTikaTable();
-        testUtils.insertTestBinariesForTika("tblInputDocs");
+        postGresTestUtils.createBasicOutputTable();
+        postGresTestUtils.initMultiLineTextTable();
+        testUtils.insertDataIntoBasicTable("tblInputDocs");
+        testUtils.insertTestLinesForDBLineFixer("tblDocLines");
     }
 
     @Test
     @DirtiesContext
-    public void postgresTikaPipelineTest() {
+    public void postgresDBLineFixerPipelineTest() {
         jobLauncher.launchJob();
+
     }
-
-
-
 }

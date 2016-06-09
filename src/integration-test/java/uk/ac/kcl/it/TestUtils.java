@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Random;
 import java.util.logging.Level;
@@ -75,7 +74,7 @@ public class TestUtils  {
                 xhtmlString = new String(bytes, StandardCharsets.UTF_8);
                 jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName", "fictionalPrimaryKeyFieldName", docCount, null, xhtmlString);
             } catch (IOException ex) {
-                java.util.logging.Logger.getLogger(PostGresIntegrationTestsGATE.class.getName()).log(Level.SEVERE, null, ex);
+                java.util.logging.Logger.getLogger(PostGresIntegrationTestsGATEPKPartitionWithoutScheduling.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }

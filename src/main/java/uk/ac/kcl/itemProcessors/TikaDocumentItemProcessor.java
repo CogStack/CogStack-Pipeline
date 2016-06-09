@@ -21,12 +21,15 @@ import org.apache.tika.sax.BodyContentHandler;
 import org.apache.tika.sax.ToXMLContentHandler;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.xml.sax.ContentHandler;
 import uk.ac.kcl.model.BinaryDocument;
 import uk.ac.kcl.model.Document;
 
+import javax.annotation.PostConstruct;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
@@ -48,6 +51,19 @@ public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemPr
 
     public void setKeepTags(boolean keepTags) {
         this.keepTags = keepTags;
+    }
+
+    @Autowired
+    Environment env;
+
+    @PostConstruct
+    public void init(){
+        if(env.getProperty("keepTags").equalsIgnoreCase("true")) {
+            this.keepTags = true;
+        }else{
+            this.keepTags = false;
+        }
+        setFieldName(env.getProperty("tikaFieldName"));
     }
 
     @Override

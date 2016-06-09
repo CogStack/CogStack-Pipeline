@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2016 King's College London, Richard Jackson <richgjackson@gmail.com>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,8 +27,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
-import uk.ac.uk.it.TestExecutionListeners.SqlServerDeidTestExecutionListener;
-import uk.ac.uk.it.TestExecutionListeners.SqlServerTikaTestExecutionListener;
+import uk.ac.uk.it.TestExecutionListeners.SqlServerDbLineFixerTestExecutionListener;
 
 /**
  *
@@ -37,10 +36,9 @@ import uk.ac.uk.it.TestExecutionListeners.SqlServerTikaTestExecutionListener;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
-        "classpath:sql_server_test_config_deid.properties",
+        "classpath:sqlserver_test_config_line_fixer.properties",
         "classpath:jms.properties",
-        "classpath:gate.properties",
-        "classpath:deidentification.properties",
+        "classpath:dBLineFixer.properties",
         "classpath:sql_server_db.properties",
         "classpath:elasticsearch.properties",
         "classpath:jobAndStep_partition_only_without_scheduling.properties"})
@@ -50,23 +48,19 @@ import uk.ac.uk.it.TestExecutionListeners.SqlServerTikaTestExecutionListener;
         TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 @TestExecutionListeners(
-        listeners = SqlServerDeidTestExecutionListener.class,
+        listeners = SqlServerDbLineFixerTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-public class SqlServerIntegrationTestsDeIdentification {
+public class SqlServerIntegrationTestsLineFixerPKPartitionWithoutScheduling {
 
-    final static Logger logger = Logger.getLogger(SqlServerIntegrationTestsDeIdentification.class);
+    final static Logger logger = Logger.getLogger(PostGresIntegrationTestsLineFixerPKPartitionWithoutScheduling.class);
 
     @Autowired
     SingleJobLauncher jobLauncher;
 
 
-
     @Test
     @DirtiesContext
-    public void sqlServerikaPipelineTest() {
+    public void sqlServerGatePipelineTest() {
         jobLauncher.launchJob();
     }
-
-
-
 }

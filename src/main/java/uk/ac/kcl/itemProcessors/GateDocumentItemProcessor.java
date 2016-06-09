@@ -27,6 +27,8 @@ import uk.ac.kcl.model.Document;
 import uk.ac.kcl.model.TextDocument;
 import uk.ac.kcl.service.GateService;
 
+import javax.annotation.PostConstruct;
+
 @Profile("gate")
 @Service("gateDocumentItemProcessor")
 public class GateDocumentItemProcessor extends TLItemProcessor implements ItemProcessor<Document, Document> {
@@ -41,6 +43,11 @@ public class GateDocumentItemProcessor extends TLItemProcessor implements ItemPr
 
     public void setGateService(GateService gateService) {
         this.gateService = gateService;
+    }
+
+    @PostConstruct
+    public void init(){
+        setFieldName(env.getProperty("gateFieldName"));
     }
 
     public GateService getGateService() {

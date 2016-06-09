@@ -60,6 +60,7 @@ public class DbLineFixerItemProcessor extends TLItemProcessor implements ItemPro
     @PostConstruct
     public void init(){
         this.template = new JdbcTemplate(ds);
+        setFieldName(env.getProperty("dbLineFixerFieldName"));
     }
 
     @Override

@@ -41,19 +41,12 @@ import java.util.Random;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @TestPropertySource({
-        "classpath:postgres_test_config_gate.properties",
-        "classpath:jms.properties",
-        "classpath:gate.properties",
-        "classpath:deidentification.properties",
-        "classpath:postgres_db.properties",
-        "classpath:elasticsearch.properties",
-        "classpath:jobAndStep.properties"})
+        "classpath:postgres_db.properties"})
 @Configuration
 @Import({JobConfiguration.class,TestUtils.class})
-@Profile("postgres")
 public class PostGresTestUtils implements DbmsTestUtils{
 
-    final static Logger logger = Logger.getLogger(PostGresIntegrationTestsGATE.class);
+    final static Logger logger = Logger.getLogger(PostGresIntegrationTestsGATEPKPartitionWithoutScheduling.class);
     long today = System.currentTimeMillis();
     Random random = new Random();
 
