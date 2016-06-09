@@ -169,9 +169,15 @@ public class ItemHandlers {
     @Qualifier("deIdDocumentItemProcessor")
     ItemProcessor<Document, Document> deIdDocumentItemProcessor;
 
+    @Autowired(required = false)
+    @Qualifier("biolarkDocumentItemProcessor")
+    ItemProcessor<Document, Document> biolarkDocumentItemProcessor;
+
     @Autowired
     @Qualifier("jsonMakerItemProcessor")
     ItemProcessor<Document, Document> jsonMakerItemProcessor;
+
+
 
     @Bean
     @Qualifier("compositeItemProcessorr")
@@ -192,6 +198,9 @@ public class ItemHandlers {
         }
         if(deIdDocumentItemProcessor !=null) {
             delegates.add(deIdDocumentItemProcessor);
+        }
+        if(biolarkDocumentItemProcessor !=null) {
+            delegates.add(biolarkDocumentItemProcessor);
         }
 
         delegates.add(jsonMakerItemProcessor);

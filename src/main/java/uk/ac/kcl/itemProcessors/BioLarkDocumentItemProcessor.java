@@ -15,53 +15,48 @@
  */
 package uk.ac.kcl.itemProcessors;
 
-import gate.Factory;
-import gate.creole.ExecutionException;
-import gate.creole.ResourceInstantiationException;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import uk.ac.kcl.exception.DeIdentificationFailedException;
+import org.springframework.web.client.RestTemplate;
 import uk.ac.kcl.model.Document;
 import uk.ac.kcl.service.ElasticGazetteerService;
 import uk.ac.kcl.service.GateService;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-@Profile("deid")
-@Service("deIdDocumentItemProcessor")
+@Profile("biolark")
+@Service("biolarkDocumentItemProcessor")
 @ComponentScan("uk.ac.kcl.service")
-public class DeIdDocumentItemProcessor implements ItemProcessor<Document, Document> {
+public class BioLarkDocumentItemProcessor implements ItemProcessor<Document, Document> {
 
-    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(DeIdDocumentItemProcessor.class);
-
-    @Autowired(required = false)
-    private GateService gateService;
-
-    @Autowired(required = false)
-    private ElasticGazetteerService elasticGazetteer;
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(BioLarkDocumentItemProcessor.class);
 
     @Autowired
     private Environment env;
+    private String endPoint;
 
     @PostConstruct
     private void init(){
-        fieldsToDeId = Arrays.asList(env.getProperty("fieldsToDeId").split(","));
+
+        fieldsToBioLark = Arrays.asList(env.getProperty("fieldsToBioLark").split(","));
+        endPoint = env.getProperty("biolarkEndPoint");
     }
 
-    private List<String> fieldsToDeId;
+    private List<String> fieldsToBioLark;
 
-    public void setFieldsToDeId(List<String> fields){
-        this.fieldsToDeId = fields;
+    public void setFieldsToBioLark(List<String> fields){
+        this.fieldsToBioLark = fields;
     }
 
 
@@ -72,14 +67,10 @@ public class DeIdDocumentItemProcessor implements ItemProcessor<Document, Docume
         newMap.putAll(doc.getAdditionalFields());
         doc.getAdditionalFields().forEach((k,v)->{
             String newString = "";
-            if(fieldsToDeId.contains(k)) {
-                if(env.getProperty("useGateApp").equalsIgnoreCase("true")) {
-                    newString = gateService.deIdentifyString(v.toString(), doc.getPrimaryKeyFieldValue());
-                }else{
-                    newString = elasticGazetteer.deIdentify(v.toString(),doc.getPrimaryKeyFieldValue());
-                }
-
-                newMap.put(k,newString);
+            if(fieldsToBioLark.contains(k)) {
+                RestTemplate restTemplate = new RestTemplate();
+                String responseEntity = restTemplate.postForObject(endPoint,v,String.class);
+                newMap.put((k+"_biolark"),responseEntity);
             }
         });
 

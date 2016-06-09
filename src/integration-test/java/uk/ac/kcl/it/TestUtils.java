@@ -117,7 +117,14 @@ public class TestUtils  {
                 + ") VALUES (?,?,?,?,?,?,?)";
 
 
-        String string1 = "Fictional patient John Smith came to the Clinic today and was diagnosed with gigantic toe syndrome";
+        String string1 = "Disproportionate dwarfism.\n" +
+                "Shortening of the proximal limbs (called rhizomelic shortening).\n" +
+                "Short fingers and toes with trident hands.\n" +
+                "Large head with prominent forehead frontal bossing.\n" +
+                "Small midface with a flattened nasal bridge.\n" +
+                "Spinal kyphosis (convex curvature) or lordosis (concave curvature).\n" +
+                "Varus (bowleg) or valgus (knock knee) deformities.\n" +
+                "Frequently have ear infections (due to Eustachian tube blockages), sleep apnea (which can be central or obstructive), and hydrocephalus.";
         for (long i = 1; i <= docCount; i++) {
 
                 jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName",
