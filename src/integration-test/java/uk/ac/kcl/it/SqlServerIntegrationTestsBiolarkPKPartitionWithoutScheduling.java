@@ -38,7 +38,7 @@ import uk.ac.uk.it.TestExecutionListeners.SqlServerDeidTestExecutionListener;
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
         "classpath:biolarkPKprofiles.properties",
-        "classpath:sql_server_test_config_deid.properties",
+        "classpath:sql_server_test_config_biolark.properties",
         "classpath:jms.properties",
         "classpath:sql_server_db.properties",
         "classpath:elasticsearch.properties",

@@ -43,6 +43,7 @@ import org.springframework.jdbc.support.MetaDataAccessException;
 import org.springframework.jms.connection.CachingConnectionFactory;
 import uk.ac.kcl.itemProcessors.JSONMakerItemProcessor;
 import uk.ac.kcl.model.Document;
+import uk.ac.kcl.utils.LoggerHelper;
 
 import javax.sql.DataSource;
 import java.util.ArrayList;
@@ -64,6 +65,13 @@ import java.util.ArrayList;
 public class JobConfiguration {
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(JobConfiguration.class);
 
+
+    @Bean
+    public LoggerHelper loggerHelper(){
+        LoggerHelper lh = new LoggerHelper();
+        lh.setContextID(env.getProperty("jobName"));
+        return lh;
+    };
     /*
         
     

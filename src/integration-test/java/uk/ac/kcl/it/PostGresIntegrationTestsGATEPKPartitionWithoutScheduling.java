@@ -35,16 +35,16 @@ import uk.ac.kcl.scheduling.SingleJobLauncher;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
-		"classpath:postgres_test_config_gate.properties",
-                "classpath:jms.properties",
-                "classpath:gate.properties",
-                "classpath:deidentification.properties",
-                "classpath:postgres_db.properties",
-                "classpath:elasticsearch.properties",
-        "classpath:jobAndStep_normal_start_without_scheduling.properties"})
+        "classpath:postgres_test_config_gate.properties",
+        "classpath:jms.properties",
+        "classpath:gate.properties",
+        "classpath:deidentification.properties",
+        "classpath:postgres_db.properties",
+        "classpath:elasticsearch.properties",
+        "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
-    SingleJobLauncher.class,
-    PostGresTestUtils.class,
+        SingleJobLauncher.class,
+        PostGresTestUtils.class,
         TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 public class PostGresIntegrationTestsGATEPKPartitionWithoutScheduling {
