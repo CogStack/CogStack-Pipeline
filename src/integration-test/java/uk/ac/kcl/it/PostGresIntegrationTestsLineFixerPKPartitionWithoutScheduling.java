@@ -40,6 +40,7 @@ import uk.ac.uk.it.TestExecutionListeners.SqlServerDbLineFixerTestExecutionListe
         "classpath:dbLineFixerPKprofiles.properties",
         "classpath:postgres_test_config_line_fixer.properties",
         "classpath:jms.properties",
+        "classpath:noScheduling.properties",
         "classpath:dBLineFixer.properties",
         "classpath:postgres_db.properties",
         "classpath:elasticsearch.properties",

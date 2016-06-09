@@ -37,12 +37,13 @@ import uk.ac.uk.it.TestExecutionListeners.SqlServerTikaTestExecutionListener;
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
         "classpath:tikaPKprofiles.properties",
-    "classpath:sql_server_test_config_tika.properties",
-    "classpath:jms.properties",
-    "classpath:tika.properties",
-    "classpath:sql_server_db.properties",
-    "classpath:elasticsearch.properties",
-    "classpath:jobAndStep.properties"})
+        "classpath:sql_server_test_config_tika.properties",
+        "classpath:jms.properties",
+        "classpath:tika.properties",
+        "classpath:noScheduling.properties",
+        "classpath:sql_server_db.properties",
+        "classpath:elasticsearch.properties",
+        "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
         SingleJobLauncher.class,
         SqlServerTestUtils.class,

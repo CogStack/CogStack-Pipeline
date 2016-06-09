@@ -40,6 +40,7 @@ import uk.ac.uk.it.TestExecutionListeners.SqlServerTikaTestExecutionListener;
         "classpath:tikaPKprofiles.properties",
         "classpath:postgres_test_config_tika.properties",
         "classpath:jms.properties",
+        "classpath:noScheduling.properties",
         "classpath:tika.properties",
         "classpath:postgres_db.properties",
         "classpath:elasticsearch.properties",

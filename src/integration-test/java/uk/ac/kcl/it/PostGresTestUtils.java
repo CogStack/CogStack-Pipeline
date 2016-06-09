@@ -1,6 +1,7 @@
 package uk.ac.kcl.it;
 
 import org.apache.log4j.Logger;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -44,6 +45,7 @@ import java.util.Random;
         "classpath:postgres_db.properties"})
 @Configuration
 @Import({JobConfiguration.class,TestUtils.class})
+@Ignore
 public class PostGresTestUtils implements DbmsTestUtils{
 
     final static Logger logger = Logger.getLogger(PostGresIntegrationTestsGATEPKPartitionWithoutScheduling.class);

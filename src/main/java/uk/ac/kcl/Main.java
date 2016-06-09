@@ -61,19 +61,24 @@ public class Main {
                         @SuppressWarnings("resource")
                         AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
                         ctx.setEnvironment(environment);
-                        if (properties.getProperty("useScheduling").equalsIgnoreCase("true")) {
+                        String scheduling;
+                        try {
+                            scheduling = properties.getProperty("useScheduling");
+                        }catch(NullPointerException ex){
+                            throw new RuntimeException("useScheduling not configured. Must be true, false or slave");
+                        }
+
+                        if (scheduling.equalsIgnoreCase("true")) {
                             ctx.register(ScheduledJobLauncher.class);
                             ctx.refresh();
-                        } else if(properties.getProperty("useScheduling").equalsIgnoreCase("false")) {
+                        } else if(scheduling.equalsIgnoreCase("false")) {
                             ctx.register(SingleJobLauncher.class);
                             ctx.refresh();
                             SingleJobLauncher launcher = ctx.getBean(SingleJobLauncher.class);
                             launcher.launchJob();
-                        } else if (properties.getProperty("useScheduling").equalsIgnoreCase("slave")) {
+                        } else if (scheduling.equalsIgnoreCase("slave")) {
                             ctx.register(JobConfiguration.class);
                             ctx.refresh();
-                        }else {
-                            throw new RuntimeException("useScheduling not configured. Must be true, false or slave");
                         }
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();

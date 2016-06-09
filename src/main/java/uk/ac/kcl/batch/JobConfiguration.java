@@ -210,6 +210,7 @@ public class JobConfiguration {
                 new ActiveMQConnectionFactory(env.getProperty("jmsIP"));
         factory.setUserName(env.getProperty("jmsUsername"));
         factory.setPassword(env.getProperty("jmsPassword"));
+        factory.setCloseTimeout(Integer.valueOf(env.getProperty("closeTimeout")));
         return factory;
     }
 

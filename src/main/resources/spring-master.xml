@@ -24,8 +24,8 @@
             destination-name="${requestQueueName}"/>
         
     	<int-jms:message-driven-channel-adapter connection-factory="connectionFactory"
-            channel="replyChannel"            
-            destination-name="${replyQueueName}"/>        
+            channel="replyChannel"
+            destination-name="${replyQueueName}"/>
       	<int:aggregator ref="partitionHandler"
 					input-channel="replyChannel"
 					output-channel="aggregatedReplyChannel"

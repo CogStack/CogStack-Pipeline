@@ -35,6 +35,7 @@ import uk.ac.uk.it.TestExecutionListeners.SqlServerBasicTestExecutionListener;
         "classpath:basicPKprofiles.properties",
         "classpath:sql_server_test_config_basic.properties",
         "classpath:jms.properties",
+        "classpath:noScheduling.properties",
         "classpath:sql_server_db.properties",
         "classpath:elasticsearch.properties",
         "classpath:jobAndStep.properties"})

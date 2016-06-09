@@ -37,6 +37,7 @@ import uk.ac.uk.it.TestExecutionListeners.SqlServerBasicTestExecutionListener;
         "classpath:postgres_test_config_basic.properties",
         "classpath:jms.properties",
         "classpath:postgres_db.properties",
+        "classpath:noScheduling.properties",
         "classpath:elasticsearch.properties",
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {

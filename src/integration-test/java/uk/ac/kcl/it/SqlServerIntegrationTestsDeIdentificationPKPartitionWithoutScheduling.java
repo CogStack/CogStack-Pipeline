@@ -39,6 +39,7 @@ import uk.ac.uk.it.TestExecutionListeners.SqlServerDeidTestExecutionListener;
         "classpath:deidPKprofiles.properties",
         "classpath:sql_server_test_config_deid.properties",
         "classpath:jms.properties",
+        "classpath:noScheduling.properties",
         "classpath:gate.properties",
         "classpath:deidentification.properties",
         "classpath:sql_server_db.properties",

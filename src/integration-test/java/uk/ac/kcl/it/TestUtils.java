@@ -2,6 +2,7 @@ package uk.ac.kcl.it;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.junit.Ignore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -17,6 +18,7 @@ import java.util.logging.Level;
 /**
  * Created by rich on 13/05/16.
  */
+@Ignore
 @Service
 public class TestUtils  {
     static Random random = new Random();

@@ -40,6 +40,7 @@ import uk.ac.uk.it.TestExecutionListeners.SqlServerDbLineFixerTestExecutionListe
         "classpath:sql_server_test_config_line_fixer.properties",
         "classpath:jms.properties",
         "classpath:dBLineFixer.properties",
+        "classpath:noScheduling.properties",
         "classpath:sql_server_db.properties",
         "classpath:elasticsearch.properties",
         "classpath:jobAndStep.properties"})

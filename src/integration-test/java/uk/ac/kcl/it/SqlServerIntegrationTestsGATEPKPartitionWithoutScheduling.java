@@ -39,6 +39,7 @@ import uk.ac.uk.it.TestExecutionListeners.SqlServerGateTestExecutionListener;
         "classpath:gatePKprofiles.properties",
         "classpath:sql_server_test_config_gate.properties",
         "classpath:jms.properties",
+        "classpath:noScheduling.properties",
         "classpath:gate.properties",
         "classpath:sql_server_db.properties",
         "classpath:elasticsearch.properties",

@@ -70,10 +70,12 @@ public class GateService {
 
         gateHome = new File(env.getProperty("gateHome"));
         poolSize = Integer.parseInt(env.getProperty("poolSize"));
-        Gate.setGateHome(gateHome);
-        Gate.runInSandbox(true);
-        Gate.init();
-
+        //in case called by other contexts
+        if(!Gate.isInitialised()) {
+            Gate.setGateHome(gateHome);
+            Gate.runInSandbox(true);
+            Gate.init();
+        }
 
         loadresources();
     }

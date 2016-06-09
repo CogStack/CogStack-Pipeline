@@ -40,6 +40,7 @@ import uk.ac.uk.it.TestExecutionListeners.SqlServerDeidTestExecutionListener;
         "classpath:biolarkPKprofiles.properties",
         "classpath:sql_server_test_config_biolark.properties",
         "classpath:jms.properties",
+        "classpath:noScheduling.properties",
         "classpath:sql_server_db.properties",
         "classpath:elasticsearch.properties",
         "classpath:biolark.properties",
