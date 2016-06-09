@@ -117,15 +117,6 @@ public class SingleJobLauncher {
                     LOG.info("No previous completed jobs found");
                     jobOperator.startNextInstance(job.getName());
                 }
-//                if(env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("false")){
-//                    LOG.info("Not using timeStampBasedScheduling");
-//                }else if(lastJobExitStatus == null){
-//
-//                }else if (env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("true")){
-
-//                    }else {
-//                throw new RuntimeException("Cannot determine intended JobParameters");
-//            }
         } catch (JobInstanceAlreadyCompleteException|
                 JobExecutionAlreadyRunningException|
                 JobParametersInvalidException|

@@ -60,12 +60,6 @@ public class TLJobParametersIncrementer implements JobParametersIncrementer {
             LOG.info("No previous jobs found");
         }
 
-//        if(env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("false")){
-//            LOG.info("Not using timeStampBasedScheduling");
-//            params = new JobParametersBuilder(params)
-//                    .addLong(key, id)
-//                    .toJobParameters();
-//        }else
 
         if(lastJobExitStatus == null) {
             params = new JobParametersBuilder()

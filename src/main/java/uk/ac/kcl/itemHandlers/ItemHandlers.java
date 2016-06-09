@@ -23,6 +23,7 @@ import org.springframework.jdbc.core.RowMapper;
 import uk.ac.kcl.model.BinaryDocument;
 import uk.ac.kcl.model.Document;
 import uk.ac.kcl.model.TextDocument;
+import uk.ac.kcl.partitioners.StepPartitioner;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
@@ -38,24 +39,9 @@ public class ItemHandlers {
     @Resource
     Environment env;
 
-    private String getPartitioningLogic(String minValue, String maxValue, String minTimeStamp, String maxTimeStamp){
-        String returnString;
-        if(env.getProperty("useTimeStampBasedScheduling").equalsIgnoreCase("true")
-                && minTimeStamp!= null && maxTimeStamp != null) {
-            returnString = "WHERE " +env.getProperty("timeStamp")
-                    + " BETWEEN CAST('" + minTimeStamp +
-                    "' AS "+env.getProperty("dbmsToJavaSqlTimestampType")+") "
-                    + " AND CAST('" + maxTimeStamp +
-                    "' AS "+env.getProperty("dbmsToJavaSqlTimestampType")+") "
-                    + " AND " + env.getProperty("columnToProcess")
-                    + " BETWEEN '" + minValue + "' AND '" + maxValue +"'";
-        }else{
-            returnString = ("WHERE " + env.getProperty("columnToProcess")
-                    + " BETWEEN " + minValue + " AND " + maxValue) ;
-        }
-        LOG.info("This step where clause: " + returnString);
-        return returnString;
-    }
+
+    @Autowired
+    StepPartitioner stepPartitioner;
 
     @Bean
     @StepScope
@@ -74,7 +60,7 @@ public class ItemHandlers {
         qp.setSelectClause(env.getProperty("source.selectClause"));
         qp.setFromClause(env.getProperty("source.fromClause"));
         qp.setSortKey(env.getProperty("source.sortKey"));
-        qp.setWhereClause(getPartitioningLogic(minValue,maxValue, minTimeStamp,maxTimeStamp));
+        qp.setWhereClause(stepPartitioner.getPartitioningLogic(minValue,maxValue, minTimeStamp,maxTimeStamp));
         qp.setDataSource(jdbcDocumentSource);
         reader.setPageSize(Integer.parseInt(env.getProperty("source.pageSize")));
         reader.setQueryProvider(qp.getObject());
@@ -99,7 +85,7 @@ public class ItemHandlers {
         qp.setSelectClause(env.getProperty("source.selectClause"));
         qp.setFromClause(env.getProperty("source.fromClause"));
         qp.setSortKey(env.getProperty("source.sortKey"));
-        qp.setWhereClause(getPartitioningLogic(minValue,maxValue, minTimeStamp,maxTimeStamp));
+        qp.setWhereClause(stepPartitioner.getPartitioningLogic(minValue,maxValue, minTimeStamp,maxTimeStamp));
         qp.setDataSource(jdbcDocumentSource);
         reader.setPageSize(Integer.parseInt(env.getProperty("source.pageSize")));
         reader.setQueryProvider(qp.getObject());
@@ -125,7 +111,7 @@ public class ItemHandlers {
         qp.setSelectClause(env.getProperty("source.selectClause"));
         qp.setFromClause(env.getProperty("source.fromClause"));
         qp.setSortKey(env.getProperty("source.sortKey"));
-        qp.setWhereClause(getPartitioningLogic(minValue,maxValue,minTimeStamp,maxTimeStamp));
+        qp.setWhereClause(stepPartitioner.getPartitioningLogic(minValue,maxValue,minTimeStamp,maxTimeStamp));
         qp.setDataSource(jdbcDocumentSource);
         reader.setPageSize(Integer.parseInt(env.getProperty("source.pageSize")));
         reader.setQueryProvider(qp.getObject());
