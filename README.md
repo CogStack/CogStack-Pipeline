@@ -24,16 +24,16 @@ gradle writeExampleConfig
 
 The easiest way to run turbo-laser is to activate the various spring profiles available as required. These are
 
-> elasticsearch - write to an elasticsearch cluster
-> jdbc - write to a JDBC endpoint
-> tika - process JDBC input with Tika. Extended with a custom PDF preprocessor to perform OCR on scanned PDF document. Extended with a custom PDF preprocessor to perform OCR on scanned PDF documents. (requires ImageMagick and Tesseract
-> gate - process JDBC input with a generic GATE app.
-> dBLineFixer - process JDBC input with dBLineFixer (concatenates multi-row documents)
-> basic - a job without a processing step, for simply writing JDBC input to elasticsearch
-> master - designates the JVM instance as a master, allowing it to create new jobs and update the job repository
-> slave - designates the JVM as a slave allowing it to execute processing steps retrieved from the activeMQ endpoint
-> deid - deidentify text with a GATE application or using teh ElasticGazetteer
-> biolark - specify the endpoint for the Biolark application, Tudor Groza's awesome HPO term extraction project.
+1. elasticsearch - write to an elasticsearch cluster
+2. jdbc - write to a JDBC endpoint
+3. tika - process JDBC input with Tika. Extended with a custom PDF preprocessor to perform OCR on scanned PDF document. Extended with a custom PDF preprocessor to perform OCR on scanned PDF documents. (requires ImageMagick and Tesseract
+4. gate - process JDBC input with a generic GATE app.
+5. dBLineFixer - process JDBC input with dBLineFixer (concatenates multi-row documents)
+6. basic - a job without a processing step, for simply writing JDBC input to elasticsearch
+7. master - designates the JVM instance as a master, allowing it to create new jobs and update the job repository
+8. slave - designates the JVM as a slave allowing it to execute processing steps retrieved from the activeMQ endpoint
+9. deid - deidentify text with a GATE application or using teh ElasticGazetteer
+10. biolark - specify the endpoint for the Biolark application, Tudor Groza's awesome HPO term extraction project.
 
 
 Turbo-laser also offers a built in scheduler, to process changes in a database between job runs (requires a timestamp in the source database)
