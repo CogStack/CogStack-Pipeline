@@ -3,7 +3,7 @@
 
 ## Introduction
 
-Turbo-laser is a distributed, fault tolerant batch processing architecture for Tika, GATE and Elasticsearch using the Spring Batch framework. In the parlance of the batch processing domain language (http://docs.spring.io/spring-batch/reference/html/domain.html), it uses the remote partitioning method to create 'slave step' metadata for a DB table of documents. This metadata is persisted in the Spring database schema, and farmed out via a JMS middleware server. Remote worker JVM slaves then retrieve metadata descriptions of work units. The outcome of processing is then persisted in the database, allowing robust tracking of failed steps.
+Turbo-laser is a distributed, fault tolerant batch processing architecture for Tika, GATE, Biolark, text deidentification and Elasticsearch using the Spring Batch framework. In the parlance of the batch processing domain language (http://docs.spring.io/spring-batch/reference/html/domain.html), it uses the remote partitioning method to create 'slave step' metadata for a DB table of documents. This metadata is persisted in the Spring database schema, and farmed out via a JMS middleware server. Remote worker JVM slaves then retrieve metadata descriptions of work units. The outcome of processing is then persisted in the database, allowing robust tracking of failed partitions.
 
 ## Why is batch processing in NLP difficult?
 
@@ -11,20 +11,10 @@ When processing very large natural corpora (10s - 100s of millions of documents)
 
 ## Example usage
 
-The entire process is configured via a single config file, which, in order for Spring Batch to pick up correctly, is determined by the java system variable TURBO_LASER. This should point to a directory, containing the floowing files as required
+The entire process is configured a directory containing config files, which is supplied as a single command line argument. These config files selectively activate Spring profiles as required to perform required processing and output writing steps.
 
-Here, you will need to configure input and output database connection details, the activeMQ server and other particulars specific to the job you want to run (for example, the GATE home directory, and the GATE application .xgapp)
+Examples of config file are in the exampleConfigs dir. Most are relatively self explanatory, or should be annotated to explain their meaning.
 
-> tikaJob.conf
-> gateJob.conf
-> dBLineFixerJob.conf
-> basicJob.conf
-
-
-Examples of config file are in the exampleConfigs dir. Note, these test configurations are split into multiple configs, to ease integration testing, but they could just as easily all be places into one of the above named files in production.
-
-
-The parameters of other configuration files are job specific (e.g. tika.properties has keepTags for specifying whether to output in XHTML or plaintext). The details of each are described in the comments of the respective example files
 
 example configs can be generated from the gradle task:
 
@@ -36,37 +26,25 @@ The easiest way to run turbo-laser is to activate the various spring profiles av
 
 > elasticsearch - write to an elasticsearch cluster
 > jdbc - write to a JDBC endpoint
-> tika - process JDBC input with Tika
-> gate - process JDBC input with GATE
+> tika - process JDBC input with Tika. Extended with a custom PDF preprocessor to perform OCR on scanned PDF document. Extended with a custom PDF preprocessor to perform OCR on scanned PDF documents. (requires ImageMagick and Tesseract
+> gate - process JDBC input with a generic GATE app.
 > dBLineFixer - process JDBC input with dBLineFixer (concatenates multi-row documents)
-> basic - a simple job without a processing step, for simply writing JDBC input to elasticsearch
+> basic - a job without a processing step, for simply writing JDBC input to elasticsearch
 > master - designates the JVM instance as a master, allowing it to create new jobs and update the job repository
 > slave - designates the JVM as a slave allowing it to execute processing steps retrieved from the activeMQ endpoint
+> deid - deidentify text with a GATE application or using teh ElasticGazetteer
+> biolark - specify the endpoint for the Biolark application, Tudor Groza's awesome HPO term extraction project.
 
 
-dBLineFixer = fixes a bizarre but somehow frequent occurance in databases where strings of text from a single document are spread across multiple rows
-gate = run a generic GATE app. Specify which annotationSets to keep in the config file, or none to keep them all.
-tika = the excellent 'can opener' apache project for all types of files. Extracts text. I've included a custom PDFPreprocessor class, which allows scanned PDF's to undergo Object Character Recognition. This requires ImageMagick and Tesseract to be installed and available on the system path
+Turbo-laser also offers a built in scheduler, to process changes in a database between job runs (requires a timestamp in the source database)
 
+> set useScheduling to true
 
-
-
-
-With the various profiles specified, a job can be run in:
-
-> 'single' mode (best used with the 'timeStampBasedScheduling' flag set to false, for unordered, large batches and efficient query execution speed
-
-> 'scheduled' mode (best used for smaller batches, for near real time processing of a database) Just set the following parameter in the .conf for e.g. a new job to be created every 5 seconds - it will wait for the previous batch to finish before commencing a new one
-
+run intervals are handled with the following CRON like syntax
 ```
 scheduler.rate = "*/5 * * * * *"
 ```
 
-
-For example
-```
-java -Dspring.profiles.active=tika,master,slave,elasticsearch,jdbc -jar turbo-laser-0.3.0.jar scheduled
-```
 
 ## Logging support
 
@@ -76,7 +54,7 @@ e.g.
 
 
 ```
-java -DLOG_FILE_NAME=aTestLog -Dspring.profiles.active=tika,master,slave,elasticsearch,jdbc -jar turbo-laser-0.3.0.jar scheduled
+java -DLOG_FILE_NAME=aTestLog -DLOG_LEVEL=debug -jar turbo-laser-0.3.0.jar /my/path/to/configs
 ```
 
 
@@ -85,20 +63,8 @@ Turbo-laser assumes the job repository schema is already in place in the DB impl
 
 ## Scaling
 
-To add additional JVM processes, vither locally or remotely (via the wonders of Spring Integration), just launch an instance as per the following example
+To add additional JVM processes, whether locally or remotely (via the wonders of Spring Integration), just launch an instance with the same config files but with useScheduling = slave. You'll need an ActiveMQ server to co-ordinate the nodes (see config example for details)
 
-```
-java  -Dspring.profiles.active=tika,elasticsearch,jdbc,slave -jar turbo-laser-0.3.0.jar slave
-```
+That's it! If a job fails, any uncompleted partitions will be picked up by the next run. If a Job ends up in an unknown state (e.g. due to hardware failure), the next run will mark it as abandonded and recommence from the last successful job it can find in the repository.
 
-
-
-
-Alternatively, turbo-laser can run with the standard Spring Batch CommandLineJobRunner, specifying the job type and appropriate Spring profiles, and key/value pairs that uniquely identify a job (which can be more or less anything - see Spring Batch documentation for details)
-
-For example
-```
-java  -Dspring.profiles.active=dBLineFixer -jar turbo-laser-0.1.0.jar uk.ac.kcl.batch.JobConfiguration dBLineFixerJob date=test1
-```
-
-
+Questions? Want to help? Drop me a message!
