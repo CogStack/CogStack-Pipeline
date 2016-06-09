@@ -172,66 +172,130 @@ allprojects {
     }
 }
 
-task writeExampleConfig  {
-    //String concurrency = new File("src/integration-test/resources/concurrency.properties").text
-    String elasticsearch = new File("src/integration-test/resources/elasticsearch.properties").text
-    String gate = new File("src/integration-test/resources/gate.properties").text
+task writeExampleConfigs  {
+    //profiles
+    String basicPKAndTimeStampProfiles = new File("src/integration-test/resources/basicPKAndTimeStampProfiles.properties").text
+    String basicPKprofiles = new File("src/integration-test/resources/basicPKprofiles.properties").text
+    String dbLineFixerPKprofiles = new File("src/integration-test/resources/dbLineFixerPKprofiles.properties").text
+    String deidPKprofiles = new File("src/integration-test/resources/deidPKprofiles.properties").text
+    String gatePKprofiles = new File("src/integration-test/resources/gatePKprofiles.properties").text
+    String tikaPKprofiles = new File("src/integration-test/resources/tikaPKprofiles.properties").text
+
+    //ItemProcessors
+    String deidentification = new File("src/integration-test/resources/deidentification.properties").text
     String tika = new File("src/integration-test/resources/tika.properties").text
+    String gate = new File("src/integration-test/resources/gate.properties").text
     String dBLineFixer = new File("src/integration-test/resources/dBLineFixer.properties").text
-    String jms = new File("src/integration-test/resources/jms.properties").text
-    String jobAndStep = new File("src/integration-test/resources/jobAndStep_PK_partition_with_scheduling.properties").text
+
+    //Database connectivity
     String postgres_db = new File("src/integration-test/resources/postgres_db.properties").text
+    String sql_server_db = new File("src/integration-test/resources/sql_server_db.properties").text
+
+    //ItemWriters
+    String elasticsearch = new File("src/integration-test/resources/elasticsearch.properties").text
+
+    //Job and Step
+    String jobAndStep = new File("src/integration-test/resources/jobAndStep.properties").text
+
+    //JMS
+    String jms = new File("src/integration-test/resources/jms.properties").text
+
+    //processing period
+    String processingPeriod = new File("src/integration-test/resources/processingPeriod.properties").text
+
+    //configured start
+    String configuredStart = new File("src/integration-test/resources/configured_start.properties").text
+
+    //Scheduling
+    String scheduling = new File("src/integration-test/resources/scheduling.properties").text
+
     String postgres_test_config_gate = new File("src/integration-test/resources/postgres_test_config_gate.properties").text
     String postgres_test_config_tika = new File("src/integration-test/resources/postgres_test_config_tika.properties").text
     String postgres_test_config_basic = new File("src/integration-test/resources/postgres_test_config_basic.properties").text
     String postgres_test_config_dBLineFixer = new File("src/integration-test/resources/postgres_test_config_line_fixer.properties").text
+
+    String sql_server_test_config_gate = new File("src/integration-test/resources/sql_server_test_config_gate.properties").text
+    String sql_server_test_config_tika = new File("src/integration-test/resources/sql_server_test_config_tika.properties").text
+    String sql_server_test_config_basic = new File("src/integration-test/resources/sql_server_test_config_basic.properties").text
+    String sql_server_test_config_dBLineFixer = new File("src/integration-test/resources/sql_server_test_config_line_fixer.properties").text
+    String sql_server_test_config_deid = new File("src/integration-test/resources/sql_server_test_config_deid.properties").text
+
 
     new File("exampleConfigs").mkdir()
     def gateExample = new File("exampleConfigs/gateJob.properties")
     gateExample.withWriter("UTF-8") { writer ->
         writer.write(  "# EXAMPLE CONFIG FOR gateJob \n" +
                 elasticsearch
-                        + "\n" + gate
-                        + "\n" + jms
-                        + "\n" + elasticsearch
-                        + "\n" + jobAndStep
-                        + "\n" + postgres_db
-                        + "\n" + postgres_test_config_gate
+                + "\n" + gate
+                + "\n" + gatePKprofiles
+                + "\n" + jms
+                + "\n" + jobAndStep
+                + "\n" + sql_server_db
+                + "\n" + sql_server_test_config_gate
         )
     }
-        def tikaExample = new File("exampleConfigs/tikaJob.properties")
+    def tikaExample = new File("exampleConfigs/tikaJob.properties")
     tikaExample.withWriter("UTF-8"){ writer ->
-            writer.write ("# EXAMPLE CONFIG FOR tikaJob \n" +
-                    elasticsearch
-                            +"\n" + tika
-                            +"\n" + jms
-                            + "\n" + elasticsearch
-                            +"\n" + jobAndStep
-                            +"\n" + postgres_db
-                            +"\n" + postgres_test_config_tika
-            )
+        writer.write ("# EXAMPLE CONFIG FOR tikaJob \n" +
+                elasticsearch
+                +"\n" + tika
+                +"\n" + tikaPKprofiles
+                +"\n" + jms
+                +"\n" + jobAndStep
+                + "\n" + sql_server_db
+                + "\n" + sql_server_test_config_tika
+        )
     }
     def basicExample = new File("exampleConfigs/basicJob.properties")
     basicExample.withWriter("UTF-8"){ writer ->
         writer.write("# EXAMPLE CONFIG FOR basicJob \n" +
                 elasticsearch
-                        +"\n" + jms
-                        +"\n" + elasticsearch
-                        +"\n" + jobAndStep
-                        +"\n" + postgres_db
-                        +"\n" + postgres_test_config_basic
+                +"\n" + basicPKprofiles
+                +"\n" + jms
+                +"\n" + jobAndStep
+                + "\n" + sql_server_db
+                + "\n" + sql_server_test_config_basic
         )
     }
+    def basicExample2 = new File("exampleConfigs/basicJob2.properties")
+    basicExample2.withWriter("UTF-8"){ writer ->
+        writer.write("# EXAMPLE CONFIG FOR basicJob with timestamp based processing, configured start date and scheduling on \n" +
+                elasticsearch
+                +"\n" + basicPKAndTimeStampProfiles
+                +"\n" + scheduling
+                +"\n" + configuredStart
+                +"\n" + processingPeriod
+                +"\n" + jms
+                +"\n" + jobAndStep
+                + "\n" + sql_server_db
+                + "\n" + sql_server_test_config_basic
+        )
+    }
+
     def dBLineFixerExample = new File("exampleConfigs/dBLineFixerJob.properties")
     dBLineFixerExample.withWriter("UTF-8"){ writer ->
         writer.write("# EXAMPLE CONFIG FOR dBLineFixerJob \n" +
                 elasticsearch
                 +"\n" + dBLineFixer
+                +"\n" + dbLineFixerPKprofiles
                 +"\n" + jms
                 +"\n" + elasticsearch
                 +"\n" + jobAndStep
-                +"\n" + postgres_db
-                +"\n" + postgres_test_config_dBLineFixer
+                + "\n" + sql_server_db
+                + "\n" + sql_server_test_config_dBLineFixer
+        )
+    }
+
+    def deidentificationExample = new File("exampleConfigs/deidJob.properties")
+    deidentificationExample.withWriter("UTF-8"){ writer ->
+        writer.write("# EXAMPLE CONFIG FOR deidentification Job \n" +
+                elasticsearch
+                +"\n" + deidPKprofiles
+                +"\n" + deidentification
+                +"\n" + jms
+                +"\n" + jobAndStep
+                + "\n" + sql_server_db
+                + "\n" + sql_server_test_config_deid
         )
     }
 

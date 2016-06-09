@@ -16,14 +16,15 @@ public class PostgresDbLineFixerTestExecutionListener extends AbstractTestExecut
 
     @Override
     public void beforeTestClass(TestContext testContext) {
-        PostGresTestUtils sqlServerTestUtils =
+        PostGresTestUtils postGresTestUtils =
                 testContext.getApplicationContext().getBean(PostGresTestUtils.class);
-        sqlServerTestUtils.initJobRepository();
-        sqlServerTestUtils.createBasicOutputTable();
-        sqlServerTestUtils.initMultiLineTextTable();
+        postGresTestUtils.initJobRepository();
+        postGresTestUtils.createBasicOutputTable();
+        postGresTestUtils.initMultiLineTextTable();
         TestUtils testUtils =
                 testContext.getApplicationContext().getBean(TestUtils.class);
-        testUtils.insertTestBinariesForTika("tblInputDocs");
+        testUtils.insertDataIntoBasicTable("tblInputDocs");
+        testUtils.insertTestLinesForDBLineFixer("tblDocLines");
     }
 
 }

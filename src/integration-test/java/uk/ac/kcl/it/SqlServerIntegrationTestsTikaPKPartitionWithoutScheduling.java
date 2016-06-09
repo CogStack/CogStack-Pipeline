@@ -42,7 +42,7 @@ import uk.ac.uk.it.TestExecutionListeners.SqlServerTikaTestExecutionListener;
     "classpath:tika.properties",
     "classpath:sql_server_db.properties",
     "classpath:elasticsearch.properties",
-    "classpath:jobAndStep_partition_only_without_scheduling.properties"})
+    "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
         SingleJobLauncher.class,
         SqlServerTestUtils.class,
@@ -53,7 +53,7 @@ import uk.ac.uk.it.TestExecutionListeners.SqlServerTikaTestExecutionListener;
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 public class SqlServerIntegrationTestsTikaPKPartitionWithoutScheduling {
 
-    final static Logger logger = Logger.getLogger(PostGresIntegrationTestsTikaPKPartitionWithoutScheduling.class);
+    final static Logger logger = Logger.getLogger(SqlServerIntegrationTestsTikaPKPartitionWithoutScheduling.class);
 
     @Autowired
     SingleJobLauncher jobLauncher;

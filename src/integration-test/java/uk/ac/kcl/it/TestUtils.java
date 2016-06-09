@@ -80,7 +80,7 @@ public class TestUtils  {
     }
     public void insertTestBinariesForTika( String tableName) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
-        int docCount = 100;
+        int docCount = 1000;
         byte[] bytes = null;
         try {
             bytes = IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream("tika/testdocs/docexample.doc"));

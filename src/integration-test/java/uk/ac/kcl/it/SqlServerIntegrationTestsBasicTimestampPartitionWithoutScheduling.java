@@ -36,11 +36,9 @@ import uk.ac.uk.it.TestExecutionListeners.SqlServerBasicTestExecutionListener;
         "classpath:basicPKAndTimeStampProfiles.properties",
         "classpath:sql_server_test_config_basic.properties",
         "classpath:jms.properties",
-        "classpath:deidentification.properties",
-        "classpath:gate.properties",
         "classpath:sql_server_db.properties",
         "classpath:elasticsearch.properties",
-        "classpath:jobAndStep_timestamp_without_scheduling.properties"})
+        "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
         SqlServerTestUtils.class,
         SingleJobLauncher.class,

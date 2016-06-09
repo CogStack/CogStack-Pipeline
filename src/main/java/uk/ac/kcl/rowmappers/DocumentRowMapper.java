@@ -93,28 +93,31 @@ public class DocumentRowMapper implements RowMapper<Document>{
 
         int colCount = meta.getColumnCount();
 
-            for (int col=1; col <= colCount; col++){
-                Object value = rs.getObject(col);
-                if (value != null && !fieldsToIgnore.contains(meta.getColumnLabel(col)))
-                {
-                    if(meta.getColumnType(col)==91) {
-                        Date dt = (Date)value;
-                        DateTime dateTime = new DateTime(dt.getTime());
-                        doc.getAdditionalFields().put(meta.getColumnLabel(col), fmt.print(dateTime));
-                    }else if (meta.getColumnType(col)==93){
-                        Timestamp ts = (Timestamp) value;
-                        DateTime dateTime = new DateTime(ts.getTime());
-                        doc.getAdditionalFields().put(meta.getColumnLabel(col), fmt.print(dateTime));
-                    }else {
-                        doc.getAdditionalFields().put(meta.getColumnLabel(col), rs.getString(col));
+        for (int col=1; col <= colCount; col++){
+            Object value = rs.getObject(col);
+            if (value != null){
+                for(String s : fieldsToIgnore){
+                    if(!meta.getColumnLabel(col).equalsIgnoreCase(s)){
+                        if(meta.getColumnType(col)==91) {
+                            Date dt = (Date)value;
+                            DateTime dateTime = new DateTime(dt.getTime());
+                            doc.getAdditionalFields().put(meta.getColumnLabel(col), fmt.print(dateTime));
+                        }else if (meta.getColumnType(col)==93){
+                            Timestamp ts = (Timestamp) value;
+                            DateTime dateTime = new DateTime(ts.getTime());
+                            doc.getAdditionalFields().put(meta.getColumnLabel(col), fmt.print(dateTime));
+                        }else {
+                            doc.getAdditionalFields().put(meta.getColumnLabel(col), rs.getString(col));
+                        }
                     }
                 }
-                if (binaryContentFieldName !=null &&
-                        value !=null
-                        && meta.getColumnLabel(col).equalsIgnoreCase(binaryContentFieldName)){
-                    doc.setBinaryContent(rs.getBytes(col));
-                }
             }
+            if (binaryContentFieldName !=null &&
+                    value !=null
+                    && meta.getColumnLabel(col).equalsIgnoreCase(binaryContentFieldName)){
+                doc.setBinaryContent(rs.getBytes(col));
+            }
+        }
     }
 
     @Override

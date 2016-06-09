@@ -41,7 +41,7 @@ import uk.ac.kcl.scheduling.SingleJobLauncher;
                 "classpath:deidentification.properties",
                 "classpath:postgres_db.properties",
                 "classpath:elasticsearch.properties",
-        "classpath:jobAndStep_PK_partition_without_scheduling.properties"})
+        "classpath:jobAndStep_normal_start_without_scheduling.properties"})
 @ContextConfiguration(classes = {
     SingleJobLauncher.class,
     PostGresTestUtils.class,

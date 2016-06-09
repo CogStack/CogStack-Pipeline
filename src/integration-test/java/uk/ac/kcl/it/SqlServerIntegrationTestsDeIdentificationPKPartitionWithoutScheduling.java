@@ -43,7 +43,7 @@ import uk.ac.uk.it.TestExecutionListeners.SqlServerDeidTestExecutionListener;
         "classpath:deidentification.properties",
         "classpath:sql_server_db.properties",
         "classpath:elasticsearch.properties",
-        "classpath:jobAndStep_partition_only_without_scheduling.properties"})
+        "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
         SingleJobLauncher.class,
         SqlServerTestUtils.class,

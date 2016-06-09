@@ -16,17 +16,19 @@
 package uk.ac.kcl.it;
 
 import org.apache.log4j.Logger;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
+import uk.ac.uk.it.TestExecutionListeners.PostgresTikaTestExecutionListener;
+import uk.ac.uk.it.TestExecutionListeners.SqlServerTikaTestExecutionListener;
 
 /**
  *
@@ -35,19 +37,21 @@ import uk.ac.kcl.scheduling.SingleJobLauncher;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
-    "classpath:postgres_test_config_tika.properties",
-    "classpath:jms.properties",
-    "classpath:tika.properties",
-        "classpath:gate.properties",
-    "classpath:deidentification.properties",
-    "classpath:postgres_db.properties",
-    "classpath:elasticsearch.properties",
-        "classpath:jobAndStep_PK_partition_without_scheduling.properties"})
+        "classpath:tikaPKprofiles.properties",
+        "classpath:postgres_test_config_tika.properties",
+        "classpath:jms.properties",
+        "classpath:tika.properties",
+        "classpath:postgres_db.properties",
+        "classpath:elasticsearch.properties",
+        "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
         SingleJobLauncher.class,
-    PostGresTestUtils.class,
+        PostGresTestUtils.class,
         TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
+@TestExecutionListeners(
+        listeners = PostgresTikaTestExecutionListener.class,
+        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 public class PostGresIntegrationTestsTikaPKPartitionWithoutScheduling {
 
     final static Logger logger = Logger.getLogger(PostGresIntegrationTestsTikaPKPartitionWithoutScheduling.class);
@@ -55,21 +59,11 @@ public class PostGresIntegrationTestsTikaPKPartitionWithoutScheduling {
     @Autowired
     SingleJobLauncher jobLauncher;
 
-    @Autowired
-    PostGresTestUtils postGresTestUtils;
 
-    @Autowired
-    TestUtils testUtils;
-    @Before
-    public void init(){
-        postGresTestUtils.initJobRepository();
-        postGresTestUtils.initTikaTable();
-        testUtils.insertTestBinariesForTika("tblInputDocs");
-    }
 
     @Test
     @DirtiesContext
-    public void postgresTikaPipelineTest() {
+    public void sqlServerikaPipelineTest() {
         jobLauncher.launchJob();
     }
 

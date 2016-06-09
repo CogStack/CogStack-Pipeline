@@ -40,10 +40,9 @@ import uk.ac.uk.it.TestExecutionListeners.SqlServerGateTestExecutionListener;
         "classpath:sql_server_test_config_gate.properties",
         "classpath:jms.properties",
         "classpath:gate.properties",
-        "classpath:deidentification.properties",
         "classpath:sql_server_db.properties",
         "classpath:elasticsearch.properties",
-        "classpath:jobAndStep_partition_only_without_scheduling.properties"})
+        "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
         SingleJobLauncher.class,
         SqlServerTestUtils.class,

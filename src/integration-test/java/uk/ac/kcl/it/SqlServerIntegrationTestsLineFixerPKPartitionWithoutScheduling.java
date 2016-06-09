@@ -37,12 +37,12 @@ import uk.ac.uk.it.TestExecutionListeners.SqlServerDbLineFixerTestExecutionListe
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
         "classpath:dbLineFixerPKprofiles.properties",
-        "classpath:sqlserver_test_config_line_fixer.properties",
+        "classpath:sql_server_test_config_line_fixer.properties",
         "classpath:jms.properties",
         "classpath:dBLineFixer.properties",
         "classpath:sql_server_db.properties",
         "classpath:elasticsearch.properties",
-        "classpath:jobAndStep_partition_only_without_scheduling.properties"})
+        "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
         SingleJobLauncher.class,
         SqlServerTestUtils.class,
