@@ -28,7 +28,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import uk.ac.kcl.exception.DeIdentificationFailedException;
 import uk.ac.kcl.model.Document;
-import uk.ac.kcl.model.TextDocument;
 import uk.ac.kcl.service.ElasticGazetteerService;
 import uk.ac.kcl.service.GateService;
 
