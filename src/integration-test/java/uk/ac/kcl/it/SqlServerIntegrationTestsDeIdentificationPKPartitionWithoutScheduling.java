@@ -36,6 +36,7 @@ import uk.ac.uk.it.TestExecutionListeners.SqlServerDeidTestExecutionListener;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
+        "classpath:deidPKprofiles.properties",
         "classpath:sql_server_test_config_deid.properties",
         "classpath:jms.properties",
         "classpath:gate.properties",

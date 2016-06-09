@@ -48,8 +48,15 @@ public class DocumentRowMapper implements RowMapper<Document>{
         primaryKeyFieldValue = env.getProperty("primaryKeyFieldValue");
         timeStamp = env.getProperty("timeStamp");
         fieldsToIgnore = Arrays.asList(env.getProperty("elasticsearch.excludeFromIndexing").split(","));
-    }
+        //for tika
 
+        if(env.getProperty("binaryFieldName")!=null){
+            binaryContentFieldName = env.getProperty("binaryFieldName");
+        }else{
+            binaryContentFieldName = null;
+        }
+    }
+    String binaryContentFieldName;
     private String srcTableName;
     private String srcColumnFieldName;
     private String primaryKeyFieldName;
@@ -81,10 +88,12 @@ public class DocumentRowMapper implements RowMapper<Document>{
         DateTimeFormatter fmt = DateTimeFormat.forPattern(env.getProperty("datePatternForES"));
         //add additional query fields for ES export
         ResultSetMetaData meta = rs.getMetaData();
+
+
+
         int colCount = meta.getColumnCount();
 
-            for (int col=1; col <= colCount; col++)
-            {
+            for (int col=1; col <= colCount; col++){
                 Object value = rs.getObject(col);
                 if (value != null && !fieldsToIgnore.contains(meta.getColumnLabel(col)))
                 {
@@ -99,6 +108,11 @@ public class DocumentRowMapper implements RowMapper<Document>{
                     }else {
                         doc.getAdditionalFields().put(meta.getColumnLabel(col), rs.getString(col));
                     }
+                }
+                if (binaryContentFieldName !=null &&
+                        value !=null
+                        && meta.getColumnLabel(col).equalsIgnoreCase(binaryContentFieldName)){
+                    doc.setBinaryContent(rs.getBytes(col));
                 }
             }
     }

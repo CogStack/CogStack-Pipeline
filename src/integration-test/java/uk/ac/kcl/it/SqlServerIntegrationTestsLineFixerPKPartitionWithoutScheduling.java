@@ -36,6 +36,7 @@ import uk.ac.uk.it.TestExecutionListeners.SqlServerDbLineFixerTestExecutionListe
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
+        "classpath:dbLineFixerPKprofiles.properties",
         "classpath:sqlserver_test_config_line_fixer.properties",
         "classpath:jms.properties",
         "classpath:dBLineFixer.properties",

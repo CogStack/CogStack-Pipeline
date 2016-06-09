@@ -31,6 +31,7 @@ import uk.ac.kcl.scheduling.SingleJobLauncher;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
+        "classpath:basicPKprofiles.properties",
         "classpath:jms.properties",
         "classpath:deidentification.properties",
         "classpath:postgres_db.properties",

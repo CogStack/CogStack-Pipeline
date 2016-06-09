@@ -42,7 +42,7 @@ import java.util.logging.Level;
 
 
 
-@Service
+@Service("gateService")
 @Profile({"gate","deid"})
 public class GateService {
 

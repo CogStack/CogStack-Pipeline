@@ -36,6 +36,7 @@ import uk.ac.uk.it.TestExecutionListeners.SqlServerGateTestExecutionListener;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
+        "classpath:gatePKprofiles.properties",
         "classpath:sql_server_test_config_gate.properties",
         "classpath:jms.properties",
         "classpath:gate.properties",

@@ -228,7 +228,7 @@ public class JobConfiguration {
 
     @Bean
     public Step compositeSlaveStep(
-            @Qualifier("documentItemReader") ItemReader<Document> reader,
+                        ItemReader<Document> reader,
             @Qualifier("compositeItemProcessor") ItemProcessor<Document, Document> processor,
             @Qualifier("compositeESandJdbcItemWriter") ItemWriter<Document> writer,
             @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor,

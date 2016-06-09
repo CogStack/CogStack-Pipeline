@@ -36,11 +36,10 @@ import uk.ac.uk.it.TestExecutionListeners.SqlServerTikaTestExecutionListener;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
+        "classpath:tikaPKprofiles.properties",
     "classpath:sql_server_test_config_tika.properties",
     "classpath:jms.properties",
     "classpath:tika.properties",
-        "classpath:gate.properties",
-    "classpath:deidentification.properties",
     "classpath:sql_server_db.properties",
     "classpath:elasticsearch.properties",
     "classpath:jobAndStep_partition_only_without_scheduling.properties"})

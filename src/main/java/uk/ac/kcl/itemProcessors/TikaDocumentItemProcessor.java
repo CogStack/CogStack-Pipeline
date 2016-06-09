@@ -26,7 +26,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.xml.sax.ContentHandler;
-import uk.ac.kcl.model.BinaryDocument;
 import uk.ac.kcl.model.Document;
 
 import javax.annotation.PostConstruct;
@@ -44,6 +43,7 @@ public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemPr
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(TikaDocumentItemProcessor.class);
 
     private boolean keepTags;
+    private String binaryFieldName;
 
     public boolean isKeepTags() {
         return keepTags;
@@ -69,7 +69,7 @@ public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemPr
     @Override
     public Document process(final Document doc) throws Exception {
         ContentHandler handler;
-        LOG.debug("processing doc ID: " + doc.getPrimaryKeyFieldValue());
+        LOG.debug("processing doc: " + doc.getDocName());
         if (keepTags) {
             handler = new ToXMLContentHandler();
         } else {

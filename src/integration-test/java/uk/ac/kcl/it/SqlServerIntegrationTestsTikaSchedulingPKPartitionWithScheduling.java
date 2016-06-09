@@ -33,6 +33,7 @@ import uk.ac.uk.it.TestExecutionListeners.SqlServerTikaTestExecutionListener;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @TestPropertySource({
+        "classpath:tikaPKprofiles.properties",
         "classpath:sql_server_test_config_tika.properties",
         "classpath:jms.properties",
         "classpath:deidentification.properties",
