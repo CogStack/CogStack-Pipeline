@@ -66,57 +66,6 @@ public class ItemHandlers {
         return reader;
     }
 
-//    @Bean
-//    @StepScope
-//    @Qualifier("textDocumentItemReader")
-//    public ItemReader<TextDocument> textDocumentItemReader(
-//            @Value("#{stepExecutionContext[minValue]}") String minValue,
-//            @Value("#{stepExecutionContext[maxValue]}") String maxValue,
-//            @Value("#{stepExecutionContext[min_time_stamp]}") String minTimeStamp,
-//            @Value("#{stepExecutionContext[max_time_stamp]}") String maxTimeStamp,
-//            @Qualifier("textDocumentRowMapper")RowMapper<TextDocument> documentRowmapper,
-//            @Qualifier("sourceDataSource") DataSource jdbcDocumentSource) throws Exception {
-//
-//        JdbcPagingItemReader<TextDocument> reader = new JdbcPagingItemReader<>();
-//        reader.setDataSource(jdbcDocumentSource);
-//        SqlPagingQueryProviderFactoryBean qp = new SqlPagingQueryProviderFactoryBean();
-//        qp.setSelectClause(env.getProperty("source.selectClause"));
-//        qp.setFromClause(env.getProperty("source.fromClause"));
-//        qp.setSortKey(env.getProperty("source.sortKey"));
-//        qp.setWhereClause(stepPartitioner.getPartitioningLogic(minValue,maxValue, minTimeStamp,maxTimeStamp));
-//        qp.setDataSource(jdbcDocumentSource);
-//        reader.setPageSize(Integer.parseInt(env.getProperty("source.pageSize")));
-//        reader.setQueryProvider(qp.getObject());
-//        reader.setRowMapper(documentRowmapper);
-//
-//        return reader;
-//    }
-//
-//    @Bean
-//    @StepScope
-//    @Qualifier("binaryDocumentItemReader")
-//    public ItemReader<BinaryDocument> binaryDocumentItemReader(
-//            @Value("#{stepExecutionContext[minValue]}") String minValue,
-//            @Value("#{stepExecutionContext[maxValue]}") String maxValue,
-//            @Value("#{stepExecutionContext[min_time_stamp]}") String minTimeStamp,
-//            @Value("#{stepExecutionContext[max_time_stamp]}") String maxTimeStamp,
-//            @Qualifier("binaryDocumentRowMapper")RowMapper<BinaryDocument> documentRowmapper,
-//            @Qualifier("sourceDataSource") DataSource jdbcDocumentSource) throws Exception {
-//
-//        JdbcPagingItemReader<BinaryDocument> reader = new JdbcPagingItemReader<>();
-//        reader.setDataSource(jdbcDocumentSource);
-//        SqlPagingQueryProviderFactoryBean qp = new SqlPagingQueryProviderFactoryBean();
-//        qp.setSelectClause(env.getProperty("source.selectClause"));
-//        qp.setFromClause(env.getProperty("source.fromClause"));
-//        qp.setSortKey(env.getProperty("source.sortKey"));
-//        qp.setWhereClause(stepPartitioner.getPartitioningLogic(minValue,maxValue,minTimeStamp,maxTimeStamp));
-//        qp.setDataSource(jdbcDocumentSource);
-//        reader.setPageSize(Integer.parseInt(env.getProperty("source.pageSize")));
-//        reader.setQueryProvider(qp.getObject());
-//        reader.setRowMapper(documentRowmapper);
-//        return reader;
-//    }
-
     @Bean
     @Qualifier("simpleJdbcItemWriter")
     @Profile("jdbc")

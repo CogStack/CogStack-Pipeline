@@ -24,7 +24,7 @@ import org.springframework.integration.config.EnableIntegration;
  *
  * @author King's College London, Richard Jackson <richgjackson@gmail.com>
  */
-@Profile("slave")
+@Profile("master")
 @ImportResource("classpath:spring-slave.xml")
 @Configuration
 @EnableIntegration

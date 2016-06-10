@@ -18,6 +18,8 @@ package uk.ac.kcl.rowmappers;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.RowMapper;
@@ -32,7 +34,7 @@ import java.util.List;
 
 @Component
 public class DocumentRowMapper implements RowMapper<Document>{
-
+    private static final Logger LOG = LoggerFactory.getLogger(DocumentRowMapper.class);
     @Autowired
     Environment env;
 
@@ -47,7 +49,7 @@ public class DocumentRowMapper implements RowMapper<Document>{
         primaryKeyFieldName =env.getProperty("primaryKeyFieldName");
         primaryKeyFieldValue = env.getProperty("primaryKeyFieldValue");
         timeStamp = env.getProperty("timeStamp");
-        fieldsToIgnore = Arrays.asList(env.getProperty("elasticsearch.excludeFromIndexing").split(","));
+        fieldsToIgnore = Arrays.asList(env.getProperty("elasticsearch.excludeFromIndexing").toLowerCase().split(","));
         //for tika
 
         if(env.getProperty("binaryFieldName")!=null){
@@ -96,9 +98,8 @@ public class DocumentRowMapper implements RowMapper<Document>{
         for (int col=1; col <= colCount; col++){
             Object value = rs.getObject(col);
             if (value != null){
-                for(String s : fieldsToIgnore){
-                    if(!meta.getColumnLabel(col).equalsIgnoreCase(s) &&
-                            !meta.getColumnName(col).equalsIgnoreCase(s)){
+                    String colLabel =meta.getColumnLabel(col).toLowerCase();
+                    if(!fieldsToIgnore.contains(colLabel)){
                         if(meta.getColumnType(col)==91) {
                             Date dt = (Date)value;
                             DateTime dateTime = new DateTime(dt.getTime());
@@ -111,7 +112,6 @@ public class DocumentRowMapper implements RowMapper<Document>{
                             doc.getAdditionalFields().put(meta.getColumnLabel(col), rs.getString(col));
                         }
                     }
-                }
             }
             if (binaryContentFieldName !=null &&
                     value !=null
