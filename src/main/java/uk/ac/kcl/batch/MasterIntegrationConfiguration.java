@@ -34,6 +34,7 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.integration.core.MessagingTemplate;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.PollableChannel;
+import org.springframework.transaction.PlatformTransactionManager;
 import uk.ac.kcl.jobParametersIncrementers.TLJobParametersIncrementer;
 import uk.ac.kcl.listeners.JobCompleteNotificationListener;
 import uk.ac.kcl.model.Document;
@@ -70,12 +71,13 @@ public class MasterIntegrationConfiguration {
     @Bean
     public Job job(JobBuilderFactory jobs,
                    StepBuilderFactory steps,
-                    Partitioner partitioner,
+                   Partitioner partitioner,
                    @Qualifier("partitionHandler") PartitionHandler gatePartitionHandler,
                    JobCompleteNotificationListener jobCompleteNotificationListener,
+                   //@Qualifier("targetDatasourceTransactionManager")PlatformTransactionManager manager,
                    @Qualifier("tLJobParametersIncrementer") TLJobParametersIncrementer runIdIncrementer
 
-    ) {
+                   ) {
         Job job = jobs.get(env.getProperty("jobName"))
                 .incrementer(runIdIncrementer)
                 .listener(jobCompleteNotificationListener)

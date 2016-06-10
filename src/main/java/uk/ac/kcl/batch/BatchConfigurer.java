@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -54,6 +55,19 @@ public class BatchConfigurer extends DefaultBatchConfigurer {
     @Qualifier("jobRepositoryDataSource")
     DataSource jobRepositoryDataSource;
 
+    @Bean(destroyMethod = "close")
+    @Qualifier("jobRepositoryDataSource")
+    public DataSource jobRepositoryDataSource() {
+        HikariDataSource mainDatasource = new HikariDataSource();
+        mainDatasource.setDriverClassName(env.getProperty("jobRepository.Driver"));
+        mainDatasource.setJdbcUrl(env.getProperty("jobRepository.JdbcPath"));
+        mainDatasource.setUsername(env.getProperty("jobRepository.username"));
+        mainDatasource.setPassword(env.getProperty("jobRepository.password"));
+        mainDatasource.setIdleTimeout(Long.valueOf(env.getProperty("jobRepository.idleTimeout")));
+        mainDatasource.setMaxLifetime(Long.valueOf(env.getProperty("jobRepository.maxLifetime")));
+        //mainDatasource.setAutoCommit(false);
+        return mainDatasource;
+    }
 
     @Override
     protected JobRepository createJobRepository() throws Exception {
@@ -75,15 +89,14 @@ public class BatchConfigurer extends DefaultBatchConfigurer {
     }
 
 
-    @Autowired
-    public PlatformTransactionManager getTransactionManager(
+    @Bean
+    public PlatformTransactionManager getJobRepoDataSourceTransactionManager(
             @Qualifier("jobRepositoryDataSource")
             DataSource jdbcDocumentTarget) {
         DataSourceTransactionManager tx = new DataSourceTransactionManager();
         tx.setDataSource(jdbcDocumentTarget);
         return tx;
     }
-
 
     
     @Bean

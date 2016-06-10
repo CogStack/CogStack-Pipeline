@@ -85,7 +85,7 @@ public class BatchJobUtils {
         String sql = "SELECT MAX(bje.job_execution_id) FROM batch_job_execution bje \n" +
                 " JOIN batch_job_instance bji ON bje.job_instance_id = bji.job_instance_id \n" +
                 " JOIN batch_job_execution_params bjep ON bje.job_execution_id = bjep.job_execution_id" +
-                " WHERE bje.exit_code = 'COMPLETED' \n" +
+                " WHERE bje.status = 'COMPLETED' \n" +
                 " AND bji.job_name = '" + env.getProperty("jobName") + "'";
         LOG.info("Looking for last previous job with query " + sql);
         Long id = template.queryForObject(sql, Long.class);
@@ -168,11 +168,17 @@ public class BatchJobUtils {
         }
     }
 
-    public List<Long> getExecutionIdsOfFailedOrUnknownJobsAfterLastSuccessfulJob() {
+    public List<Long> getExecutionIdsOfJobsToAbandon() {
         JdbcTemplate template = new JdbcTemplate(jobRepositoryDataSource);
         String sql = "SELECT bje.job_execution_id FROM batch_job_execution bje \n" +
                 " JOIN batch_job_instance bji ON bje.job_instance_id = bji.job_instance_id \n" +
-                " WHERE (bje.exit_code = 'FAILED' OR bje.exit_code = 'UNKNOWN' OR bje.exit_code = 'STOPPED') AND bji.job_name = '" +
+                " WHERE (" +
+                "bje.status = 'FAILED' " +
+                "OR bje.status = 'UNKNOWN' " +
+                "OR bje.status = 'STARTING' " +
+                "OR bje.status = 'STARTED'" +
+                "OR bje.status = 'STOPPED') " +
+                "AND bji.job_name = '" +
                 env.getProperty("jobName") + "'";
         LOG.info("retrieving list of job executions to mark as abandoned " + sql);
         return template.queryForList(sql, Long.class);

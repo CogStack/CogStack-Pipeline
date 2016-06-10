@@ -18,8 +18,7 @@ package uk.ac.kcl.scheduling;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.batch.core.launch.JobOperator;
+import org.springframework.batch.core.launch.*;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRepository;
@@ -34,8 +33,6 @@ import uk.ac.kcl.batch.JobConfiguration;
 import uk.ac.kcl.utils.BatchJobUtils;
 
 import javax.sql.DataSource;
-import java.sql.Date;
-import java.sql.Timestamp;
 import java.util.List;
 
 
@@ -82,35 +79,49 @@ public class SingleJobLauncher {
 
 
     public void launchJob()  {
+        JobExecution lastJobExecution = null;
         try {
-                JobExecution lastJobExecution = null;
-                ExitStatus lastJobExitStatus = null;
+            BatchStatus lastJobStatus = null;
+            try {
+                lastJobExecution = batchJobUtils.getLastJobExecution();
+                lastJobStatus = lastJobExecution.getStatus();
+            } catch (NullPointerException e) {
+                LOG.info("No previous successful jobs found");
+            }
                 try {
-                    lastJobExecution = batchJobUtils.getLastJobExecution();
-                    lastJobExitStatus = lastJobExecution.getExitStatus();
-                    switch (lastJobExitStatus.getExitCode()) {
-                        case "COMPLETED":
+                    switch (lastJobStatus) {
+                        case COMPLETED:
+                            LOG.info("Last job execution was successful");
                             jobOperator.startNextInstance(job.getName());
                             break;
-                        case "EXECUTING":
-                            LOG.info("Job is already running");
+                        case STARTED:
+                        case STARTING:
+                        case STOPPING:
+                            LOG.info("Job is already running. Repository in unknown state." +
+                                    " Attempting to repair and restart from last successful job");
+                            abandonAllJobsStartedAfterLastSuccessfulJob();
+                            jobOperator.startNextInstance(job.getName());
                             break;
-                        case "FAILED":
+                        case FAILED:
                             LOG.info("Last job failed. Attempting restart");
-                            jobOperator.restart(lastJobExecution.getId());
+                            jobOperator.startNextInstance(job.getName());
                             break;
-                        case "NOOP":
+                        case ABANDONED:
+                            LOG.info("Last job was abandoned. Marking as abandoned and attempting restart from last successful job");
+                            abandonAllJobsStartedAfterLastSuccessfulJob();
+                            jobOperator.startNextInstance(job.getName());
                             break;
-                        case "STOPPED":
-                            LOG.info("Last job stopped. Attempting to restart incomplete steps");
-                            jobOperator.restart(lastJobExecution.getId());
+                        case STOPPED:
+                            LOG.info("Last job was stopped. Attempting restart")       ;
+                            jobOperator.startNextInstance(job.getName());
                             break;
-                        case "UNKNOWN":
-                            LOG.info("Last job has unknown status. Attempting restart from last job with known status");
+                        case UNKNOWN:
+                            LOG.info("Last job has unknown status. Marking as abandoned and attempting restart from last successful job");
+                            abandonAllJobsStartedAfterLastSuccessfulJob();
                             jobOperator.startNextInstance(job.getName());
                             break;
                         default:
-                            LOG.info("Should never be reached");
+                            LOG.error("Should never be reached");
                             break;
                     }
                 }catch(NullPointerException ex){
@@ -119,11 +130,46 @@ public class SingleJobLauncher {
                 }
         } catch (JobInstanceAlreadyCompleteException|
                 JobExecutionAlreadyRunningException|
-                JobParametersInvalidException|
-                JobRestartException e) {
+                JobParametersInvalidException
+                 e) {
             LOG.error("Cannot start job", e);
-        } catch (Exception e) {
+        } catch (JobRestartException e){
+            LOG.error("Cannot restart job. Attempting to start next instance", e);
+            try {
+                jobOperator.abandon(lastJobExecution.getId());
+                jobOperator.startNextInstance(job.getName());
+            } catch (NoSuchJobExecutionException |JobExecutionAlreadyRunningException|
+                    NoSuchJobException|JobInstanceAlreadyCompleteException|
+                    JobRestartException|JobParametersNotFoundException|JobParametersInvalidException e1) {
+                throw new RuntimeException("Cannot start next instance", e1);
+            }
+        }catch (Exception e) {
             LOG.error("Cannot start job", e);
+        }
+    }
+
+    private void abandonAllJobsStartedAfterLastSuccessfulJob() {
+        List<Long> idsToAbandon = batchJobUtils.getExecutionIdsOfJobsToAbandon();
+
+        for (Long id : idsToAbandon) {
+            try {
+                try {
+
+                    jobOperator.stop(id);
+                } catch (JobExecutionNotRunningException e) {
+                    LOG.info("Cannot stop job execution ID " + id +
+                            " as it is already stopped. Attempting to mark as abandoned");
+                }
+                try {
+                    jobOperator.abandon(id);
+                } catch (JobExecutionAlreadyRunningException e) {
+                    throw new RuntimeException("Cannot abandon job execution ID " + id + " as it appears to be running. "+
+                            "JobRepository may require inspection",e);
+                }
+            } catch (NoSuchJobExecutionException e) {
+                throw new RuntimeException("Cannot mark job execution ID " + id + " as abandoned as it doesn't exist." +
+                        " JobRepository may require inspection)", e);
+            }
         }
     }
 }

@@ -51,44 +51,36 @@ public class TLJobParametersIncrementer implements JobParametersIncrementer {
     public JobParameters getNext(JobParameters parameters) {
         JobParameters params = (parameters == null) ? new JobParameters() : parameters;
         long id = params.getLong(key, 0L) + 1;
-        ExitStatus lastJobExitStatus = null;
+        BatchStatus lastJobStatus = null;
         JobExecution lastJobExecution = null;
         try {
             lastJobExecution = batchJobUtils.getLastJobExecution();
-            lastJobExitStatus = lastJobExecution.getExitStatus();
+            lastJobStatus = lastJobExecution.getStatus();
         } catch (NullPointerException e) {
-            LOG.info("No previous jobs found");
+            LOG.info("No previous successful jobs found");
         }
-
-
-        if(lastJobExitStatus == null) {
-            params = new JobParametersBuilder()
-                    .addString("first_run_of_job", "true")
-                    .addString("jobName", env.getProperty("jobName"))
-                    .addLong(key, id)
-                    .toJobParameters();
+        if(lastJobStatus == null) {
+            params = getNewJobParameters(id,null);
         }else{
-            switch (lastJobExitStatus.getExitCode()) {
-                case "COMPLETED":
-                    LOG.info("Last job execution was successful");
+            switch (lastJobStatus) {
+                case COMPLETED:
                     params = getNewJobParameters(id, lastJobExecution);
                     break;
-                case "EXECUTING":
-                    LOG.info("Job is already running");
+                case STARTED:
+                case STARTING:
+                case STOPPING:
+                    LOG.error("Attempting to generate params but repository in unknown state");
                     break;
-                case "FAILED":
-                    LOG.info("Last job failed. Attempting restart");
+                case FAILED:
                     params = lastJobExecution.getJobParameters();
                     break;
-                case "NOOP":
+                case ABANDONED:
+                    params = getNewJobParameters(id, batchJobUtils.getLastSuccessfulJobExecution());
                     break;
-                case "STOPPED":
-                    LOG.info("Last job stopped. Attempting to restart incomplete steps");
+                case STOPPED:
                     params = lastJobExecution.getJobParameters();
                     break;
-                case "UNKNOWN":
-                    LOG.info("Last job has unknown status. Marking as abandoned and attempting restart from last successful job");
-                    abandonAllJobsStartedAfterLastSuccessfulJob(lastJobExecution);
+                case UNKNOWN:
                     params = getNewJobParameters(id, batchJobUtils.getLastSuccessfulJobExecution());
                     break;
                 default:
@@ -99,36 +91,20 @@ public class TLJobParametersIncrementer implements JobParametersIncrementer {
         return params;
     }
 
-    private void abandonAllJobsStartedAfterLastSuccessfulJob(JobExecution lastJobExecution) {
-        List<Long> idsToAbandon = batchJobUtils.getExecutionIdsOfFailedOrUnknownJobsAfterLastSuccessfulJob();
 
-        for (Long id : idsToAbandon) {
-            try {
-                try {
-
-                    jobOperator.stop(id);
-                } catch (JobExecutionNotRunningException e) {
-                    LOG.info("Cannot stop job execution ID " + id +
-                            " as it is already stopped. Attempting to mark as abandoned");
-                }
-                try {
-                    jobOperator.abandon(id);
-                } catch (JobExecutionAlreadyRunningException e) {
-                    throw new RuntimeException("Cannot abandon job execution ID " + id + " as it appears to be running. "+
-                            "JobRepository may require inspection",e);
-                }
-            } catch (NoSuchJobExecutionException e) {
-                throw new RuntimeException("Cannot mark job execution ID " + id + " as abandoned as it doesn't exist." +
-                        " JobRepository may require inspection)", e);
-            }
-        }
-    }
 
     private JobParameters getNewJobParameters(long id, JobExecution lastJobExecution) {
 
         JobParameters params;
         Timestamp newJobTimeStamp;
-        if(lastJobExecution.getExecutionContext().get("last_successful_timestamp_from_this_job")!=null){
+        if(lastJobExecution == null){
+            LOG.info("Cannot find any previously successful jobs. Commencing from beginning");
+            params = new JobParametersBuilder()
+                    .addString("first_run_of_job", "true")
+                    .addString("jobName", env.getProperty("jobName"))
+                    .addLong(key, id)
+                    .toJobParameters();
+        }else if(lastJobExecution.getExecutionContext().get("last_successful_timestamp_from_this_job")!=null){
             newJobTimeStamp = new Timestamp(
                     Long.valueOf(lastJobExecution
                             .getExecutionContext()
@@ -140,9 +116,9 @@ public class TLJobParametersIncrementer implements JobParametersIncrementer {
                     .addString("jobName",env.getProperty("jobName"))
                     .addLong(key, id)
                     .toJobParameters();
-            return params;
         }else{
             throw new RuntimeException("Cannot get new parameters from Job Repository");
         }
+        return params;
     }
 }

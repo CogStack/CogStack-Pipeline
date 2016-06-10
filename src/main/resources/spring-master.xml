@@ -29,22 +29,7 @@
       	<int:aggregator ref="partitionHandler"
 					input-channel="replyChannel"
 					output-channel="aggregatedReplyChannel"
-					send-timeout="${jobTimeout}"/>        
+					send-timeout="${jobTimeout}"/>
 
-<!--        slave only-->
-
-<!--	<int-jms:message-driven-channel-adapter connection-factory="connectionFactory"
-            destination-name="requestsQueue"
-            channel="requestChannel"/>
-             
-	<int-jms:outbound-channel-adapter connection-factory="connectionFactory"
-            destination-name="replyQueue"
-            channel="replyChannel"/>
-        
-        
-        
-	<int:service-activator input-channel="requestChannel"
-            output-channel="replyChannel"
-                               ref="stepExecutionRequestHandler"/>-->
 
 </beans>

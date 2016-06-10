@@ -39,8 +39,10 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.integration.config.EnableIntegration;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.support.MetaDataAccessException;
 import org.springframework.jms.connection.CachingConnectionFactory;
+import org.springframework.transaction.PlatformTransactionManager;
 import uk.ac.kcl.itemProcessors.JSONMakerItemProcessor;
 import uk.ac.kcl.model.Document;
 import uk.ac.kcl.utils.LoggerHelper;
@@ -130,22 +132,24 @@ public class JobConfiguration {
         mainDatasource.setPassword(env.getProperty("target.password"));
         mainDatasource.setIdleTimeout(Long.valueOf(env.getProperty("target.idleTimeout")));
         mainDatasource.setMaxLifetime(Long.valueOf(env.getProperty("target.maxLifetime")));
+        //?? should be managed by transaction manager
+        //mainDatasource.setAutoCommit(false);
         return mainDatasource;
 
     }
 
-    @Bean(destroyMethod = "close")
-    @Qualifier("jobRepositoryDataSource")
-    public DataSource jobRepositoryDataSource() {
-        HikariDataSource mainDatasource = new HikariDataSource();
-        mainDatasource.setDriverClassName(env.getProperty("jobRepository.Driver"));
-        mainDatasource.setJdbcUrl(env.getProperty("jobRepository.JdbcPath"));
-        mainDatasource.setUsername(env.getProperty("jobRepository.username"));
-        mainDatasource.setPassword(env.getProperty("jobRepository.password"));
-        mainDatasource.setIdleTimeout(Long.valueOf(env.getProperty("jobRepository.idleTimeout")));
-        mainDatasource.setMaxLifetime(Long.valueOf(env.getProperty("jobRepository.maxLifetime")));
-        return mainDatasource;
-    }
+//    @Bean
+//    @Profile("jdbc")
+//    @Qualifier("targetDatasourceTransactionManager")
+//    public PlatformTransactionManager targetDatasourceTransactionManager(
+//            @Qualifier("targetDataSource")
+//                    DataSource jdbcDocumentTarget) {
+//        DataSourceTransactionManager tx = new DataSourceTransactionManager();
+//        tx.setDataSource(jdbcDocumentTarget);
+//        return tx;
+//    }
+
+
 
 
 
@@ -241,6 +245,7 @@ public class JobConfiguration {
             @Qualifier("compositeItemProcessor") ItemProcessor<Document, Document> processor,
             @Qualifier("compositeESandJdbcItemWriter") ItemWriter<Document> writer,
             @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor,
+            //@Qualifier("targetDatasourceTransactionManager")PlatformTransactionManager manager,
             StepBuilderFactory stepBuilderFactory
     ) {
         Step step = stepBuilderFactory.get("compositeSlaveStep")

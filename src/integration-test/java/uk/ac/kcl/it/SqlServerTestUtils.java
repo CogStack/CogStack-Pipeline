@@ -14,6 +14,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.kcl.batch.JobConfiguration;
 
 import javax.annotation.PostConstruct;
@@ -61,7 +63,6 @@ public class SqlServerTestUtils implements DbmsTestUtils {
     @Qualifier("jobRepositoryDataSource")
     public DataSource jobRepositoryDataSource;
 
-
     private JdbcTemplate sourceTemplate;
     private JdbcTemplate targetTemplate;
     private JdbcTemplate jobRepoTemplate;
@@ -101,6 +102,7 @@ public class SqlServerTestUtils implements DbmsTestUtils {
                 + ", primaryKeyFieldValue BIGINT "
                 + ", updateTime DateTIME "
                 + ", output text )");
+
     }
 
     @Override
@@ -142,6 +144,8 @@ public class SqlServerTestUtils implements DbmsTestUtils {
 
 
     }
+
+
 
     @Override
     public void createBasicOutputTable(){

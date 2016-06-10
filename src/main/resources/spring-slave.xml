@@ -32,22 +32,6 @@
             output-channel="replyChannel"
                                ref="stepExecutionRequestHandler"/>
 
-        
-<!--        Master only        -->
-<!--	<int:channel id="aggregatedReplyChannel">
-		<int:queue/>
-	</int:channel>
-        
-        <int-jms:outbound-channel-adapter connection-factory="connectionFactory"
-            channel="requestsChannel"
-            destination-name="requestsQueue"/>
-        
-    	<int-jms:message-driven-channel-adapter connection-factory="connectionFactory"
-            channel="replyChannel"
-            destination-name="replyQueue"/>
-      	<int:aggregator ref="partitionHandler"
-					input-channel="replyChannel"
-					output-channel="aggregatedReplyChannel"
-					send-timeout="3600000"/>   -->
+
 
 </beans>
