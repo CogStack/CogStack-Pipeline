@@ -92,7 +92,7 @@ public class PostGresTestUtils implements DbmsTestUtils{
                 + ", primaryKeyFieldName text "
                 + ", primaryKeyFieldValue integer "
                 + ", updateTime TIMESTAMP "
-                + ", binaryContent bytea )");
+                + ", binaryContent bytea)");
 
         targetTemplate.execute("DROP TABLE IF EXISTS tblOutputDocs");
         targetTemplate.execute("CREATE TABLE tblOutputDocs "

@@ -97,7 +97,8 @@ public class DocumentRowMapper implements RowMapper<Document>{
             Object value = rs.getObject(col);
             if (value != null){
                 for(String s : fieldsToIgnore){
-                    if(!meta.getColumnLabel(col).equalsIgnoreCase(s)){
+                    if(!meta.getColumnLabel(col).equalsIgnoreCase(s) &&
+                            !meta.getColumnName(col).equalsIgnoreCase(s)){
                         if(meta.getColumnType(col)==91) {
                             Date dt = (Date)value;
                             DateTime dateTime = new DateTime(dt.getTime());

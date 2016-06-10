@@ -91,7 +91,7 @@ public class SqlServerTestUtils implements DbmsTestUtils {
                 + ", primaryKeyFieldName VARCHAR(MAX) "
                 + ", primaryKeyFieldValue BIGINT "
                 + ", updateTime DateTIME "
-                + ", binaryContent VARBINARY(max) )");
+                + ", binaryContent VARBINARY(max))");
 
         targetTemplate.execute("IF OBJECT_ID('dbo.tblOutputDocs', 'U') IS NOT NULL DROP TABLE  dbo.tblOutputDocs");
         targetTemplate.execute("CREATE TABLE dbo.tblOutputDocs "
