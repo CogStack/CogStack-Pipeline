@@ -38,24 +38,18 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
-import org.springframework.integration.config.EnableIntegration;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.jdbc.support.MetaDataAccessException;
 import org.springframework.jms.connection.CachingConnectionFactory;
-import org.springframework.transaction.PlatformTransactionManager;
 import uk.ac.kcl.itemProcessors.JSONMakerItemProcessor;
 import uk.ac.kcl.model.Document;
 import uk.ac.kcl.utils.LoggerHelper;
 
 import javax.sql.DataSource;
-import java.util.ArrayList;
 
 /**
  *
  * @author rich
  */
 
-@EnableIntegration
 @Configuration
 @ComponentScan({"uk.ac.kcl.rowmappers",
         "uk.ac.kcl.utils",
@@ -65,8 +59,8 @@ import java.util.ArrayList;
 @EnableBatchProcessing
 @Import({
         BatchConfigurer.class,
-        SlaveIntegrationConfiguration.class,
-        MasterIntegrationConfiguration.class
+        RemoteConfiguration.class,
+        LocalConfiguration.class
 })
 public class JobConfiguration {
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(JobConfiguration.class);
@@ -244,6 +238,7 @@ public class JobConfiguration {
     public RunIdIncrementer runIdIncrementer(){return new RunIdIncrementer();};
 
     @Bean
+    @Qualifier("compositeSlaveStep")
     public Step compositeSlaveStep(
                         ItemReader<Document> reader,
             @Qualifier("compositeItemProcessor") ItemProcessor<Document, Document> processor,

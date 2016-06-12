@@ -19,52 +19,39 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.partition.PartitionHandler;
 import org.springframework.batch.core.partition.support.Partitioner;
+import org.springframework.batch.core.partition.support.TaskExecutorPartitionHandler;
 import org.springframework.batch.integration.partition.MessageChannelPartitionHandler;
-import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.integration.core.MessagingTemplate;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.PollableChannel;
-import org.springframework.transaction.PlatformTransactionManager;
 import uk.ac.kcl.jobParametersIncrementers.TLJobParametersIncrementer;
 import uk.ac.kcl.listeners.JobCompleteNotificationListener;
-import uk.ac.kcl.model.Document;
 
 /**
  *
  * @author King's College London, Richard Jackson <richgjackson@gmail.com>
  */
-@Profile("master")
-@ImportResource("classpath:spring-master.xml")
+@Profile("localPartitioning")
 @ComponentScan({"uk.ac.kcl.partitioners","uk.ac.kcl.listeners","uk.ac.kcl.jobParametersIncrementers"})
 @Configuration
-public class MasterIntegrationConfiguration {
+public class LocalConfiguration {
 
     @Autowired
     Environment env;
 
     @Bean
-    public MessageChannelPartitionHandler partitionHandler(
-            @Qualifier("requestChannel") MessageChannel reqChannel,
-            @Qualifier("aggregatedReplyChannel") PollableChannel repChannel) {
-        MessageChannelPartitionHandler handler = new MessageChannelPartitionHandler();
+    public TaskExecutorPartitionHandler partitionHandler(
+            @Qualifier("compositeSlaveStep")
+            Step compositeSlaveStep) {
+        TaskExecutorPartitionHandler handler = new TaskExecutorPartitionHandler();
         handler.setGridSize(Integer.parseInt(env.getProperty("gridSize")));
-        //handler.setStepName(env.getProperty("stepName"));
-        handler.setStepName("compositeSlaveStep");
-        handler.setReplyChannel(repChannel);
-        MessagingTemplate template = new MessagingTemplate();
-        template.setDefaultChannel(reqChannel);
-        template.setReceiveTimeout(Integer.parseInt(env.getProperty("partitionHandlerTimeout")));
-        handler.setMessagingOperations(template);
+        handler.setStep(compositeSlaveStep);
         return handler;
     }
 
@@ -72,12 +59,11 @@ public class MasterIntegrationConfiguration {
     public Job job(JobBuilderFactory jobs,
                    StepBuilderFactory steps,
                    Partitioner partitioner,
-                   @Qualifier("partitionHandler") PartitionHandler gatePartitionHandler,
                    JobCompleteNotificationListener jobCompleteNotificationListener,
-                   //@Qualifier("targetDatasourceTransactionManager")PlatformTransactionManager manager,
+                   @Qualifier("partitionHandler") PartitionHandler partitionHandler,
                    @Qualifier("tLJobParametersIncrementer") TLJobParametersIncrementer runIdIncrementer
 
-                   ) {
+    ) {
         Job job = jobs.get(env.getProperty("jobName"))
                 .incrementer(runIdIncrementer)
                 .listener(jobCompleteNotificationListener)
@@ -85,7 +71,7 @@ public class MasterIntegrationConfiguration {
                         steps
                                 .get(env.getProperty("jobName") + "MasterStep")
                                 .partitioner((env.getProperty("jobName")+"SlaveStep"), partitioner)
-                                .partitionHandler(gatePartitionHandler)
+                                .partitionHandler(partitionHandler)
                                 .build()
                 )
                 .end()
