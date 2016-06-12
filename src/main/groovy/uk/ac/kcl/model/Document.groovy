@@ -1,6 +1,5 @@
 package uk.ac.kcl.model
 
-import java.sql.Date
 import java.sql.Timestamp
 
 /**
@@ -27,7 +26,7 @@ class Document {
     String textContent
 
     //for es
-    LinkedHashMap<String,Object> additionalFields = new HashMap<String,Object>();
+    HashMap<String,Object> additionalFields = new HashMap<String,Object>();
 
     public String getDocName(){
         return srcTableName+"_"+srcColumnFieldName+"_"+primaryKeyFieldValue

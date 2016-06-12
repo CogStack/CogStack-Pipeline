@@ -60,8 +60,8 @@ public class PDFPreprocessorParser extends AbstractParser {
     private static final ImageMagickConfig DEFAULT_IMAGEMAGICK_CONFIG = new ImageMagickConfig();
     private static final Set<MediaType> SUPPORTED_TYPES = Collections.unmodifiableSet(
             new HashSet<MediaType>(Arrays.asList(new MediaType[]{
-        MediaType.application("pdf")
-    })));
+                    MediaType.application("pdf")
+            })));
 
     @Override
     public Set<MediaType> getSupportedTypes(ParseContext context) {
@@ -120,7 +120,7 @@ public class PDFPreprocessorParser extends AbstractParser {
         //needed to reset stream
         if (stream.markSupported()) {
             stream.mark(Integer.MAX_VALUE);
-        };
+        }
 
         //first do initial parse to see if there's subsantial content in pdf metadata already
         pdfParser.parse(stream, body, pdfMetadata, context);
@@ -130,7 +130,7 @@ public class PDFPreprocessorParser extends AbstractParser {
             pdfParser.parse(stream, handler, metadata, context);
             return;
         } else {
-            //add the PDF metadata to the official metadata object            
+            //add the PDF metadata to the official metadata object
             Arrays.asList(pdfMetadata.names()).stream().forEach(name -> {
                 metadata.add(name, pdfMetadata.get(name));
             });
@@ -164,7 +164,7 @@ public class PDFPreprocessorParser extends AbstractParser {
 
     private File makeTiffFromPDF(File input, File output, ImageMagickConfig config) throws IOException, TikaException {
         String[] cmd = {config.getImageMagickPath() + getImageMagickProg(), "-density", config.getDensity(),
-            input.getPath(), "-depth", config.getDepth(), "-quality", config.getQuality(), output.getPath()};
+                input.getPath(), "-depth", config.getDepth(), "-quality", config.getQuality(), output.getPath()};
 
         ProcessBuilder pb = new ProcessBuilder(cmd);
         //setEnv(config, pb);
@@ -206,7 +206,6 @@ public class PDFPreprocessorParser extends AbstractParser {
         return null;
     }
 
-    ;
     /**
      * Starts a thread that reads the contents of the standard output or error
      * stream of the given process to not block the process. The stream is

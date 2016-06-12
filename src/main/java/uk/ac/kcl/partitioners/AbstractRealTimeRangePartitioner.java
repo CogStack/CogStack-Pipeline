@@ -27,7 +27,7 @@ import java.sql.Timestamp;
 @ComponentScan("uk.ac.kcl.listeners")
 public abstract class AbstractRealTimeRangePartitioner {
 
-    final static Logger logger = LoggerFactory.getLogger(AbstractRealTimeRangePartitioner.class);
+    private final static Logger logger = LoggerFactory.getLogger(AbstractRealTimeRangePartitioner.class);
 
     @Autowired
     JobCompleteNotificationListener jobCompleteNotificationListener;
@@ -38,10 +38,10 @@ public abstract class AbstractRealTimeRangePartitioner {
     @Autowired
     protected Environment env;
 
-    protected String timeStamp;
+    String timeStamp;
 
-    protected JdbcTemplate jdbcTemplate;
-    protected Timestamp configuredFirstRunTimestamp;
+    private JdbcTemplate jdbcTemplate;
+    Timestamp configuredFirstRunTimestamp;
 
     @PostConstruct
     public void init(){
@@ -60,34 +60,30 @@ public abstract class AbstractRealTimeRangePartitioner {
     @Autowired
     protected BatchJobUtils batchJobUtils;
 
-    protected JobExecution jobExecution;
+    private JobExecution jobExecution;
 
-    protected String table;
+    String table;
 
-    protected String column;
+    String column;
 
-    public void setTable(String table) {
+    private void setTable(String table) {
         this.table = table;
     }
 
-    public void setColumn(String column) {
+    private void setColumn(String column) {
         this.column = column;
     }
 
-    public void setTimeStampColumnName(String timeStamp) {this.timeStamp = timeStamp;}
+    private void setTimeStampColumnName(String timeStamp) {this.timeStamp = timeStamp;}
 
-    protected boolean firstRun;
+    boolean firstRun;
 
 
-    protected boolean noRecordsFoundInProcessingPeriod(ScheduledPartitionParams scheduledPartitionParams){
-        if(scheduledPartitionParams.getMinTimeStamp() == null){
-            return true;
-        }else{
-            return false;
-        }
+    boolean noRecordsFoundInProcessingPeriod(ScheduledPartitionParams scheduledPartitionParams){
+        return scheduledPartitionParams.getMinTimeStamp() == null;
     }
 
-    protected Timestamp getFirstTimestampInTable() {
+    private Timestamp getFirstTimestampInTable() {
         Timestamp startTimeStamp = null;
         try{
             if (jobExecution.getJobParameters().getString("first_run_of_job").equalsIgnoreCase("true")) {
@@ -95,37 +91,37 @@ public abstract class AbstractRealTimeRangePartitioner {
                 startTimeStamp = jdbcTemplate.queryForObject(tsSql, Timestamp.class);
                 firstRun = true;
             }
-        }catch (NullPointerException ex){}
+        }catch (NullPointerException ignored){}
 
         return startTimeStamp;
     }
 
-    protected Timestamp getConfiguredRunAsTimestamp() {
+    private Timestamp getConfiguredRunAsTimestamp() {
         Timestamp timestamp = null;
         try {
             DateTimeFormatter formatter = DateTimeFormat.forPattern(env.getProperty("datePatternForSQL"));
             DateTime dt = formatter.parseDateTime(env.getProperty("firstJobStartDate"));
             timestamp = new Timestamp(dt.getMillis());
-        }catch(NullPointerException ex){}
+        }catch(NullPointerException ignored){}
         return timestamp;
     }
 
 
 
-    protected Timestamp getEndTimeStamp(Timestamp startTimeStamp ){
+    Timestamp getEndTimeStamp(Timestamp startTimeStamp){
         return new Timestamp(startTimeStamp.getTime() + Long.valueOf(env.getProperty("processingPeriod")));
     }
 
-    protected Timestamp getLastTimestampFromLastSuccessfulJob(){
+    Timestamp getLastTimestampFromLastSuccessfulJob(){
         Timestamp jobStartTimeStamp  = null;
         try {
             jobStartTimeStamp = new Timestamp(jobExecution.getJobParameters()
                     .getDate("last_timestamp_from_last_successful_job").getTime());
-        }catch(NullPointerException ex){}
+        }catch(NullPointerException ignored){}
         return jobStartTimeStamp;
     }
 
-    protected Timestamp getStartTimeStampIfConfiguredOrFirstRun(){
+    Timestamp getStartTimeStampIfConfiguredOrFirstRun(){
         Timestamp startTimestamp;
         if(configuredFirstRunTimestamp !=null && firstRun){
             startTimestamp =  configuredFirstRunTimestamp;
@@ -137,7 +133,7 @@ public abstract class AbstractRealTimeRangePartitioner {
             logger.info ("No previous successful batches detected. Commencing from first timestamp: " + startTimestamp.toString());
             return startTimestamp;
         }
-        return startTimestamp;
+        return null;
     }
 
     public void setJobExecution(JobExecution jobExecution) {

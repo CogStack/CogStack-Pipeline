@@ -15,24 +15,18 @@
  */
 package uk.ac.kcl.itemProcessors;
 
-import gate.Factory;
-import gate.creole.ExecutionException;
-import gate.creole.ResourceInstantiationException;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
-import uk.ac.kcl.exception.DeIdentificationFailedException;
 import uk.ac.kcl.model.Document;
 import uk.ac.kcl.service.ElasticGazetteerService;
 import uk.ac.kcl.service.GateService;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;

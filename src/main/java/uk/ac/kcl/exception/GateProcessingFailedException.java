@@ -19,6 +19,6 @@ package uk.ac.kcl.exception;
  *
  * @author rich
  */
-public class GateProcessingFailedException extends RuntimeException{
+class GateProcessingFailedException extends RuntimeException{
    
 }

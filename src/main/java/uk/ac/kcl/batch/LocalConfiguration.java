@@ -22,14 +22,13 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.core.partition.PartitionHandler;
 import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.core.partition.support.TaskExecutorPartitionHandler;
-import org.springframework.batch.integration.partition.MessageChannelPartitionHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
-import org.springframework.integration.core.MessagingTemplate;
-import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.PollableChannel;
 import uk.ac.kcl.jobParametersIncrementers.TLJobParametersIncrementer;
 import uk.ac.kcl.listeners.JobCompleteNotificationListener;
 
@@ -64,7 +63,7 @@ public class LocalConfiguration {
                    @Qualifier("tLJobParametersIncrementer") TLJobParametersIncrementer runIdIncrementer
 
     ) {
-        Job job = jobs.get(env.getProperty("jobName"))
+        return jobs.get(env.getProperty("jobName"))
                 .incrementer(runIdIncrementer)
                 .listener(jobCompleteNotificationListener)
                 .flow(
@@ -76,7 +75,6 @@ public class LocalConfiguration {
                 )
                 .end()
                 .build();
-        return job;
 
     }
 }

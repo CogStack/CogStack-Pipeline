@@ -9,7 +9,7 @@ import org.springframework.beans.factory.InitializingBean;
 public class LoggerHelper implements InitializingBean {
     private String contextID;
 
-    public LoggerHelper() {};
+    public LoggerHelper() {}
 
     public void setContextID(String id) {
         this.contextID = id;
@@ -18,6 +18,6 @@ public class LoggerHelper implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         if ( contextID != null )
-            MDC.put("contextID", contextID.toString());
+            MDC.put("contextID", contextID);
     }
 }

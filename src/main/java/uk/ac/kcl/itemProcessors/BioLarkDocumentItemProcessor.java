@@ -21,14 +21,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import uk.ac.kcl.model.Document;
-import uk.ac.kcl.service.ElasticGazetteerService;
-import uk.ac.kcl.service.GateService;
 
 import javax.annotation.PostConstruct;
 import java.util.Arrays;

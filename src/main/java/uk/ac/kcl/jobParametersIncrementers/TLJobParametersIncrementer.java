@@ -3,18 +3,14 @@ package uk.ac.kcl.jobParametersIncrementers;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.core.launch.*;
-import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
-import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.launch.JobOperator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import uk.ac.kcl.utils.BatchJobUtils;
 
-import javax.sql.DataSource;
 import java.sql.Timestamp;
-import java.util.List;
 
 /**
  * Created by rich on 02/06/16.
@@ -32,7 +28,7 @@ public class TLJobParametersIncrementer implements JobParametersIncrementer {
     @Autowired
     JobOperator jobOperator;
 
-    private static String RUN_ID_KEY = "run.id";
+    private static final String RUN_ID_KEY = "run.id";
 
     private String key = RUN_ID_KEY;
     @Autowired

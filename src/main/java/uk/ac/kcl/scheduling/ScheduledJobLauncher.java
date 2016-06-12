@@ -17,7 +17,6 @@ package uk.ac.kcl.scheduling;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;

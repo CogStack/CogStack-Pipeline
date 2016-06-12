@@ -29,7 +29,8 @@ import java.sql.SQLException;
 @Component
 public class ColumnKeyRowMapper implements RowMapper{
 
-    public ColumnKeyRowMapper(){};
+    public ColumnKeyRowMapper(){}
+
     @Override
     public Long mapRow(ResultSet rs, int i) throws SQLException {
 

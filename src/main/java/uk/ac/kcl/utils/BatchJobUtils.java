@@ -4,7 +4,6 @@ package uk.ac.kcl.utils;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
@@ -13,8 +12,6 @@ import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 
@@ -49,7 +46,7 @@ public class BatchJobUtils {
                 env.getProperty("dbmsToJavaSqlTimestampType")+
                 ") >  CAST('" + lastGoodJob.toString() +
                 "' AS "+env.getProperty("dbmsToJavaSqlTimestampType")+")";
-        Timestamp timestampLong = (Timestamp)template.queryForObject(sql, Timestamp.class);
+        Timestamp timestampLong = template.queryForObject(sql, Timestamp.class);
 
         if(timestampLong == null){
             return null;

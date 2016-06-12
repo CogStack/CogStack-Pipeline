@@ -58,7 +58,7 @@ public class DocumentRowMapper implements RowMapper<Document>{
             binaryContentFieldName = null;
         }
     }
-    String binaryContentFieldName;
+    private String binaryContentFieldName;
     private String srcTableName;
     private String srcColumnFieldName;
     private String primaryKeyFieldName;
@@ -68,7 +68,7 @@ public class DocumentRowMapper implements RowMapper<Document>{
 
 
 
-    protected void mapFields(Document doc, ResultSet rs) throws SQLException {
+    void mapFields(Document doc, ResultSet rs) throws SQLException {
 //implement later if database name/schema is requried
 //        if(rs.getString(env.getProperty("databaseName"))==null){
 //            doc.setDatabaseName(null);

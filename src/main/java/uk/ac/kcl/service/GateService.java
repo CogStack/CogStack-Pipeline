@@ -17,8 +17,6 @@ package uk.ac.kcl.service;
 
 import gate.*;
 import gate.creole.ExecutionException;
-import gate.creole.ResourceInstantiationException;
-import gate.persist.PersistenceException;
 import gate.util.GateException;
 import gate.util.persistence.PersistenceManager;
 import org.slf4j.LoggerFactory;
@@ -33,7 +31,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Level;
 
 /**
  *
@@ -49,26 +46,23 @@ public class GateService {
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(GateService.class);
 
 
-    File gateHome;
-    File gateApp;
-    LinkedBlockingQueue<CorpusController> genericQueue;
+    private LinkedBlockingQueue<CorpusController> genericQueue;
     private int poolSize;
     private Iterable<String> annotationSets;
 
-    File deidApp;
-    LinkedBlockingQueue<CorpusController> deIdQueue;
+    private LinkedBlockingQueue<CorpusController> deIdQueue;
 
 
     @Autowired
     private Environment env;
 
-    public GateService() {
+    private GateService() {
     }
 
     @PostConstruct
-    public void init() throws ResourceInstantiationException, GateException, PersistenceException, IOException {
+    public void init() throws GateException, IOException {
 
-        gateHome = new File(env.getProperty("gateHome"));
+        File gateHome = new File(env.getProperty("gateHome"));
         poolSize = Integer.parseInt(env.getProperty("poolSize"));
         //in case called by other contexts
         if(!Gate.isInitialised()) {
@@ -83,12 +77,10 @@ public class GateService {
     private void loadresources() throws GateException, IOException {
         List<String> activeProfiles = Arrays.asList(env.getActiveProfiles());
         //if called assume resources are either new/damaged/stale etc and delete all
-        for(Resource resource : Gate.getCreoleRegister().getAllInstances("gate.Resource")){
-            Factory.deleteResource(resource);
-        }
+        Gate.getCreoleRegister().getAllInstances("gate.Resource").forEach(Factory::deleteResource);
 
         if(activeProfiles.contains("gate")){
-            gateApp = new File(env.getProperty("gateApp"));
+            File gateApp = new File(env.getProperty("gateApp"));
             annotationSets = Arrays.asList(env.getProperty("gateAnnotationSets").split(","));
             genericQueue = new LinkedBlockingQueue<>();
             Corpus corpus = Factory.newCorpus("Corpus");
@@ -103,7 +95,7 @@ public class GateService {
 
 
         if(activeProfiles.contains("deid")){
-            deidApp = new File(env.getProperty("deIdApp"));
+            File deidApp = new File(env.getProperty("deIdApp"));
             deIdQueue = new LinkedBlockingQueue<>();
             Corpus corpus = Factory.newCorpus("Corpus");
             CorpusController pipeline = (CorpusController) PersistenceManager
@@ -116,13 +108,14 @@ public class GateService {
         }
     }
 
-    public gate.Document processDoc(gate.Document doc) throws ExecutionException {
+    public void processDoc(Document doc) throws ExecutionException {
         CorpusController controller = null;
         try {
             controller = genericQueue.take();
         } catch (InterruptedException ex) {
             LOG.warn("GATE app execution interrupted", ex);
         }
+        assert controller != null;
         controller.getCorpus().add(doc);
         controller.execute();
         controller.getCorpus().clear();
@@ -131,16 +124,15 @@ public class GateService {
         } catch (InterruptedException ex) {
             LOG.info("Interrupted", ex);
         }
-        return doc;
     }
 
     public String deIdentifyString(String text, String primaryKeyFieldValue)  {
-        Document doc = null;
+        Document doc;
         try {
             doc = Factory.newDocument(text);
 
             doc.getFeatures().put("primaryKeyFieldValue", primaryKeyFieldValue);
-            CorpusController controller = null;
+            CorpusController controller;
 
             controller = deIdQueue.take();
 
@@ -172,10 +164,9 @@ public class GateService {
             if (ASName != null) {
                 map.put(ASName, doc.getAnnotations(ASName));
             } else {
-                map.put("", doc.getAnnotations(ASName));
+                map.put("", doc.getAnnotations(null));
             }
         }
-        String json = gate.corpora.DocumentJsonUtils.toJson(doc, map);
-        return json;
+        return gate.corpora.DocumentJsonUtils.toJson(doc, map);
     }
 }

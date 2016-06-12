@@ -58,11 +58,7 @@ public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemPr
 
     @PostConstruct
     public void init(){
-        if(env.getProperty("keepTags").equalsIgnoreCase("true")) {
-            this.keepTags = true;
-        }else{
-            this.keepTags = false;
-        }
+        this.keepTags = env.getProperty("keepTags").equalsIgnoreCase("true");
         setFieldName(env.getProperty("tikaFieldName"));
     }
 

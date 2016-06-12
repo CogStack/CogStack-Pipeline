@@ -8,11 +8,11 @@ import uk.ac.kcl.model.Document;
 public abstract class TLItemProcessor {
     private String fieldName;
 
-    public void setFieldName(String fieldName){
+    void setFieldName(String fieldName){
         this.fieldName = fieldName;
     }
 
-    public void addField(Document doc, String content){
+    void addField(Document doc, String content){
         doc.getAdditionalFields().put(fieldName, content);
 
     }

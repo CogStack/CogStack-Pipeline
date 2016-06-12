@@ -35,7 +35,7 @@ import java.util.Map;
 @org.springframework.context.annotation.Profile("primaryKeyAndTimeStampPartition")
 public class RealtimeTimeStampAndPKRangePartitioner extends AbstractRealTimeRangePartitioner implements Partitioner{
 
-    final static Logger logger = LoggerFactory.getLogger(RealtimeTimeStampAndPKRangePartitioner.class);
+    private final static Logger logger = LoggerFactory.getLogger(RealtimeTimeStampAndPKRangePartitioner.class);
 
     @Override
     public Map<String, ExecutionContext> partition(int gridSize) {
@@ -97,7 +97,7 @@ public class RealtimeTimeStampAndPKRangePartitioner extends AbstractRealTimeRang
 
 //////////////////////////////////    TEST THIS BLOCK
 
-    ScheduledPartitionParams scanForNewRecords(Timestamp jobStartTimeStamp) {
+    private ScheduledPartitionParams scanForNewRecords(Timestamp jobStartTimeStamp) {
         ScheduledPartitionParams result = null;
         logger.info("No new data found in processing period " + String.valueOf(jobStartTimeStamp.toString())
                 +" to " +getEndTimeStamp(jobStartTimeStamp).toString()+". Commencing scan ahead");
@@ -118,7 +118,7 @@ public class RealtimeTimeStampAndPKRangePartitioner extends AbstractRealTimeRang
 
 ////////////////////////////
 
-    Map<String, ExecutionContext> getExecutionContextMap(int gridSize, ScheduledPartitionParams params) {
+    private Map<String, ExecutionContext> getExecutionContextMap(int gridSize, ScheduledPartitionParams params) {
         logger.info("commencing timestamp and PK based partitioning");
         Map<String,ExecutionContext> result = new HashMap<>();
         logger.info("Database not yet synched. Synching as far as  "

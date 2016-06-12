@@ -31,7 +31,8 @@ import java.sql.SQLException;
 @Component
 public class SimpleDocumentRowMapper implements RowMapper<MultilineDocument>{
 
-    public SimpleDocumentRowMapper(){};
+    public SimpleDocumentRowMapper(){}
+
     private String documentKeyName;
     private String lineKeyName;
     private String lineContents;

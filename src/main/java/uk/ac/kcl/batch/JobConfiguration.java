@@ -17,7 +17,6 @@ package uk.ac.kcl.batch;
 
 
 import com.zaxxer.hikari.HikariDataSource;
-import org.apache.activemq.ActiveMQConnectionFactory;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -38,7 +37,6 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
-import org.springframework.jms.connection.CachingConnectionFactory;
 import uk.ac.kcl.itemProcessors.JSONMakerItemProcessor;
 import uk.ac.kcl.model.Document;
 import uk.ac.kcl.utils.LoggerHelper;
@@ -71,7 +69,8 @@ public class JobConfiguration {
         LoggerHelper lh = new LoggerHelper();
         lh.setContextID(env.getProperty("jobName"));
         return lh;
-    };
+    }
+
     /*
         
     
@@ -224,7 +223,7 @@ public class JobConfiguration {
 
     @Bean
     @Qualifier("runIdIncrementer")
-    public RunIdIncrementer runIdIncrementer(){return new RunIdIncrementer();};
+    public RunIdIncrementer runIdIncrementer(){return new RunIdIncrementer();}
 
     @Bean
     @Qualifier("compositeSlaveStep")
@@ -236,7 +235,7 @@ public class JobConfiguration {
             //@Qualifier("targetDatasourceTransactionManager")PlatformTransactionManager manager,
             StepBuilderFactory stepBuilderFactory
     ) {
-        Step step = stepBuilderFactory.get("compositeSlaveStep")
+        return stepBuilderFactory.get("compositeSlaveStep")
                 .<Document, Document> chunk(
                         Integer.parseInt(env.getProperty("chunkSize")))
                 .reader(reader)
@@ -248,6 +247,5 @@ public class JobConfiguration {
                 //add acceptable exceptions here
                 .taskExecutor(taskExecutor)
                 .build();
-        return step;
     }
 }

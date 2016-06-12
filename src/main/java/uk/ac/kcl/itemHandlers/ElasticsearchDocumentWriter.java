@@ -16,9 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.support.transaction.TransactionAwareProxyFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Profile;
-import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import uk.ac.kcl.model.Document;
@@ -39,7 +37,7 @@ public class ElasticsearchDocumentWriter implements ItemWriter<Document> {
     private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchDocumentWriter.class);
     private long timeout;
     List<T> output = TransactionAwareProxyFactory.createTransactionalList();
-    public ElasticsearchDocumentWriter() {}
+    private ElasticsearchDocumentWriter() {}
 
     @Autowired
     Environment env;

@@ -22,16 +22,10 @@
 package uk.ac.kcl.utils;
 
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.WordUtils;
-import org.apache.commons.lang.math.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,9 +33,9 @@ import java.util.stream.Collectors;
 
 public class StringTools {
 
-    private static List<String> maleNames = new ArrayList<>();
-    private static List<String> femaleNames = new ArrayList<>();
-    private static List<String> lastNames = new ArrayList<>();
+    private static final List<String> maleNames = new ArrayList<>();
+    private static final List<String> femaleNames = new ArrayList<>();
+    private static final List<String> lastNames = new ArrayList<>();
 
     public static int getLevenshteinDistance(String str1, String str2) {
         return StringUtils.getLevenshteinDistance(str1, str2);
@@ -53,11 +47,8 @@ public class StringTools {
     }
 
     public static boolean isNotTooShort(String string) {
-        if (StringUtils.isBlank(string)) {
-            return false;
-        }
+        return !StringUtils.isBlank(string) && string.trim().length() > 3;
 
-        return string.trim().length() > 3;
     }
 
     /**
@@ -66,7 +57,7 @@ public class StringTools {
      * @param maxDistance Maximum edit distance that should be satisfied.
      * @return A list of substrings from the @sourceString each of which approximately matches {@code search}.
      */
-    public static Set<String> getApproximatelyMatchingStringList(String sourceString, String search, int maxDistance) {
+    private static Set<String> getApproximatelyMatchingStringList(String sourceString, String search, int maxDistance) {
         Set<String> matches = new HashSet<>();
         if (StringUtils.isBlank(search)) {
             return matches;
@@ -107,14 +98,14 @@ public class StringTools {
      * @param word
      * @return Max heuristic Levenshtein distance for {@code word}.
      */
-    protected static int getMaxAllowedLevenshteinDistanceFor(String word) {
+    private static int getMaxAllowedLevenshteinDistanceFor(String word) {
         if (StringUtils.isBlank(word)) {
             return 0;
         }
         return Math.round((float)word.length()*15/100);
     }
 
-    public static String getCompletingString(String string, int begin, int end) {
+    private static String getCompletingString(String string, int begin, int end) {
         while ( begin > 0 && StringUtils.isAlphanumeric(string.substring(begin, begin+1)) ){
             begin -= 1;
         }
@@ -258,68 +249,8 @@ public class StringTools {
         return result;
     }
 
-    public static String getRandomForeName() {
-        if (CollectionUtils.isEmpty(maleNames)) {
-            loadMaleNames();
-            loadFemaleNames();
-            loadSurnames();
-        }
 
 
-        boolean male = RandomUtils.nextBoolean();
-        if (male) {
-            int randIndex = RandomUtils.nextInt(maleNames.size());
-            return maleNames.get(randIndex);
-        }
-
-        int randIndex = RandomUtils.nextInt(femaleNames.size());
-        return femaleNames.get(randIndex);
-    }
-
-    public static String getRandomSurname() {
-        if (CollectionUtils.isEmpty(lastNames)) {
-            loadSurnames();
-        }
-
-        int randIndex = RandomUtils.nextInt(lastNames.size());
-        return lastNames.get(randIndex);
-    }
-
-    private static void loadSurnames() {
-        InputStream resourceAsStream = StringTools.class.getClassLoader().getResourceAsStream("anonymisation/lastnames");
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(resourceAsStream))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                lastNames.add(WordUtils.capitalize(line));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static void loadFemaleNames() {
-        InputStream resourceAsStream = StringTools.class.getClassLoader().getResourceAsStream("anonymisation/femaleNames");
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(resourceAsStream))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                femaleNames.add(WordUtils.capitalize(line));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static void loadMaleNames() {
-        InputStream resourceAsStream = StringTools.class.getClassLoader().getResourceAsStream("anonymisation/maleNames");
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(resourceAsStream))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                maleNames.add(WordUtils.capitalize(line));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
 
 }

@@ -66,24 +66,23 @@ public class DbLineFixerItemProcessor extends TLItemProcessor implements ItemPro
     @Override
     public Document process(final Document doc) throws Exception {
 
-        StringBuilder sql = new StringBuilder();
-        sql.append("SELECT ")
-                .append(env.getProperty("lf.documentKeyName"))
-                .append(", ")
-                .append(env.getProperty("lf.lineKeyName"))
-                .append(", ")
-                .append(env.getProperty("lf.lineContents"))
-                .append(" FROM ")
-                .append(env.getProperty("lf.srcTableName"))
-                .append(" WHERE ")
-                .append(env.getProperty("lf.documentKeyName"))
-                .append(" = '")
-                .append(doc.getPrimaryKeyFieldValue())
-                .append("' ORDER BY ")
-                .append(env.getProperty("lf.lineKeyName"))
-                .append(" DESC");
+        String sql = "SELECT " +
+                env.getProperty("lf.documentKeyName") +
+                ", " +
+                env.getProperty("lf.lineKeyName") +
+                ", " +
+                env.getProperty("lf.lineContents") +
+                " FROM " +
+                env.getProperty("lf.srcTableName") +
+                " WHERE " +
+                env.getProperty("lf.documentKeyName") +
+                " = '" +
+                doc.getPrimaryKeyFieldValue() +
+                "' ORDER BY " +
+                env.getProperty("lf.lineKeyName") +
+                " DESC";
 
-        List<MultilineDocument> docs = template.query(sql.toString(), simpleMapper);
+        List<MultilineDocument> docs = template.query(sql, simpleMapper);
 
         TreeMap<Integer, String> map = new TreeMap<>();
         for (MultilineDocument mldoc : docs) {

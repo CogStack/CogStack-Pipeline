@@ -35,7 +35,7 @@ import java.util.Map;
 @org.springframework.context.annotation.Profile("primaryKeyPartition")
 public class RealtimePKRangePartitioner extends AbstractRealTimeRangePartitioner implements Partitioner {
 
-    final static Logger logger = LoggerFactory.getLogger(RealtimePKRangePartitioner.class);
+    private final static Logger logger = LoggerFactory.getLogger(RealtimePKRangePartitioner.class);
 
     @Override
     public Map<String, ExecutionContext> partition(int gridSize) {
@@ -56,7 +56,7 @@ public class RealtimePKRangePartitioner extends AbstractRealTimeRangePartitioner
 
     private Map<String, ExecutionContext> getExecutionContextMap(int gridSize, ScheduledPartitionParams params) {
         logger.info("Commencing PK only partition");
-        Map<String, ExecutionContext> result = new HashMap<String, ExecutionContext>();
+        Map<String, ExecutionContext> result = new HashMap<>();
         if ((params.getMaxId() -params.getMinId()) < (long) gridSize) {
             long partitionCount = (params.getMaxId() -params.getMaxId());
             logger.info("There are fewer new records than the grid size. Expect only " + partitionCount+ "partitions this execution") ;
@@ -100,8 +100,7 @@ public class RealtimePKRangePartitioner extends AbstractRealTimeRangePartitioner
                     "Checking again on next run");
             jobCompleteNotificationListener.setLastDateInthisJob(startTimeStamp.getTime());
         }
-        Map<String, ExecutionContext> result = new HashMap<String, ExecutionContext>();
-        return result;
+        return new HashMap<>();
     }
 
 
@@ -127,6 +126,7 @@ public class RealtimePKRangePartitioner extends AbstractRealTimeRangePartitioner
                     "' as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) ";
         }else if(firstRun) {
         //no new SQL required - process all data for first run
+            logger.debug("first run");
         }else{
             throw new RuntimeException("unable to determine partition requirement");
         }

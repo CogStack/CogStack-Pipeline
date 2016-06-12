@@ -15,9 +15,11 @@
  */
 package uk.ac.kcl;
 
-import org.springframework.batch.core.launch.support.CommandLineJobRunner;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.core.env.*;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.MapPropertySource;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.StandardEnvironment;
 import uk.ac.kcl.batch.JobConfiguration;
 import uk.ac.kcl.scheduling.ScheduledJobLauncher;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
@@ -26,8 +28,6 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -40,38 +40,39 @@ public class Main {
         File folder = new File(args[0]);
         File[] listOfFiles = folder.listFiles();
 
-        for (int i = 0; i < listOfFiles.length; i++) {
-            if (listOfFiles[i].isFile()) {
-                if(listOfFiles[i].getName().endsWith(".properties")){
-                    System.out.println("Properties sile found:" + listOfFiles[i].getName() +
+        assert listOfFiles != null;
+        for (File listOfFile : listOfFiles) {
+            if (listOfFile.isFile()) {
+                if (listOfFile.getName().endsWith(".properties")) {
+                    System.out.println("Properties sile found:" + listOfFile.getName() +
                             ". Attempting to launch application context");
                     Properties properties = new Properties();
-                    InputStream input = null;
+                    InputStream input;
 
-                    try{
-                        input = new FileInputStream(listOfFiles[i]);
+                    try {
+                        input = new FileInputStream(listOfFile);
                         properties.load(input);
-                        Map<String,Object> map = new HashMap<>();
-                        properties.forEach((k,v)->{
-                            map.put(k.toString(),v);
+                        Map<String, Object> map = new HashMap<>();
+                        properties.forEach((k, v) -> {
+                            map.put(k.toString(), v);
                         });
                         ConfigurableEnvironment environment = new StandardEnvironment();
                         MutablePropertySources propertySources = environment.getPropertySources();
-                        propertySources.addFirst(new MapPropertySource(listOfFiles[i].getName(),map));
+                        propertySources.addFirst(new MapPropertySource(listOfFile.getName(), map));
                         @SuppressWarnings("resource")
                         AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
                         ctx.setEnvironment(environment);
                         String scheduling;
                         try {
                             scheduling = properties.getProperty("useScheduling");
-                        }catch(NullPointerException ex){
+                        } catch (NullPointerException ex) {
                             throw new RuntimeException("useScheduling not configured. Must be true, false or slave");
                         }
 
                         if (scheduling.equalsIgnoreCase("true")) {
                             ctx.register(ScheduledJobLauncher.class);
                             ctx.refresh();
-                        } else if(scheduling.equalsIgnoreCase("false")) {
+                        } else if (scheduling.equalsIgnoreCase("false")) {
                             ctx.register(SingleJobLauncher.class);
                             ctx.refresh();
                             SingleJobLauncher launcher = ctx.getBean(SingleJobLauncher.class);
@@ -80,8 +81,6 @@ public class Main {
                             ctx.register(JobConfiguration.class);
                             ctx.refresh();
                         }
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

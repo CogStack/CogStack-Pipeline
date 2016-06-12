@@ -108,7 +108,7 @@ public class TesseractOCRParser extends AbstractParser {
         boolean hasTesseract = ExternalParser.check(checkCmd);
         TESSERACT_PRESENT.put(tesseract, hasTesseract);
         return hasTesseract;
-     
+
     }
 
     public void parse(Image image, ContentHandler handler, Metadata metadata, ParseContext context) throws IOException,
