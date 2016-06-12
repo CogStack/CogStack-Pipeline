@@ -27,20 +27,21 @@ The behaviour of turbo-laser is configured by activating a variety of spring pro
 
 
 processes
-1. tika - process JDBC input with Tika. Extended with a custom PDF preprocessor to perform OCR on scanned PDF document. Extended with a custom PDF preprocessor to perform OCR on scanned PDF documents. (requires ImageMagick and Tesseract
-2. gate - process JDBC input with a generic GATE app.
-3. dBLineFixer - process JDBC input with dBLineFixer (concatenates multi-row documents)
-4. basic - a job without a processing step, for simply writing JDBC input to elasticsearch
-5. deid - deidentify text with a GATE application or using teh ElasticGazetteer
-6. biolark - specify the endpoint for the Biolark application, Tudor Groza's awesome HPO term extraction project.
+
+ 1. tika - process JDBC input with Tika. Extended with a custom PDF preprocessor to perform OCR on scanned PDF document. Extended with a custom PDF preprocessor to perform OCR on scanned PDF documents. (requires ImageMagick and Tesseract
+ 2. gate - process JDBC input with a generic GATE app.
+ 3. dBLineFixer - process JDBC input with dBLineFixer (concatenates multi-row documents)
+ 4. basic - a job without a processing step, for simply writing JDBC input to elasticsearch
+ 5. deid - deidentify text with a GATE application or using teh ElasticGazetteer
+ 6. biolark - specify the endpoint for the Biolark application, Tudor Groza's awesome HPO term extraction project.
 
 scaling
-1. localPartitioning - run all processes within the launching JVM
-2. remotePartitioning - send partitions to JMS middleware, to be picked up by remote hosts (see below)
+ 1. localPartitioning - run all processes within the launching JVM
+ 2. remotePartitioning - send partitions to JMS middleware, to be picked up by remote hosts (see below)
 
 outputs
-1. elasticsearch - write to an elasticsearch cluster
-2. jdbc - write to a JDBC endpoint
+ 1. elasticsearch - write to an elasticsearch cluster
+ 2. jdbc - write to a JDBC endpoint
 
 
 
