@@ -15,6 +15,7 @@
  */
 package uk.ac.kcl.batch;
 
+import org.apache.activemq.ActiveMQConnectionFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
@@ -33,6 +34,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.integration.config.EnableIntegration;
 import org.springframework.integration.core.MessagingTemplate;
+import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.PollableChannel;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -69,7 +71,20 @@ public class RemoteConfiguration {
         handler.setMessagingOperations(template);
         return handler;
     }
+    @Bean
+    public CachingConnectionFactory connectionFactory(ActiveMQConnectionFactory factory){
+        return new CachingConnectionFactory(factory);
+    }
 
+    @Bean
+    public ActiveMQConnectionFactory amqConnectionFactory(){
+        ActiveMQConnectionFactory factory =
+                new ActiveMQConnectionFactory(env.getProperty("jmsIP"));
+        factory.setUserName(env.getProperty("jmsUsername"));
+        factory.setPassword(env.getProperty("jmsPassword"));
+        factory.setCloseTimeout(Integer.valueOf(env.getProperty("closeTimeout")));
+        return factory;
+    }
     @Bean
     public Job job(JobBuilderFactory jobs,
                    StepBuilderFactory steps,
