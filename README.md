@@ -22,18 +22,16 @@ example configs can be generated from the gradle task:
 gradle writeExampleConfig
 ```
 
-The behaviour of turbo-laser is configured by activating a variety of spring profiles as required. The current profiles are
-
-
+The behaviour of turbo-laser is configured by activating a variety of spring profiles (again, in the config files - see examples) as required. Currently. the available profiles are
 
 processes
 
- 1. tika - process JDBC input with Tika. Extended with a custom PDF preprocessor to perform OCR on scanned PDF document. Extended with a custom PDF preprocessor to perform OCR on scanned PDF documents. (requires ImageMagick and Tesseract
+ 1. tika - process JDBC input with Tika. Extended with a custom PDF preprocessor to perform OCR on scanned PDF document.  (requires ImageMagick and Tesseract on the PATH)
  2. gate - process JDBC input with a generic GATE app.
  3. dBLineFixer - process JDBC input with dBLineFixer (concatenates multi-row documents)
  4. basic - a job without a processing step, for simply writing JDBC input to elasticsearch
- 5. deid - deidentify text with a GATE application or using teh ElasticGazetteer
- 6. biolark - specify the endpoint for the Biolark application, Tudor Groza's awesome HPO term extraction project.
+ 5. deid - deidentify text with a GATE application (such as Azad Dehghan's DEID) or using the ElasticGazetteer - query a database for identifiers and mask them in free text using Levenstein distance
+ 6. biolark - enable Biolark, Tudor Groza's awesome HPO term extraction project.
 
 scaling
  1. localPartitioning - run all processes within the launching JVM
@@ -42,7 +40,6 @@ scaling
 outputs
  1. elasticsearch - write to an elasticsearch cluster
  2. jdbc - write to a JDBC endpoint
-
 
 
 ## Scheduling
@@ -62,14 +59,11 @@ Turbo-laser uses the SLF4J abstraction for logging, with logback as the concrete
 
 e.g.
 
-
 ```
 java -DLOG_FILE_NAME=aTestLog -DLOG_LEVEL=debug -jar turbo-laser-0.3.0.jar /my/path/to/configs
 ```
 
-
 Turbo-laser assumes the job repository schema is already in place in the DB implementation of your choice (see spring batch docs for more details)
-
 
 ## Scaling
 
