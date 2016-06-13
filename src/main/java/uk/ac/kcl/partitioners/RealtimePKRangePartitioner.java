@@ -65,6 +65,8 @@ public class RealtimePKRangePartitioner extends AbstractRealTimeRangePartitioner
                 result.put("partition" + (i + 1L), value);
                 value.putLong("minValue", (params.getMinId()+1L+i) );
                 value.putLong("maxValue", (params.getMinId()+1L+i) );
+                value.put("min_time_stamp", params.getMinTimeStamp().toString());
+                value.put("max_time_stamp", params.getMaxTimeStamp().toString());
             }
         } else {
             logger.info("Multiple steps to generate this job");
@@ -76,6 +78,8 @@ public class RealtimePKRangePartitioner extends AbstractRealTimeRangePartitioner
                 result.put("partition" + (i + 1), value);
                 value.putLong("minValue", start);
                 value.putLong("maxValue", end);
+                value.put("min_time_stamp", params.getMinTimeStamp().toString());
+                value.put("max_time_stamp", params.getMaxTimeStamp().toString());
                 start += targetSize;
                 end += targetSize;
             }
