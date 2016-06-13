@@ -6,6 +6,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.ComponentScan;
@@ -19,6 +20,8 @@ import uk.ac.kcl.utils.BatchJobUtils;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by rich on 03/06/16.
@@ -134,6 +137,41 @@ public abstract class AbstractRealTimeRangePartitioner {
             return startTimestamp;
         }
         return null;
+    }
+    Map<String, ExecutionContext> getMap(int gridSize, ScheduledPartitionParams params) {
+        Map<String, ExecutionContext> result = new HashMap<>();
+        if ((params.getMaxId() -params.getMinId()) < (long) gridSize) {
+            long partitionCount = (params.getMaxId() -params.getMaxId());
+            logger.info("There are fewer new records than the grid size. Expect only " + partitionCount+ "partitions this execution") ;
+            for(long i = 0;i<(partitionCount);i++) {
+                ExecutionContext value = new ExecutionContext();
+                result.put("partition" + (i + 1L), value);
+                value.putLong("minValue", (params.getMinId()+1L+i) );
+                value.putLong("maxValue", (params.getMinId()+1L+i) );
+                value.put("min_time_stamp", params.getMinTimeStamp().toString());
+                value.put("max_time_stamp", params.getMaxTimeStamp().toString());
+            }
+        } else {
+            logger.info("Multiple steps to generate this job");
+            long targetSize = (params.getMaxId() - params.getMinId()) / gridSize + 1;
+            long start = params.getMinId();
+            long end = start + targetSize - 1;
+            for (int i = 0; i < gridSize; i++) {
+                ExecutionContext value = new ExecutionContext();
+                result.put("partition" + (i + 1), value);
+                value.putLong("minValue", start);
+                value.putLong("maxValue", end);
+                value.put("min_time_stamp", params.getMinTimeStamp().toString());
+                value.put("max_time_stamp", params.getMaxTimeStamp().toString());
+                start += targetSize;
+                end += targetSize;
+            }
+        }
+        if (params.getMaxTimeStamp() !=null){
+            jobCompleteNotificationListener.setLastDateInthisJob(params.getMaxTimeStamp().getTime());
+        }
+        logger.info("partitioning complete");
+        return result;
     }
 
     public void setJobExecution(JobExecution jobExecution) {
