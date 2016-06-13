@@ -82,7 +82,7 @@ public class PostGresTestUtils implements DbmsTestUtils{
     }
 
 
-    public void initTikaTable() {
+    public void createTikaTable() {
 ////        for postgres
         sourceTemplate.execute("DROP TABLE IF EXISTS tblInputDocs");
         sourceTemplate.execute("CREATE TABLE tblInputDocs"
@@ -105,7 +105,7 @@ public class PostGresTestUtils implements DbmsTestUtils{
                 + ", output text )");
     }
 
-    public void initTextualGateTable() {
+    public void createTextualGateTable() {
 ////        for postgres
         sourceTemplate.execute("DROP TABLE IF EXISTS tblInputDocs");
         sourceTemplate.execute("CREATE TABLE tblInputDocs"
@@ -160,7 +160,7 @@ public class PostGresTestUtils implements DbmsTestUtils{
 
     }
 
-    public void initMultiLineTextTable(){
+    public void createMultiLineTextTable(){
         createBasicInputTable();
         sourceTemplate.execute("DROP TABLE IF EXISTS tblDocLines");
         sourceTemplate.execute("CREATE TABLE tblDocLines"
@@ -185,12 +185,17 @@ public class PostGresTestUtils implements DbmsTestUtils{
 
 
 
-    public void initJobRepository(){
+    public void createJobRepository(){
         dropTablesResource = new ClassPathResource("org/springframework/batch/core/schema-drop-postgresql.sql");
         makeTablesResource = new ClassPathResource("org/springframework/batch/core/schema-postgresql.sql");
         rdp.addScript(dropTablesResource);
         rdp.addScript(makeTablesResource);
         rdp.execute(jobRepositoryDataSource);
+    }
+
+    @Override
+    public void createDeIdInputTable() {
+
     }
 
 

@@ -63,8 +63,8 @@ public class PostGresIntegrationTestsGATEPKPartitionWithoutScheduling {
     TestUtils testUtils;
     @Before
     public void init(){
-        postGresTestUtils.initJobRepository();
-        postGresTestUtils.initTextualGateTable();
+        postGresTestUtils.createJobRepository();
+        postGresTestUtils.createTextualGateTable();
         testUtils.insertTestXHTMLForGate("tblInputDocs",false);
     }
 

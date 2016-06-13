@@ -81,7 +81,7 @@ public class SqlServerTestUtils implements DbmsTestUtils {
 
 
     @Override
-    public void initTikaTable() {
+    public void createTikaTable() {
 ////        for postgres
         sourceTemplate.execute("IF OBJECT_ID('dbo.tblInputDocs', 'U') IS NOT NULL DROP TABLE  dbo.tblInputDocs");
         sourceTemplate.execute("CREATE TABLE dbo.tblInputDocs"
@@ -106,7 +106,7 @@ public class SqlServerTestUtils implements DbmsTestUtils {
     }
 
     @Override
-    public void initTextualGateTable() {
+    public void createTextualGateTable() {
         sourceTemplate.execute("IF OBJECT_ID('dbo.tblInputDocs', 'U') IS NOT NULL DROP TABLE  dbo.tblInputDocs");
         sourceTemplate.execute("CREATE TABLE dbo.tblInputDocs"
                 + "( ID  BIGINT IDENTITY(1,1) PRIMARY KEY"
@@ -164,7 +164,7 @@ public class SqlServerTestUtils implements DbmsTestUtils {
     }
 
     @Override
-    public void initMultiLineTextTable(){
+    public void createMultiLineTextTable(){
         createBasicInputTable();
         sourceTemplate.execute("IF OBJECT_ID('dbo.tblDocLines', 'U') IS NOT NULL DROP TABLE  dbo.tblDocLines");
         sourceTemplate.execute("CREATE TABLE dbo.tblDocLines"
@@ -188,7 +188,7 @@ public class SqlServerTestUtils implements DbmsTestUtils {
 
 
     @Override
-    public void initJobRepository(){
+    public void createJobRepository(){
         dropTablesResource = new ClassPathResource("org/springframework/batch/core/schema-drop-sqlserver.sql");
         makeTablesResource = new ClassPathResource("org/springframework/batch/core/schema-sqlserver.sql");
         rdp.addScript(dropTablesResource);
@@ -198,4 +198,27 @@ public class SqlServerTestUtils implements DbmsTestUtils {
         rdp.execute(jobRepositoryDataSource);
     }
 
+    @Override
+    public void createDeIdInputTable(){
+        createBasicInputTable();
+        sourceTemplate.execute("IF OBJECT_ID('dbo.tblIdentifiers', 'U') IS NOT NULL DROP TABLE  dbo.tblIdentifiers");
+        sourceTemplate.execute("CREATE TABLE dbo.tblIdentifiers "
+                + "( ID  BIGINT IDENTITY(1,1) PRIMARY KEY"
+                + ", primaryKeyFieldValue BIGINT "
+                + ", NAME VARCHAR(MAX) "
+                + ", ADDRESS VARCHAR(MAX) "
+                + ", POSTCODE VARCHAR(MAX) "
+                + ", DATE_OF_BIRTH DATETIME )");
+
+        sourceTemplate.execute("IF OBJECT_ID('dbo.tblInputDocs', 'U') IS NOT NULL DROP TABLE  dbo.tblInputDocs");
+        sourceTemplate.execute("CREATE TABLE dbo.tblInputDocs"
+                + "( ID  BIGINT IDENTITY(1,1) PRIMARY KEY"
+                + ", srcColumnFieldName VARCHAR(MAX) "
+                + ", srcTableName VARCHAR(MAX) "
+                + ", primaryKeyFieldName VARCHAR(MAX) "
+                + ", primaryKeyFieldValue BIGINT "
+                + ", updateTime DateTIME "
+                + ", someText VARCHAR (MAX)"
+                + ", anotherTime DateTIME )");
+    }
 }

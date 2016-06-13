@@ -4,7 +4,6 @@ package uk.ac.uk.it.TestExecutionListeners;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.support.AbstractTestExecutionListener;
 import uk.ac.kcl.it.PostGresTestUtils;
-import uk.ac.kcl.it.SqlServerTestUtils;
 import uk.ac.kcl.it.TestUtils;
 
 /**
@@ -18,9 +17,9 @@ public class PostgresDbLineFixerTestExecutionListener extends AbstractTestExecut
     public void beforeTestClass(TestContext testContext) {
         PostGresTestUtils postGresTestUtils =
                 testContext.getApplicationContext().getBean(PostGresTestUtils.class);
-        postGresTestUtils.initJobRepository();
+        postGresTestUtils.createJobRepository();
         postGresTestUtils.createBasicOutputTable();
-        postGresTestUtils.initMultiLineTextTable();
+        postGresTestUtils.createMultiLineTextTable();
         TestUtils testUtils =
                 testContext.getApplicationContext().getBean(TestUtils.class);
         testUtils.insertDataIntoBasicTable("tblInputDocs");

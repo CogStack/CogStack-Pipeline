@@ -17,9 +17,9 @@ public class SqlServerDbLineFixerTestExecutionListener extends AbstractTestExecu
     public void beforeTestClass(TestContext testContext) {
         SqlServerTestUtils sqlServerTestUtils =
                 testContext.getApplicationContext().getBean(SqlServerTestUtils.class);
-        sqlServerTestUtils.initJobRepository();
+        sqlServerTestUtils.createJobRepository();
         sqlServerTestUtils.createBasicOutputTable();
-        sqlServerTestUtils.initMultiLineTextTable();
+        sqlServerTestUtils.createMultiLineTextTable();
         TestUtils testUtils =
                 testContext.getApplicationContext().getBean(TestUtils.class);
         testUtils.insertDataIntoBasicTable("dbo.tblInputDocs");

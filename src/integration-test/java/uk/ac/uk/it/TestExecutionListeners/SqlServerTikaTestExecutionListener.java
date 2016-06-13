@@ -17,8 +17,8 @@ public class SqlServerTikaTestExecutionListener extends AbstractTestExecutionLis
     public void beforeTestClass(TestContext testContext) {
         SqlServerTestUtils sqlServerTestUtils =
                 testContext.getApplicationContext().getBean(SqlServerTestUtils.class);
-        sqlServerTestUtils.initJobRepository();
-        sqlServerTestUtils.initTikaTable();
+        sqlServerTestUtils.createJobRepository();
+        sqlServerTestUtils.createTikaTable();
         sqlServerTestUtils.createBasicOutputTable();
         TestUtils testUtils =
                 testContext.getApplicationContext().getBean(TestUtils.class);

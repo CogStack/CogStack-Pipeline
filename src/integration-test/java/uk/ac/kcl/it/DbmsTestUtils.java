@@ -10,15 +10,17 @@ public interface DbmsTestUtils {
     @PostConstruct
     void init();
 
-    void initTikaTable();
+    void createTikaTable();
 
-    void initTextualGateTable();
+    void createTextualGateTable();
 
     void createBasicInputTable();
 
     void createBasicOutputTable();
 
-    void initMultiLineTextTable();
+    void createMultiLineTextTable();
 
-    void initJobRepository();
+    void createJobRepository();
+
+    void createDeIdInputTable();
 }

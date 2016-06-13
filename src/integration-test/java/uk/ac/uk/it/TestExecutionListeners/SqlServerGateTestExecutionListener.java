@@ -17,8 +17,8 @@ public class SqlServerGateTestExecutionListener extends AbstractTestExecutionLis
     public void beforeTestClass(TestContext testContext) {
         SqlServerTestUtils sqlServerTestUtils =
                 testContext.getApplicationContext().getBean(SqlServerTestUtils.class);
-        sqlServerTestUtils.initJobRepository();
-        sqlServerTestUtils.initTextualGateTable();
+        sqlServerTestUtils.createJobRepository();
+        sqlServerTestUtils.createTextualGateTable();
         TestUtils testUtils =
                 testContext.getApplicationContext().getBean(TestUtils.class);
         testUtils.insertTestXHTMLForGate("dbo.tblInputDocs",false);

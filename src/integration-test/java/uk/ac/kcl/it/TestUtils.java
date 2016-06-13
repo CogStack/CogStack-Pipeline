@@ -1,17 +1,31 @@
 package uk.ac.kcl.it;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.junit.Ignore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
-
 import javax.sql.DataSource;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 
@@ -20,6 +34,7 @@ import java.util.logging.Level;
  */
 @Ignore
 @Service
+@ComponentScan("uk.ac.kcl.it")
 public class TestUtils  {
     static Random random = new Random();
     static long today = System.currentTimeMillis();
@@ -32,6 +47,8 @@ public class TestUtils  {
     @Qualifier("targetDataSource")
     public DataSource jdbcTargetDocumentFinder;
 
+    @Autowired
+    StringMutatorService stringMutatorService;
 
     public static long nextDay() {
 
@@ -143,6 +160,52 @@ public class TestUtils  {
         }
     }
 
+
+
+    public void insertTestDataForDeidentification(String tableName1, String tableName2){
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
+
+        File idFile = new File(getClass().getClassLoader().getResource("identifiers.csv").getFile());
+
+        List<CSVRecord> records = null;
+        try {
+            records = CSVParser.parse(idFile, Charset.defaultCharset(), CSVFormat.DEFAULT).getRecords();
+        } catch (IOException e) {
+            logger.error(e);
+        }
+
+
+        String sql1 = "INSERT INTO  " + tableName1
+                + "( primaryKeyFieldValue "
+                + ",   NAME"
+                + ", ADDRESS"
+                + ", POSTCODE"
+                + ", DATE_OF_BIRTH"
+                + ") VALUES (?,?,?,?,?)";
+
+        String sql2 = "INSERT INTO  " + tableName2
+                + "( srcColumnFieldName"
+                + ", srcTableName"
+                + ", primaryKeyFieldName"
+                + ", primaryKeyFieldValue"
+                + ", updateTime"
+                + ", someText"
+                + ", anotherTime"
+                + ") VALUES (?,?,?,?,?,?,?)";
+
+        Iterator<CSVRecord> it = records.iterator();
+        it.next();
+
+        while(it.hasNext()){
+            CSVRecord r = it.next();
+            jdbcTemplate.update(sql1, Long.valueOf(r.get(0)),r.get(1),r.get(2),r.get(3), new Timestamp(today));
+            jdbcTemplate.update(sql2, "fictionalColumnFieldName", "fictionalTableName",
+                    "fictionalPrimaryKeyFieldName", Long.valueOf(r.get(0)), new Timestamp(today),stringMutatorService.generateMutantDocument(r.get(1),r.get(2),r.get(3)), new Timestamp(today));
+            today = TestUtils.nextDay();
+        }
+
+
+    }
 
     public void insertTestLinesForDBLineFixer(String tableName){
         JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);

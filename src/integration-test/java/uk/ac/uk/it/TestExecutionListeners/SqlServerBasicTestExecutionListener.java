@@ -17,7 +17,7 @@ public class SqlServerBasicTestExecutionListener extends AbstractTestExecutionLi
     public void beforeTestClass(TestContext testContext) {
         SqlServerTestUtils sqlServerTestUtils =
                 testContext.getApplicationContext().getBean(SqlServerTestUtils.class);
-        sqlServerTestUtils.initJobRepository();
+        sqlServerTestUtils.createJobRepository();
         sqlServerTestUtils.createBasicInputTable();
         sqlServerTestUtils.createBasicOutputTable();
         TestUtils testUtils =
