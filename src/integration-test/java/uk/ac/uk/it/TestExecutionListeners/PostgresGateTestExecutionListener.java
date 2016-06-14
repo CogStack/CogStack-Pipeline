@@ -11,7 +11,7 @@ import uk.ac.kcl.it.TestUtils;
  */
 public class PostgresGateTestExecutionListener extends AbstractTestExecutionListener {
 
-    public PostgresGateTestExecutionListener(){};
+    public PostgresGateTestExecutionListener(){}
 
     @Override
     public void beforeTestClass(TestContext testContext) {

@@ -15,6 +15,7 @@
  */
 package uk.ac.kcl.it;
 
+import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,35 +27,47 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
-import uk.ac.uk.it.TestExecutionListeners.PostgresBasicTestExecutionListener;
+import uk.ac.uk.it.TestExecutionListeners.PostgresDeidTestExecutionListener;
 
+/**
+ *
+ * @author rich
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
-        "classpath:basicPKAndTimeStampProfiles.properties",
-        "classpath:postgres_test_config_basic.properties",
+        "classpath:deidPKprofiles.properties",
+        "classpath:postgres_test_config_deid.properties",
         "classpath:jms.properties",
-        "classpath:scheduling.properties",
+        "classpath:noScheduling.properties",
+        "classpath:gate.properties",
+        "classpath:deidentification.properties",
         "classpath:postgres_db.properties",
         "classpath:elasticsearch.properties",
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
-        PostGresTestUtils.class,
         SingleJobLauncher.class,
+        SqlServerTestUtils.class,
         TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 @TestExecutionListeners(
-        listeners = PostgresBasicTestExecutionListener.class,
+        listeners = PostgresDeidTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-public class PostgresIntegrationTestsBasicTimestampPartitionWithoutScheduling {
+public class PostgresIntegrationTestsDeIdentificationPKPartitionWithoutScheduling {
+
+    final static Logger logger = Logger.getLogger(PostgresIntegrationTestsDeIdentificationPKPartitionWithoutScheduling.class);
 
     @Autowired
     SingleJobLauncher jobLauncher;
 
+
+
     @Test
     @DirtiesContext
-    public void postgresBasicPipelineTest() {
+    public void sqlServerikaPipelineTest() {
         jobLauncher.launchJob();
     }
+
+
 
 }

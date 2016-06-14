@@ -79,7 +79,7 @@ public class RealtimeTimeStampAndPKRangePartitioner extends AbstractRealTimeRang
                 batchJobUtils.cleanSqlString(env.getProperty("partitionerPreFieldsSQL")) +
                 " " + column + ", " + timeStamp +
                 " FROM " + table + " ";
-        Timestamp jobEndTimeStamp = jobEndTimeStamp =getEndTimeStamp(jobStartTimeStamp);
+        Timestamp jobEndTimeStamp =getEndTimeStamp(jobStartTimeStamp);
         if(configuredFirstRunTimestamp!= null && firstRun){
             sql = getStartTimeInclusiveSqlString(sql, jobStartTimeStamp, jobEndTimeStamp);
         } else if(inclusiveOfStart) {

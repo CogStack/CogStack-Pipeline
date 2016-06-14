@@ -9,17 +9,13 @@ package uk.ac.kcl.it;
 import com.google.common.collect.ImmutableMap;
 import de.svenjacobs.loremipsum.LoremIpsum;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.junit.Ignore;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
@@ -238,7 +234,7 @@ public class StringMutatorService {
         this.characterMapKeys = characterMapKeys;
     }
 
-    public String generateMutantDocument(String name, String address, String postcode) {
+    public String generateMutantDocument(String name, String address, String postcode, String date) {
 
         LoremIpsum loremIpsum = new LoremIpsum();
 
@@ -249,6 +245,8 @@ public class StringMutatorService {
         if (address != null) sb.append(" ").append(mutate(address));
         sb.append(" ").append(loremIpsum.getWords(random.nextInt(loremLength))).append(" ");
         if (postcode != null) sb.append(" ").append(mutate(postcode));
+        sb.append(" ").append(loremIpsum.getWords(random.nextInt(loremLength)));
+        if (date != null) sb.append(" ").append(date);
         sb.append(" ").append(loremIpsum.getWords(random.nextInt(loremLength)));
         return sb.toString();
     }
@@ -320,7 +318,7 @@ public class StringMutatorService {
         char[] array = normal.toCharArray();
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < array.length; i++) {
-            sb.append(array[i] + " ");
+            sb.append(array[i]).append(" ");
         }
         return sb.toString();
     }

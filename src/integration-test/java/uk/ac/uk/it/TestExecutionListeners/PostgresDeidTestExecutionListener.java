@@ -4,26 +4,29 @@ package uk.ac.uk.it.TestExecutionListeners;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.support.AbstractTestExecutionListener;
 import uk.ac.kcl.it.PostGresTestUtils;
+import uk.ac.kcl.it.SqlServerTestUtils;
 import uk.ac.kcl.it.TestUtils;
 
 /**
  * Created by rich on 03/06/16.
  */
-public class PostgresDbLineFixerTestExecutionListener extends AbstractTestExecutionListener {
+public class PostgresDeidTestExecutionListener extends AbstractTestExecutionListener {
 
-    public PostgresDbLineFixerTestExecutionListener(){}
+    public PostgresDeidTestExecutionListener(){}
 
     @Override
     public void beforeTestClass(TestContext testContext) {
-        PostGresTestUtils postGresTestUtils =
+        PostGresTestUtils postgresTestUtils =
                 testContext.getApplicationContext().getBean(PostGresTestUtils.class);
-        postGresTestUtils.createJobRepository();
-        postGresTestUtils.createBasicOutputTable();
-        postGresTestUtils.createMultiLineTextTable();
+        postgresTestUtils.createJobRepository();
+        postgresTestUtils.createBasicInputTable();
+        postgresTestUtils.createBasicOutputTable();
+        postgresTestUtils.createDeIdInputTable();
         TestUtils testUtils =
                 testContext.getApplicationContext().getBean(TestUtils.class);
-        testUtils.insertDataIntoBasicTable("tblInputDocs");
-        testUtils.insertTestLinesForDBLineFixer("tblDocLines");
+        testUtils.insertTestDataForDeidentification("tblIdentifiers","tblInputDocs");
+
+
     }
 
 }

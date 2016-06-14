@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -69,16 +68,13 @@ public class PostGresTestUtils implements DbmsTestUtils{
     private JdbcTemplate sourceTemplate;
     private JdbcTemplate targetTemplate;
     private ResourceDatabasePopulator rdp = new ResourceDatabasePopulator();
-    private Resource dropTablesResource;
-    private Resource makeTablesResource;
-    private JdbcTemplate jobRepoTemplate;
 
 
     @PostConstruct
     public void init(){
         this.sourceTemplate = new JdbcTemplate(sourceDataSource);
         this.targetTemplate = new JdbcTemplate(targetDataSource);
-        this.jobRepoTemplate = new JdbcTemplate(jobRepositoryDataSource);
+        JdbcTemplate jobRepoTemplate = new JdbcTemplate(jobRepositoryDataSource);
     }
 
 
@@ -186,8 +182,9 @@ public class PostGresTestUtils implements DbmsTestUtils{
 
 
     public void createJobRepository(){
-        dropTablesResource = new ClassPathResource("org/springframework/batch/core/schema-drop-postgresql.sql");
-        makeTablesResource = new ClassPathResource("org/springframework/batch/core/schema-postgresql.sql");
+        Resource dropTablesResource = new ClassPathResource("org/springframework/batch/core/schema-drop-postgresql" +
+                ".sql");
+        Resource makeTablesResource = new ClassPathResource("org/springframework/batch/core/schema-postgresql.sql");
         rdp.addScript(dropTablesResource);
         rdp.addScript(makeTablesResource);
         rdp.execute(jobRepositoryDataSource);
@@ -195,7 +192,15 @@ public class PostGresTestUtils implements DbmsTestUtils{
 
     @Override
     public void createDeIdInputTable() {
-
+        createBasicInputTable();
+        sourceTemplate.execute("DROP TABLE IF EXISTS tblIdentifiers");
+        sourceTemplate.execute("CREATE TABLE tblIdentifiers "
+                + "( ID  SERIAL PRIMARY KEY"
+                + ", primaryKeyFieldValue BIGINT "
+                + ", NAME TEXT "
+                + ", ADDRESS TEXT "
+                + ", POSTCODE TEXT "
+                + ", DATE_OF_BIRTH TIMESTAMP )");
     }
 
 

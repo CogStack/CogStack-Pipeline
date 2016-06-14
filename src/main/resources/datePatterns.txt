@@ -1,0 +1,41 @@
+dd/MM/yyyy
+MM/dd/yyyy
+dd-MM-yyyy
+dd-MM-yy
+MM-dd-yyyy
+MM-dd-yy
+MM.dd.yy
+MM/dd/yy
+MM/yyyy
+yyyy/MM
+dd.MM.yyyy
+dd.M.yyyy
+dd.M.yy
+dd.MM.yy
+d.MM.yy
+dd/M/yyyy
+dd/M/yy
+dd/MM/yy
+d/MM/yy
+M.yyyy
+M.yy
+MM.yy
+MM.yyyy
+M/yyyy
+M/yy
+MM/yy
+MM/yyyy
+MM.dd.yyyy
+MM dd
+dd.MM
+dd/MM
+dd-MM
+dd MM
+yyyy
+dd'\s*(th|rd|st|nd)?\s*(of)?' MMMM
+d'\s*(th|rd|st|nd)?\s*(of)?' MMMM
+yyyy-MM-dd
+yyyy-mm-dd
+yy-MM-dd
+yyyy-MMM-dd
+yyyy-MMM-d

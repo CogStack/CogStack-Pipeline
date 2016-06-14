@@ -17,13 +17,11 @@ public class RandomString {
 
     private static final Random random = new Random();
 
-    private static  char[] buf = new char[0];
-
 
     public static String nextString(int length) {
         if (length < 1)
             throw new IllegalArgumentException("length < 1: " + length);
-        buf = new char[length];
+        char[] buf = new char[length];
         for (int idx = 0; idx < buf.length; ++idx)
             buf[idx] = symbols[random.nextInt(symbols.length)];
         return new String(buf);

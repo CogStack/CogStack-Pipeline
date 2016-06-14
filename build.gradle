@@ -161,6 +161,7 @@ dependencies {
     //test
     testCompile("junit:junit")
     testCompile('org.mockito:mockito-all:1.10.19');
+    testCompile group: 'de.sven-jacobs', name: 'loremipsum', version: '1.0'
 }
 
 task wrapper(type: Wrapper) {

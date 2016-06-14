@@ -7,15 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.Transactional;
 import uk.ac.kcl.batch.JobConfiguration;
 
 import javax.annotation.PostConstruct;
@@ -65,10 +62,7 @@ public class SqlServerTestUtils implements DbmsTestUtils {
 
     private JdbcTemplate sourceTemplate;
     private JdbcTemplate targetTemplate;
-    private JdbcTemplate jobRepoTemplate;
     private ResourceDatabasePopulator rdp = new ResourceDatabasePopulator();
-    private Resource dropTablesResource;
-    private Resource makeTablesResource;
 
 
     @Override
@@ -76,7 +70,7 @@ public class SqlServerTestUtils implements DbmsTestUtils {
     public void init(){
         this.sourceTemplate = new JdbcTemplate(sourceDataSource);
         this.targetTemplate = new JdbcTemplate(targetDataSource);
-        this.jobRepoTemplate = new JdbcTemplate(jobRepositoryDataSource);
+        JdbcTemplate jobRepoTemplate = new JdbcTemplate(jobRepositoryDataSource);
     }
 
 
@@ -189,8 +183,8 @@ public class SqlServerTestUtils implements DbmsTestUtils {
 
     @Override
     public void createJobRepository(){
-        dropTablesResource = new ClassPathResource("org/springframework/batch/core/schema-drop-sqlserver.sql");
-        makeTablesResource = new ClassPathResource("org/springframework/batch/core/schema-sqlserver.sql");
+        Resource dropTablesResource = new ClassPathResource("org/springframework/batch/core/schema-drop-sqlserver.sql");
+        Resource makeTablesResource = new ClassPathResource("org/springframework/batch/core/schema-sqlserver.sql");
         rdp.addScript(dropTablesResource);
         rdp.addScript(makeTablesResource);
         rdp.setIgnoreFailedDrops(true);
@@ -210,15 +204,15 @@ public class SqlServerTestUtils implements DbmsTestUtils {
                 + ", POSTCODE VARCHAR(MAX) "
                 + ", DATE_OF_BIRTH DATETIME )");
 
-        sourceTemplate.execute("IF OBJECT_ID('dbo.tblInputDocs', 'U') IS NOT NULL DROP TABLE  dbo.tblInputDocs");
-        sourceTemplate.execute("CREATE TABLE dbo.tblInputDocs"
-                + "( ID  BIGINT IDENTITY(1,1) PRIMARY KEY"
-                + ", srcColumnFieldName VARCHAR(MAX) "
-                + ", srcTableName VARCHAR(MAX) "
-                + ", primaryKeyFieldName VARCHAR(MAX) "
-                + ", primaryKeyFieldValue BIGINT "
-                + ", updateTime DateTIME "
-                + ", someText VARCHAR (MAX)"
-                + ", anotherTime DateTIME )");
+//        sourceTemplate.execute("IF OBJECT_ID('dbo.tblInputDocs', 'U') IS NOT NULL DROP TABLE  dbo.tblInputDocs");
+//        sourceTemplate.execute("CREATE TABLE dbo.tblInputDocs"
+//                + "( ID  BIGINT IDENTITY(1,1) PRIMARY KEY"
+//                + ", srcColumnFieldName VARCHAR(MAX) "
+//                + ", srcTableName VARCHAR(MAX) "
+//                + ", primaryKeyFieldName VARCHAR(MAX) "
+//                + ", primaryKeyFieldValue BIGINT "
+//                + ", updateTime DateTIME "
+//                + ", someText VARCHAR (MAX)"
+//                + ", anotherTime DateTIME )");
     }
 }

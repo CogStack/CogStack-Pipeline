@@ -11,7 +11,7 @@ import uk.ac.kcl.it.TestUtils;
  */
 public class PostgresTikaTestExecutionListener extends AbstractTestExecutionListener {
 
-    public PostgresTikaTestExecutionListener(){};
+    public PostgresTikaTestExecutionListener(){}
 
     @Override
     public void beforeTestClass(TestContext testContext) {

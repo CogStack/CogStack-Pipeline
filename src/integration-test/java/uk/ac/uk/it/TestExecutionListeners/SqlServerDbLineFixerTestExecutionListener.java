@@ -11,7 +11,7 @@ import uk.ac.kcl.it.TestUtils;
  */
 public class SqlServerDbLineFixerTestExecutionListener extends AbstractTestExecutionListener {
 
-    public SqlServerDbLineFixerTestExecutionListener(){};
+    public SqlServerDbLineFixerTestExecutionListener(){}
 
     @Override
     public void beforeTestClass(TestContext testContext) {

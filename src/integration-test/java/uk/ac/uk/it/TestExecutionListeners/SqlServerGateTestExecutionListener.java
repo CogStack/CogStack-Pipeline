@@ -11,7 +11,7 @@ import uk.ac.kcl.it.TestUtils;
  */
 public class SqlServerGateTestExecutionListener extends AbstractTestExecutionListener {
 
-    public SqlServerGateTestExecutionListener(){};
+    public SqlServerGateTestExecutionListener(){}
 
     @Override
     public void beforeTestClass(TestContext testContext) {

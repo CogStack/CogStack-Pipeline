@@ -11,7 +11,7 @@ import uk.ac.kcl.it.TestUtils;
  */
 public class SqlServerBasicTestExecutionListener extends AbstractTestExecutionListener {
 
-    public SqlServerBasicTestExecutionListener(){};
+    public SqlServerBasicTestExecutionListener(){}
 
     @Override
     public void beforeTestClass(TestContext testContext) {

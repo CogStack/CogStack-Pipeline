@@ -41,6 +41,9 @@ outputs
  1. elasticsearch - write to an elasticsearch cluster
  2. jdbc - write to a JDBC endpoint
 
+partitioning
+ 1. primaryKeyPartition - process all records based upon partitioning of the primary key
+ 2. primaryKeyAndTimeStampPartition - process all records based upon partitioning of the primary key and the timestamp, for finer control/ smaller batch sizes per job. Use the processingPeriod property to specify the number of milliseconds to 'scan' ahead for each job run
 
 ## Scheduling
 Turbo-laser also offers a built in scheduler, to process changes in a database between job runs (requires a timestamp in the source database)
