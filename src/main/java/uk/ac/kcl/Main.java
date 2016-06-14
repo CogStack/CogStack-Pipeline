@@ -61,6 +61,7 @@ public class Main {
                         propertySources.addFirst(new MapPropertySource(listOfFile.getName(), map));
                         @SuppressWarnings("resource")
                         AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+                        ctx.registerShutdownHook();
                         ctx.setEnvironment(environment);
                         String scheduling;
                         try {

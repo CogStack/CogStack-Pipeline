@@ -53,7 +53,8 @@ import javax.sql.DataSource;
         "uk.ac.kcl.utils",
         "uk.ac.kcl.itemHandlers",
         "uk.ac.kcl.partitioners",
-        "uk.ac.kcl.itemProcessors"})
+        "uk.ac.kcl.itemProcessors",
+        "uk.ac.kcl.cleanup"})
 @EnableBatchProcessing
 @Import({
         BatchConfigurer.class,

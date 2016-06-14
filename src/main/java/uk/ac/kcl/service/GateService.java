@@ -40,7 +40,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 
 @Service("gateService")
-@Profile({"gate","deid"})
+@Profile({"gate"})
 public class GateService {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(GateService.class);
