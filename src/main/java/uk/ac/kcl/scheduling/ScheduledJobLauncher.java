@@ -36,8 +36,14 @@ public class ScheduledJobLauncher extends SingleJobLauncher {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(ScheduledJobLauncher.class);
 
+    private boolean continueWork = true;
+
+    public void setContinueWork(boolean cont){
+        this.continueWork = cont;
+    }
     @Scheduled(cron = "${scheduler.rate}")
     public void doTask()  {
-        launchJob();
+
+        if(continueWork) launchJob();
     }
 }

@@ -174,7 +174,7 @@ public class BatchJobUtils {
                 "OR bje.status = 'UNKNOWN' " +
                 "OR bje.status = 'STARTING' " +
                 "OR bje.status = 'STARTED'" +
-                "OR bje.status = 'STOPPED') " +
+                "OR bje.status = 'STOPPING') " +
                 "AND bji.job_name = '" +
                 env.getProperty("jobName") + "'";
         LOG.info("retrieving list of job executions to mark as abandoned " + sql);

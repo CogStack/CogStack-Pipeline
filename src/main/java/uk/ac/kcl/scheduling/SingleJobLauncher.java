@@ -83,14 +83,21 @@ public class SingleJobLauncher {
 
     public void launchJob()  {
         JobExecution lastJobExecution = null;
+        JobExecution lastSuccessfulJobExecution = null;
         try {
             BatchStatus lastJobStatus = null;
+            try {
+                lastSuccessfulJobExecution = batchJobUtils.getLastSuccessfulJobExecution();
+            } catch (NullPointerException e) {
+                LOG.info("No previous successful jobs found");
+            }
             try {
                 lastJobExecution = batchJobUtils.getLastJobExecution();
                 lastJobStatus = lastJobExecution.getStatus();
             } catch (NullPointerException e) {
-                LOG.info("No previous successful jobs found");
+                LOG.info("No previous jobs found");
             }
+
                 try {
                     switch (lastJobStatus) {
                         case COMPLETED:
@@ -110,7 +117,7 @@ public class SingleJobLauncher {
                             jobOperator.startNextInstance(job.getName());
                             break;
                         case ABANDONED:
-                            LOG.info("Last job was abandoned. Marking as abandoned and attempting restart from last successful job");
+                            LOG.info("Last job was abandoned. Attempting restart from last successful job");
                             abandonAllJobsStartedAfterLastSuccessfulJob();
                             jobOperator.startNextInstance(job.getName());
                             break;
@@ -124,7 +131,8 @@ public class SingleJobLauncher {
                             jobOperator.startNextInstance(job.getName());
                             break;
                         default:
-                            LOG.error("Should never be reached");
+                            LOG.error("Should be unreachable");
+//                            jobOperator.startNextInstance(job.getName());
                             break;
                     }
                 }catch(NullPointerException ex){
