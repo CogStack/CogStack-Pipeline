@@ -53,7 +53,7 @@ public class Main {
                     try {
                         input = new FileInputStream(listOfFile);
                         properties.load(input);
-                        if(Integer.valueOf(properties.getProperty("globalSocketTimeout"))!=null){
+                        if(properties.getProperty("globalSocketTimeout")!=null){
                             TcpHelper.setSocketTimeout(Integer.valueOf(properties.getProperty("globalSocketTimeout")));
                         }
                         Map<String, Object> map = new HashMap<>();

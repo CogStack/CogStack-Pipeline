@@ -1,5 +1,7 @@
 package uk.ac.kcl.utils;
 
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -11,7 +13,7 @@ import java.net.SocketImplFactory;
  * Created by rich on 15/06/16.
  */
 public class TcpHelper {
-
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(TcpHelper.class);
     public static void setSocketTimeout(int timeout)  {
         try {
             Socket.setSocketImplFactory(new SocketImplFactory() {
@@ -37,5 +39,6 @@ public class TcpHelper {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        LOG.info("Global socket timeout set to " + timeout +" ms");
     }
 }
