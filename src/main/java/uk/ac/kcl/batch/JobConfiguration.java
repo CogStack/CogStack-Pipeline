@@ -113,7 +113,7 @@ public class JobConfiguration {
         mainDatasource.setPassword(env.getProperty("source.password"));
         mainDatasource.setIdleTimeout(Long.valueOf(env.getProperty("source.idleTimeout")));
         mainDatasource.setMaxLifetime(Long.valueOf(env.getProperty("source.maxLifetime")));
-        mainDatasource.setConnectionTestQuery("select 1");
+        //mainDatasource.setConnectionTestQuery("select 1");
 
         return mainDatasource;
     }
@@ -131,7 +131,7 @@ public class JobConfiguration {
         mainDatasource.setPassword(env.getProperty("target.password"));
         mainDatasource.setIdleTimeout(Long.valueOf(env.getProperty("target.idleTimeout")));
         mainDatasource.setMaxLifetime(Long.valueOf(env.getProperty("target.maxLifetime")));
-        mainDatasource.setConnectionTestQuery("select 1");
+        //mainDatasource.setConnectionTestQuery("select 1");
         //?? should be managed by transaction manager
         //mainDatasource.setAutoCommit(false);
         return mainDatasource;

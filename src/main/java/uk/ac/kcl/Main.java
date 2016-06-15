@@ -23,6 +23,7 @@ import org.springframework.core.env.StandardEnvironment;
 import uk.ac.kcl.batch.JobConfiguration;
 import uk.ac.kcl.scheduling.ScheduledJobLauncher;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
+import uk.ac.kcl.utils.TcpHelper;
 
 import java.io.*;
 import java.util.HashMap;
@@ -52,6 +53,9 @@ public class Main {
                     try {
                         input = new FileInputStream(listOfFile);
                         properties.load(input);
+                        if(Integer.valueOf(properties.getProperty("globalSocketTimeout"))!=null){
+                            TcpHelper.setSocketTimeout(Integer.valueOf(properties.getProperty("globalSocketTimeout")));
+                        }
                         Map<String, Object> map = new HashMap<>();
                         properties.forEach((k, v) -> {
                             map.put(k.toString(), v);
