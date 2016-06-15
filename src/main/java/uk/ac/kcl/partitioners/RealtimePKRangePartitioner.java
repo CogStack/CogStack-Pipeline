@@ -87,7 +87,7 @@ public class RealtimePKRangePartitioner extends AbstractRealTimeRangePartitioner
                     "' as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) " ;
         }else if(startTimeStamp == null) {
             Timestamp newStartTimeStamp = getLastTimestampFromLastSuccessfulJob();
-            logger.info ("last successful batch retrieved from job repository. Commencing from after " +
+            logger.info ("Commencing from after " +
                     newStartTimeStamp.toString());
             sql =	sql +
                     "\n WHERE CAST (" + timeStamp + " as "+

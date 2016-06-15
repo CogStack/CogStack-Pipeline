@@ -33,6 +33,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import uk.ac.kcl.batch.JobConfiguration;
+import uk.ac.kcl.cleanup.CleanupBean;
 import uk.ac.kcl.utils.BatchJobUtils;
 
 import javax.sql.DataSource;
@@ -78,6 +79,9 @@ public class SingleJobLauncher {
     @Autowired
     JobOperator jobOperator;
 
+    @Autowired
+    CleanupBean cleanupBean;
+
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(SingleJobLauncher.class);
 
 
@@ -102,7 +106,7 @@ public class SingleJobLauncher {
                     switch (lastJobStatus) {
                         case COMPLETED:
                             LOG.info("Last job execution was successful");
-                            jobOperator.startNextInstance(job.getName());
+                            startNextInstance();
                             break;
                         case STARTED:
                         case STARTING:
@@ -110,25 +114,25 @@ public class SingleJobLauncher {
                             LOG.info("Job is already running. Repository in unknown state." +
                                     " Attempting to repair and restart from last successful job");
                             abandonAllJobsStartedAfterLastSuccessfulJob();
-                            jobOperator.startNextInstance(job.getName());
+                            startNextInstance();
                             break;
                         case FAILED:
                             LOG.info("Last job failed. Attempting restart");
-                            jobOperator.startNextInstance(job.getName());
+                            startNextInstance();
                             break;
                         case ABANDONED:
                             LOG.info("Last job was abandoned. Attempting restart from last successful job");
                             abandonAllJobsStartedAfterLastSuccessfulJob();
-                            jobOperator.startNextInstance(job.getName());
+                            startNextInstance();
                             break;
                         case STOPPED:
                             LOG.info("Last job was stopped. Attempting restart")       ;
-                            jobOperator.startNextInstance(job.getName());
+                            startNextInstance();
                             break;
                         case UNKNOWN:
                             LOG.info("Last job has unknown status. Marking as abandoned and attempting restart from last successful job");
                             abandonAllJobsStartedAfterLastSuccessfulJob();
-                            jobOperator.startNextInstance(job.getName());
+                            startNextInstance();
                             break;
                         default:
                             LOG.error("Should be unreachable");
@@ -137,7 +141,7 @@ public class SingleJobLauncher {
                     }
                 }catch(NullPointerException ex){
                     LOG.info("No previous completed jobs found");
-                    jobOperator.startNextInstance(job.getName());
+                    startNextInstance();
                 }
         } catch (JobInstanceAlreadyCompleteException|
                 JobExecutionAlreadyRunningException|
@@ -148,7 +152,7 @@ public class SingleJobLauncher {
             LOG.error("Cannot restart job. Attempting to start next instance", e);
             try {
                 jobOperator.abandon(lastJobExecution.getId());
-                jobOperator.startNextInstance(job.getName());
+                startNextInstance();
             } catch (NoSuchJobExecutionException |JobExecutionAlreadyRunningException|
                     NoSuchJobException|JobInstanceAlreadyCompleteException|
                     JobRestartException|JobParametersNotFoundException|JobParametersInvalidException e1) {
@@ -159,6 +163,11 @@ public class SingleJobLauncher {
         }
     }
 
+    private void startNextInstance() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException,
+            JobParametersInvalidException, JobRestartException, JobParametersNotFoundException, NoSuchJobException {
+        jobOperator.startNextInstance(job.getName());
+
+    }
     private void abandonAllJobsStartedAfterLastSuccessfulJob() {
         List<Long> idsToAbandon = batchJobUtils.getExecutionIdsOfJobsToAbandon();
 

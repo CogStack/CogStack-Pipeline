@@ -10,6 +10,7 @@ import org.springframework.batch.core.launch.JobOperator;
 import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.batch.core.launch.NoSuchJobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.SmartLifecycle;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import uk.ac.kcl.scheduling.ScheduledJobLauncher;
@@ -21,7 +22,7 @@ import java.util.Set;
  * Created by rich on 14/06/16.
  */
 @Service
-public class CleanupBean {
+public class CleanupBean implements SmartLifecycle {
     private static final Logger LOG = LoggerFactory.getLogger(CleanupBean.class);
     @Autowired
     JobOperator jobOperator;
@@ -31,17 +32,23 @@ public class CleanupBean {
     @Autowired(required = false)
     ScheduledJobLauncher scheduledJobLauncher;
 
+    public void setJobExecutionId(long jobExecutionId) {
+        this.jobExecutionId = jobExecutionId;
+    }
+
+    long jobExecutionId;
+
+    boolean running;
 
     @Autowired
     private Environment env;
 
-    @PreDestroy
+
     private void cleanup(){
         LOG.info("stopping scheduler");
         if(scheduledJobLauncher!=null){
             scheduledJobLauncher.setContinueWork(false);
         }
-
         LOG.info("Attempting to stop running jobs");
         Set<Long> jobExecs = null;
         try {
@@ -53,6 +60,8 @@ public class CleanupBean {
         if(jobExecs.size()==0) {
             LOG.info("No running jobs detected. Exiting now");
             return;
+        }else if(jobExecs.size() > 1){
+            LOG.warn("Detected more than one "+env.getProperty("jobName")+ " with status of running.");
         };
 
         for(Long l : jobExecs){
@@ -91,5 +100,39 @@ public class CleanupBean {
         }else {
             LOG.warn("Unable to gracefully stop jobs. Job Repository may be in unknown state");
         }
+    }
+
+    @Override
+    public boolean isAutoStartup() {
+        return true;
+    }
+
+    @Override
+    public void stop(Runnable callback) {
+        LOG.info("****************SHUTDOWN INITIATED*********************");
+        cleanup();
+        stop();
+        callback.run();
+    }
+
+    @Override
+    public void start() {
+        LOG.info("****************STARTUP INITIATED*********************");
+        running = true;
+    }
+
+    @Override
+    public void stop() {
+        running = false;
+    }
+
+    @Override
+    public boolean isRunning() {
+        return running;
+    }
+
+    @Override
+    public int getPhase() {
+        return Integer.MAX_VALUE;
     }
 }
