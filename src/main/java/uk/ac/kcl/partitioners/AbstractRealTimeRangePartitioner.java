@@ -79,6 +79,14 @@ public abstract class AbstractRealTimeRangePartitioner {
 
     private void setTimeStampColumnName(String timeStamp) {this.timeStamp = timeStamp;}
 
+    public boolean isFirstRun() {
+        return firstRun;
+    }
+
+    public void setFirstRun(boolean firstRun) {
+        this.firstRun = firstRun;
+    }
+
     boolean firstRun;
 
 

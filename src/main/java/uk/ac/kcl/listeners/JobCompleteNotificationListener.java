@@ -52,6 +52,9 @@ public class JobCompleteNotificationListener implements JobExecutionListener {
 	@Override
 	public synchronized void afterJob(JobExecution jobExecution) {
 		if(jobExecution.getStatus() == BatchStatus.COMPLETED) {
+			if(columnRangePartitioner.isFirstRun()){
+				columnRangePartitioner.setFirstRun(false);
+			}
 			log.info("!!! JOB FINISHED! promoting last good record date to JobExecutionContext");
 			jobExecution.getExecutionContext().put("last_successful_timestamp_from_this_job", timeOfNextJob);
 			jobRepository.updateExecutionContext(jobExecution);

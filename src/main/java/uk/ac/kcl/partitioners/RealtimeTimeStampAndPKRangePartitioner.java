@@ -57,9 +57,7 @@ public class RealtimeTimeStampAndPKRangePartitioner extends AbstractRealTimeRang
         }else{
             result = new HashMap<>();
         }
-        if(firstRun){
-            firstRun =false;
-        }
+
         return result;
     }
 

@@ -48,9 +48,7 @@ public class RealtimePKRangePartitioner extends AbstractRealTimeRangePartitioner
             result = getExecutionContextMap(gridSize,params);
             informJobCompleteListenerOfLastDate(params.getMaxTimeStamp());
         }
-        if(firstRun){
-            firstRun =false;
-        }
+
         return result;
     }
 
