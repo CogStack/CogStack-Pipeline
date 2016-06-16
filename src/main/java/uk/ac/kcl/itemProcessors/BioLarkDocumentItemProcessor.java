@@ -70,13 +70,7 @@ public class BioLarkDocumentItemProcessor implements ItemProcessor<Document, Doc
             String newString = "";
             if(fieldsToBioLark.contains(k)) {
                 RestTemplate restTemplate = new RestTemplate();
-                //byte[] json;
                 Object json;
-//                try {
-//                    json = mapper.writeValueAsBytes(restTemplate.postForObject(endPoint,v,Object.class));
-//                } catch (JsonProcessingException e) {
-//                    throw new BiolarkProcessingFailedException("Failed to convert JSON", e,false,true);
-//                }
                 json = restTemplate.postForObject(endPoint,v,Object.class);
                 newMap.put(fieldName,json);
             }

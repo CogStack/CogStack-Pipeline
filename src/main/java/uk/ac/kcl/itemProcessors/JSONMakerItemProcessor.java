@@ -16,9 +16,13 @@
 package uk.ac.kcl.itemProcessors;
 
 import com.google.gson.Gson;
+import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.common.xcontent.XContentFactory.*;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import uk.ac.kcl.model.Document;
+
+import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 
 /**
  *
@@ -32,9 +36,19 @@ public class JSONMakerItemProcessor implements ItemProcessor<Document, Document>
 
     @Override
     public Document process(final Document doc) throws Exception {
-        Gson gson = new Gson();
-        String json = gson.toJson(doc.getAdditionalFields());
-        doc.setOutputData(json);
+
+        //may already be populated if reindexing
+        //XContentBuilder builder = doc.getOutputData();
+
+        if(doc.getxContentBuilder()==null) {
+            XContentBuilder builder = jsonBuilder()
+                    .map(doc.getAdditionalFields());
+            doc.setxContentBuilder(builder);
+        }
+        doc.setOutputData(doc.getxContentBuilder().string());
+//        Gson gson = new Gson();
+//        String json = gson.toJson(doc.getAdditionalFields());
+//        doc.setOutputData(json);
 
         return doc;
     }

@@ -90,7 +90,7 @@ public class ElasticsearchDocumentWriter implements ItemWriter<Document> {
             IndexRequestBuilder request = client.prepareIndex(
                     env.getProperty("elasticsearch.index.name"),
                     env.getProperty("elasticsearch.type")).setSource(
-                    doc.getAdditionalFields());
+                    doc.getxContentBuilder());
             request.setId(doc.getPrimaryKeyFieldValue());
             bulkRequest.add(request);
         }

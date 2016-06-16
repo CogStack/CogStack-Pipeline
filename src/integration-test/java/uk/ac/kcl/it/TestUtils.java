@@ -12,8 +12,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import javax.sql.DataSource;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
@@ -234,4 +233,37 @@ public class TestUtils  {
         }
     }
 
+    public void insertJsonsIntoOutputTable(String s) {
+
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
+
+        File jsonFile = new File(getClass().getClassLoader().getResource("jsonExamples.txt").getFile());
+
+
+        String sql = "INSERT INTO  " + s
+                + "( srcColumnFieldName"
+                + ", srcTableName"
+                + ", primaryKeyFieldName"
+                + ", primaryKeyFieldValue"
+                + ", updateTime"
+                + ", output )"
+                + " VALUES (?,?,?,?,?,?)";
+
+
+        //Construct BufferedReader from InputStreamReader
+        try(BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(jsonFile)))){
+            String line = null;
+            long l = 0;
+            while ((line = br.readLine()) != null) {
+                jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName",
+                        "fictionalPrimaryKeyFieldName", l, new Timestamp(today),line);
+                today = TestUtils.nextDay();
+                l++;
+            }
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

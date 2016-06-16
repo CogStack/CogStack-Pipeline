@@ -15,6 +15,10 @@
  */
 package uk.ac.kcl.rowmappers;
 
+import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.common.xcontent.XContentFactory;
+import org.elasticsearch.common.xcontent.XContentParser;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -24,13 +28,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
+import uk.ac.kcl.exception.TurboLaserException;
 import uk.ac.kcl.model.Document;
 import uk.ac.kcl.utils.BatchJobUtils;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.sql.*;
 import java.util.Arrays;
 import java.util.List;
+
+import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 
 @Component
 public class DocumentRowMapper implements RowMapper<Document>{
@@ -40,6 +48,7 @@ public class DocumentRowMapper implements RowMapper<Document>{
 
     @Autowired
     BatchJobUtils batchJobUtils;
+    private String reindexColumn;
 
 
     @PostConstruct
@@ -57,6 +66,14 @@ public class DocumentRowMapper implements RowMapper<Document>{
         }else{
             binaryContentFieldName = null;
         }
+
+        if(env.getProperty("reindexColumn")!=null){
+            reindexColumn = env.getProperty("reindexColumn");
+        }else{
+            reindexColumn = null;
+        }
+
+
     }
     private String binaryContentFieldName;
     private String srcTableName;
@@ -117,6 +134,20 @@ public class DocumentRowMapper implements RowMapper<Document>{
                     value !=null
                     && meta.getColumnLabel(col).equalsIgnoreCase(binaryContentFieldName)){
                 doc.setBinaryContent(rs.getBytes(col));
+            }
+            if (reindexColumn !=null &&
+                    value !=null
+                    && meta.getColumnLabel(col).equalsIgnoreCase(reindexColumn)){
+                byte[] json = rs.getBytes(reindexColumn);
+                XContentParser parser = null;
+                try {
+                    parser = XContentFactory.xContent(XContentType.JSON).createParser(json);
+                parser.close();
+                XContentBuilder builder = jsonBuilder().copyCurrentStructure(parser);
+                doc.setxContentBuilder(builder);
+                } catch (IOException e) {
+                    throw new TurboLaserException("Couldn't parse JSON",e,false ,true);
+                }
             }
         }
     }

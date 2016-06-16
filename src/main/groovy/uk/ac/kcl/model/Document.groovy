@@ -1,5 +1,7 @@
 package uk.ac.kcl.model
 
+import org.elasticsearch.common.xcontent.XContentBuilder
+
 import java.sql.Timestamp
 
 /**
@@ -17,7 +19,9 @@ class Document {
     Timestamp timeStamp
 
     //for catpuring itemProcessor output
-    String outputData
+    XContentBuilder xContentBuilder
+
+    String outputData;
 
     //for tika
     byte[] binaryContent
@@ -25,10 +29,12 @@ class Document {
     //for Gate
     String textContent
 
+
     //for es
     HashMap<String,Object> additionalFields = new HashMap<String,Object>();
 
     public String getDocName(){
         return srcTableName+"_"+srcColumnFieldName+"_"+primaryKeyFieldValue
     }
+
 }
