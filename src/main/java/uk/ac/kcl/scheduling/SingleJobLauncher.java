@@ -121,7 +121,7 @@ public class SingleJobLauncher {
                             startNextInstance();
                             break;
                         case ABANDONED:
-                            LOG.info("Last job was abandoned. Attempting restart from last successful job");
+                            LOG.info("Last job was abandoned. Attempting start from last successful job");
                             abandonAllJobsStartedAfterLastSuccessfulJob();
                             startNextInstance();
                             break;
@@ -136,7 +136,6 @@ public class SingleJobLauncher {
                             break;
                         default:
                             LOG.error("Should be unreachable");
-//                            jobOperator.startNextInstance(job.getName());
                             break;
                     }
                 }catch(NullPointerException ex){
@@ -149,7 +148,7 @@ public class SingleJobLauncher {
                  e) {
             LOG.error("Cannot start job", e);
         } catch (JobRestartException e){
-            LOG.error("Cannot restart job. Attempting to start next instance", e);
+            LOG.error("Cannot restart job. Attempting start from last successful job", e);
             try {
                 jobOperator.abandon(lastJobExecution.getId());
                 startNextInstance();

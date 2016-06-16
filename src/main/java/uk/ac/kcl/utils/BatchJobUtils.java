@@ -72,7 +72,7 @@ public class BatchJobUtils {
                 " JOIN batch_job_instance bji ON bje.job_instance_id = bji.job_instance_id \n" +
                 " JOIN batch_job_execution_params bjep ON bje.job_execution_id = bjep.job_execution_id" +
                 " WHERE bji.job_name = '" + env.getProperty("jobName") + "'";
-        LOG.info("Looking for last previous job with query " + sql);
+        LOG.info("Looking for status of last job");
         Long id = template.queryForObject(sql, Long.class);
         return jobExplorer.getJobExecution(id);
     }
@@ -84,7 +84,7 @@ public class BatchJobUtils {
                 " JOIN batch_job_execution_params bjep ON bje.job_execution_id = bjep.job_execution_id" +
                 " WHERE bje.status = 'COMPLETED' \n" +
                 " AND bji.job_name = '" + env.getProperty("jobName") + "'";
-        LOG.info("Looking for last previous job with query " + sql);
+        LOG.info("Looking for last successful job");
         Long id = template.queryForObject(sql, Long.class);
         return jobExplorer.getJobExecution(id);
     }
@@ -96,7 +96,7 @@ public class BatchJobUtils {
                 " JOIN batch_job_execution_params bjep ON bje.job_execution_id = bjep.job_execution_id" +
                 " WHERE (bje.exit_code = 'COMPLETED' OR bje.exit_code = 'FAILED' OR bje.exit_code = 'STOPPED') \n" +
                 " AND bji.job_name = '" + env.getProperty("jobName") + "'";
-        LOG.info("Looking for last previous job with query " + sql);
+        LOG.info("Looking for last restartable job");
         Long id =  template.queryForObject(sql, Long.class);
         return jobExplorer.getJobExecution(id);
 

@@ -65,18 +65,14 @@ public class TLJobParametersIncrementer implements JobParametersIncrementer {
                 case STARTED:
                 case STARTING:
                 case STOPPING:
+                case UNKNOWN:
                     LOG.error("Attempting to generate params but repository in unknown state");
                     break;
                 case FAILED:
-                    params = lastJobExecution.getJobParameters();
-                    break;
-                case ABANDONED:
-                    params = getNewJobParameters(id, batchJobUtils.getLastSuccessfulJobExecution());
-                    break;
                 case STOPPED:
                     params = lastJobExecution.getJobParameters();
                     break;
-                case UNKNOWN:
+                case ABANDONED:
                     params = getNewJobParameters(id, batchJobUtils.getLastSuccessfulJobExecution());
                     break;
                 default:
