@@ -3,7 +3,7 @@
 
 ## Introduction
 
-Turbo-laser is a distributed, fault tolerant database processing architecture for Tika, GATE, Biolark and text deidentification, with JDBC and Elasticsearch export options. It makes use of the Spring Batch framework. In the parlance of the batch processing domain language (http://docs.spring.io/spring-batch/reference/html/domain.html), it uses the partitioning concept to create 'partition step' metadata for a DB table. This metadata is persisted in the Spring database schema, whereafter each partition can then be executed locally or farmed out remotely via a JMS middleware server (only ActiveMQ is suported at this time). Remote worker JVMs then retrieve metadata descriptions of work units. The outcome of processing is then persisted in the database, allowing robust tracking and simple restart of failed partitions.
+Turbo-laser is a distributed, fault tolerant database processing architecture for Tika, GATE, Biolark and text deidentification, with JDBC and Elasticsearch export options. It makes use of the Spring Batch framework in order to provide a fully configurable pipeline with the goal of generating a JSON that can be readily indexed into elasticsearch. In the parlance of the batch processing domain language (http://docs.spring.io/spring-batch/reference/html/domain.html), it uses the partitioning concept to create 'partition step' metadata for a DB table. This metadata is persisted in the Spring database schema, whereafter each partition can then be executed locally or farmed out remotely via a JMS middleware server (only ActiveMQ is suported at this time). Remote worker JVMs then retrieve metadata descriptions of work units. The outcome of processing is then persisted in the database, allowing robust tracking and simple restart of failed partitions.
 
 ## Why does this project exist/ why is batch processing difficult?
 
@@ -31,7 +31,7 @@ processes
  3. dBLineFixer - process JDBC input with dBLineFixer (concatenates multi-row documents)
  4. basic - a job without a processing step, for simply writing JDBC input to elasticsearch
  5. deid - deidentify text with a GATE application (such as Azad Dehghan's DEID) or using the ElasticGazetteer - query a database for identifiers and mask them in free text using Levenstein distance
- 6. biolark - enable Biolark, Tudor Groza's awesome HPO term extraction project.
+ 6. biolark - enable Biolark, Tudor Groza's awesome HPO term extraction project. Note - requires a nested mapping to be set up in elasticsearch, so that the inner JSONs can be queried correctly. See https://www.elastic.co/guide/en/elasticsearch/guide/current/nested-objects.html for details.
 
 scaling
  1. localPartitioning - run all processes within the launching JVM
@@ -39,7 +39,7 @@ scaling
 
 outputs
  1. elasticsearch - write to an elasticsearch cluster
- 2. jdbc - write to a JDBC endpoint
+ 2. jdbc - write the generated JSON to a JDBC endpoint. Useful if the selected processes are particularly heavy (e.g. biolark), so that data can be reindexed without the need for reprocessing
 
 partitioning
  1. primaryKeyPartition - process all records based upon partitioning of the primary key
@@ -73,5 +73,10 @@ Turbo-laser assumes the job repository schema is already in place in the DB impl
 To add additional JVM processes, whether locally or remotely (via the magic of Spring Integration), just launch an instance with the same config files but with useScheduling = slave. You'll need an ActiveMQ server to co-ordinate the nodes (see config example for details)
 
 That's it! If a job fails, any uncompleted partitions will be picked up by the next run. If a Job ends up in an unknown state (e.g. due to hardware failure), the next run will mark it as abandonded and recommence from the last successful job it can find in the repository.
+
+## JDBC output/reindexing
+
+Using the JDBC output, it is possible to generate a column of JSON strings back into a database. This is useful for reindexing large quantities of data without the need to re-process with the more computationally expensive item processors (e.g. OCR, biolark). To reindex, simply use the reindexColumn in the configuration file. Note, if you include other profiles, these will still run, but will not contribute to the final JSON, and are thus pointless. Therefore, only the 'basic' profile should be used when reindexing data.
+
 
 Questions? Want to help? Drop me a message!

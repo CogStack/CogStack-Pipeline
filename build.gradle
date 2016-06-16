@@ -184,6 +184,8 @@ task writeExampleConfigs  {
     String deidPKprofiles = new File("src/integration-test/resources/deidPKprofiles.properties").text
     String gatePKprofiles = new File("src/integration-test/resources/gatePKprofiles.properties").text
     String tikaPKprofiles = new File("src/integration-test/resources/tikaPKprofiles.properties").text
+    String reindexPKprofiles = new File("src/integration-test/resources/reindexPKprofiles.properties").text
+    String biolarkPKprofiles = new File("src/integration-test/resources/biolarkPKprofiles.properties").text
 
     //ItemProcessors
     String deidentification = new File("src/integration-test/resources/deidentification.properties").text
@@ -204,9 +206,6 @@ task writeExampleConfigs  {
     //JMS
     String jms = new File("src/integration-test/resources/jms.properties").text
 
-    //processing period
-    String processingPeriod = new File("src/integration-test/resources/processingPeriod.properties").text
-
     //configured start
     String configuredStart = new File("src/integration-test/resources/configured_start.properties").text
 
@@ -223,7 +222,8 @@ task writeExampleConfigs  {
     String sql_server_test_config_basic = new File("src/integration-test/resources/sql_server_test_config_basic.properties").text
     String sql_server_test_config_dBLineFixer = new File("src/integration-test/resources/sql_server_test_config_line_fixer.properties").text
     String sql_server_test_config_deid = new File("src/integration-test/resources/sql_server_test_config_deid.properties").text
-
+    String sql_server_test_config_reindex = new File("src/integration-test/resources/sql_server_test_config_reindex.properties").text
+    String sql_server_test_config_biolark = new File("src/integration-test/resources/sql_server_test_config_biolark.properties").text
 
     new File("exampleConfigs").mkdir()
     def gateExample = new File("exampleConfigs/gateJob.properties")
@@ -261,6 +261,28 @@ task writeExampleConfigs  {
                 + "\n" + sql_server_test_config_basic
         )
     }
+    def biolarkExample = new File("exampleConfigs/biolarkJob.properties")
+    biolarkExample.withWriter("UTF-8"){ writer ->
+        writer.write("# EXAMPLE CONFIG FOR basicJob \n" +
+                elasticsearch
+                +"\n" + biolarkPKprofiles
+                +"\n" + jms
+                +"\n" + jobAndStep
+                + "\n" + sql_server_db
+                + "\n" + sql_server_test_config_biolark
+        )
+    }
+    def reindexExample = new File("exampleConfigs/reindexJob.properties")
+    reindexExample.withWriter("UTF-8"){ writer ->
+        writer.write("# EXAMPLE CONFIG FOR basicJob \n" +
+                elasticsearch
+                +"\n" + reindexPKprofiles
+                +"\n" + jms
+                +"\n" + jobAndStep
+                + "\n" + sql_server_db
+                + "\n" + sql_server_test_config_reindex
+        )
+    }
     def basicExample2 = new File("exampleConfigs/basicJob2.properties")
     basicExample2.withWriter("UTF-8"){ writer ->
         writer.write("# EXAMPLE CONFIG FOR basicJob with timestamp based processing, configured start date and scheduling on \n" +
@@ -268,7 +290,6 @@ task writeExampleConfigs  {
                 +"\n" + basicPKAndTimeStampProfiles
                 +"\n" + scheduling
                 +"\n" + configuredStart
-                +"\n" + processingPeriod
                 +"\n" + jms
                 +"\n" + jobAndStep
                 + "\n" + sql_server_db
