@@ -141,13 +141,13 @@ public abstract class AbstractRealTimeRangePartitioner {
     Map<String, ExecutionContext> getMap(int gridSize, ScheduledPartitionParams params) {
         Map<String, ExecutionContext> result = new HashMap<>();
         if ((params.getMaxId() -params.getMinId()) < (long) gridSize) {
-            long partitionCount = (params.getMaxId() -params.getMaxId());
-            logger.info("There are fewer new records than the grid size. Expect only " + partitionCount+ "partitions this execution") ;
+            long partitionCount = (params.getMaxId() -params.getMinId()+1L);
+            logger.info("There are fewer new records than the grid size. Expect only " + partitionCount+ " partitions this execution") ;
             for(long i = 0;i<(partitionCount);i++) {
                 ExecutionContext value = new ExecutionContext();
                 result.put("partition" + (i + 1L), value);
-                value.putLong("minValue", (params.getMinId()+1L+i) );
-                value.putLong("maxValue", (params.getMinId()+1L+i) );
+                value.putLong("minValue", (params.getMinId()+i) );
+                value.putLong("maxValue", (params.getMinId()+i) );
                 value.put("min_time_stamp", params.getMinTimeStamp().toString());
                 value.put("max_time_stamp", params.getMaxTimeStamp().toString());
             }
@@ -174,6 +174,9 @@ public abstract class AbstractRealTimeRangePartitioner {
         return result;
     }
 
+    public void informJobCompleteListenerOfLastDate(Timestamp jobEndTimestamp) {
+        jobCompleteNotificationListener.setLastDateInthisJob(jobEndTimestamp.getTime());
+    }
     public void setJobExecution(JobExecution jobExecution) {
         this.jobExecution = jobExecution;
     }

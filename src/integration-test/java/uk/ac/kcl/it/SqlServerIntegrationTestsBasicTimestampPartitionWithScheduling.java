@@ -37,6 +37,7 @@ import uk.ac.uk.it.TestExecutionListeners.SqlServerBasicTestExecutionListener;
         "classpath:sql_server_db.properties",
         "classpath:elasticsearch.properties",
         "classpath:scheduling.properties",
+        "classpath:biolark.properties",
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
         SqlServerTestUtils.class,

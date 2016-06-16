@@ -53,6 +53,7 @@ public class RealtimeTimeStampAndPKRangePartitioner extends AbstractRealTimeRang
         }
         if(params!=null) {
             result = getExecutionContextMap(gridSize, params);
+            informJobCompleteListenerOfLastDate(params.getMaxTimeStamp());
         }else{
             result = new HashMap<>();
         }
@@ -107,7 +108,7 @@ public class RealtimeTimeStampAndPKRangePartitioner extends AbstractRealTimeRang
         if(newJobStartTimeStamp == null){
             logger.info("Database appears to be synched as far as " +jobStartTimeStamp.toString()+ ". " +
                     "Checking again on next run");
-            jobCompleteNotificationListener.setLastDateInthisJob(jobStartTimeStamp.getTime());
+            informJobCompleteListenerOfLastDate(jobStartTimeStamp);
         }else{
             logger.info("New data found! Generating partitions from " + newJobStartTimeStamp.toString() +" inclusive.");
             result =  getParams(newJobStartTimeStamp,true);

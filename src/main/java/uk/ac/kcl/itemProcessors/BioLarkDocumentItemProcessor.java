@@ -15,6 +15,8 @@
  */
 package uk.ac.kcl.itemProcessors;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import uk.ac.kcl.exception.BiolarkProcessingFailedException;
 import uk.ac.kcl.model.Document;
 
 import javax.annotation.PostConstruct;
@@ -40,12 +43,15 @@ public class BioLarkDocumentItemProcessor implements ItemProcessor<Document, Doc
     @Autowired
     private Environment env;
     private String endPoint;
-
+    private String fieldName;
+    private ObjectMapper mapper;
     @PostConstruct
     private void init(){
 
         fieldsToBioLark = Arrays.asList(env.getProperty("fieldsToBioLark").split(","));
         endPoint = env.getProperty("biolarkEndPoint");
+        setFieldName(env.getProperty("biolarkFieldName"));
+         this.mapper = new ObjectMapper();
     }
 
     private List<String> fieldsToBioLark;
@@ -64,13 +70,24 @@ public class BioLarkDocumentItemProcessor implements ItemProcessor<Document, Doc
             String newString = "";
             if(fieldsToBioLark.contains(k)) {
                 RestTemplate restTemplate = new RestTemplate();
-                String responseEntity = restTemplate.postForObject(endPoint,v,String.class);
-                newMap.put((k+"_biolark"),responseEntity);
+                //byte[] json;
+                Object json;
+//                try {
+//                    json = mapper.writeValueAsBytes(restTemplate.postForObject(endPoint,v,Object.class));
+//                } catch (JsonProcessingException e) {
+//                    throw new BiolarkProcessingFailedException("Failed to convert JSON", e,false,true);
+//                }
+                json = restTemplate.postForObject(endPoint,v,Object.class);
+                newMap.put(fieldName,json);
             }
         });
 
         doc.getAdditionalFields().clear();
         doc.getAdditionalFields().putAll(newMap);
         return doc;
+    }
+
+    public void setFieldName(String fieldName) {
+        this.fieldName = fieldName;
     }
 }

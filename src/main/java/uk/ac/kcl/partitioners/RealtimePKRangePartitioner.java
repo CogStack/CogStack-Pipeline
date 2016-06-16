@@ -46,6 +46,7 @@ public class RealtimePKRangePartitioner extends AbstractRealTimeRangePartitioner
             result = handleNoNewRecords(getLastTimestampFromLastSuccessfulJob());
         }else{
             result = getExecutionContextMap(gridSize,params);
+            informJobCompleteListenerOfLastDate(params.getMaxTimeStamp());
         }
         if(firstRun){
             firstRun =false;
@@ -64,11 +65,11 @@ public class RealtimePKRangePartitioner extends AbstractRealTimeRangePartitioner
     private Map<String, ExecutionContext> handleNoNewRecords (Timestamp startTimeStamp) {
         if(firstRun) {
             logger.info("No new data found from configured start time " + startTimeStamp.toString());
-            jobCompleteNotificationListener.setLastDateInthisJob(startTimeStamp.getTime());
+            informJobCompleteListenerOfLastDate(startTimeStamp);
         }else {
             logger.info("Database appears to be synched as far as " + startTimeStamp.toString() + ". " +
                     "Checking again on next run");
-            jobCompleteNotificationListener.setLastDateInthisJob(startTimeStamp.getTime());
+            informJobCompleteListenerOfLastDate(startTimeStamp);
         }
         return new HashMap<>();
     }
@@ -104,5 +105,7 @@ public class RealtimePKRangePartitioner extends AbstractRealTimeRangePartitioner
         return (ScheduledPartitionParams) jdbcTemplate.queryForObject(
                 sql, new PartitionParamsRowMapper());
     }
+
+
 
 }
