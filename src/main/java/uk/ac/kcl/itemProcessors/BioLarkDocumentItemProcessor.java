@@ -48,7 +48,7 @@ public class BioLarkDocumentItemProcessor implements ItemProcessor<Document, Doc
     @PostConstruct
     private void init(){
 
-        fieldsToBioLark = Arrays.asList(env.getProperty("fieldsToBioLark").split(","));
+        fieldsToBioLark = Arrays.asList(env.getProperty("fieldsToBioLark").toLowerCase().split(","));
         endPoint = env.getProperty("biolarkEndPoint");
         setFieldName(env.getProperty("biolarkFieldName"));
          this.mapper = new ObjectMapper();
