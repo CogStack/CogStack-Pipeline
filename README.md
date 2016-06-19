@@ -3,7 +3,7 @@
 
 ## Introduction
 
-Turbo-laser is a distributed, fault tolerant database processing architecture for Tika, GATE, Biolark and text deidentification, with JDBC and Elasticsearch export options. It makes use of the Spring Batch framework in order to provide a fully configurable pipeline with the goal of generating a JSON that can be readily indexed into elasticsearch. In the parlance of the batch processing domain language (http://docs.spring.io/spring-batch/reference/html/domain.html), it uses the partitioning concept to create 'partition step' metadata for a DB table. This metadata is persisted in the Spring database schema, whereafter each partition can then be executed locally or farmed out remotely via a JMS middleware server (only ActiveMQ is suported at this time). Remote worker JVMs then retrieve metadata descriptions of work units. The outcome of processing is then persisted in the database, allowing robust tracking and simple restart of failed partitions.
+Turbo-laser is a distributed, fault tolerant database processing architecture for Tika, GATE, Biolark and text deidentification, with JDBC and Elasticsearch export options. It makes use of the Spring Batch framework in order to provide a fully configurable pipeline with the goal of generating a JSON that can be readily indexed into elasticsearch. In the parlance of the batch processing [domain language](http://docs.spring.io/spring-batch/reference/html/domain.html), it uses the partitioning concept to create 'partition step' metadata for a DB table. This metadata is persisted in the Spring database schema, whereafter each partition can then be executed locally or farmed out remotely via a JMS middleware server (only ActiveMQ is suported at this time). Remote worker JVMs then retrieve metadata descriptions of work units. The outcome of processing is then persisted in the database, allowing robust tracking and simple restart of failed partitions.
 
 ## Why does this project exist/ why is batch processing difficult?
 
@@ -47,9 +47,9 @@ partitioning
 
 ## Scheduling
 Turbo-laser also offers a built in scheduler, to process changes in a database between job runs (requires a timestamp in the source database)
-
-> set useScheduling to true
-
+```
+useScheduling = true
+```
 run intervals are handled with the following CRON like syntax
 ```
 scheduler.rate = "*/5 * * * * *"
@@ -78,5 +78,18 @@ That's it! If a job fails, any uncompleted partitions will be picked up by the n
 
 Using the JDBC output, it is possible to generate a column of JSON strings back into a database. This is useful for reindexing large quantities of data without the need to re-process with the more computationally expensive item processors (e.g. OCR, biolark). To reindex, simply use the reindexColumn in the configuration file. Note, if you include other profiles, these will still run, but will not contribute to the final JSON, and are thus pointless. Therefore, only the 'basic' profile should be used when reindexing data.
 
+## History
+
+This project is an ‘evolution’ of an earlier KHP-Informatics project I was involved with called [Cognition](https://github.com/KHP-Informatics/Cognition-DNC). Although Cognition had an excellent implementation of Levenstein distance for string substitution (thanks [iemre](https://github.com/iemre)!), the architecture of the code suffered some design flaws, such as an overly complex domain model and configuration, and lack of fault tolerance/job stop/start/retry logic. As such, it was somewhat difficult to work with in production, and hard to extend with new features. It was clear that there was the need for a proper batch processing framework. Enter Spring Batch and a completely rebuilt codebase, save a couple of classes from the original Cognition project. Turbo-laser is used at King's College Hospital and the South London and Maudsley Hospital to feed Elasticsearch clusters for business intelligence and research use cases
+
+Some of the advancements in Turbo-laser:
+
+ 1. A simple <String,Object> map, with a few pieces of database metadata for its [domain model](https://github.com/RichJackson/turbo-laser/blob/master/src/main/groovy/uk/ac/kcl/model/Document.groovy) (essentially mapping a database row to a elasticsearch document, with the ability to embed [nested types](https://www.elastic.co/guide/en/elasticsearch/reference/2.3/nested.html)
+ 2. A composite [item processor configuration](https://github.com/RichJackson/turbo-laser/blob/master/src/main/java/uk/ac/kcl/itemHandlers/ItemHandlers.java), that can be easily extended and combined with other processing use case
+ 3. Complete, sensible coverage of stop, start, retry, abandon logic
+ 4. A custom socket timeout factory, to manage network failures when the pesky JDBC driver implementations aren’t fully implemented. Check out [this blog post](https://social.msdn.microsoft.com/Forums/office/en-US/3373d40a-2a0b-4fe4-b6e8-46f2988debf8/any-plans-to-add-socket-timeout-option-in-jdbc-driver?forum=sqldataaccess) for info.
+ 5. The ability to run multiple batch jobs (i.e. process multiple database tables within a single JVM, each having its own Spring container
+ 6. Remote partitioning via an ActiveMQ JMS server, for complete scalability
+ 7. Built in job scheduler to enable near real time synchronisation with a database
 
 Questions? Want to help? Drop me a message!
