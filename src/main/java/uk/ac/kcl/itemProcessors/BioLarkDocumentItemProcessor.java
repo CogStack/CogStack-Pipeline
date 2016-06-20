@@ -76,7 +76,7 @@ public class BioLarkDocumentItemProcessor implements ItemProcessor<Document, Doc
                     json = restTemplate.postForObject(endPoint, v, Object.class);
                 }catch (HttpClientErrorException e){
                     LOG.warn("Biolark failed on document "+ doc.getDocName(), e);
-                    json = "{\"biolark_error\":\""+e.getMessage()+"\"}";
+                    json = "{\"biolark_error\":\"See logs for details\"}";
                 }
                 newMap.put(fieldName,json);
             }
