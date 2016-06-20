@@ -30,9 +30,7 @@ import uk.ac.kcl.exception.BiolarkProcessingFailedException;
 import uk.ac.kcl.model.Document;
 
 import javax.annotation.PostConstruct;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Profile("biolark")
 @Service("biolarkDocumentItemProcessor")
@@ -71,12 +69,16 @@ public class BioLarkDocumentItemProcessor implements ItemProcessor<Document, Doc
             String newString = "";
             if(fieldsToBioLark.contains(k)) {
                 RestTemplate restTemplate = new RestTemplate();
-                Object json;
+                Object json = null;
                 try {
                     json = restTemplate.postForObject(endPoint, v, Object.class);
                 }catch (HttpClientErrorException e){
                     LOG.warn("Biolark failed on document "+ doc.getDocName(), e);
-                    json = "{\"biolark_error\":\"See logs for details\"}";
+                    ArrayList<LinkedHashMap<Object,Object>> al = new ArrayList<LinkedHashMap<Object, Object>>();
+                    LinkedHashMap<Object,Object> hm = new LinkedHashMap<Object, Object>();
+                    hm.put("error",e.getLocalizedMessage());
+                    al.add(hm);
+                    json = al;
                 }
                 newMap.put(fieldName,json);
             }
