@@ -73,6 +73,10 @@ public class CleanupBean implements SmartLifecycle {
             }
         }
 
+
+        long shutdownTimeout = Long.valueOf(env.getProperty("shutdownTimeout"));
+
+        long t1 = shutdownTimeout/6L;
         int stoppedCount = 0;
         stop_loop:
         for(int i=0;i<=5;i++){
@@ -89,7 +93,7 @@ public class CleanupBean implements SmartLifecycle {
                 if(stoppedCount == jobExecs.size()) break stop_loop;
             }
             try {
-                Thread.sleep(5000);
+                Thread.sleep(t1);
             } catch (InterruptedException e) {
                 LOG.warn("program exited before all jobs confirmed stopped. Job Repository may be in unknown state");
                 break;

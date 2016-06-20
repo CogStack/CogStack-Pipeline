@@ -37,10 +37,8 @@ import java.util.Properties;
 public class Main {
 
     public static void main(String[] args) {
-
         File folder = new File(args[0]);
         File[] listOfFiles = folder.listFiles();
-
         assert listOfFiles != null;
         for (File listOfFile : listOfFiles) {
             if (listOfFile.isFile()) {
@@ -49,7 +47,6 @@ public class Main {
                             ". Attempting to launch application context");
                     Properties properties = new Properties();
                     InputStream input;
-
                     try {
                         input = new FileInputStream(listOfFile);
                         properties.load(input);
