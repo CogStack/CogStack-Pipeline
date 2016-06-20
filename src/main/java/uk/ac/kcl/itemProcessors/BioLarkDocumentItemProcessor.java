@@ -24,6 +24,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import uk.ac.kcl.exception.BiolarkProcessingFailedException;
 import uk.ac.kcl.model.Document;
@@ -71,7 +72,12 @@ public class BioLarkDocumentItemProcessor implements ItemProcessor<Document, Doc
             if(fieldsToBioLark.contains(k)) {
                 RestTemplate restTemplate = new RestTemplate();
                 Object json;
-                json = restTemplate.postForObject(endPoint,v,Object.class);
+                try {
+                    json = restTemplate.postForObject(endPoint, v, Object.class);
+                }catch (HttpClientErrorException e){
+                    LOG.warn("Biolark failed on document "+ doc.getDocName(), e);
+                    json = "{\"biolark_error\":\""+e.getMessage()+"\"}";
+                }
                 newMap.put(fieldName,json);
             }
         });
