@@ -1,5 +1,6 @@
 package uk.ac.kcl.service;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Profile;
@@ -32,7 +33,7 @@ import java.util.stream.Collectors;
 @Profile("deid")
 public class ElasticGazetteerService {
 
-
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(ElasticGazetteerService.class);
     @Autowired
     ResourceLoader resourceLoader;
 
@@ -131,7 +132,11 @@ public class ElasticGazetteerService {
         for(Timestamp ts : timestamps) {
             for(String date: datePatterns){
                 SimpleDateFormat dateFormat = new SimpleDateFormat(date);
-                patterns.add(Pattern.compile(dateFormat.format(ts)));
+                try {
+                    patterns.add(Pattern.compile(dateFormat.format(ts)));
+                }catch (NullPointerException e){
+                    LOG.debug("null detected in input");
+                };
             }
         }
         return patterns;
