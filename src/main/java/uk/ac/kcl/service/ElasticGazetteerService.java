@@ -20,7 +20,9 @@ import java.io.InputStreamReader;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -86,7 +88,7 @@ public class ElasticGazetteerService {
 
     public String deIdentifyString(String document, String docPrimaryKey){
         double levDistance = Double.valueOf(env.getProperty("levDistance"));
-        List<Pattern> patterns;
+        Set<Pattern> patterns;
         List<String> strings = getStrings(docPrimaryKey);
         patterns = getStringPatterns(strings,document,levDistance);
         String str2="";
@@ -115,17 +117,22 @@ public class ElasticGazetteerService {
         return sb.toString();
     }
 
-    private List<Pattern> getStringPatterns(List<String> strings, String document, double levDistance) {
+    private Set<Pattern> getStringPatterns(List<String> strings, String document, double levDistance) {
 
-        List<Pattern> patterns = new ArrayList<>();
 
+        Set<String> stringSet = new HashSet<>();
         for(String string : strings) {
-            patterns.addAll(StringTools.getApproximatelyMatchingStringList(document, string).stream().map(approximateMatch -> Pattern.compile(Pattern.quote(approximateMatch), Pattern.CASE_INSENSITIVE)).collect(Collectors.toList()));
-            patterns.addAll(StringTools.getMatchingWindowsAboveThreshold(document, string, levDistance).stream().filter(window -> StringTools.isNotTooShort(string)).map(window -> Pattern.compile(Pattern.quote(window.getMatchingText()), Pattern.CASE_INSENSITIVE)).collect(Collectors.toList()));
-            patterns.addAll(StringTools.splitIntoWordsWithLengthHigherThan(string, Integer.valueOf(env.getProperty("minWordLength"))).stream().map(word -> Pattern.compile(Pattern.quote(word), Pattern.CASE_INSENSITIVE)).collect(Collectors.toList()));
+            stringSet.addAll(StringTools.getApproximatelyMatchingStringList(document, string));
+            stringSet.addAll(StringTools.getApproximatelyMatchingStringList(document, string));
+            stringSet.addAll((StringTools.splitIntoWordsWithLengthHigherThan(string, Integer.valueOf(env.getProperty("minWordLength")))));
         }
+
+        Set<Pattern> patterns = new HashSet<>();
+        patterns.addAll(stringSet.stream().map(string -> Pattern.compile(Pattern.quote(string), Pattern.CASE_INSENSITIVE)).collect(Collectors.toSet()));
+
         return patterns;
     }
+
 
     private List<Pattern> getTimestampPatterns(List<Timestamp> timestamps) {
         List<Pattern> patterns = new ArrayList<>();
