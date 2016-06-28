@@ -168,7 +168,9 @@ public abstract class AbstractRealTimeRangePartitioner {
                 long end = targetSize;
                 int partitionCounter = 0;
                 while (start <= params.getMaxId()) {
-                    populateMap(params, result, start, end, partitionCounter);
+                    if(populateMap(params, result, start, end, partitionCounter)){
+                        partitionCounter++;
+                    }
                     start += targetSize;
                     end += targetSize;
                 }
@@ -178,7 +180,9 @@ public abstract class AbstractRealTimeRangePartitioner {
                 long end = start + targetSize - 1;
                 int counter = 0;
                 for (int i = 0; i < gridSize; i++) {
-                    populateMap(params, result, start, end, counter);
+                    if(populateMap(params, result, start, end, counter)){
+                        counter++;
+                    }
                     start += targetSize;
                     end += targetSize;
                 }
@@ -191,15 +195,16 @@ public abstract class AbstractRealTimeRangePartitioner {
         return result;
     }
 
-    private int populateMap(ScheduledPartitionParams params, Map<String, ExecutionContext> result, long start, long end, int counter) {
+    private boolean populateMap(ScheduledPartitionParams params, Map<String, ExecutionContext> result, long start, long end, int counter) {
         long recordCountThisPartition = getRecordCountThisPartition(Long.toString(start), Long.toString(end),
                 params.getMinTimeStamp().toString(),
                 params.getMaxTimeStamp().toString());
         if (recordCountThisPartition > 0L) {
-            result.put("partition" + (counter + 1), getNewExecutionContext(params, start, end));
-            counter++;
+            result.put("partition" + counter, getNewExecutionContext(params, start, end));
+            return true;
+        }else{
+            return false;
         }
-        return counter;
     }
 
 
