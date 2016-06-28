@@ -162,6 +162,7 @@ public abstract class AbstractRealTimeRangePartitioner {
         } else {
             logger.info("Multiple steps to generate this job");
             if(env.getProperty("maxPartitionSize")!=null){
+                logger.info("maxPartitionSize detected in properties. Ignoring gridSize if configured");
                 populatePartitionMapWithRestrictions(params, result);
             }else {
                 populatePartitionMapWithoutRestrictions(gridSize, params, result);
@@ -180,29 +181,28 @@ public abstract class AbstractRealTimeRangePartitioner {
         long end = targetSize;
         int partitionCounter = 0;
         while (start <= params.getMaxId()) {
-            ExecutionContext value = new ExecutionContext();
+
             long recordCountThisPartition = getRecordCountThisPartition(
                     String.valueOf(start),
                     String.valueOf(end),
                     params.getMinTimeStamp().toString(),
                     params.getMaxTimeStamp().toString());
-            addParams(params, result, start, end, partitionCounter, value, recordCountThisPartition);
-            start += targetSize;
-            end += targetSize;
-            partitionCounter++;
+            if (recordCountThisPartition > 0L) {
+                result.put("partition" + (partitionCounter + 1), getNewExecutionContext(params, start, end));
+                start += targetSize;
+                end += targetSize;
+                partitionCounter++;
+            }
         }
     }
 
-    private void addParams(ScheduledPartitionParams params, Map<String, ExecutionContext> result, long start, long end, int partitionCounter, ExecutionContext value, long recordCountThisPartition) {
-        if (recordCountThisPartition == 0L) {
-            //move to next partition
-        } else {
-            result.put("partition" + (partitionCounter + 1), value);
-            value.putLong("minValue", start);
-            value.putLong("maxValue", end);
-            value.put("min_time_stamp", params.getMinTimeStamp().toString());
-            value.put("max_time_stamp", params.getMaxTimeStamp().toString());
-        }
+    private ExecutionContext getNewExecutionContext(ScheduledPartitionParams params, long start, long end) {
+        ExecutionContext value = new ExecutionContext();
+        value.putLong("minValue", start);
+        value.putLong("maxValue", end);
+        value.put("min_time_stamp", params.getMinTimeStamp().toString());
+        value.put("max_time_stamp", params.getMaxTimeStamp().toString());
+        return value;
     }
 
     private void populatePartitionMapWithoutRestrictions(int gridSize, ScheduledPartitionParams params, Map<String, ExecutionContext> result) {
@@ -210,13 +210,14 @@ public abstract class AbstractRealTimeRangePartitioner {
         long start = params.getMinId();
         long end = start + targetSize - 1;
         for (int i = 0; i < gridSize; i++) {
-            ExecutionContext value = new ExecutionContext();
             long recordCountThisPartition = getRecordCountThisPartition(Long.toString(start), Long.toString(end),
                     params.getMinTimeStamp().toString(),
                     params.getMaxTimeStamp().toString());
-            addParams(params, result, start, end, i, value, recordCountThisPartition);
-            start += targetSize;
-            end += targetSize;
+            if (recordCountThisPartition > 0L) {
+                result.put("partition" + (i + 1), getNewExecutionContext(params, start, end));
+                start += targetSize;
+                end += targetSize;
+            }
         }
     }
 
