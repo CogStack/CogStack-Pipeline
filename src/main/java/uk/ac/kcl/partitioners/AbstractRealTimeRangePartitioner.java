@@ -163,9 +163,25 @@ public abstract class AbstractRealTimeRangePartitioner {
             logger.info("Multiple steps to generate this job");
             if(env.getProperty("maxPartitionSize")!=null){
                 logger.info("maxPartitionSize detected in properties. Ignoring gridSize if configured");
-                populatePartitionMapWithRestrictions(params, result);
+                long targetSize = Long.valueOf(env.getProperty("maxPartitionSize"));
+                long start = params.getMinId();
+                long end = targetSize;
+                int partitionCounter = 0;
+                while (start <= params.getMaxId()) {
+                    populateMap(params, result, start, end, partitionCounter);
+                    start += targetSize;
+                    end += targetSize;
+                }
             }else {
-                populatePartitionMapWithoutRestrictions(gridSize, params, result);
+                long targetSize = (params.getMaxId() - params.getMinId()) / gridSize + 1;
+                long start = params.getMinId();
+                long end = start + targetSize - 1;
+                int counter = 0;
+                for (int i = 0; i < gridSize; i++) {
+                    populateMap(params, result, start, end, counter);
+                    start += targetSize;
+                    end += targetSize;
+                }
             }
         }
         if (params.getMaxTimeStamp() !=null){
@@ -175,26 +191,17 @@ public abstract class AbstractRealTimeRangePartitioner {
         return result;
     }
 
-    private void populatePartitionMapWithRestrictions(ScheduledPartitionParams params, Map<String, ExecutionContext> result) {
-        long targetSize = Long.valueOf(env.getProperty("maxPartitionSize"));
-        long start = params.getMinId();
-        long end = targetSize;
-        int partitionCounter = 0;
-        while (start <= params.getMaxId()) {
-
-            long recordCountThisPartition = getRecordCountThisPartition(
-                    String.valueOf(start),
-                    String.valueOf(end),
-                    params.getMinTimeStamp().toString(),
-                    params.getMaxTimeStamp().toString());
-            if (recordCountThisPartition > 0L) {
-                result.put("partition" + (partitionCounter + 1), getNewExecutionContext(params, start, end));
-                start += targetSize;
-                end += targetSize;
-                partitionCounter++;
-            }
+    private int populateMap(ScheduledPartitionParams params, Map<String, ExecutionContext> result, long start, long end, int counter) {
+        long recordCountThisPartition = getRecordCountThisPartition(Long.toString(start), Long.toString(end),
+                params.getMinTimeStamp().toString(),
+                params.getMaxTimeStamp().toString());
+        if (recordCountThisPartition > 0L) {
+            result.put("partition" + (counter + 1), getNewExecutionContext(params, start, end));
+            counter++;
         }
+        return counter;
     }
+
 
     private ExecutionContext getNewExecutionContext(ScheduledPartitionParams params, long start, long end) {
         ExecutionContext value = new ExecutionContext();
@@ -205,21 +212,6 @@ public abstract class AbstractRealTimeRangePartitioner {
         return value;
     }
 
-    private void populatePartitionMapWithoutRestrictions(int gridSize, ScheduledPartitionParams params, Map<String, ExecutionContext> result) {
-        long targetSize = (params.getMaxId() - params.getMinId()) / gridSize + 1;
-        long start = params.getMinId();
-        long end = start + targetSize - 1;
-        for (int i = 0; i < gridSize; i++) {
-            long recordCountThisPartition = getRecordCountThisPartition(Long.toString(start), Long.toString(end),
-                    params.getMinTimeStamp().toString(),
-                    params.getMaxTimeStamp().toString());
-            if (recordCountThisPartition > 0L) {
-                result.put("partition" + (i + 1), getNewExecutionContext(params, start, end));
-                start += targetSize;
-                end += targetSize;
-            }
-        }
-    }
 
     public void informJobCompleteListenerOfLastDate(Timestamp jobEndTimestamp) {
         jobCompleteNotificationListener.setLastDateInthisJob(jobEndTimestamp.getTime());
