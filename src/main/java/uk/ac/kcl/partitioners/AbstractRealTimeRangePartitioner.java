@@ -234,7 +234,7 @@ public abstract class AbstractRealTimeRangePartitioner {
         }
         long partitionCount = jdbcTemplate.queryForObject(tsSql, Long.class);
         if(partitionCount==0L){
-            logger.info("No rows detected with query " + tsSql);
+            logger.debug("No rows detected with query " + tsSql);
         }else{
             logger.info( partitionCount +" rows detected with query " + tsSql);
         }
