@@ -201,6 +201,7 @@ public abstract class AbstractRealTimeRangePartitioner {
                 params.getMaxTimeStamp().toString());
         if (recordCountThisPartition > 0L) {
             result.put("partition" + counter, getNewExecutionContext(params, start, end));
+            logger.info("partition " + counter + " created");
             return true;
         }else{
             return false;
