@@ -94,7 +94,6 @@ public class RealtimeTimeStampAndPKRangePartitioner extends AbstractRealTimeRang
     }
 
 
-//////////////////////////////////    TEST THIS BLOCK
 
     private ScheduledPartitionParams scanForNewRecords(Timestamp jobStartTimeStamp) {
         ScheduledPartitionParams result = null;
@@ -115,7 +114,6 @@ public class RealtimeTimeStampAndPKRangePartitioner extends AbstractRealTimeRang
     }
 
 
-////////////////////////////
 
     private Map<String, ExecutionContext> getExecutionContextMap(int gridSize, ScheduledPartitionParams params) {
         logger.info("commencing timestamp and PK based partitioning");

@@ -72,7 +72,6 @@ public class BioLarkDocumentItemProcessor implements ItemProcessor<Document, Doc
                 Object json = null;
                 try {
                     json = restTemplate.postForObject(endPoint, v, Object.class);
-
                 }catch (HttpClientErrorException e){
                     LOG.warn("Biolark failed on document "+ doc.getDocName(), e);
                     ArrayList<LinkedHashMap<Object,Object>> al = new ArrayList<LinkedHashMap<Object, Object>>();
@@ -81,7 +80,7 @@ public class BioLarkDocumentItemProcessor implements ItemProcessor<Document, Doc
                     al.add(hm);
                     json = al;
                 }
-                newMap.put(fieldName,json);
+                newMap.put(k.toString()+"_"+fieldName,json);
             }
         });
 
