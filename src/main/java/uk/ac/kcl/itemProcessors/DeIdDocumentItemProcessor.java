@@ -22,6 +22,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import uk.ac.kcl.exception.DeIdentificationFailedException;
 import uk.ac.kcl.model.Document;
 import uk.ac.kcl.service.ElasticGazetteerService;
 import uk.ac.kcl.service.GateService;
@@ -67,14 +68,18 @@ public class DeIdDocumentItemProcessor implements ItemProcessor<Document, Docume
         doc.getAdditionalFields().forEach((k,v)->{
             String newString = "";
             if(fieldsToDeId.contains(k.toLowerCase())) {
-                if(env.getProperty("useGateApp").equalsIgnoreCase("true")) {
-                    newString = gateService.deIdentifyString(v.toString(), doc.getPrimaryKeyFieldValue());
-                }else{
-                    newString = elasticGazetteer.deIdentifyDates(v.toString(),doc.getPrimaryKeyFieldValue());
-                    newString = elasticGazetteer.deIdentifyString(newString,doc.getPrimaryKeyFieldValue());
+                try {
+                    if (env.getProperty("useGateApp").equalsIgnoreCase("true")) {
+                        newString = gateService.deIdentifyString(v.toString(), doc.getPrimaryKeyFieldValue());
+                    } else {
+                        newString = elasticGazetteer.deIdentifyDates(v.toString(), doc.getPrimaryKeyFieldValue());
+                        newString = elasticGazetteer.deIdentifyString(newString, doc.getPrimaryKeyFieldValue());
+                    }
+                    newMap.put(k,newString);
+                }catch (DeIdentificationFailedException e){
+                    LOG.warn("De-identification failed on document " + doc.getDocName(), e);
+                    newMap.put(k,e.getLocalizedMessage());
                 }
-
-                newMap.put(k,newString);
             }
         });
 

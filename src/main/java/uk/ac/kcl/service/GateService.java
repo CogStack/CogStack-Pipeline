@@ -126,7 +126,7 @@ public class GateService {
         }
     }
 
-    public String deIdentifyString(String text, String primaryKeyFieldValue)  {
+    public String deIdentifyString(String text, String primaryKeyFieldValue) throws DeIdentificationFailedException {
         Document doc;
         try {
             doc = Factory.newDocument(text);
@@ -151,7 +151,7 @@ public class GateService {
             } catch (GateException|IOException e) {
                 LOG.error("could not reload resources", ex);
             }
-            throw new DeIdentificationFailedException();
+            throw new DeIdentificationFailedException("GATE app execution error");
         }
         return text;
     }

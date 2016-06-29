@@ -1,5 +1,7 @@
 package uk.ac.kcl.service;
 
+import org.apache.commons.logging.Log;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Profile;
@@ -8,6 +10,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import uk.ac.kcl.exception.DeIdentificationFailedException;
 import uk.ac.kcl.utils.StringTools;
 
 import javax.annotation.PostConstruct;
@@ -32,7 +35,7 @@ import java.util.stream.Collectors;
 @Profile("deid")
 public class ElasticGazetteerService {
 
-
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(ElasticGazetteerService.class);
     @Autowired
     ResourceLoader resourceLoader;
 
@@ -83,18 +86,16 @@ public class ElasticGazetteerService {
 
 
 
-    public String deIdentifyString(String document, String docPrimaryKey){
+    public String deIdentifyString(String document, String docPrimaryKey) throws DeIdentificationFailedException {
         double levDistance = Double.valueOf(env.getProperty("levDistance"));
         List<Pattern> patterns;
         List<String> strings = getStrings(docPrimaryKey);
         patterns = getStringPatterns(strings,document,levDistance);
-        String str2="";
         List<MatchResult> results = new ArrayList<>();
         for (Pattern pattern : patterns) {
             Matcher matcher = pattern.matcher(document);
             while (matcher.find()){
                 results.add(matcher.toMatchResult());
-
             }
         }
         return replaceStrings(results, document);
@@ -119,9 +120,21 @@ public class ElasticGazetteerService {
         List<Pattern> patterns = new ArrayList<>();
 
         for(String string : strings) {
-            patterns.addAll(StringTools.getApproximatelyMatchingStringList(document, string).stream().map(approximateMatch -> Pattern.compile(Pattern.quote(approximateMatch), Pattern.CASE_INSENSITIVE)).collect(Collectors.toList()));
-            patterns.addAll(StringTools.getMatchingWindowsAboveThreshold(document, string, levDistance).stream().filter(window -> StringTools.isNotTooShort(string)).map(window -> Pattern.compile(Pattern.quote(window.getMatchingText()), Pattern.CASE_INSENSITIVE)).collect(Collectors.toList()));
-            patterns.addAll(StringTools.splitIntoWordsWithLengthHigherThan(string, Integer.valueOf(env.getProperty("minWordLength"))).stream().map(word -> Pattern.compile(Pattern.quote(word), Pattern.CASE_INSENSITIVE)).collect(Collectors.toList()));
+            patterns.addAll(StringTools.getApproximatelyMatchingStringList(document, string)
+                    .stream().map(approximateMatch -> Pattern
+                            .compile(Pattern.quote(approximateMatch),
+                                    Pattern.CASE_INSENSITIVE))
+                    .collect(Collectors.toList()));
+            patterns.addAll(StringTools.getMatchingWindowsAboveThreshold(document, string, levDistance)
+                    .stream()
+                    .filter(window -> StringTools
+                            .isNotTooShort(string)).map(window -> Pattern
+                            .compile(Pattern.quote(window.getMatchingText()), Pattern.CASE_INSENSITIVE))
+                    .collect(Collectors.toList()));
+            patterns.addAll(StringTools.splitIntoWordsWithLengthHigherThan(string,
+                    Integer.valueOf(env.getProperty("minWordLength")))
+                    .stream().map(word -> Pattern.compile(Pattern.quote(word), Pattern.CASE_INSENSITIVE))
+                    .collect(Collectors.toList()));
         }
         return patterns;
     }

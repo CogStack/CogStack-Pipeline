@@ -25,7 +25,7 @@ public class PostgresDeidTestExecutionListener extends AbstractTestExecutionList
         TestUtils testUtils =
                 testContext.getApplicationContext().getBean(TestUtils.class);
         testUtils.insertTestDataForDeidentification("tblIdentifiers","tblInputDocs");
-
+        //testUtils.insertTestDataForDeidentificationMemoryLeak("tblIdentifiers","tblInputDocs");
 
     }
 

@@ -60,11 +60,9 @@ public class PostgresIntegrationTestsDeIdentificationPKPartitionWithoutSchedulin
     @Autowired
     SingleJobLauncher jobLauncher;
 
-
-
     @Test
     @DirtiesContext
-    public void sqlServerikaPipelineTest() {
+    public void postgresIntegrationTestsDeIdentificationPKPartitionWithoutScheduling() {
         jobLauncher.launchJob();
     }
 
