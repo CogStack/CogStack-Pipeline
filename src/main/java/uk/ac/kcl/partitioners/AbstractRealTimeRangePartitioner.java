@@ -45,6 +45,7 @@ public abstract class AbstractRealTimeRangePartitioner {
 
     private JdbcTemplate jdbcTemplate;
     Timestamp configuredFirstRunTimestamp;
+    private Boolean checkForEmptyPartitions;
 
     @PostConstruct
     public void init(){
@@ -57,6 +58,12 @@ public abstract class AbstractRealTimeRangePartitioner {
         }else{
             firstRun = false;
         }
+        if(env.getProperty("checkForEmptyPartitions") !=null){
+            checkForEmptyPartitions = Boolean.valueOf(env.getProperty("checkForEmptyPartitions"));
+        }else{
+            checkForEmptyPartitions = false;
+        }
+
         this.jdbcTemplate = new JdbcTemplate(sourceDataSource);
     }
 
@@ -196,15 +203,22 @@ public abstract class AbstractRealTimeRangePartitioner {
     }
 
     private boolean populateMap(ScheduledPartitionParams params, Map<String, ExecutionContext> result, long start, long end, int counter) {
-        long recordCountThisPartition = getRecordCountThisPartition(Long.toString(start), Long.toString(end),
-                params.getMinTimeStamp().toString(),
-                params.getMaxTimeStamp().toString());
-        if (recordCountThisPartition > 0L) {
+
+        if(checkForEmptyPartitions) {
+            long recordCountThisPartition = getRecordCountThisPartition(Long.toString(start), Long.toString(end),
+                    params.getMinTimeStamp().toString(),
+                    params.getMaxTimeStamp().toString());
+            if (recordCountThisPartition > 0L) {
+                result.put("partition" + counter, getNewExecutionContext(params, start, end));
+                logger.info("partition " + counter + " created");
+                return true;
+            } else {
+                return false;
+            }
+        }else{
             result.put("partition" + counter, getNewExecutionContext(params, start, end));
             logger.info("partition " + counter + " created");
             return true;
-        }else{
-            return false;
         }
     }
 
