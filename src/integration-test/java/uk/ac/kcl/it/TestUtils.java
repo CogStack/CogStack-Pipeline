@@ -192,12 +192,73 @@ public class TestUtils  {
             CSVRecord r = it.next();
             jdbcTemplate.update(sql1, Long.valueOf(r.get(0)),r.get(1),r.get(2),r.get(3), new Timestamp(today));
             jdbcTemplate.update(sql2, "fictionalColumnFieldName", "fictionalTableName",
-                    "fictionalPrimaryKeyFieldName", Long.valueOf(r.get(0)), new Timestamp(today),stringMutatorService.generateMutantDocument(r.get(1),r.get(2),r.get(3),r.get(4)), new Timestamp(today));
+                    "fictionalPrimaryKeyFieldName", Long.valueOf(r.get(0)),
+                    new Timestamp(today),stringMutatorService.generateMutantDocument(r.get(1),r.get(2),r.get(3),r.get(4)),
+                    new Timestamp(today));
             today = TestUtils.nextDay();
+        }
+    }
+
+
+    public void insertTestDataForDeidentificationMemoryLeak(String tableName1, String tableName2){
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
+
+        File idFile = new File(getClass().getClassLoader().getResource("identifiers.csv").getFile());
+
+        List<CSVRecord> records = null;
+        try {
+            records = CSVParser.parse(idFile, Charset.defaultCharset(), CSVFormat.DEFAULT).getRecords();
+        } catch (IOException e) {
+            logger.error(e);
         }
 
 
+        String sql1 = "INSERT INTO  " + tableName1
+                + "( primaryKeyFieldValue "
+                + ",   NAME"
+                + ", ADDRESS"
+                + ", POSTCODE"
+                + ", DATE_OF_BIRTH"
+                + ") VALUES (?,?,?,?,?)";
+
+        String sql2 = "INSERT INTO  " + tableName2
+                + "( srcColumnFieldName"
+                + ", srcTableName"
+                + ", primaryKeyFieldName"
+                + ", primaryKeyFieldValue"
+                + ", updateTime"
+                + ", someText"
+                + ", anotherTime"
+                + ") VALUES (?,?,?,?,?,?,?)";
+
+        Iterator<CSVRecord> it = records.iterator();
+        it.next();
+
+
+        String massiveDoc = "";
+        CSVRecord r = it.next();
+        long id = Long.valueOf(r.get(0));
+        for(int i=0;i<=10;i++) {
+            Iterator<CSVRecord> it2 = records.iterator();
+            it2.next();
+            while (it2.hasNext()) {
+                r = it2.next();
+                massiveDoc = massiveDoc + stringMutatorService.generateMutantDocument(r.get(1), r.get(2), r.get(3), r.get(4));
+
+                //jdbcTemplate.update(sql1, id, r.get(1), r.get(2), r.get(3), new Timestamp(today));
+            }
+        }
+
+        while(it.hasNext()){
+            r = it.next();
+            jdbcTemplate.update(sql1, id, r.get(1), r.get(2), r.get(3), new Timestamp(today));
+        }
+        jdbcTemplate.update(sql2, "fictionalColumnFieldName", "fictionalTableName",
+                "fictionalPrimaryKeyFieldName", id, new Timestamp(today),massiveDoc, new Timestamp(today));
     }
+
+
+
 
     public void insertTestLinesForDBLineFixer(String tableName){
         JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
