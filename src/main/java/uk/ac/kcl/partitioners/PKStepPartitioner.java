@@ -19,7 +19,7 @@ public class PKStepPartitioner implements StepPartitioner {
     private static final Logger LOG = LoggerFactory.getLogger(PKStepPartitioner.class);
 
     @Override
-     public String getPartitioningLogic(String minValue, String maxValue, String minTimeStamp, String maxTimeStamp){
+    public String getPartitioningLogic(String minValue, String maxValue, String minTimeStamp, String maxTimeStamp){
         String returnString = null;
         if( minTimeStamp!= null && maxTimeStamp != null) {
             returnString = "WHERE " +env.getProperty("timeStamp")
@@ -29,7 +29,8 @@ public class PKStepPartitioner implements StepPartitioner {
                     "' AS "+env.getProperty("dbmsToJavaSqlTimestampType")+") "
                     + " AND " + env.getProperty("columnToProcess")
                     + " BETWEEN '" + minValue + "' AND '" + maxValue +"'";
-        }        LOG.info("This step where clause: " + returnString);
+        }
+        LOG.info("This step where clause: " + returnString);
         return returnString;
     }
 }

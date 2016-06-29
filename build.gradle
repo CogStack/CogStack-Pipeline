@@ -192,6 +192,7 @@ task writeExampleConfigs  {
     String tika = new File("src/integration-test/resources/tika.properties").text
     String gate = new File("src/integration-test/resources/gate.properties").text
     String dBLineFixer = new File("src/integration-test/resources/dBLineFixer.properties").text
+    String biolark = new File("src/integration-test/resources/biolark.properties").text
 
     //Database connectivity
     String postgres_db = new File("src/integration-test/resources/postgres_db.properties").text
@@ -266,6 +267,7 @@ task writeExampleConfigs  {
         writer.write("# EXAMPLE CONFIG FOR basicJob \n" +
                 elasticsearch
                 +"\n" + biolarkPKprofiles
+                +"\n" + biolark
                 +"\n" + jms
                 +"\n" + jobAndStep
                 + "\n" + sql_server_db

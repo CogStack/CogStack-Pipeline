@@ -19,18 +19,18 @@ public class TimestampAndPKStepPartitioner implements StepPartitioner {
     private static final Logger LOG = LoggerFactory.getLogger(TimestampAndPKStepPartitioner.class);
 
     @Override
-     public String getPartitioningLogic(String minValue, String maxValue, String minTimeStamp, String maxTimeStamp){
-         String returnString = null;
-         if( minTimeStamp!= null && maxTimeStamp != null) {
-             returnString = "WHERE " +env.getProperty("timeStamp")
-                     + " BETWEEN CAST('" + minTimeStamp +
-                     "' AS "+env.getProperty("dbmsToJavaSqlTimestampType")+") "
-                     + " AND CAST('" + maxTimeStamp +
-                     "' AS "+env.getProperty("dbmsToJavaSqlTimestampType")+") "
-                     + " AND " + env.getProperty("columnToProcess")
-                     + " BETWEEN '" + minValue + "' AND '" + maxValue +"'";
-         }
-         LOG.info("This step where clause: " + returnString);
-         return returnString;
+    public String getPartitioningLogic(String minValue, String maxValue, String minTimeStamp, String maxTimeStamp){
+        String returnString = null;
+        if( minTimeStamp!= null && maxTimeStamp != null) {
+            returnString = "WHERE " +env.getProperty("timeStamp")
+                    + " BETWEEN CAST('" + minTimeStamp +
+                    "' AS "+env.getProperty("dbmsToJavaSqlTimestampType")+") "
+                    + " AND CAST('" + maxTimeStamp +
+                    "' AS "+env.getProperty("dbmsToJavaSqlTimestampType")+") "
+                    + " AND " + env.getProperty("columnToProcess")
+                    + " BETWEEN '" + minValue + "' AND '" + maxValue +"'";
+        }
+        LOG.info("This step where clause: " + returnString);
+        return returnString;
     }
 }

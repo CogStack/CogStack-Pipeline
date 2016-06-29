@@ -161,18 +161,31 @@ public abstract class AbstractRealTimeRangePartitioner {
             }
         } else {
             logger.info("Multiple steps to generate this job");
-            long targetSize = (params.getMaxId() - params.getMinId()) / gridSize + 1;
-            long start = params.getMinId();
-            long end = start + targetSize - 1;
-            for (int i = 0; i < gridSize; i++) {
-                ExecutionContext value = new ExecutionContext();
-                result.put("partition" + (i + 1), value);
-                value.putLong("minValue", start);
-                value.putLong("maxValue", end);
-                value.put("min_time_stamp", params.getMinTimeStamp().toString());
-                value.put("max_time_stamp", params.getMaxTimeStamp().toString());
-                start += targetSize;
-                end += targetSize;
+            if(env.getProperty("maxPartitionSize")!=null){
+                logger.info("maxPartitionSize detected in properties. Ignoring gridSize if configured");
+                long targetSize = Long.valueOf(env.getProperty("maxPartitionSize"));
+                long start = params.getMinId();
+                long end = targetSize;
+                int partitionCounter = 0;
+                while (start <= params.getMaxId()) {
+                    if(populateMap(params, result, start, end, partitionCounter)){
+                        partitionCounter++;
+                    }
+                    start += targetSize;
+                    end += targetSize;
+                }
+            }else {
+                long targetSize = (params.getMaxId() - params.getMinId()) / gridSize + 1;
+                long start = params.getMinId();
+                long end = start + targetSize - 1;
+                int counter = 0;
+                for (int i = 0; i < gridSize; i++) {
+                    if(populateMap(params, result, start, end, counter)){
+                        counter++;
+                    }
+                    start += targetSize;
+                    end += targetSize;
+                }
             }
         }
         if (params.getMaxTimeStamp() !=null){
@@ -182,10 +195,55 @@ public abstract class AbstractRealTimeRangePartitioner {
         return result;
     }
 
+    private boolean populateMap(ScheduledPartitionParams params, Map<String, ExecutionContext> result, long start, long end, int counter) {
+        long recordCountThisPartition = getRecordCountThisPartition(Long.toString(start), Long.toString(end),
+                params.getMinTimeStamp().toString(),
+                params.getMaxTimeStamp().toString());
+        if (recordCountThisPartition > 0L) {
+            result.put("partition" + counter, getNewExecutionContext(params, start, end));
+            logger.info("partition " + counter + " created");
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+
+    private ExecutionContext getNewExecutionContext(ScheduledPartitionParams params, long start, long end) {
+        ExecutionContext value = new ExecutionContext();
+        value.putLong("minValue", start);
+        value.putLong("maxValue", end);
+        value.put("min_time_stamp", params.getMinTimeStamp().toString());
+        value.put("max_time_stamp", params.getMaxTimeStamp().toString());
+        return value;
+    }
+
+
     public void informJobCompleteListenerOfLastDate(Timestamp jobEndTimestamp) {
         jobCompleteNotificationListener.setLastDateInthisJob(jobEndTimestamp.getTime());
     }
     public void setJobExecution(JobExecution jobExecution) {
         this.jobExecution = jobExecution;
+    }
+
+    private long getRecordCountThisPartition(String minValue, String maxValue, String minTimeStamp, String maxTimeStamp){
+        String tsSql = "SELECT COUNT(*)  FROM " + table;
+
+        if( minTimeStamp!= null && maxTimeStamp != null) {
+            tsSql = tsSql + " WHERE " +env.getProperty("timeStamp")
+                    + " BETWEEN CAST('" + minTimeStamp +
+                    "' AS "+env.getProperty("dbmsToJavaSqlTimestampType")+") "
+                    + " AND CAST('" + maxTimeStamp +
+                    "' AS "+env.getProperty("dbmsToJavaSqlTimestampType")+") "
+                    + " AND " + env.getProperty("columnToProcess")
+                    + " BETWEEN '" + minValue + "' AND '" + maxValue +"'";
+        }
+        long partitionCount = jdbcTemplate.queryForObject(tsSql, Long.class);
+        if(partitionCount==0L){
+            logger.debug("No rows detected with query " + tsSql);
+        }else{
+            logger.info( partitionCount +" rows detected with query " + tsSql);
+        }
+        return partitionCount;
     }
 }

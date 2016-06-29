@@ -24,14 +24,13 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import uk.ac.kcl.exception.BiolarkProcessingFailedException;
 import uk.ac.kcl.model.Document;
 
 import javax.annotation.PostConstruct;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Profile("biolark")
 @Service("biolarkDocumentItemProcessor")
@@ -48,7 +47,7 @@ public class BioLarkDocumentItemProcessor implements ItemProcessor<Document, Doc
     @PostConstruct
     private void init(){
 
-        fieldsToBioLark = Arrays.asList(env.getProperty("fieldsToBioLark").split(","));
+        fieldsToBioLark = Arrays.asList(env.getProperty("fieldsToBioLark").toLowerCase().split(","));
         endPoint = env.getProperty("biolarkEndPoint");
         setFieldName(env.getProperty("biolarkFieldName"));
          this.mapper = new ObjectMapper();
@@ -70,9 +69,18 @@ public class BioLarkDocumentItemProcessor implements ItemProcessor<Document, Doc
             String newString = "";
             if(fieldsToBioLark.contains(k)) {
                 RestTemplate restTemplate = new RestTemplate();
-                Object json;
-                json = restTemplate.postForObject(endPoint,v,Object.class);
-                newMap.put(fieldName,json);
+                Object json = null;
+                try {
+                    json = restTemplate.postForObject(endPoint, v, Object.class);
+                }catch (HttpClientErrorException e){
+                    LOG.warn("Biolark failed on document "+ doc.getDocName(), e);
+                    ArrayList<LinkedHashMap<Object,Object>> al = new ArrayList<LinkedHashMap<Object, Object>>();
+                    LinkedHashMap<Object,Object> hm = new LinkedHashMap<Object, Object>();
+                    hm.put("error","see logs");
+                    al.add(hm);
+                    json = al;
+                }
+                newMap.put(k.toString()+"_"+fieldName,json);
             }
         });
 
