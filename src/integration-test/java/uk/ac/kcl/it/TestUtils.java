@@ -244,8 +244,6 @@ public class TestUtils  {
             while (it2.hasNext()) {
                 r = it2.next();
                 massiveDoc = massiveDoc + stringMutatorService.generateMutantDocument(r.get(1), r.get(2), r.get(3), r.get(4));
-
-                //jdbcTemplate.update(sql1, id, r.get(1), r.get(2), r.get(3), new Timestamp(today));
             }
         }
 
