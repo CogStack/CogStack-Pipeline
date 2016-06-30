@@ -172,7 +172,7 @@ public abstract class AbstractRealTimeRangePartitioner {
                 logger.info("maxPartitionSize detected in properties. Ignoring gridSize if configured");
                 long targetSize = Long.valueOf(env.getProperty("maxPartitionSize"));
                 long start = params.getMinId();
-                long end = targetSize;
+                long end = params.getMinId() + targetSize;
                 int partitionCounter = 0;
                 while (start <= params.getMaxId()) {
                     if(populateMap(params, result, start, end, partitionCounter)){
