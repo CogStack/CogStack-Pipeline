@@ -1,4 +1,4 @@
-package uk.ac.uk.it.TestExecutionListeners;
+package uk.ac.kcl.testexecutionlisteners;
 
 
 import org.springframework.test.context.TestContext;
@@ -9,9 +9,9 @@ import uk.ac.kcl.it.TestUtils;
 /**
  * Created by rich on 03/06/16.
  */
-public class SqlServerTikaTestExecutionListener extends AbstractTestExecutionListener {
+public class SqlServerFullPipelineTestExecutionListener extends AbstractTestExecutionListener {
 
-    public SqlServerTikaTestExecutionListener(){}
+    public SqlServerFullPipelineTestExecutionListener(){}
 
     @Override
     public void beforeTestClass(TestContext testContext) {
@@ -19,10 +19,11 @@ public class SqlServerTikaTestExecutionListener extends AbstractTestExecutionLis
                 testContext.getApplicationContext().getBean(SqlServerTestUtils.class);
         sqlServerTestUtils.createJobRepository();
         sqlServerTestUtils.createTikaTable();
+        sqlServerTestUtils.createDeIdInputTable();
         sqlServerTestUtils.createBasicOutputTable();
         TestUtils testUtils =
                 testContext.getApplicationContext().getBean(TestUtils.class);
-        testUtils.insertTestBinariesForTika("dbo.tblInputDocs");
+        testUtils.insertTestDataForFullPipeline("dbo.tblIdentifiers","dbo.tblInputDocs");
     }
 
 }

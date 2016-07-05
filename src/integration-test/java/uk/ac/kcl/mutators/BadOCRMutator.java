@@ -1,0 +1,57 @@
+package uk.ac.kcl.mutators;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import java.util.StringTokenizer;
+
+/**
+ * Created by rich on 05/07/16.
+ */
+@Service
+public class BadOCRMutator implements Mutator {
+
+    @Autowired
+    SubstituteCharactersMutator substituteCharactersMutator;
+    @Value("#{'${badOCRMutationRate:8}'}")
+    private int badOCRMutationRate;
+    @PostConstruct
+    public void init(){
+        substituteCharactersMutator.setMutationRate(badOCRMutationRate);
+    }
+
+    private Mutant simulateBadOCR(String normal) {
+        StringTokenizer st = new StringTokenizer(normal);
+        Mutant mutant = new Mutant();
+        StringBuilder documentSB = new StringBuilder();
+
+        while(st.hasMoreTokens()){
+            StringBuilder tokenSb = new StringBuilder("");
+            String token = st.nextToken();
+            mutant.getInputTokens().add(token);
+            String newToken = substituteCharactersMutator.mutate(token).getFinalText();
+            char[] array = newToken.toCharArray();
+            for (int i = 0; i < array.length; i++) {
+                if (random.nextInt(100) <= badOCRMutationRate) {
+                    tokenSb.append(array[i]).append(" ");
+                }else{
+                    tokenSb.append(array[i]);
+                }
+            }
+            mutant.getOutputTokens().add(tokenSb.toString());
+            documentSB.append(" ").append(tokenSb.toString());
+        }
+
+        mutant.setFinalText(documentSB.toString());
+        return mutant;
+    }
+
+
+
+    @Override
+    public Mutant mutate(String document) {
+        return simulateBadOCR(document);
+    }
+}

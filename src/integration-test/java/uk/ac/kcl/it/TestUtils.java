@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import uk.ac.kcl.mutators.StringMutatorService;
+
 import javax.sql.DataSource;
 import java.io.*;
 import java.nio.charset.Charset;
@@ -25,7 +27,7 @@ import java.util.logging.Level;
  */
 @Ignore
 @Service
-@ComponentScan("uk.ac.kcl.it")
+@ComponentScan({"uk.ac.kcl.it","uk.ac.kcl.mutators"})
 public class TestUtils  {
     static Random random = new Random();
     static long today = System.currentTimeMillis();

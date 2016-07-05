@@ -1,4 +1,4 @@
-package uk.ac.uk.it.TestExecutionListeners;
+package uk.ac.kcl.testexecutionlisteners;
 
 
 import org.springframework.test.context.TestContext;
@@ -9,21 +9,19 @@ import uk.ac.kcl.it.TestUtils;
 /**
  * Created by rich on 03/06/16.
  */
-public class SqlServerDbLineFixerTestExecutionListener extends AbstractTestExecutionListener {
+public class SqlServerGateTestExecutionListener extends AbstractTestExecutionListener {
 
-    public SqlServerDbLineFixerTestExecutionListener(){}
+    public SqlServerGateTestExecutionListener(){}
 
     @Override
     public void beforeTestClass(TestContext testContext) {
         SqlServerTestUtils sqlServerTestUtils =
                 testContext.getApplicationContext().getBean(SqlServerTestUtils.class);
         sqlServerTestUtils.createJobRepository();
-        sqlServerTestUtils.createBasicOutputTable();
-        sqlServerTestUtils.createMultiLineTextTable();
+        sqlServerTestUtils.createTextualGateTable();
         TestUtils testUtils =
                 testContext.getApplicationContext().getBean(TestUtils.class);
-        testUtils.insertDataIntoBasicTable("dbo.tblInputDocs");
-        testUtils.insertTestLinesForDBLineFixer("dbo.tblDocLines");
+        testUtils.insertTestXHTMLForGate("dbo.tblInputDocs",false);
     }
 
 }

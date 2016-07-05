@@ -193,6 +193,7 @@ public class PostGresTestUtils implements DbmsTestUtils{
     @Override
     public void createDeIdInputTable() {
         createBasicInputTable();
+        sourceTemplate.execute("DROP VIEW IF EXISTS vwidentifiers");
         sourceTemplate.execute("DROP TABLE IF EXISTS tblIdentifiers");
         sourceTemplate.execute("CREATE TABLE tblIdentifiers "
                 + "( ID  SERIAL PRIMARY KEY"
@@ -201,6 +202,12 @@ public class PostGresTestUtils implements DbmsTestUtils{
                 + ", ADDRESS TEXT "
                 + ", POSTCODE TEXT "
                 + ", DATE_OF_BIRTH TIMESTAMP )");
+        sourceTemplate.execute("create view vwIdentifiers AS\n" +
+                "  select primarykeyfieldvalue, address as identifier from tblidentifiers\n" +
+                "  UNION\n" +
+                "  select primarykeyfieldvalue, name  as identifier from tblidentifiers\n" +
+                "  UNION\n" +
+                "  select primarykeyfieldvalue, postcode as identifier  from tblidentifiers");
     }
 
 

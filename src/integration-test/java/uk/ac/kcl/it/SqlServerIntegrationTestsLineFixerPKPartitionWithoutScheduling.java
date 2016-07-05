@@ -27,7 +27,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
-import uk.ac.uk.it.TestExecutionListeners.SqlServerDbLineFixerTestExecutionListener;
+import uk.ac.kcl.testexecutionlisteners.SqlServerDbLineFixerTestExecutionListener;
 
 /**
  *

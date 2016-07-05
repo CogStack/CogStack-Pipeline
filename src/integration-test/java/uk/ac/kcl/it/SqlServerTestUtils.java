@@ -195,7 +195,12 @@ public class SqlServerTestUtils implements DbmsTestUtils {
     @Override
     public void createDeIdInputTable(){
         createBasicInputTable();
+
+        sourceTemplate.execute("IF OBJECT_ID('dbo.vwidentifiers', 'U') IS NOT NULL DROP TABLE  dbo.vwidentifiers");
         sourceTemplate.execute("IF OBJECT_ID('dbo.tblIdentifiers', 'U') IS NOT NULL DROP TABLE  dbo.tblIdentifiers");
+
+
+
         sourceTemplate.execute("CREATE TABLE dbo.tblIdentifiers "
                 + "( ID  BIGINT IDENTITY(1,1) PRIMARY KEY"
                 + ", primaryKeyFieldValue BIGINT "
@@ -203,6 +208,12 @@ public class SqlServerTestUtils implements DbmsTestUtils {
                 + ", ADDRESS VARCHAR(MAX) "
                 + ", POSTCODE VARCHAR(MAX) "
                 + ", DATE_OF_BIRTH DATETIME )");
+        sourceTemplate.execute("create view dbo.vwIdentifiers AS\n" +
+                "  select primarykeyfieldvalue, address as identifier from dbo.tblidentifiers\n" +
+                "  UNION\n" +
+                "  select primarykeyfieldvalue, name  as identifier from dbo.tblidentifiers\n" +
+                "  UNION\n" +
+                "  select primarykeyfieldvalue, postcode as identifier  from dbo.tblidentifiers");
 
 //        sourceTemplate.execute("IF OBJECT_ID('dbo.tblInputDocs', 'U') IS NOT NULL DROP TABLE  dbo.tblInputDocs");
 //        sourceTemplate.execute("CREATE TABLE dbo.tblInputDocs"

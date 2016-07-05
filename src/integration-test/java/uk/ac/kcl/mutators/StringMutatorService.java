@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package uk.ac.kcl.it;
+package uk.ac.kcl.mutators;
 
 
 import com.google.common.collect.ImmutableMap;
@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
+import uk.ac.kcl.it.MagicSquare;
 
 import javax.annotation.PostConstruct;
 
@@ -26,46 +27,32 @@ import javax.annotation.PostConstruct;
  * @author rich
  */
 @Ignore
-@Service("stringMutatorService")
-@ComponentScan("uk.ac.kcl.it")
+@Service
+@ComponentScan({"uk.ac.kcl.it","uk.ac.kcl.mutators"})
 public class StringMutatorService {
 
-    @Autowired
-    private MagicSquare ms = null;
+    private final Random random = new Random();
 
-    @Value("#{'${humanMistypeMutationRate:8}'}")
-    private int humanMistypeMutationRate;
-    @Value("#{'${badOCRMutationRate:8}'}")
-    private int badOCRMutationRate;
+
+
     @Value("#{'${loremLength:10}'}")
     private int loremLength;
 
-    private ImmutableMap<Integer, Character> characterMap;
-    private Map<Character, Integer> charTotals;
-    private HashMap<Character, Integer> characterMapKeys;
-    private final Random random = new Random();
-    @Value("#{'${minAddressTokenCount:3}'}")
-    private int minAddressTokenCount;
-    @Value("#{'${probOfAddressTokenTruncation:50}'}")
-    private int probOfAddressTokenTruncation;
-
     public ImmutableMap<String, String> addressAbbrevMap;
+
+    @Autowired
+    private SubstituteCharactersMutator substituteCharactersMutator;
+    @Autowired
+    private BadOCRMutator badOcrMutator;
+    @Autowired
+    private AddressAliasMutator addressAliasMutator;
+    @Autowired
+    private StringTokenTruncatorMutator stringTokenTruncatorMutator;
 
 
     @PostConstruct
     private void init() {
-        this.characterMap = ImmutableMap.<Integer, Character>builder()
-                .put(0, "A".charAt(0)).put(1, "B".charAt(0)).put(2, "C".charAt(0)).put(3, "D".charAt(0)).put(4, "E"
-                        .charAt(0)).put(5, "F".charAt(0)).put(6, "G".charAt(0)).put(7, "H".charAt(0)).put(8, "I"
-                        .charAt(0)).put(9, "J".charAt(0)).put(10, "K".charAt(0)).put(11, "L".charAt(0)).put(12, "M"
-                        .charAt(0)).put(13, "N".charAt(0)).put(14, "O".charAt(0)).put(15, "P".charAt(0)).put(16, "Q"
-                        .charAt(0)).put(17, "R".charAt(0)).put(18, "S".charAt(0)).put(19, "T".charAt(0)).put(20, "U"
-                        .charAt(0)).put(21, "V".charAt(0)).put(22, "W".charAt(0)).put(23, "X".charAt(0)).put(24, "Y"
-                        .charAt(0)).put(25, "Z".charAt(0)).build();
-        this.characterMapKeys = new HashMap<>();
-        for (Map.Entry<Integer, Character> entry : characterMap.entrySet()) {
-            characterMapKeys.put(entry.getValue(), entry.getKey());
-        }
+
 
         this.addressAbbrevMap = ImmutableMap.<String, String>builder()
                 .put("ALY", "ALLEY").put("ANX ", "ANNEX").put("APT ", "APARTMENT").put("ARC ", "ARCADE").put("AVE ",
@@ -141,6 +128,9 @@ public class StringMutatorService {
                         "TPKE").put("UNION ", "UN").put("UPPER ", "UPPR").put("VALLEY ", "VLY").put("VIADUCT ",
                         "VIA").put("VIEW ", "VW").put("VILLAGE ", "VLG").put("VILLE ", "VL").put("VISTA ", "VIS")
                 .put("WELL ", "WL").put("WELLS", "WLS").build();
+
+
+
     }
 
     public int getLoremLength() {
@@ -151,88 +141,6 @@ public class StringMutatorService {
         this.loremLength = loremLength;
     }
 
-    public int getBadOCRMutationRate() {
-        return badOCRMutationRate;
-    }
-
-    public void setBadOCRMutationRate(int badOCRMutationRate) {
-        this.badOCRMutationRate = badOCRMutationRate;
-    }
-
-    public int getMinAddressTokenCount() {
-        return minAddressTokenCount;
-    }
-
-    public void setMinAddressTokenCount(int minAddressTokenCount) {
-        this.minAddressTokenCount = minAddressTokenCount;
-    }
-
-
-    public int getProbOfAddressTokenTruncation() {
-        return probOfAddressTokenTruncation;
-    }
-
-    public void setProbOfAddressTokenTruncation(int probOfAddressTokenTruncation) {
-        this.probOfAddressTokenTruncation = probOfAddressTokenTruncation;
-    }
-
-    public void calcCharTotals() {
-        charTotals = new HashMap<>();
-        int[][] matrix = ms.getMatrix();
-        for (int i = 0; i < matrix.length; i++) {
-            int total = 0;
-            for (int j = 0; j < matrix[i].length; j++) {
-                total = total + matrix[i][j];
-            }
-            charTotals.put(characterMap.get(i), total);
-        }
-    }
-
-    public String getMutation(char c, int hit) {
-
-        String returnC = "";
-        int i = random.nextInt(3);
-        int[][] matrix = ms.getMatrix();
-        int cursor = 0;
-        int j;
-        for (j = 0; j < matrix[characterMapKeys.get(c)].length; j++) {
-            cursor = cursor + matrix[characterMapKeys.get(c)][j];
-            if (cursor >= hit) {
-                break;
-            }
-        }
-        if (i == 0) {
-            returnC = "";
-
-        } else if (i == 1) {
-
-        } else {
-            returnC = c + characterMap.get(j).toString();
-        }
-        return returnC;
-    }
-
-
-    public void setHumanMistypeMutationRate(int humanMistypeMutationRate) {
-        this.humanMistypeMutationRate = humanMistypeMutationRate;
-    }
-
-
-    public Map<Character, Integer> getCharTotals() {
-        return charTotals;
-    }
-
-    public void setCharTotals(Map<Character, Integer> charTotals) {
-        this.charTotals = charTotals;
-    }
-
-    public HashMap<Character, Integer> getCharacterMapKeys() {
-        return characterMapKeys;
-    }
-
-    public void setCharacterMapKeys(HashMap<Character, Integer> characterMapKeys) {
-        this.characterMapKeys = characterMapKeys;
-    }
 
     public String generateMutantDocument(String[] mutantStrings, String[] nonMutantStrings) {
 
@@ -266,75 +174,28 @@ public class StringMutatorService {
         return sb.toString();
     }
 
+
     public String mutate(String normal) {
         int i = random.nextInt(4);
         if (i == 0) {
-            normal = subCharacters(normal, humanMistypeMutationRate);
+            normal = substituteCharactersMutator.mutate(normal).getFinalText();
         } else if (i == 1) {
-            normal = generateAliases(normal);
+            normal = addressAliasMutator.mutate(normal).getFinalText();
         } else if (i == 2) {
-            normal = removeAddressTokens(normal);
+            normal = stringTokenTruncatorMutator.mutate(normal).getFinalText();
         } else if (i == 3) {
-            normal = simulateBadOCR(normal);
+            normal = badOcrMutator.mutate(normal).getFinalText();
         }
 
 
         return normal;
     }
 
-    private String generateAliases(String normal) {
-        if (random.nextInt(2) == 1) {
-            for (Map.Entry<String, String> entry : addressAbbrevMap.entrySet()) {
 
-                normal = normal.replaceAll("(?)^" + entry.getKey() + "$", entry.getValue());
-            }
-        }
-        return normal;
-    }
 
-    private String subCharacters(String normal, int mutationRate) {
-        char[] array = normal.toCharArray();
-        calcCharTotals();
-        StringBuilder sb = new StringBuilder("");
-        for (int i = 0; i < array.length; i++) {
-            if (random.nextInt(100) <= mutationRate) {
-                if (characterMapKeys.containsKey(array[i])) {
-                    char a = array[i];
-                    int b = charTotals.get(array[i]);
-                    int c = random.nextInt(b);
-                    //array[i] = getMutation(a,c);
-                    sb.append(getMutation(a, c));
-                }
-            } else {
-                sb.append(array[i]);
-            }
-        }
-        return sb.toString();
-    }
 
-    private String removeAddressTokens(String normal) {
-        String mutant = "";
-        StringTokenizer st = new StringTokenizer(normal);
-        int totalCount = st.countTokens();
-        for (int i = 0; i < totalCount; i++) {
-            if (i <= minAddressTokenCount) {
-                mutant = mutant + " " + st.nextToken();
-            } else if (i > minAddressTokenCount && random.nextInt(100) <= probOfAddressTokenTruncation) {
-                mutant = mutant + " " + st.nextToken();
-            } else {
-                break;
-            }
-        }
-        return mutant;
-    }
 
-    private String simulateBadOCR(String normal) {
-        normal = subCharacters(normal, badOCRMutationRate);
-        char[] array = normal.toCharArray();
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < array.length; i++) {
-            sb.append(array[i]).append(" ");
-        }
-        return sb.toString();
-    }
+
+
+
 }

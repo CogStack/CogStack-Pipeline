@@ -1,4 +1,4 @@
-package uk.ac.uk.it.TestExecutionListeners;
+package uk.ac.kcl.testexecutionlisteners;
 
 
 import org.springframework.test.context.TestContext;
@@ -9,20 +9,20 @@ import uk.ac.kcl.it.TestUtils;
 /**
  * Created by rich on 03/06/16.
  */
-public class PostgresGateTestExecutionListener extends AbstractTestExecutionListener {
+public class PostgresReindexTestExecutionListener extends AbstractTestExecutionListener {
 
-    public PostgresGateTestExecutionListener(){}
+    public PostgresReindexTestExecutionListener(){}
 
     @Override
     public void beforeTestClass(TestContext testContext) {
-        PostGresTestUtils sqlServerTestUtils =
+        PostGresTestUtils postGresTestUtils =
                 testContext.getApplicationContext().getBean(PostGresTestUtils.class);
-        sqlServerTestUtils.createJobRepository();
-        sqlServerTestUtils.createTikaTable();
-        sqlServerTestUtils.createTextualGateTable();
+        postGresTestUtils.createJobRepository();
+        postGresTestUtils.createBasicOutputTable();
         TestUtils testUtils =
                 testContext.getApplicationContext().getBean(TestUtils.class);
-        testUtils.insertTestBinariesForTika("tblInputDocs");
+        testUtils.insertJsonsIntoOutputTable("tbloutputDocs");
+
     }
 
 }

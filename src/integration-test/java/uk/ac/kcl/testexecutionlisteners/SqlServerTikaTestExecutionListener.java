@@ -1,4 +1,4 @@
-package uk.ac.uk.it.TestExecutionListeners;
+package uk.ac.kcl.testexecutionlisteners;
 
 
 import org.springframework.test.context.TestContext;
@@ -9,23 +9,20 @@ import uk.ac.kcl.it.TestUtils;
 /**
  * Created by rich on 03/06/16.
  */
-public class SqlServerDeidTestExecutionListener extends AbstractTestExecutionListener {
+public class SqlServerTikaTestExecutionListener extends AbstractTestExecutionListener {
 
-    public SqlServerDeidTestExecutionListener(){}
+    public SqlServerTikaTestExecutionListener(){}
 
     @Override
     public void beforeTestClass(TestContext testContext) {
         SqlServerTestUtils sqlServerTestUtils =
                 testContext.getApplicationContext().getBean(SqlServerTestUtils.class);
         sqlServerTestUtils.createJobRepository();
-        sqlServerTestUtils.createBasicInputTable();
+        sqlServerTestUtils.createTikaTable();
         sqlServerTestUtils.createBasicOutputTable();
-        sqlServerTestUtils.createDeIdInputTable();
         TestUtils testUtils =
                 testContext.getApplicationContext().getBean(TestUtils.class);
-        testUtils.insertTestDataForDeidentification("dbo.tblIdentifiers","dbo.tblInputDocs");
-
-
+        testUtils.insertTestBinariesForTika("dbo.tblInputDocs");
     }
 
 }
