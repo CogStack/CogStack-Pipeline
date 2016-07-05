@@ -68,12 +68,20 @@ public class StringMutatorService {
                         .append(loremIpsum.getWords(loremEnd,loremStart)).append(" ");
                 loremStart = loremEnd +1;
                 loremEnd = loremStart + random.nextInt(loremLength);
+                if(loremEnd>49 ||loremStart>49){
+                    loremStart =0;
+                    loremEnd =random.nextInt(loremLength);
+                }
 
                 for(int j = 0;j<nonMutantStrings.length;j++){
                     sb.append(nonMutantStrings[j]).append(" ")
                             .append(loremIpsum.getWords(loremEnd,loremStart)).append(" ");
                     loremStart = loremEnd +1;
                     loremEnd = loremStart + random.nextInt(loremLength);
+                    if(loremEnd>49 ||loremStart>49){
+                        loremStart =0;
+                        loremEnd =random.nextInt(loremLength);
+                    }
                 }
             }
         parentMutant.setFinalText(sb.toString());

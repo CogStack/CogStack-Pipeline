@@ -80,7 +80,7 @@ public class BioLarkDocumentItemProcessor implements ItemProcessor<Document, Doc
                     al.add(hm);
                     json = al;
                 }
-                newMap.put(k.toString()+"_"+fieldName,json);
+                newMap.put(fieldName,json);
             }
         });
 
