@@ -33,22 +33,8 @@ import java.util.stream.Collectors;
 
 public class StringTools {
 
-    private static final List<String> maleNames = new ArrayList<>();
-    private static final List<String> femaleNames = new ArrayList<>();
-    private static final List<String> lastNames = new ArrayList<>();
-
     public static int getLevenshteinDistance(String str1, String str2) {
         return StringUtils.getLevenshteinDistance(str1, str2);
-    }
-
-
-    public static Set<String> getApproximatelyMatchingStringList(String sourceString, String search) {
-        return getApproximatelyMatchingStringList(sourceString, search, getMaxAllowedLevenshteinDistanceFor(search));
-    }
-
-    public static boolean isNotTooShort(String string) {
-        return !StringUtils.isBlank(string) && string.trim().length() > 3;
-
     }
 
     /**
@@ -57,7 +43,8 @@ public class StringTools {
      * @param maxDistance Maximum edit distance that should be satisfied.
      * @return A list of substrings from the @sourceString each of which approximately matches {@code search}.
      */
-    private static Set<String> getApproximatelyMatchingStringList(String sourceString, String search, int maxDistance) {
+    public static Set<String> getApproximatelyMatchingStringList(String sourceString, String search, int maxDistance) {
+        maxDistance = getMaxAllowedLevenshteinDistanceFor(search,maxDistance);
         Set<String> matches = new HashSet<>();
         if (StringUtils.isBlank(search)) {
             return matches;
@@ -84,9 +71,6 @@ public class StringTools {
                 continue;
             }
             if (getLevenshteinDistance(completingString, search) <= maxDistance) {
-                //handled with Pattern.quote
-                //matches.add(completingString.replace("\"", "\\\""));
-
                 matches.add(completingString);
                 i = endIndex;
             }
@@ -98,11 +82,11 @@ public class StringTools {
      * @param word
      * @return Max heuristic Levenshtein distance for {@code word}.
      */
-    private static int getMaxAllowedLevenshteinDistanceFor(String word) {
+    private static int getMaxAllowedLevenshteinDistanceFor(String word, int levDistance) {
         if (StringUtils.isBlank(word)) {
             return 0;
         }
-        return Math.round((float)word.length()*15/100);
+        return Math.round((float)word.length()*levDistance/100);
     }
 
     private static String getCompletingString(String string, int begin, int end) {
@@ -196,7 +180,7 @@ public class StringTools {
 
         String[] splitArray = string.split(" ");
         for (String word : splitArray) {
-            if (word.length() > minLength) {
+            if (word.length() > minLength || word.matches("[0-9]+") || word.matches("[0-9]+-[0-9]+")) {
                 strings.add(word);
             }
         }

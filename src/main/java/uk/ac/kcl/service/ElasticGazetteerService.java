@@ -46,8 +46,10 @@ public class ElasticGazetteerService {
     @Autowired
     private Environment env;
 
+
     private JdbcTemplate jdbcTemplate;
     private  List<String> datePatterns;
+    private Integer levDistance;
 
     @PostConstruct
     private void init() throws IOException {
@@ -56,7 +58,7 @@ public class ElasticGazetteerService {
         Resource datePatternsResource = resourceLoader.getResource("classpath:datePatterns.txt");
         this.datePatterns = new ArrayList<>();
         InputStream inputStream = datePatternsResource.getInputStream();
-
+        levDistance = Integer.valueOf(env.getProperty("levDistance"));
 
         try(BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))){
             String line;
@@ -87,11 +89,9 @@ public class ElasticGazetteerService {
 
 
     public String deIdentifyString(String document, String docPrimaryKey){
-        double levDistance = Double.valueOf(env.getProperty("levDistance"));
         Set<Pattern> patterns;
         List<String> strings = getStrings(docPrimaryKey);
-        patterns = getStringPatterns(strings,document,levDistance);
-        String str2="";
+        patterns = getStringPatterns(strings,document);
         List<MatchResult> results = new ArrayList<>();
         for (Pattern pattern : patterns) {
             Matcher matcher = pattern.matcher(document);
@@ -117,13 +117,12 @@ public class ElasticGazetteerService {
         return sb.toString();
     }
 
-    private Set<Pattern> getStringPatterns(List<String> strings, String document, double levDistance) {
+    private Set<Pattern> getStringPatterns(List<String> strings, String document) {
 
 
         Set<String> stringSet = new HashSet<>();
         for(String string : strings) {
-            stringSet.addAll(StringTools.getApproximatelyMatchingStringList(document, string));
-            stringSet.addAll(StringTools.getApproximatelyMatchingStringList(document, string));
+            stringSet.addAll(StringTools.getApproximatelyMatchingStringList(document, string,levDistance));
             stringSet.addAll((StringTools.splitIntoWordsWithLengthHigherThan(string, Integer.valueOf(env.getProperty("minWordLength")))));
         }
 

@@ -16,7 +16,7 @@ public class StringTokenTruncatorMutator implements Mutator {
 
 
     private ImmutableMap<String, String> addressAbbrevMap;
-    @Value("#{'${removeTokenRate:50}'}")
+    @Value("#{'${removeTokenRate:100}'}")
     private int removeTokenRate;
     @Value("#{'${minAddressTokenCount:3}'}")
     private int minTokenCount;

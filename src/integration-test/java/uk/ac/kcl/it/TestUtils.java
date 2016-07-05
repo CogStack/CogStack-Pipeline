@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import uk.ac.kcl.mutators.Mutant;
 import uk.ac.kcl.mutators.StringMutatorService;
 
 import javax.sql.DataSource;
@@ -156,7 +157,7 @@ public class TestUtils  {
 
 
 
-    public void insertTestDataForDeidentification(String tableName1, String tableName2){
+    public List<Mutant> insertTestDataForDeidentification(String tableName1, String tableName2){
         JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
 
         File idFile = new File(getClass().getClassLoader().getResource("identifiers.csv").getFile());
@@ -190,25 +191,28 @@ public class TestUtils  {
         Iterator<CSVRecord> it = records.iterator();
         it.next();
 
+        List<Mutant> mutants = new ArrayList<>();
         while(it.hasNext()){
             CSVRecord r = it.next();
 
 
-            String[] mutants = convertCsvRecordToStringArray(r);
-
-
+            String[] stringToMutate = convertCsvRecordToStringArray(r);
+            Mutant mutant = stringMutatorService.generateMutantDocument(stringToMutate, 1);
+            mutant.setDocumentid(Long.valueOf(r.get(0)));
+            mutants.add(mutant);
             jdbcTemplate.update(sql1, Long.valueOf(r.get(0)),r.get(1),r.get(2),r.get(3), new Timestamp(today));
             jdbcTemplate.update(sql2, "fictionalColumnFieldName", "fictionalTableName",
                     "fictionalPrimaryKeyFieldName", Long.valueOf(r.get(0)),
-                    new Timestamp(today),
-                    stringMutatorService.generateMutantDocument(mutants),
+                    new Timestamp(today),mutant.getFinalText()
+                    ,
                     new Timestamp(today));
             today = TestUtils.nextDay();
         }
+        return mutants;
     }
 
 
-    public void insertTestDataForFullPipeline(String tableName1, String tableName2){
+    public List<Mutant> insertTestDataForFullPipeline(String tableName1, String tableName2){
         JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
 
         File idFile = new File(getClass().getClassLoader().getResource("identifiers.csv").getFile());
@@ -240,17 +244,19 @@ public class TestUtils  {
 
         Iterator<CSVRecord> it = records.listIterator();
         it.next();
-
+        List<Mutant> mutants = new ArrayList<>();
         while (it.hasNext()) {
             CSVRecord r = it.next();
             long id = Long.valueOf(r.get(0));
-            String massiveDoc = stringMutatorService.generateMutantDocument(convertCsvRecordToStringArray(r)
-                    ,biolarkText);
+            Mutant massiveDoc = stringMutatorService.generateMutantDocument(convertCsvRecordToStringArray(r)
+                    ,biolarkText, 1);
+            mutants.add(massiveDoc);
             jdbcTemplate.update(sql2, "fictionalColumnFieldName", "fictionalTableName", "fictionalPrimaryKeyFieldName", id,
-                    new Timestamp(today), convertObjectToByteArray(generateDocxDocument(massiveDoc)));
+                    new Timestamp(today), convertObjectToByteArray(generateDocxDocument(massiveDoc.getFinalText())));
             today = TestUtils.nextDay();
             jdbcTemplate.update(sql1, id, r.get(1), r.get(2), r.get(3), new Timestamp(today));
         }
+        return mutants;
     }
 
 
@@ -282,7 +288,7 @@ public class TestUtils  {
     public void insertFreshDataIntoBasicTableAfterDelay(String tablename,long delay) {
         try {
             Thread.sleep(delay);
-            logger.info("********************* INSERTING FRESH DATA*******************");
+            System.out.println("********************* INSERTING FRESH DATA*******************");
             insertDataIntoBasicTable(tablename);
             Thread.sleep(delay);
         } catch (InterruptedException e) {
@@ -361,12 +367,12 @@ public class TestUtils  {
         return null;
     }
 
-    private String[] convertCsvRecordToStringArray(CSVRecord r){
+    public static String[] convertCsvRecordToStringArray(CSVRecord r){
         Iterator it = r.iterator();
         ArrayList<String> list = new ArrayList<>();
-        while(it.hasNext()){
-            list.add(it.next().toString());
-        }
+        list.add(r.get(1));
+        list.add(r.get(2));
+        list.add(r.get(3));
         String[] arr = new String[list.size()];
         arr = list.toArray(arr);
         return arr;

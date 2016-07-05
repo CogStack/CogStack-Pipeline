@@ -17,7 +17,7 @@ public class AddressAliasMutator implements Mutator {
 
 
     private ImmutableMap<String, String> addressAbbrevMap;
-    @Value("#{'${replaceAliasesRate:75}'}")
+    @Value("#{'${replaceAliasesRate:100}'}")
     private int replaceAliasesRate;
 
     @PostConstruct

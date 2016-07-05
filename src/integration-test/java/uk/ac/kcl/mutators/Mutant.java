@@ -9,7 +9,28 @@ import java.util.List;
 public class Mutant {
     private List<String> inputTokens;
     private List<String> outputTokens;
-    String finalText;
+    private String finalText;
+
+    public String getDeidentifiedString() {
+        return deidentifiedString;
+    }
+
+    public void setDeidentifiedString(String deidentifiedString) {
+        this.deidentifiedString = deidentifiedString;
+    }
+
+    private String deidentifiedString;
+
+
+    public long getDocumentid() {
+        return documentid;
+    }
+
+    public void setDocumentid(long documentid) {
+        this.documentid = documentid;
+    }
+
+    private long documentid;
     public Mutant(){
         this.inputTokens=new ArrayList<>();
         this.outputTokens=new ArrayList<>();

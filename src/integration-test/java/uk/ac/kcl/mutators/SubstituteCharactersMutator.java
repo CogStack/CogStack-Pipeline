@@ -26,7 +26,7 @@ public class SubstituteCharactersMutator implements Mutator {
         this.mutationRate = mutationRate;
     }
 
-    @Value("#{'${humanMistypeMutationRate:8}'}")
+    @Value("#{'${mutationRate:3}'}")
     private int mutationRate;
     private ImmutableMap<Integer, Character> characterMap;
 
@@ -71,13 +71,16 @@ public class SubstituteCharactersMutator implements Mutator {
                 break;
             }
         }
-        if (i == 0) {
-            returnC = "";
-        } else if (i == 1) {
-            returnC = " ";
-        } else {
-            returnC = c + characterMap.get(j).toString();
-        }
+        returnC = characterMap.get(j).toString();
+
+        //move to bad OCR
+//        if (i == 0) {
+//            returnC = "";
+//        } else if (i == 1) {
+//            returnC = " ";
+//        } else {
+//
+//        }
         return returnC;
     }
     private Mutant subCharacters(String normal, int mutationRate) {
@@ -87,7 +90,7 @@ public class SubstituteCharactersMutator implements Mutator {
         while(st.hasMoreTokens()){
             StringBuilder tokenSb = new StringBuilder("");
             String token = st.nextToken();
-            mutant.getInputTokens().add(token);
+            mutant.getInputTokens().add(new String(token));
             char[] array = token.toCharArray();
             for (int i = 0; i < array.length; i++) {
                 if (random.nextInt(100) <= mutationRate) {
