@@ -234,20 +234,35 @@ public class StringMutatorService {
         this.characterMapKeys = characterMapKeys;
     }
 
-    public String generateMutantDocument(String name, String address, String postcode, String date) {
+    public String generateMutantDocument(String[] mutantStrings, String[] nonMutantStrings) {
 
         LoremIpsum loremIpsum = new LoremIpsum();
 
         StringBuilder sb = new StringBuilder();
         sb.insert(0, loremIpsum.getWords(random.nextInt(loremLength)));
-        if (name != null) sb.append(" ").append(mutate(name));
-        sb.append(" ").append(loremIpsum.getWords(random.nextInt(loremLength))).append(" ");
-        if (address != null) sb.append(" ").append(mutate(address));
-        sb.append(" ").append(loremIpsum.getWords(random.nextInt(loremLength))).append(" ");
-        if (postcode != null) sb.append(" ").append(mutate(postcode));
-        sb.append(" ").append(loremIpsum.getWords(random.nextInt(loremLength)));
-        if (date != null) sb.append(" ").append(date);
-        sb.append(" ").append(loremIpsum.getWords(random.nextInt(loremLength)));
+
+            for (int i = 0; i < mutantStrings.length; i++) {
+                sb.append(mutate(mutantStrings[i])).append(" ")
+                        .append(loremIpsum.getWords(random.nextInt(loremLength))).append(" ");
+                for(int j = 0;j<nonMutantStrings.length;j++){
+                    sb.append(nonMutantStrings[j]).append(" ")
+                            .append(loremIpsum.getWords(random.nextInt(loremLength))).append(" ");
+                }
+            }
+        return sb.toString();
+    }
+
+    public String generateMutantDocument(String[] mutantStrings) {
+
+        LoremIpsum loremIpsum = new LoremIpsum();
+
+        StringBuilder sb = new StringBuilder();
+        sb.insert(0, loremIpsum.getWords(random.nextInt(loremLength)));
+
+        for (int i = 0; i < mutantStrings.length; i++) {
+            sb.append(mutate(mutantStrings[i])).append(" ")
+                    .append(loremIpsum.getWords(random.nextInt(loremLength))).append(" ");
+        }
         return sb.toString();
     }
 

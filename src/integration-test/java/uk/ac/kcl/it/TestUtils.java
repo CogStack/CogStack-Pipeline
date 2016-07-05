@@ -5,6 +5,7 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.apache.poi.xwpf.usermodel.*;
 import org.junit.Ignore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,9 +17,7 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.logging.Level;
 
 /**
@@ -31,6 +30,14 @@ public class TestUtils  {
     static Random random = new Random();
     static long today = System.currentTimeMillis();
     final static Logger logger = Logger.getLogger(TestUtils.class);
+    final static String[] biolarkText ={"Disproportionate dwarfism.",
+            "Shortening of the proximal limbs (called rhizomelic shortening).",
+            "Short fingers and toes with trident hands.",
+            "Large head with prominent forehead frontal bossing.",
+            "Small midface with a flattened nasal bridge.",
+            "Spinal kyphosis (convex curvature) or lordosis (concave curvature).",
+            "Varus (bowleg) or valgus (knock knee) deformities.",
+            "Frequently have ear infections (due to Eustachian tube blockages), sleep apnea (which can be central or obstructive), and hydrocephalus."};
     @Autowired
     @Qualifier("sourceDataSource")
     public DataSource sourceDataSource;
@@ -128,18 +135,11 @@ public class TestUtils  {
                 + ") VALUES (?,?,?,?,?,?,?)";
 
 
-        String string1 = "Disproportionate dwarfism.\n" +
-                "Shortening of the proximal limbs (called rhizomelic shortening).\n" +
-                "Short fingers and toes with trident hands.\n" +
-                "Large head with prominent forehead frontal bossing.\n" +
-                "Small midface with a flattened nasal bridge.\n" +
-                "Spinal kyphosis (convex curvature) or lordosis (concave curvature).\n" +
-                "Varus (bowleg) or valgus (knock knee) deformities.\n" +
-                "Frequently have ear infections (due to Eustachian tube blockages), sleep apnea (which can be central or obstructive), and hydrocephalus.";
+
         for (long i = 1; i <= docCount; i++) {
 
-                jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName",
-                        "fictionalPrimaryKeyFieldName", i, new Timestamp(today),string1, new Timestamp(today));
+            jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName",
+                    "fictionalPrimaryKeyFieldName", i, new Timestamp(today),biolarkText, new Timestamp(today));
 //            if (i==0) {
 //                //test for massive string in ES
 //                jdbcTemplate.update(sql, RandomString.nextString(50), "fictionalTableName",
@@ -190,17 +190,23 @@ public class TestUtils  {
 
         while(it.hasNext()){
             CSVRecord r = it.next();
+
+
+            String[] mutants = convertCsvRecordToStringArray(r);
+
+
             jdbcTemplate.update(sql1, Long.valueOf(r.get(0)),r.get(1),r.get(2),r.get(3), new Timestamp(today));
             jdbcTemplate.update(sql2, "fictionalColumnFieldName", "fictionalTableName",
                     "fictionalPrimaryKeyFieldName", Long.valueOf(r.get(0)),
-                    new Timestamp(today),stringMutatorService.generateMutantDocument(r.get(1),r.get(2),r.get(3),r.get(4)),
+                    new Timestamp(today),
+                    stringMutatorService.generateMutantDocument(mutants),
                     new Timestamp(today));
             today = TestUtils.nextDay();
         }
     }
 
 
-    public void insertTestDataForDeidentificationMemoryLeak(String tableName1, String tableName2){
+    public void insertTestDataForFullPipeline(String tableName1, String tableName2){
         JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
 
         File idFile = new File(getClass().getClassLoader().getResource("identifiers.csv").getFile());
@@ -227,32 +233,22 @@ public class TestUtils  {
                 + ", primaryKeyFieldName"
                 + ", primaryKeyFieldValue"
                 + ", updateTime"
-                + ", someText"
-                + ", anotherTime"
-                + ") VALUES (?,?,?,?,?,?,?)";
+                + ", binaryContent"
+                + ") VALUES (?,?,?,?,?,?)";
 
-        Iterator<CSVRecord> it = records.iterator();
+        Iterator<CSVRecord> it = records.listIterator();
         it.next();
 
-
-        String massiveDoc = "";
-        CSVRecord r = it.next();
-        long id = Long.valueOf(r.get(0));
-        for(int i=0;i<=10;i++) {
-            Iterator<CSVRecord> it2 = records.iterator();
-            it2.next();
-            while (it2.hasNext()) {
-                r = it2.next();
-                massiveDoc = massiveDoc + stringMutatorService.generateMutantDocument(r.get(1), r.get(2), r.get(3), r.get(4));
-            }
-        }
-
-        while(it.hasNext()){
-            r = it.next();
+        while (it.hasNext()) {
+            CSVRecord r = it.next();
+            long id = Long.valueOf(r.get(0));
+            String massiveDoc = stringMutatorService.generateMutantDocument(convertCsvRecordToStringArray(r)
+                    ,biolarkText);
+            jdbcTemplate.update(sql2, "fictionalColumnFieldName", "fictionalTableName", "fictionalPrimaryKeyFieldName", id,
+                    new Timestamp(today), convertObjectToByteArray(generateDocxDocument(massiveDoc)));
+            today = TestUtils.nextDay();
             jdbcTemplate.update(sql1, id, r.get(1), r.get(2), r.get(3), new Timestamp(today));
         }
-        jdbcTemplate.update(sql2, "fictionalColumnFieldName", "fictionalTableName",
-                "fictionalPrimaryKeyFieldName", id, new Timestamp(today),massiveDoc, new Timestamp(today));
     }
 
 
@@ -325,4 +321,53 @@ public class TestUtils  {
             e.printStackTrace();
         }
     }
+
+    private XWPFDocument generateDocxDocument(String content)  {
+        XWPFDocument doc = new XWPFDocument();
+
+        XWPFParagraph p1 = doc.createParagraph();
+        p1.setAlignment(ParagraphAlignment.CENTER);
+        p1.setBorderBottom(Borders.DOUBLE);
+        p1.setBorderTop(Borders.DOUBLE);
+
+        p1.setBorderRight(Borders.DOUBLE);
+        p1.setBorderLeft(Borders.DOUBLE);
+        p1.setBorderBetween(Borders.SINGLE);
+
+        p1.setVerticalAlignment(TextAlignment.TOP);
+
+        XWPFRun r1 = p1.createRun();
+        r1.setBold(true);
+        r1.setText(content);
+        r1.setBold(true);
+        r1.setFontFamily("Courier");
+        r1.setUnderline(UnderlinePatterns.DOT_DOT_DASH);
+        r1.setTextPosition(100);
+        return doc;
+    }
+
+    private byte[] convertObjectToByteArray(XWPFDocument o){
+
+
+        try(ByteArrayOutputStream b = new ByteArrayOutputStream()){
+
+            o.write(b);
+            return b.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private String[] convertCsvRecordToStringArray(CSVRecord r){
+        Iterator it = r.iterator();
+        ArrayList<String> list = new ArrayList<>();
+        while(it.hasNext()){
+            list.add(it.next().toString());
+        }
+        String[] arr = new String[list.size()];
+        arr = list.toArray(arr);
+        return arr;
+    }
+
 }
