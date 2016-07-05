@@ -54,6 +54,8 @@ public class StringMutatorService {
     public Mutant generateMutantDocument(String[] stringsToMutate, String[] nonMutantStrings, int severity) {
 
         LoremIpsum loremIpsum = new LoremIpsum();
+        int loremStart =0;
+        int loremEnd =random.nextInt(loremLength);
 
         StringBuilder sb = new StringBuilder();
         sb.insert(0, loremIpsum.getWords(random.nextInt(loremLength)));
@@ -63,10 +65,15 @@ public class StringMutatorService {
                 parentMutant.getInputTokens().addAll(childMutant.getInputTokens());
                 parentMutant.getOutputTokens().addAll(childMutant.getOutputTokens());
                 sb.append(childMutant.getFinalText()).append(" ")
-                        .append(loremIpsum.getWords(random.nextInt(loremLength))).append(" ");
+                        .append(loremIpsum.getWords(loremEnd,loremStart)).append(" ");
+                loremStart = loremEnd +1;
+                loremEnd = loremStart + random.nextInt(loremLength);
+
                 for(int j = 0;j<nonMutantStrings.length;j++){
                     sb.append(nonMutantStrings[j]).append(" ")
-                            .append(loremIpsum.getWords(random.nextInt(loremLength))).append(" ");
+                            .append(loremIpsum.getWords(loremEnd,loremStart)).append(" ");
+                    loremStart = loremEnd +1;
+                    loremEnd = loremStart + random.nextInt(loremLength);
                 }
             }
         parentMutant.setFinalText(sb.toString());
@@ -76,6 +83,8 @@ public class StringMutatorService {
     public Mutant generateMutantDocument(String[] stringToMutate, int severity) {
 
         LoremIpsum loremIpsum = new LoremIpsum();
+        int loremStart =0;
+        int loremEnd =random.nextInt(loremLength);
 
         StringBuilder sb = new StringBuilder();
         sb.insert(0, loremIpsum.getWords(random.nextInt(loremLength)));
@@ -85,7 +94,9 @@ public class StringMutatorService {
             parentMutant.getInputTokens().addAll(childMutant.getInputTokens());
             parentMutant.getOutputTokens().addAll(childMutant.getOutputTokens());
             sb.append(childMutant.getFinalText()).append(" ")
-                    .append(loremIpsum.getWords(random.nextInt(loremLength))).append(" ");
+                    .append(loremIpsum.getWords(loremEnd,loremStart)).append(" ");
+            loremStart = loremEnd +1;
+            loremEnd = loremStart + random.nextInt(loremLength);
         }
         parentMutant.setFinalText(sb.toString());
         return parentMutant;

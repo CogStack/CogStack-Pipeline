@@ -180,7 +180,10 @@ public class StringTools {
 
         String[] splitArray = string.split(" ");
         for (String word : splitArray) {
-            if (word.length() > minLength || word.matches("[0-9]+") || word.matches("[0-9]+-[0-9]+")) {
+            if (word.length() > minLength || word.matches("[0-9]+") || word.matches("[0-9]+-[0-9]+")
+                    || word.matches("(?i)[0-9]+st")|| word.matches("(?i)[0-9]+nd")|| word.matches("(?i)[0-9]+rd")
+                    || word.matches("(?i)[0-9]+th") || word.matches("(?i)inn")
+                    ) {
                 strings.add(word);
             }
         }

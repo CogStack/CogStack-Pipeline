@@ -1,14 +1,16 @@
 package uk.ac.kcl.mutators;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by rich on 05/07/16.
  */
 public class Mutant {
-    private List<String> inputTokens;
-    private List<String> outputTokens;
+    private Set<String> inputTokens;
+    private Set<String> outputTokens;
     private String finalText;
 
     public String getDeidentifiedString() {
@@ -32,23 +34,23 @@ public class Mutant {
 
     private long documentid;
     public Mutant(){
-        this.inputTokens=new ArrayList<>();
-        this.outputTokens=new ArrayList<>();
+        this.inputTokens=new HashSet<>();
+        this.outputTokens=new HashSet<>();
     }
 
-    public List<String> getInputTokens() {
+    public Set<String> getInputTokens() {
         return inputTokens;
     }
 
-    public void setInputTokens(List<String> inputTokens) {
+    public void setInputTokens(Set<String> inputTokens) {
         this.inputTokens = inputTokens;
     }
 
-    public List<String> getOutputTokens() {
+    public Set<String> getOutputTokens() {
         return outputTokens;
     }
 
-    public void setOutputTokens(List<String> outputTokens) {
+    public void setOutputTokens(Set<String> outputTokens) {
         this.outputTokens = outputTokens;
     }
 

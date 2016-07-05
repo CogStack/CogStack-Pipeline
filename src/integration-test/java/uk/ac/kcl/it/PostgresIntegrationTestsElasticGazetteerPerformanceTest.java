@@ -15,34 +15,22 @@
  */
 package uk.ac.kcl.it;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
-import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import uk.ac.kcl.model.Document;
 import uk.ac.kcl.mutators.*;
 import uk.ac.kcl.rowmappers.DocumentRowMapper;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
 import uk.ac.kcl.service.ElasticGazetteerService;
-import uk.ac.kcl.testexecutionlisteners.PostgresDeidTestExecutionListener;
 
 import javax.sql.DataSource;
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.sql.Timestamp;
 import java.util.*;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
@@ -99,27 +87,125 @@ public class PostgresIntegrationTestsElasticGazetteerPerformanceTest {
         postGresTestUtils.createBasicOutputTable();
         postGresTestUtils.createDeIdInputTable();
         List<Mutant> mutants  = testUtils.insertTestDataForDeidentification("tblIdentifiers","tblInputDocs");
+        int totalTruePositives = 0;
+        int totalFalsePositives = 0;
+        int totalFalseNegatives = 0;
+
         for(Mutant mutant : mutants){
-            Set<Pattern> patterns = new HashSet<>();
+            Set<Pattern> mutatedPatterns = new HashSet<>();
             mutant.setDeidentifiedString(elasticGazetteerService.deIdentifyString(mutant.getFinalText(),String.valueOf(mutant.getDocumentid())));
             Set<String> set = new HashSet<>(mutant.getOutputTokens());
-            patterns.addAll(set.stream().map(string -> Pattern.compile(Pattern.quote(string), Pattern.CASE_INSENSITIVE)).collect(Collectors.toSet()));
+            mutatedPatterns.addAll(set.stream().map(string -> Pattern.compile(Pattern.quote(string), Pattern.CASE_INSENSITIVE)).collect(Collectors.toSet()));
             List<MatchResult> results = new ArrayList<>();
-            for (Pattern pattern : patterns) {
-                Matcher matcher = pattern.matcher(mutant.getDeidentifiedString());
+            for (Pattern pattern : mutatedPatterns) {
+                Matcher matcher = pattern.matcher(mutant.getFinalText());
                 while (matcher.find()){
                     results.add(matcher.toMatchResult());
                 }
             }
-            System.out.println("Doc ID "+ mutant.getDocumentid() + " has " +results.size() +" unmasked strings from a total of " + mutant.getOutputTokens().size());
+
+            int truePositives = getTruePositiveTokenCount(mutant);
+            int falsePositives = getFalsePositiveTokenCount(mutant);
+            int falseNegatives = getFalseNegativeTokenCount(mutant);
+
+            System.out.println("Doc ID "+ mutant.getDocumentid() + " has " +falseNegatives +" unmasked identifiers from a total of " + (falseNegatives+truePositives));
+            System.out.println("Doc ID "+ mutant.getDocumentid() + " has " +falsePositives +" inaccurately masked tokens from a total of " + (falsePositives+truePositives));
+            System.out.println("TP: "+truePositives +" FP: " + falsePositives + " FN: "+falseNegatives);
+            System.out.println("Doc ID precision " + calcPrecision(falsePositives,truePositives));
+            System.out.println("Doc ID recall " + calcRecall(falseNegatives,truePositives));
             System.out.println(mutant.getDeidentifiedString());
             System.out.println(mutant.getFinalText());
             System.out.println(mutant.getInputTokens());
             System.out.println(mutant.getOutputTokens());
+            System.out.println();
+            totalTruePositives +=truePositives;
+            totalFalsePositives += falsePositives;
+            totalFalseNegatives += falseNegatives;
         }
-
+        System.out.println();
+        System.out.println();
+        System.out.println("THIS RUN TP: "+totalTruePositives +" FP: " + totalFalsePositives+ " FN: "+totalFalseNegatives);
+        System.out.println("Doc ID precision " + calcPrecision(totalFalsePositives,totalTruePositives));
+        System.out.println("Doc ID recall " + calcRecall(totalFalseNegatives,totalTruePositives));
     }
 
 
+    private int getFalsePositiveTokenCount( Mutant mutant){
+        int count = 0;
+        Pattern mask = Pattern.compile("X+");
+        List<MatchResult> results = new ArrayList<>();
+        Matcher matcher = mask.matcher(mutant.getDeidentifiedString());
+        while (matcher.find()){
+            results.add(matcher.toMatchResult());
+        }
+        for(MatchResult result: results) {
+            String[] hits = mutant.getFinalText().substring(result.start(),result.end()).split(" ");
+            ArrayList<String> arHits = new ArrayList<String>(Arrays.asList(hits));
+            for(String hit : arHits){
+                boolean isAnIdentifier = false;
+                for(String token : mutant.getOutputTokens()) {
+                    if (hit.matches(token)) {
+                        isAnIdentifier = true;
+                    }
+                }
+                if(!isAnIdentifier && !hit.equalsIgnoreCase("")&& !hit.equalsIgnoreCase("-")){
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    private int getTruePositiveTokenCount( Mutant mutant){
+        int count = 0;
+        Pattern mask = Pattern.compile("X+");
+        List<MatchResult> results = new ArrayList<>();
+        Matcher matcher = mask.matcher(mutant.getDeidentifiedString());
+        while (matcher.find()){
+            results.add(matcher.toMatchResult());
+        }
+        for(MatchResult result: results) {
+            String[] hits = mutant.getFinalText().substring(result.start(),result.end()).split(" ");
+            ArrayList<String> arHits = new ArrayList<String>(Arrays.asList(hits));
+            for(String hit : arHits){
+                boolean hitFound = false;
+                for(String token : mutant.getOutputTokens()) {
+                    if (hit.matches(token)) {
+                        hitFound = true;
+                    }
+                }
+                if(hitFound && !hit.equalsIgnoreCase("")&& !hit.equalsIgnoreCase("-")){
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    private int getFalseNegativeTokenCount( Mutant mutant){
+        int count = 0;
+        String[] hits = mutant.getDeidentifiedString().split(" ");
+        ArrayList<String> allTokensFromDeidentifiedString = new ArrayList<String>(Arrays.asList(hits));
+        for(String token : allTokensFromDeidentifiedString){
+            boolean isAnIdentifier = false;
+            for(String mutatedIdentifiers : mutant.getOutputTokens()) {
+                if (mutatedIdentifiers.matches(token)) {
+                    isAnIdentifier = true;
+                }
+            }
+            if(isAnIdentifier && !token.equalsIgnoreCase("") && !token.equalsIgnoreCase("-")){
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private double calcPrecision(int falsePositives, int truePositives){
+        return (((double)truePositives / ((double)falsePositives + (double)truePositives)))*100.0;
+    }
+
+    private double calcRecall(int falseNegative, int truePositives){
+        return (((double)truePositives / ((double)falseNegative + (double)truePositives)))*100.0;
+    }
 
 }
