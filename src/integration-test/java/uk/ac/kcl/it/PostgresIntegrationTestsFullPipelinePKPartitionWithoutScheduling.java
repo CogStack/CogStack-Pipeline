@@ -67,7 +67,7 @@ public class PostgresIntegrationTestsFullPipelinePKPartitionWithoutScheduling {
 
     @Test
     @DirtiesContext
-    public void sqlServerikaPipelineTest() {
+    public void fullPipelineTest() {
         jobLauncher.launchJob();
     }
 

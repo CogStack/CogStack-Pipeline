@@ -47,10 +47,13 @@ public class DeIdDocumentItemProcessor implements ItemProcessor<Document, Docume
 
     @Autowired
     private Environment env;
+    private boolean replaceFields;
 
     @PostConstruct
     private void init(){
+
         fieldsToDeId = Arrays.asList(env.getProperty("fieldsToDeId").toLowerCase().split(","));
+        replaceFields = Boolean.parseBoolean(env.getProperty("fieldsToDeId"));
     }
 
     private List<String> fieldsToDeId;
@@ -75,10 +78,18 @@ public class DeIdDocumentItemProcessor implements ItemProcessor<Document, Docume
                         newString = elasticGazetteer.deIdentifyDates(v.toString(), doc.getPrimaryKeyFieldValue());
                         newString = elasticGazetteer.deIdentifyString(newString, doc.getPrimaryKeyFieldValue());
                     }
-                    newMap.put(k,newString);
+                    if(replaceFields) {
+                        newMap.put(k, newString);
+                    }else{
+                        newMap.put(("deidentified_"+k), newString);
+                    }
                 }catch (DeIdentificationFailedException e){
                     LOG.warn("De-identification failed on document " + doc.getDocName(), e);
-                    newMap.put(k,e.getLocalizedMessage());
+                    if(replaceFields) {
+                        newMap.put(k,e.getLocalizedMessage());
+                    }else{
+                        newMap.put(("deidentified_"+k), e.getLocalizedMessage());
+                    }
                 }
             }
         });
