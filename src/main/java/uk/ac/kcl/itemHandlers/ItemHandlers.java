@@ -78,8 +78,20 @@ public class ItemHandlers {
         return writer;
     }
 
+    @Autowired(required = false)
+    @Qualifier("esDocumentWriter")
+    ItemWriter<Document> esItemWriter;
+
+    @Autowired(required = false)
+    @Qualifier("simpleJdbcItemWriter")
+    ItemWriter<Document> jdbcItemWriter;
+
+    @Autowired(required = false)
+    @Qualifier("jsonFileItemWriter")
+    ItemWriter<Document> jsonFileItemWriter;
+
     @Bean
-    @Qualifier("compositeESandJdbcItemWriter")
+    @Qualifier("compositeItemWriter")
     public ItemWriter<Document> compositeESandJdbcItemWriter() {
         CompositeItemWriter writer = new CompositeItemWriter<>();
         ArrayList<ItemWriter<Document>> delegates = new ArrayList<>();
@@ -89,18 +101,14 @@ public class ItemHandlers {
         if(jdbcItemWriter !=null) {
             delegates.add(jdbcItemWriter);
         }
+        if(jsonFileItemWriter !=null){
+            delegates.add(jsonFileItemWriter);
+        }
         writer.setDelegates(delegates);
         return writer;
     }
 
 
-    @Autowired(required = false)
-    @Qualifier("esDocumentWriter")
-    ItemWriter<Document> esItemWriter;
-
-    @Autowired(required = false)
-    @Qualifier("simpleJdbcItemWriter")
-    ItemWriter<Document> jdbcItemWriter;
 
     @Autowired(required = false)
     @Qualifier("gateDocumentItemProcessor")

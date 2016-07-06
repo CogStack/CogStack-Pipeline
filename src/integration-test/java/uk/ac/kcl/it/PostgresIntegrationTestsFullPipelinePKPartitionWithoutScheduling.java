@@ -46,6 +46,7 @@ import uk.ac.kcl.testexecutionlisteners.PostgresFullPipelineTestExecutionListene
         "classpath:noScheduling.properties",
         "classpath:postgres_db.properties",
         "classpath:elasticsearch.properties",
+        "classpath:jsonFileItemWriter.properties",
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
         SingleJobLauncher.class,
