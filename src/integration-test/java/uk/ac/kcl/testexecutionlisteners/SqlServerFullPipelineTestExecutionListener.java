@@ -23,7 +23,7 @@ public class SqlServerFullPipelineTestExecutionListener extends AbstractTestExec
         sqlServerTestUtils.createBasicOutputTable();
         TestUtils testUtils =
                 testContext.getApplicationContext().getBean(TestUtils.class);
-        testUtils.insertTestDataForFullPipeline("dbo.tblIdentifiers","dbo.tblInputDocs");
+        testUtils.insertTestDataForFullPipeline("dbo.tblIdentifiers","dbo.tblInputDocs",1);
     }
 
 }

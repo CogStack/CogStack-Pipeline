@@ -86,7 +86,7 @@ public class PostgresIntegrationTestsElasticGazetteerPerformanceTest {
         postGresTestUtils.createBasicInputTable();
         postGresTestUtils.createBasicOutputTable();
         postGresTestUtils.createDeIdInputTable();
-        List<Mutant> mutants  = testUtils.insertTestDataForDeidentification("tblIdentifiers","tblInputDocs");
+        List<Mutant> mutants  = testUtils.insertTestDataForDeidentification("tblIdentifiers","tblInputDocs", 0);
         int totalTruePositives = 0;
         int totalFalsePositives = 0;
         int totalFalseNegatives = 0;
@@ -139,12 +139,15 @@ public class PostgresIntegrationTestsElasticGazetteerPerformanceTest {
             results.add(matcher.toMatchResult());
         }
         for(MatchResult result: results) {
-            String[] hits = mutant.getFinalText().substring(result.start(),result.end()).split(" ");
-            ArrayList<String> arHits = new ArrayList<String>(Arrays.asList(hits));
+            StringTokenizer tokenizer = new StringTokenizer(mutant.getFinalText().substring(result.start(),result.end()));
+            ArrayList<String> arHits = new ArrayList<>();
+            while (tokenizer.hasMoreTokens()){
+                arHits.add(tokenizer.nextToken());
+            }
             for(String hit : arHits){
                 boolean isAnIdentifier = false;
                 for(String token : mutant.getOutputTokens()) {
-                    if (hit.matches(token)) {
+                    if (hit.matches(Pattern.quote(token))) {
                         isAnIdentifier = true;
                     }
                 }
@@ -165,12 +168,15 @@ public class PostgresIntegrationTestsElasticGazetteerPerformanceTest {
             results.add(matcher.toMatchResult());
         }
         for(MatchResult result: results) {
-            String[] hits = mutant.getFinalText().substring(result.start(),result.end()).split(" ");
-            ArrayList<String> arHits = new ArrayList<String>(Arrays.asList(hits));
+            StringTokenizer tokenizer = new StringTokenizer(mutant.getFinalText());
+            ArrayList<String> arHits = new ArrayList<>();
+            while (tokenizer.hasMoreTokens()){
+                arHits.add(tokenizer.nextToken());
+            }
             for(String hit : arHits){
                 boolean hitFound = false;
                 for(String token : mutant.getOutputTokens()) {
-                    if (hit.matches(token)) {
+                    if (hit.matches(Pattern.quote(token))) {
                         hitFound = true;
                     }
                 }
@@ -184,12 +190,15 @@ public class PostgresIntegrationTestsElasticGazetteerPerformanceTest {
 
     private int getFalseNegativeTokenCount( Mutant mutant){
         int count = 0;
-        String[] hits = mutant.getDeidentifiedString().split(" ");
-        ArrayList<String> allTokensFromDeidentifiedString = new ArrayList<String>(Arrays.asList(hits));
-        for(String token : allTokensFromDeidentifiedString){
+        StringTokenizer tokenizer = new StringTokenizer(mutant.getDeidentifiedString());
+        ArrayList<String> arHits = new ArrayList<>();
+        while (tokenizer.hasMoreTokens()){
+            arHits.add(tokenizer.nextToken());
+        }
+        for(String token : arHits){
             boolean isAnIdentifier = false;
             for(String mutatedIdentifiers : mutant.getOutputTokens()) {
-                if (mutatedIdentifiers.matches(token)) {
+                if (mutatedIdentifiers.matches(Pattern.quote(token))) {
                     isAnIdentifier = true;
                 }
             }

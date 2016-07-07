@@ -40,6 +40,8 @@ public class StringMutatorService {
     private AddressAliasMutator addressAliasMutator;
     @Autowired
     private StringTokenTruncatorMutator stringTokenTruncatorMutator;
+    @Autowired
+    private NullMutator nullMutator;
 
 
     public int getLoremLength() {
@@ -96,6 +98,7 @@ public class StringMutatorService {
 
         StringBuilder sb = new StringBuilder();
         sb.insert(0, loremIpsum.getWords(random.nextInt(loremLength)));
+        sb.append(" ");
         Mutant parentMutant = new Mutant();
         for (int i = 0; i < stringToMutate.length; i++) {
             Mutant childMutant = mutate(stringToMutate[i], severity);
@@ -115,8 +118,8 @@ public class StringMutatorService {
         Mutant mutant = null;
         switch (severity) {
             case 0:
-                mutant = new Mutant();
-                mutant.setFinalText(normal);
+                mutant = nullMutator.mutate(normal);
+                break;
             case 1:
                 mutant = substituteCharactersMutator.mutate(normal);
                 break;
@@ -127,7 +130,7 @@ public class StringMutatorService {
                 mutant = stringTokenTruncatorMutator.mutate(normal);
                 break;
             case 4:
-                mutant = substituteCharactersMutator.mutate(normal);
+                mutant = badOcrMutator.mutate(normal);
                 break;
             case 5:
                 int i = random.nextInt(4);
@@ -142,8 +145,7 @@ public class StringMutatorService {
                 }
                 break;
             default:
-                mutant = new Mutant();
-                mutant.setFinalText(normal);
+                mutant = nullMutator.mutate(normal);
                 break;
         }
         return mutant;

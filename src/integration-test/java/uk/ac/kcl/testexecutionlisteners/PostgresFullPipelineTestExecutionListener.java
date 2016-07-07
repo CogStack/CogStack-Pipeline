@@ -23,7 +23,7 @@ public class PostgresFullPipelineTestExecutionListener extends AbstractTestExecu
         postgresTestUtils.createBasicOutputTable();
         TestUtils testUtils =
                 testContext.getApplicationContext().getBean(TestUtils.class);
-        testUtils.insertTestDataForFullPipeline("tblIdentifiers","tblInputDocs");
+        testUtils.insertTestDataForFullPipeline("tblIdentifiers","tblInputDocs",1);
     }
 
 }

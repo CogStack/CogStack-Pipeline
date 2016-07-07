@@ -23,7 +23,7 @@ public class SqlServerDeidTestExecutionListener extends AbstractTestExecutionLis
         sqlServerTestUtils.createDeIdInputTable();
         TestUtils testUtils =
                 testContext.getApplicationContext().getBean(TestUtils.class);
-        testUtils.insertTestDataForDeidentification("dbo.tblIdentifiers","dbo.tblInputDocs");
+        testUtils.insertTestDataForDeidentification("dbo.tblIdentifiers","dbo.tblInputDocs",1);
 
 
     }
