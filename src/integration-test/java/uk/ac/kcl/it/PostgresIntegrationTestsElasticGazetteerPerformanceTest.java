@@ -243,6 +243,7 @@ public class PostgresIntegrationTestsElasticGazetteerPerformanceTest {
         return count;
     }
 
+
     private int getFalseNegativeTokenCount( Mutant mutant){
         int count = 0;
         StringTokenizer tokenizer = new StringTokenizer(mutant.getDeidentifiedString());
