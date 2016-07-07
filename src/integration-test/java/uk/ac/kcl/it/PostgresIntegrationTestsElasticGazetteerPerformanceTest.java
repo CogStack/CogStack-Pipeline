@@ -86,7 +86,7 @@ public class PostgresIntegrationTestsElasticGazetteerPerformanceTest {
         postGresTestUtils.createBasicInputTable();
         postGresTestUtils.createBasicOutputTable();
         postGresTestUtils.createDeIdInputTable();
-        List<Mutant> mutants  = testUtils.insertTestDataForDeidentification("tblIdentifiers","tblInputDocs", 0);
+        List<Mutant> mutants  = testUtils.insertTestDataForDeidentification("tblIdentifiers","tblInputDocs", 4);
         int totalTruePositives = 0;
         int totalFalsePositives = 0;
         int totalFalseNegatives = 0;
@@ -168,7 +168,7 @@ public class PostgresIntegrationTestsElasticGazetteerPerformanceTest {
             results.add(matcher.toMatchResult());
         }
         for(MatchResult result: results) {
-            StringTokenizer tokenizer = new StringTokenizer(mutant.getFinalText());
+            StringTokenizer tokenizer = new StringTokenizer(mutant.getFinalText().substring(result.start(),result.end()));
             ArrayList<String> arHits = new ArrayList<>();
             while (tokenizer.hasMoreTokens()){
                 arHits.add(tokenizer.nextToken());

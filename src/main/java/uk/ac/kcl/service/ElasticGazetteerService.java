@@ -122,6 +122,7 @@ public class ElasticGazetteerService {
 
         Set<String> stringSet = new HashSet<>();
         for(String string : strings) {
+            stringSet.add(string);
             stringSet.addAll(StringTools.getApproximatelyMatchingStringList(document, string,levDistance));
             stringSet.addAll((StringTools.splitIntoWordsWithLengthHigherThan(string, Integer.valueOf(env.getProperty("minWordLength")))));
         }

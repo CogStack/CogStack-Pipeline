@@ -28,18 +28,21 @@ public class StringTokenTruncatorMutator implements Mutator {
 
     private Mutant removeTokensFromEnd(String normal) {
         Mutant mutant = new Mutant();
-        mutant.getInputTokens().add(normal);
+        //mutant.getInputTokens().add(normal.trim());
         StringTokenizer st = new StringTokenizer(normal);
         StringBuilder documentSB = new StringBuilder();
         int totalCount = st.countTokens();
         for (int i = 0; i < totalCount; i++) {
-            if (i <= minTokenCount || i > minTokenCount && random.nextInt(100) <= removeTokenRate) {
-                documentSB.append(st.nextToken()).append(" ");
+            String token = st.nextToken();
+            mutant.getInputTokens().add(token);
+            mutant.getOutputTokens().add(token);
+            if (i <= minTokenCount || i > minTokenCount && random.nextInt(100) >= removeTokenRate) {
+                documentSB.append(token).append(" ");
             } else {
                 break;
             }
         }
-        mutant.getOutputTokens().add(documentSB.toString());
+        //mutant.getOutputTokens().add(documentSB.toString().trim());
         mutant.setFinalText(documentSB.toString());
         return mutant;
     }

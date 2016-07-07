@@ -15,10 +15,10 @@ public class BadOCRMutator implements Mutator {
 
     @Autowired
     SubstituteCharactersMutator substituteCharactersMutator;
-    @Value("#{'${badOCRWhitespaceRate:100}'}")
+    @Value("#{'${badOCRWhitespaceRate:10}'}")
     private int badOCRWhitespaceRate;
 
-    @Value("#{'${badOCRCharacterMutationRate:1}'}")
+    @Value("#{'${badOCRCharacterMutationRate:10}'}")
     private int badOCRCharacterMutationRate;
 
     private Mutant simulateBadOCR(String normal) {
@@ -40,7 +40,10 @@ public class BadOCRMutator implements Mutator {
                     tokenSb.append(array[i]);
                 }
             }
-            mutant.getOutputTokens().add(tokenSb.toString());
+            StringTokenizer st2 = new StringTokenizer(tokenSb.toString());
+            while (st2.hasMoreTokens()){
+                mutant.getOutputTokens().add(st2.nextToken());
+            }
             documentSB.append(" ").append(tokenSb.toString());
         }
 
