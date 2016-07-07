@@ -20,17 +20,23 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.env.Environment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import uk.ac.kcl.mutators.*;
 import uk.ac.kcl.rowmappers.DocumentRowMapper;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
 import uk.ac.kcl.service.ElasticGazetteerService;
 
 import javax.sql.DataSource;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
@@ -51,6 +57,7 @@ import java.util.stream.Collectors;
         "classpath:gate.properties",
         "classpath:deidentification.properties",
         "classpath:postgres_db.properties",
+        "classpath:elasticgazetteer_test.properties",
         "classpath:elasticsearch.properties",
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
@@ -77,7 +84,8 @@ public class PostgresIntegrationTestsElasticGazetteerPerformanceTest {
     @Autowired
     PostGresTestUtils postGresTestUtils;
 
-
+    @Autowired
+    Environment env;
 
 
     @Test
@@ -86,20 +94,20 @@ public class PostgresIntegrationTestsElasticGazetteerPerformanceTest {
         postGresTestUtils.createBasicInputTable();
         postGresTestUtils.createBasicOutputTable();
         postGresTestUtils.createDeIdInputTable();
-        List<Mutant> mutants  = testUtils.insertTestDataForDeidentification("tblIdentifiers","tblInputDocs", 4);
+        List<Mutant> mutants = testUtils.insertTestDataForDeidentification("tblIdentifiers", "tblInputDocs", 1);
         int totalTruePositives = 0;
         int totalFalsePositives = 0;
         int totalFalseNegatives = 0;
 
-        for(Mutant mutant : mutants){
+        for (Mutant mutant : mutants) {
             Set<Pattern> mutatedPatterns = new HashSet<>();
-            mutant.setDeidentifiedString(elasticGazetteerService.deIdentifyString(mutant.getFinalText(),String.valueOf(mutant.getDocumentid())));
+            mutant.setDeidentifiedString(elasticGazetteerService.deIdentifyString(mutant.getFinalText(), String.valueOf(mutant.getDocumentid())));
             Set<String> set = new HashSet<>(mutant.getOutputTokens());
             mutatedPatterns.addAll(set.stream().map(string -> Pattern.compile(Pattern.quote(string), Pattern.CASE_INSENSITIVE)).collect(Collectors.toSet()));
             List<MatchResult> results = new ArrayList<>();
             for (Pattern pattern : mutatedPatterns) {
                 Matcher matcher = pattern.matcher(mutant.getFinalText());
-                while (matcher.find()){
+                while (matcher.find()) {
                     results.add(matcher.toMatchResult());
                 }
             }
@@ -108,25 +116,67 @@ public class PostgresIntegrationTestsElasticGazetteerPerformanceTest {
             int falsePositives = getFalsePositiveTokenCount(mutant);
             int falseNegatives = getFalseNegativeTokenCount(mutant);
 
-            System.out.println("Doc ID "+ mutant.getDocumentid() + " has " +falseNegatives +" unmasked identifiers from a total of " + (falseNegatives+truePositives));
-            System.out.println("Doc ID "+ mutant.getDocumentid() + " has " +falsePositives +" inaccurately masked tokens from a total of " + (falsePositives+truePositives));
-            System.out.println("TP: "+truePositives +" FP: " + falsePositives + " FN: "+falseNegatives);
-            System.out.println("Doc ID precision " + calcPrecision(falsePositives,truePositives));
-            System.out.println("Doc ID recall " + calcRecall(falseNegatives,truePositives));
+            System.out.println("Doc ID " + mutant.getDocumentid() + " has " + falseNegatives + " unmasked identifiers from a total of " + (falseNegatives + truePositives));
+            System.out.println("Doc ID " + mutant.getDocumentid() + " has " + falsePositives + " inaccurately masked tokens from a total of " + (falsePositives + truePositives));
+            System.out.println("TP: " + truePositives + " FP: " + falsePositives + " FN: " + falseNegatives);
+            System.out.println("Doc ID precision " + calcPrecision(falsePositives, truePositives));
+            System.out.println("Doc ID recall " + calcRecall(falseNegatives, truePositives));
             System.out.println(mutant.getDeidentifiedString());
             System.out.println(mutant.getFinalText());
             System.out.println(mutant.getInputTokens());
             System.out.println(mutant.getOutputTokens());
             System.out.println();
-            totalTruePositives +=truePositives;
+            if (env.getProperty("elasticgazetteerTestOutput") != null) {
+                try {
+                    try (BufferedWriter bw = new BufferedWriter(new FileWriter(
+                            new File(env.getProperty("elasticgazetteerTestOutput") + File.separator + mutant.getDocumentid())))) {
+                        bw.write("Doc ID " + mutant.getDocumentid() + " has " + falseNegatives + " unmasked identifiers from a total of " + (falseNegatives + truePositives));
+                        bw.newLine();
+                        bw.write("Doc ID " + mutant.getDocumentid() + " has " + falsePositives + " inaccurately masked tokens from a total of " + (falsePositives + truePositives));
+                        bw.newLine();
+                        bw.write("TP: " + truePositives + " FP: " + falsePositives + " FN: " + falseNegatives);
+                        bw.newLine();
+                        bw.write("Doc ID precision " + calcPrecision(falsePositives, truePositives));
+                        bw.newLine();
+                        bw.write("Doc ID recall " + calcRecall(falseNegatives, truePositives));
+                        bw.newLine();
+                        bw.write(mutant.getDeidentifiedString());
+                        bw.newLine();
+                        bw.write(mutant.getFinalText());
+                        bw.newLine();
+                        bw.write(mutant.getInputTokens().toString());
+                        bw.newLine();
+                        bw.write(mutant.getOutputTokens().toString());
+
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            totalTruePositives += truePositives;
             totalFalsePositives += falsePositives;
             totalFalseNegatives += falseNegatives;
         }
         System.out.println();
         System.out.println();
-        System.out.println("THIS RUN TP: "+totalTruePositives +" FP: " + totalFalsePositives+ " FN: "+totalFalseNegatives);
-        System.out.println("Doc ID precision " + calcPrecision(totalFalsePositives,totalTruePositives));
-        System.out.println("Doc ID recall " + calcRecall(totalFalseNegatives,totalTruePositives));
+        System.out.println("THIS RUN TP: " + totalTruePositives + " FP: " + totalFalsePositives + " FN: " + totalFalseNegatives);
+        System.out.println("Doc ID precision " + calcPrecision(totalFalsePositives, totalTruePositives));
+        System.out.println("Doc ID recall " + calcRecall(totalFalseNegatives, totalTruePositives));
+        if (env.getProperty("elasticgazetteerTestOutput") != null) {
+                try {
+                    try (BufferedWriter bw = new BufferedWriter(new FileWriter(
+                            new File(env.getProperty("elasticgazetteerTestOutput") + File.separator + "summary")))) {
+                        bw.write("THIS RUN TP: " + totalTruePositives + " FP: " + totalFalsePositives + " FN: " + totalFalseNegatives);
+                        bw.newLine();
+                        bw.write("Doc ID precision " + calcPrecision(totalFalsePositives, totalTruePositives));
+                        bw.newLine();
+                        bw.write("Doc ID recall " + calcRecall(totalFalseNegatives, totalTruePositives));
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+        }
     }
 
 
@@ -173,16 +223,21 @@ public class PostgresIntegrationTestsElasticGazetteerPerformanceTest {
             while (tokenizer.hasMoreTokens()){
                 arHits.add(tokenizer.nextToken());
             }
-            for(String hit : arHits){
-                boolean hitFound = false;
-                for(String token : mutant.getOutputTokens()) {
-                    if (hit.matches(Pattern.quote(token))) {
-                        hitFound = true;
-                    }
+            count = getHitCount(mutant, count, arHits);
+        }
+        return count;
+    }
+
+    private int getHitCount(Mutant mutant, int count, ArrayList<String> arHits) {
+        for(String hit : arHits){
+            boolean hitFound = false;
+            for(String token : mutant.getOutputTokens()) {
+                if (hit.matches(Pattern.quote(token))) {
+                    hitFound = true;
                 }
-                if(hitFound && !hit.equalsIgnoreCase("")&& !hit.equalsIgnoreCase("-")){
-                    count++;
-                }
+            }
+            if(hitFound && !hit.equalsIgnoreCase("")&& !hit.equalsIgnoreCase("-")){
+                count++;
             }
         }
         return count;
@@ -195,17 +250,7 @@ public class PostgresIntegrationTestsElasticGazetteerPerformanceTest {
         while (tokenizer.hasMoreTokens()){
             arHits.add(tokenizer.nextToken());
         }
-        for(String token : arHits){
-            boolean isAnIdentifier = false;
-            for(String mutatedIdentifiers : mutant.getOutputTokens()) {
-                if (mutatedIdentifiers.matches(Pattern.quote(token))) {
-                    isAnIdentifier = true;
-                }
-            }
-            if(isAnIdentifier && !token.equalsIgnoreCase("") && !token.equalsIgnoreCase("-")){
-                count++;
-            }
-        }
+        count = getHitCount(mutant, count, arHits);
         return count;
     }
 
