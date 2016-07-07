@@ -15,10 +15,10 @@ public class BadOCRMutator implements Mutator {
 
     @Autowired
     SubstituteCharactersMutator substituteCharactersMutator;
-    @Value("#{'${badOCRWhitespaceRate:10}'}")
+    @Value("#{'${badOCRWhitespaceRate:3}'}")
     private int badOCRWhitespaceRate;
 
-    @Value("#{'${badOCRCharacterMutationRate:10}'}")
+    @Value("#{'${badOCRCharacterMutationRate:3}'}")
     private int badOCRCharacterMutationRate;
 
     private Mutant simulateBadOCR(String normal) {

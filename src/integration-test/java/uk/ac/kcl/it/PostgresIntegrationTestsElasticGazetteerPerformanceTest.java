@@ -19,6 +19,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 import org.springframework.test.annotation.DirtiesContext;
@@ -87,6 +88,8 @@ public class PostgresIntegrationTestsElasticGazetteerPerformanceTest {
     @Autowired
     Environment env;
 
+    @Value("#{'${mutatortype:0}'}")
+    private int mutatortype;
 
     @Test
     @DirtiesContext
@@ -94,7 +97,7 @@ public class PostgresIntegrationTestsElasticGazetteerPerformanceTest {
         postGresTestUtils.createBasicInputTable();
         postGresTestUtils.createBasicOutputTable();
         postGresTestUtils.createDeIdInputTable();
-        List<Mutant> mutants = testUtils.insertTestDataForDeidentification("tblIdentifiers", "tblInputDocs", 1);
+        List<Mutant> mutants = testUtils.insertTestDataForDeidentification("tblIdentifiers", "tblInputDocs", mutatortype);
         int totalTruePositives = 0;
         int totalFalsePositives = 0;
         int totalFalseNegatives = 0;
