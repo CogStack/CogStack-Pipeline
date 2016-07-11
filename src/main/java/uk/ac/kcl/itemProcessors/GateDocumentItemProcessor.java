@@ -56,6 +56,7 @@ public class GateDocumentItemProcessor extends TLItemProcessor implements ItemPr
 
     @Override
     public Document process(final Document doc) throws Exception {
+        LOG.debug("starting " + this.getClass().getSimpleName() +" on doc " +doc.getDocName());
         gate.Document gateDoc = Factory
                 .newDocument((String) doc.getAdditionalFields()
                         .get(env.getProperty("gateInputFieldName")));
@@ -66,9 +67,11 @@ public class GateDocumentItemProcessor extends TLItemProcessor implements ItemPr
             }else{
                 addField(doc, gateDoc.toXml());
             }
-            return doc;
+
         }finally{
             Factory.deleteResource(gateDoc);
         }
+        LOG.debug("finished " + this.getClass().getSimpleName() +" on doc " +doc.getDocName());
+        return doc;
     }
 }

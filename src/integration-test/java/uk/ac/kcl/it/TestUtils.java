@@ -368,7 +368,6 @@ public class TestUtils  {
     }
 
     public static String[] convertCsvRecordToStringArray(CSVRecord r){
-        Iterator it = r.iterator();
         ArrayList<String> list = new ArrayList<>();
         list.add(r.get(1));
         list.add(r.get(2));

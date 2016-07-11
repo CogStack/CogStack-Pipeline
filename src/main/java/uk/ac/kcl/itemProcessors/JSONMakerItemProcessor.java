@@ -36,7 +36,7 @@ public class JSONMakerItemProcessor implements ItemProcessor<Document, Document>
 
     @Override
     public Document process(final Document doc) throws Exception {
-
+        LOG.debug("starting " + this.getClass().getSimpleName() +" on doc " +doc.getDocName());
         //may already be populated if reindexing
         //XContentBuilder builder = doc.getOutputData();
 
@@ -49,7 +49,7 @@ public class JSONMakerItemProcessor implements ItemProcessor<Document, Document>
 //        Gson gson = new Gson();
 //        String json = gson.toJson(doc.getAdditionalFields());
 //        doc.setOutputData(json);
-
+        LOG.debug("finished " + this.getClass().getSimpleName() +" on doc " +doc.getDocName());
         return doc;
     }
 

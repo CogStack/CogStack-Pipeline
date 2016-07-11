@@ -64,8 +64,8 @@ public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemPr
 
     @Override
     public Document process(final Document doc) throws Exception {
+        LOG.debug("starting " + this.getClass().getSimpleName() +" on doc " +doc.getDocName());
         ContentHandler handler;
-        LOG.debug("processing doc: " + doc.getDocName());
         if (keepTags) {
             handler = new ToXMLContentHandler();
         } else {
@@ -79,6 +79,7 @@ public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemPr
         } catch (Exception ex) {
             addField(doc,ex.getMessage());
         }
+        LOG.debug("finished " + this.getClass().getSimpleName() +" on doc " +doc.getDocName());
         return doc;
     }
 

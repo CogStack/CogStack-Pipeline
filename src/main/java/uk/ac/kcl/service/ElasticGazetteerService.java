@@ -103,6 +103,8 @@ public class ElasticGazetteerService {
         return replaceStrings(results, document);
     }
 
+
+
     private String replaceStrings(List<MatchResult> results, String document) {
         StringBuffer sb = new StringBuffer(document);
         for(MatchResult m : results) {

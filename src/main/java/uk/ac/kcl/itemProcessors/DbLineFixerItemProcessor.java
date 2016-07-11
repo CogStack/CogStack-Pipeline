@@ -65,7 +65,7 @@ public class DbLineFixerItemProcessor extends TLItemProcessor implements ItemPro
 
     @Override
     public Document process(final Document doc) throws Exception {
-
+        LOG.debug("starting " + this.getClass().getSimpleName() +" on doc " +doc.getDocName());
         String sql = "SELECT " +
                 env.getProperty("lf.documentKeyName") +
                 ", " +
@@ -94,6 +94,7 @@ public class DbLineFixerItemProcessor extends TLItemProcessor implements ItemPro
         }
 
         addField(doc,sb2.toString());
+        LOG.debug("finished " + this.getClass().getSimpleName() +" on doc " +doc.getDocName());
         return doc;
     }
 
