@@ -245,7 +245,6 @@ public class JobConfiguration {
                 .faultTolerant()
                 .skipLimit(Integer.parseInt(env.getProperty("skipLimit")))
                 .noSkip(Exception.class)
-                //add acceptable exceptions here
                 .taskExecutor(taskExecutor)
                 .build();
     }

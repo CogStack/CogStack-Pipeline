@@ -52,9 +52,9 @@ import uk.ac.kcl.testexecutionlisteners.PostgresBasicTestExecutionListener;
 @TestExecutionListeners(
         listeners = PostgresBasicTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-public class PostgresTestsBiolarkPKPartitionWithoutScheduling {
+public class PostgresIntegrationTestsBiolarkPKPartitionWithoutScheduling {
 
-    final static Logger logger = Logger.getLogger(PostgresTestsBiolarkPKPartitionWithoutScheduling.class);
+    final static Logger logger = Logger.getLogger(PostgresIntegrationTestsBiolarkPKPartitionWithoutScheduling.class);
 
     @Autowired
     SingleJobLauncher jobLauncher;

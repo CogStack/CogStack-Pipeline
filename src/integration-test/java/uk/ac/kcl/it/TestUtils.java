@@ -138,11 +138,14 @@ public class TestUtils  {
                 + ") VALUES (?,?,?,?,?,?,?)";
 
 
-
+        String biolarkTs = "";
+        for(int i=0;i<biolarkText.length;i++){
+            biolarkTs = biolarkTs +" " +biolarkText[i];
+        }
         for (long i = 1; i <= docCount; i++) {
 
             jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName",
-                    "fictionalPrimaryKeyFieldName", i, new Timestamp(today),biolarkText, new Timestamp(today));
+                    "fictionalPrimaryKeyFieldName", i, new Timestamp(today),biolarkTs, new Timestamp(today));
 //            if (i==0) {
 //                //test for massive string in ES
 //                jdbcTemplate.update(sql, RandomString.nextString(50), "fictionalTableName",
@@ -160,7 +163,7 @@ public class TestUtils  {
     public List<Mutant> insertTestDataForDeidentification(String tableName1, String tableName2, int mutationLevel){
         JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
 
-        File idFile = new File(getClass().getClassLoader().getResource("identifiers.csv").getFile());
+        File idFile = new File(getClass().getClassLoader().getResource("identifiers_small.csv").getFile());
 
         List<CSVRecord> records = null;
         try {

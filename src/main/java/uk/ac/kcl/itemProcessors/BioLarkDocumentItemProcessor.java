@@ -23,6 +23,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.retry.RecoveryCallback;
+import org.springframework.retry.RetryCallback;
+import org.springframework.retry.RetryContext;
+import org.springframework.retry.backoff.FixedBackOffPolicy;
+import org.springframework.retry.policy.TimeoutRetryPolicy;
+import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -44,13 +51,25 @@ public class BioLarkDocumentItemProcessor implements ItemProcessor<Document, Doc
     private String endPoint;
     private String fieldName;
     private ObjectMapper mapper;
+    private int connectTimeout;
+    private int readTimeout;
+
+    private RetryTemplate retryTemplate;
+    private RestTemplate restTemplate;
+
     @PostConstruct
     private void init(){
 
         fieldsToBioLark = Arrays.asList(env.getProperty("fieldsToBioLark").toLowerCase().split(","));
         endPoint = env.getProperty("biolarkEndPoint");
         setFieldName(env.getProperty("biolarkFieldName"));
-         this.mapper = new ObjectMapper();
+        this.mapper = new ObjectMapper();
+        this.connectTimeout = Integer.valueOf(env.getProperty("biolarkConnectTimeout"));
+        this.readTimeout = Integer.valueOf(env.getProperty("biolarkReadTimeout"));
+        this.retryTemplate = getRetryTemplate();
+        this.restTemplate = new RestTemplate();
+        ((SimpleClientHttpRequestFactory)restTemplate.getRequestFactory()).setReadTimeout(readTimeout);
+        ((SimpleClientHttpRequestFactory)restTemplate.getRequestFactory()).setConnectTimeout(connectTimeout);
     }
 
     private List<String> fieldsToBioLark;
@@ -69,29 +88,49 @@ public class BioLarkDocumentItemProcessor implements ItemProcessor<Document, Doc
         doc.getAdditionalFields().forEach((k,v)->{
             String newString = "";
             if(fieldsToBioLark.contains(k)) {
-                RestTemplate restTemplate = new RestTemplate();
-                Object json = null;
-                try {
-                    json = restTemplate.postForObject(endPoint, v, Object.class);
-                }catch (HttpClientErrorException e){
-                    LOG.warn("Biolark failed on document "+ doc.getDocName(), e);
-                    ArrayList<LinkedHashMap<Object,Object>> al = new ArrayList<LinkedHashMap<Object, Object>>();
-                    LinkedHashMap<Object,Object> hm = new LinkedHashMap<Object, Object>();
-                    hm.put("error","see logs");
-                    al.add(hm);
-                    json = al;
-                }
-                newMap.put(fieldName,json);
-            }
-        });
 
-        doc.getAdditionalFields().clear();
-        doc.getAdditionalFields().putAll(newMap);
-        LOG.debug("finished " + this.getClass().getSimpleName() +" on doc " +doc.getDocName());
-        return doc;
-    }
+                Object json = null;
+
+                json = retryTemplate.execute(new RetryCallback<Object,BiolarkProcessingFailedException>() {
+                    public Object doWithRetry(RetryContext context) {
+                        // business logic here
+                        return restTemplate.postForObject(endPoint, v, Object.class);
+                    }
+                }, new RecoveryCallback() {
+                    @Override
+                    public Object recover(RetryContext context) throws Exception {
+                        LOG.warn("Biolark failed on document "+ doc.getDocName());
+                        ArrayList<LinkedHashMap<Object,Object>> al = new ArrayList<LinkedHashMap<Object, Object>>();
+                        LinkedHashMap<Object,Object> hm = new LinkedHashMap<Object, Object>();
+                        hm.put("error","see logs");
+                        al.add(hm);
+                        return al;
+                    }
+                });
+
+                    newMap.put(fieldName,json);
+                }
+            });
+
+            doc.getAdditionalFields().clear();
+            doc.getAdditionalFields().putAll(newMap);
+            LOG.debug("finished " + this.getClass().getSimpleName() +" on doc " +doc.getDocName());
+            return doc;
+        }
 
     public void setFieldName(String fieldName) {
         this.fieldName = fieldName;
+    }
+
+    public RetryTemplate getRetryTemplate(){
+        TimeoutRetryPolicy retryPolicy = new TimeoutRetryPolicy();
+        retryPolicy.setTimeout(Long.valueOf(env.getProperty("biolarkRetryTimeout")));
+        FixedBackOffPolicy backOffPolicy = new FixedBackOffPolicy();
+        backOffPolicy.setBackOffPeriod(Long.valueOf(env.getProperty("biolarkRetryBackoff")));
+
+        RetryTemplate template = new RetryTemplate();
+        template.setRetryPolicy(retryPolicy);
+        template.setBackOffPolicy(backOffPolicy);
+        return template;
     }
 }
