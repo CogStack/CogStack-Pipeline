@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -41,9 +42,11 @@ import java.util.Random;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @TestPropertySource({
-        "classpath:postgres_db.properties"})
+        "classpath:postgres_db.properties",
+        "classpath:postgres_test.properties",})
 @Configuration
 @Import({JobConfiguration.class,TestUtils.class})
+@Profile("postgres")
 @Ignore
 public class PostGresTestUtils implements DbmsTestUtils{
 
@@ -88,7 +91,8 @@ public class PostGresTestUtils implements DbmsTestUtils{
                 + ", primaryKeyFieldName text "
                 + ", primaryKeyFieldValue integer "
                 + ", updateTime TIMESTAMP "
-                + ", binaryContent bytea)");
+                + ", someText bytea"
+                + ", anotherTime TIMESTAMP )");
 
         targetTemplate.execute("DROP TABLE IF EXISTS tblOutputDocs");
         targetTemplate.execute("CREATE TABLE tblOutputDocs "
@@ -101,28 +105,6 @@ public class PostGresTestUtils implements DbmsTestUtils{
                 + ", output text )");
     }
 
-    public void createTextualGateTable() {
-////        for postgres
-        sourceTemplate.execute("DROP TABLE IF EXISTS tblInputDocs");
-        sourceTemplate.execute("CREATE TABLE tblInputDocs"
-                + "( ID  SERIAL PRIMARY KEY"
-                + ", srcColumnFieldName text "
-                + ", srcTableName text "
-                + ", primaryKeyFieldName text "
-                + ", primaryKeyFieldValue integer "
-                + ", updateTime TIMESTAMP "
-                + ", input text )");
-
-        targetTemplate.execute("DROP TABLE IF EXISTS tblOutputDocs");
-        targetTemplate.execute("CREATE TABLE tblOutputDocs "
-                + "( ID  SERIAL PRIMARY KEY"
-                + ", srcColumnFieldName text "
-                + ", srcTableName text "
-                + ", primaryKeyFieldName text "
-                + ", primaryKeyFieldValue integer "
-                + ", updateTime TIMESTAMP "
-                + ", output text )");
-    }
 
 
     public void createBasicInputTable(){

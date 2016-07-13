@@ -19,6 +19,10 @@ package uk.ac.kcl.exception;
  *
  * @author rich
  */
-class GateProcessingFailedException extends RuntimeException{
-   
+public class GateProcessingFailedException extends RuntimeException{
+    public GateProcessingFailedException(String message, Throwable cause,
+                                            boolean enableSuppression, boolean writableStackTrace){
+        super(message, cause, enableSuppression, writableStackTrace);
+
+    }
 }

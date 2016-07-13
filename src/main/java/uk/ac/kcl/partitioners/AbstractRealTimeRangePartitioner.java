@@ -65,6 +65,7 @@ public abstract class AbstractRealTimeRangePartitioner {
         }
 
         this.jdbcTemplate = new JdbcTemplate(sourceDataSource);
+        this.table = env.getProperty("tableToPartition");
     }
 
     @Autowired

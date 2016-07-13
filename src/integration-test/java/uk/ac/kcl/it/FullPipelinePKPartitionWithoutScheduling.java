@@ -21,13 +21,14 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
-import uk.ac.kcl.testexecutionlisteners.PostgresFullPipelineTestExecutionListener;
+import uk.ac.kcl.testexecutionlisteners.FullPipelineTestExecutionListener;
 
 /**
  *
@@ -37,28 +38,34 @@ import uk.ac.kcl.testexecutionlisteners.PostgresFullPipelineTestExecutionListene
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
         "classpath:fullPipelinePKprofiles.properties",
-        "classpath:postgres_test_config_full_pipeline.properties",
+//        "classpath:postgres_test.properties",
+//        "classpath:postgres_db.properties",
+        "classpath:sql_server_test.properties",
+        "classpath:sql_server_db.properties",
         "classpath:jms.properties",
         "classpath:tika.properties",
         "classpath:gate.properties",
         "classpath:deidentification.properties",
         "classpath:biolark.properties",
         "classpath:noScheduling.properties",
-        "classpath:postgres_db.properties",
         "classpath:elasticsearch.properties",
         "classpath:jsonFileItemWriter.properties",
+        "classpath:elasticgazetteer_test.properties",
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
         SingleJobLauncher.class,
         SqlServerTestUtils.class,
+        PostGresTestUtils.class,
         TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 @TestExecutionListeners(
-        listeners = PostgresFullPipelineTestExecutionListener.class,
+        listeners = FullPipelineTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-public class PostgresIntegrationTestsFullPipelinePKPartitionWithoutScheduling {
+//@ActiveProfiles({"biolark","deid","tika","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","postgres"})
+@ActiveProfiles({"deid","tika","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","sqlserver"})
+public class FullPipelinePKPartitionWithoutScheduling {
 
-    final static Logger logger = Logger.getLogger(PostgresIntegrationTestsFullPipelinePKPartitionWithoutScheduling.class);
+    final static Logger logger = Logger.getLogger(FullPipelinePKPartitionWithoutScheduling.class);
 
     @Autowired
     SingleJobLauncher jobLauncher;

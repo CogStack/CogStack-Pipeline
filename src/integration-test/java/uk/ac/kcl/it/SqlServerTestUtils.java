@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -43,6 +44,7 @@ import javax.sql.DataSource;
         "classpath:sql_server_db.properties"})
 @Configuration
 @Import({JobConfiguration.class,TestUtils.class})
+@Profile("sqlserver")
 @Ignore
 public class SqlServerTestUtils implements DbmsTestUtils {
 
@@ -85,7 +87,8 @@ public class SqlServerTestUtils implements DbmsTestUtils {
                 + ", primaryKeyFieldName VARCHAR(MAX) "
                 + ", primaryKeyFieldValue BIGINT "
                 + ", updateTime DateTIME "
-                + ", binaryContent VARBINARY(max))");
+                + ", someText VARBINARY(max)"
+                + ", anotherTime DateTIME )");
 
         targetTemplate.execute("IF OBJECT_ID('dbo.tblOutputDocs', 'U') IS NOT NULL DROP TABLE  dbo.tblOutputDocs");
         targetTemplate.execute("CREATE TABLE dbo.tblOutputDocs "
@@ -97,29 +100,6 @@ public class SqlServerTestUtils implements DbmsTestUtils {
                 + ", updateTime DateTIME "
                 + ", output text )");
 
-    }
-
-    @Override
-    public void createTextualGateTable() {
-        sourceTemplate.execute("IF OBJECT_ID('dbo.tblInputDocs', 'U') IS NOT NULL DROP TABLE  dbo.tblInputDocs");
-        sourceTemplate.execute("CREATE TABLE dbo.tblInputDocs"
-                + "( ID  BIGINT IDENTITY(1,1) PRIMARY KEY"
-                + ", srcColumnFieldName VARCHAR(MAX) "
-                + ", srcTableName VARCHAR(MAX) "
-                + ", primaryKeyFieldName VARCHAR(MAX) "
-                + ", primaryKeyFieldValue BIGINT "
-                + ", updateTime DateTIME "
-                + ", input text )");
-
-        targetTemplate.execute("IF OBJECT_ID('dbo.tblOutputDocs', 'U') IS NOT NULL DROP TABLE  dbo.tblOutputDocs");
-        targetTemplate.execute("CREATE TABLE dbo.tblOutputDocs "
-                + "( ID  BIGINT IDENTITY(1,1) PRIMARY KEY"
-                + ", srcColumnFieldName VARCHAR(MAX) "
-                + ", srcTableName VARCHAR(MAX) "
-                + ", primaryKeyFieldName VARCHAR(MAX) "
-                + ", primaryKeyFieldValue BIGINT "
-                + ", updateTime DateTIME "
-                + ", output text )");
     }
 
 
@@ -196,7 +176,7 @@ public class SqlServerTestUtils implements DbmsTestUtils {
     public void createDeIdInputTable(){
         createBasicInputTable();
 
-        sourceTemplate.execute("IF OBJECT_ID('dbo.vwidentifiers', 'U') IS NOT NULL DROP TABLE  dbo.vwidentifiers");
+        sourceTemplate.execute("IF OBJECT_ID('dbo.vwidentifiers', 'V') IS NOT NULL DROP VIEW  dbo.vwidentifiers");
         sourceTemplate.execute("IF OBJECT_ID('dbo.tblIdentifiers', 'U') IS NOT NULL DROP TABLE  dbo.tblIdentifiers");
 
 

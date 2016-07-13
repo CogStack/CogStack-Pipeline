@@ -55,9 +55,11 @@ public class CleanupBean implements SmartLifecycle {
             jobExecs = jobOperator.getRunningExecutions(env.getProperty("jobName"));
         } catch (NoSuchJobException e) {
             LOG.error("Couldn't get job list to stop executions ",e);
+        } catch (NullPointerException ex){
+            //probably no running jobs?
         }
 
-        if(jobExecs.size()==0) {
+        if(jobExecs == null) {
             LOG.info("No running jobs detected. Exiting now");
             return;
         }else if(jobExecs.size() > 1){

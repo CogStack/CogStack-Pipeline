@@ -21,13 +21,14 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
-import uk.ac.kcl.testexecutionlisteners.PostgresBasicTestExecutionListener;
+import uk.ac.kcl.testexecutionlisteners.BasicTestExecutionListener;
 
 /**
  *
@@ -36,30 +37,33 @@ import uk.ac.kcl.testexecutionlisteners.PostgresBasicTestExecutionListener;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
-        "classpath:biolarkPKprofiles.properties",
-        "classpath:postgres_test_config_biolark.properties",
+        //"classpath:biolarkPKprofiles.properties",
+//        "classpath:postgres_test.properties",
+//        "classpath:postgres_db.properties",
+        "classpath:sql_server_test.properties",
+        "classpath:sql_server_db.properties",
         "classpath:jms.properties",
         "classpath:noScheduling.properties",
-        "classpath:postgres_db.properties",
         "classpath:elasticsearch.properties",
         "classpath:biolark.properties",
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
-        SingleJobLauncher.class,
         PostGresTestUtils.class,
+        SqlServerTestUtils.class,
+        SingleJobLauncher.class,
         TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 @TestExecutionListeners(
-        listeners = PostgresBasicTestExecutionListener.class,
+        listeners = BasicTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-public class PostgresIntegrationTestsBiolarkPKPartitionWithoutScheduling {
+//@ActiveProfiles({"biolark","basic","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","postgres"})
+@ActiveProfiles({"biolark","basic","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","sqlserver"})
+public class BiolarkPKPartitionWithoutScheduling {
 
-    final static Logger logger = Logger.getLogger(PostgresIntegrationTestsBiolarkPKPartitionWithoutScheduling.class);
+    final static Logger logger = Logger.getLogger(BiolarkPKPartitionWithoutScheduling.class);
 
     @Autowired
     SingleJobLauncher jobLauncher;
-
-
 
     @Test
     @DirtiesContext

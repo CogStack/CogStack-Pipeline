@@ -15,6 +15,7 @@
  */
 package uk.ac.kcl.it;
 
+import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,15 +24,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import uk.ac.kcl.mutators.*;
+import uk.ac.kcl.mutators.Mutant;
 import uk.ac.kcl.rowmappers.DocumentRowMapper;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
 import uk.ac.kcl.service.ElasticGazetteerService;
+import uk.ac.kcl.testexecutionlisteners.DeidTestExecutionListener;
 
 import javax.sql.DataSource;
 import java.io.BufferedWriter;
@@ -51,22 +54,41 @@ import java.util.stream.Collectors;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
-        "classpath:deidPKprofiles.properties",
-        "classpath:postgres_test_config_deid.properties",
+//        "classpath:deidPKprofiles.properties",
+        "classpath:postgres_test.properties",
+        "classpath:postgres_db.properties",
+//        "classpath:sql_server_test.properties",
+//        "classpath:sql_server_db.properties",
         "classpath:jms.properties",
         "classpath:noScheduling.properties",
         "classpath:gate.properties",
         "classpath:deidentification.properties",
-        "classpath:postgres_db.properties",
-        "classpath:elasticgazetteer_test.properties",
         "classpath:elasticsearch.properties",
+        "classpath:elasticgazetteer_test.properties",
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
         SingleJobLauncher.class,
+        PostGresTestUtils.class,
         SqlServerTestUtils.class,
         TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
-public class PostgresIntegrationTestsElasticGazetteerPerformanceTest {
+@TestExecutionListeners(
+        listeners = DeidTestExecutionListener.class,
+        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
+@ActiveProfiles({"deid","basic","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","postgres"})
+//@ActiveProfiles({"deid","basic","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","sqlserver"})
+public class DeIdentificationPKPartitionWithoutScheduling {
+
+    final static Logger logger = Logger.getLogger(DeIdentificationPKPartitionWithoutScheduling.class);
+
+    @Autowired
+    SingleJobLauncher jobLauncher;
+
+    @Test
+    @DirtiesContext
+    public void postgresIntegrationTestsDeIdentificationPKPartitionWithoutScheduling() {
+        jobLauncher.launchJob();
+    }
 
 
     @Autowired
@@ -83,7 +105,7 @@ public class PostgresIntegrationTestsElasticGazetteerPerformanceTest {
     TestUtils testUtils;
 
     @Autowired
-    PostGresTestUtils postGresTestUtils;
+    DbmsTestUtils dbmsTestUtils;
 
     @Autowired
     Environment env;
@@ -92,12 +114,11 @@ public class PostgresIntegrationTestsElasticGazetteerPerformanceTest {
     private int mutatortype;
 
     @Test
-    @DirtiesContext
-    public void postgresIntegrationTestsDeIdentificationPKPartitionWithoutScheduling() {
-        postGresTestUtils.createBasicInputTable();
-        postGresTestUtils.createBasicOutputTable();
-        postGresTestUtils.createDeIdInputTable();
-        List<Mutant> mutants = testUtils.insertTestDataForDeidentification("tblIdentifiers", "tblInputDocs", mutatortype);
+    public void performanceTest() {
+        dbmsTestUtils.createBasicInputTable();
+        dbmsTestUtils.createBasicOutputTable();
+        dbmsTestUtils.createDeIdInputTable();
+        List<Mutant> mutants = testUtils.insertTestDataForDeidentification(env.getProperty("tblIdentifiers"),env.getProperty("tblInputDocs"),mutatortype);
         int totalTruePositives = 0;
         int totalFalsePositives = 0;
         int totalFalseNegatives = 0;
@@ -167,18 +188,18 @@ public class PostgresIntegrationTestsElasticGazetteerPerformanceTest {
         System.out.println("Doc ID precision " + calcPrecision(totalFalsePositives, totalTruePositives));
         System.out.println("Doc ID recall " + calcRecall(totalFalseNegatives, totalTruePositives));
         if (env.getProperty("elasticgazetteerTestOutput") != null) {
-                try {
-                    try (BufferedWriter bw = new BufferedWriter(new FileWriter(
-                            new File(env.getProperty("elasticgazetteerTestOutput") + File.separator + "summary")))) {
-                        bw.write("THIS RUN TP: " + totalTruePositives + " FP: " + totalFalsePositives + " FN: " + totalFalseNegatives);
-                        bw.newLine();
-                        bw.write("Doc ID precision " + calcPrecision(totalFalsePositives, totalTruePositives));
-                        bw.newLine();
-                        bw.write("Doc ID recall " + calcRecall(totalFalseNegatives, totalTruePositives));
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
+            try {
+                try (BufferedWriter bw = new BufferedWriter(new FileWriter(
+                        new File(env.getProperty("elasticgazetteerTestOutput") + File.separator + "summary")))) {
+                    bw.write("THIS RUN TP: " + totalTruePositives + " FP: " + totalFalsePositives + " FN: " + totalFalseNegatives);
+                    bw.newLine();
+                    bw.write("Doc ID precision " + calcPrecision(totalFalsePositives, totalTruePositives));
+                    bw.newLine();
+                    bw.write("Doc ID recall " + calcRecall(totalFalseNegatives, totalTruePositives));
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -265,5 +286,8 @@ public class PostgresIntegrationTestsElasticGazetteerPerformanceTest {
     private double calcRecall(int falseNegative, int truePositives){
         return (((double)truePositives / ((double)falseNegative + (double)truePositives)))*100.0;
     }
+
+
+
 
 }

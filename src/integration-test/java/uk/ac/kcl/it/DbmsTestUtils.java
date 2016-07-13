@@ -12,8 +12,6 @@ public interface DbmsTestUtils {
 
     void createTikaTable();
 
-    void createTextualGateTable();
-
     void createBasicInputTable();
 
     void createBasicOutputTable();

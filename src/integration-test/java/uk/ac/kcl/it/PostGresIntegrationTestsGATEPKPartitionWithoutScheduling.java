@@ -22,11 +22,15 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
+import uk.ac.kcl.testexecutionlisteners.FullPipelineTestExecutionListener;
+import uk.ac.kcl.testexecutionlisteners.GateTestExecutionListener;
 
 /**
  *
@@ -35,20 +39,27 @@ import uk.ac.kcl.scheduling.SingleJobLauncher;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
-        "classpath:gatePKprofiles.properties",
-        "classpath:postgres_test_config_gate.properties",
+//        "classpath:fullPipelinePKprofiles.properties",
+        "classpath:postgres_test.properties",
+        "classpath:postgres_db.properties",
+//        "classpath:sql_server_test.properties",
+//        "classpath:sql_server_db.properties",
         "classpath:jms.properties",
         "classpath:gate.properties",
         "classpath:noScheduling.properties",
-        "classpath:deidentification.properties",
-        "classpath:postgres_db.properties",
         "classpath:elasticsearch.properties",
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
         SingleJobLauncher.class,
+        SqlServerTestUtils.class,
         PostGresTestUtils.class,
         TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
+@TestExecutionListeners(
+        listeners = GateTestExecutionListener.class,
+        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
+@ActiveProfiles({"gate","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","postgres"})
+//@ActiveProfiles({"gate","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","sqlserver"})
 public class PostGresIntegrationTestsGATEPKPartitionWithoutScheduling {
 
     final static Logger logger = Logger.getLogger(PostGresIntegrationTestsGATEPKPartitionWithoutScheduling.class);
@@ -56,21 +67,9 @@ public class PostGresIntegrationTestsGATEPKPartitionWithoutScheduling {
     @Autowired
     SingleJobLauncher jobLauncher;
 
-    @Autowired
-    PostGresTestUtils postGresTestUtils;
-
-    @Autowired
-    TestUtils testUtils;
-    @Before
-    public void init(){
-        postGresTestUtils.createJobRepository();
-        postGresTestUtils.createTextualGateTable();
-        testUtils.insertTestXHTMLForGate("tblInputDocs",false);
-    }
-
     @Test
     @DirtiesContext
-    public void postgresGatePipelineTest() {
+    public void gatePipelineTest() {
         jobLauncher.launchJob();
     }
 

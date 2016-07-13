@@ -16,6 +16,8 @@
 package uk.ac.kcl.itemProcessors;
 
 import gate.Factory;
+import gate.creole.ExecutionException;
+import gate.creole.ResourceInstantiationException;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +25,13 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import uk.ac.kcl.exception.GateProcessingFailedException;
 import uk.ac.kcl.model.Document;
 import uk.ac.kcl.service.GateService;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.util.*;
 
 @Profile("gate")
 @Service("gateDocumentItemProcessor")
@@ -40,6 +45,9 @@ public class GateDocumentItemProcessor extends TLItemProcessor implements ItemPr
 
     @Autowired
     private Environment env;
+    private List<String> fieldsToGate;
+    private Boolean jsonOutput;
+    private String fieldName;
 
     public void setGateService(GateService gateService) {
         this.gateService = gateService;
@@ -47,7 +55,11 @@ public class GateDocumentItemProcessor extends TLItemProcessor implements ItemPr
 
     @PostConstruct
     public void init(){
-        setFieldName(env.getProperty("gateFieldName"));
+
+        fieldsToGate = Arrays.asList(env.getProperty("fieldsToGate").toLowerCase().split(","));
+        jsonOutput = Boolean.valueOf(env.getProperty("gateJSON"));
+        fieldName = env.getProperty("gateFieldName");
+
     }
 
     public GateService getGateService() {
@@ -57,20 +69,38 @@ public class GateDocumentItemProcessor extends TLItemProcessor implements ItemPr
     @Override
     public Document process(final Document doc) throws Exception {
         LOG.debug("starting " + this.getClass().getSimpleName() +" on doc " +doc.getDocName());
-        gate.Document gateDoc = Factory
-                .newDocument((String) doc.getAdditionalFields()
-                        .get(env.getProperty("gateInputFieldName")));
-        try {
-            gateService.processDoc(gateDoc);
-            if(env.getProperty("gateJSON", "true").equalsIgnoreCase("true")){
-                addField(doc, gateService.convertDocToJSON(gateDoc));
-            }else{
-                addField(doc, gateDoc.toXml());
-            }
+        HashMap<String,Object> newMap = new HashMap<>();
+        newMap.putAll(doc.getAdditionalFields());
+        doc.getAdditionalFields().forEach((k,v)-> {
+            if (fieldsToGate.contains(k)) {
+                gate.Document gateDoc = null;
+                try {
+                    gateDoc = Factory
+                            .newDocument((String) v);
+                    gateService.processDoc(gateDoc);
+                    if (jsonOutput) {
+                        newMap.put(fieldName, gateService.convertDocToJSON(gateDoc));
+                    } else {
+                        newMap.put(fieldName, gateDoc.toXml());
+                    }
 
-        }finally{
-            Factory.deleteResource(gateDoc);
-        }
+                } catch (ExecutionException | IOException | ResourceInstantiationException e) {
+                    LOG.debug("gate failed on doc " + doc.getDocName() + " ", e);
+                    LOG.warn("Biolark failed on document " + doc.getDocName());
+                    ArrayList<LinkedHashMap<Object, Object>> al = new ArrayList<LinkedHashMap<Object, Object>>();
+
+                    LinkedHashMap<Object, Object> hm = new LinkedHashMap<Object, Object>();
+                    hm.put("error", "see logs");
+                    al.add(hm);
+                    newMap.put(fieldName,hm);
+
+                } finally {
+                    Factory.deleteResource(gateDoc);
+                }
+            }
+        });
+        doc.getAdditionalFields().clear();
+        doc.getAdditionalFields().putAll(newMap);
         LOG.debug("finished " + this.getClass().getSimpleName() +" on doc " +doc.getDocName());
         return doc;
     }

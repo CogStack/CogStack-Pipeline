@@ -19,7 +19,7 @@ public class PostgresGateTestExecutionListener extends AbstractTestExecutionList
                 testContext.getApplicationContext().getBean(PostGresTestUtils.class);
         sqlServerTestUtils.createJobRepository();
         sqlServerTestUtils.createTikaTable();
-        sqlServerTestUtils.createTextualGateTable();
+        //sqlServerTestUtils.createTextualGateTable();
         TestUtils testUtils =
                 testContext.getApplicationContext().getBean(TestUtils.class);
         testUtils.insertTestBinariesForTika("tblInputDocs");

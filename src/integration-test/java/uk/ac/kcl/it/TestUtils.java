@@ -4,14 +4,19 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.log4j.Logger;
 import org.apache.poi.xwpf.usermodel.*;
 import org.junit.Ignore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.env.Environment;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 import uk.ac.kcl.mutators.Mutant;
 import uk.ac.kcl.mutators.StringMutatorService;
 
@@ -52,6 +57,9 @@ public class TestUtils  {
     @Autowired
     StringMutatorService stringMutatorService;
 
+    @Autowired
+    Environment env;
+
     public static long nextDay() {
 
         // error checking and 2^x checking removed for simplicity.
@@ -81,7 +89,7 @@ public class TestUtils  {
                 + ", primaryKeyFieldName"
                 + ", primaryKeyFieldValue"
                 + ", updateTime"
-                + ", input"
+                + ", sometext"
                 + ") VALUES (?,?,?,?,?,?)";
         for (long ii = 0; ii < docCount; ii++) {
             jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName", "fictionalPrimaryKeyFieldName", ii, new Timestamp(today), xhtmlString);
@@ -218,7 +226,7 @@ public class TestUtils  {
     public List<Mutant> insertTestDataForFullPipeline(String tableName1, String tableName2, int mutationLevel){
         JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
 
-        File idFile = new File(getClass().getClassLoader().getResource("identifiers.csv").getFile());
+        File idFile = new File(getClass().getClassLoader().getResource("identifiers_small.csv").getFile());
 
         List<CSVRecord> records = null;
         try {
@@ -242,7 +250,7 @@ public class TestUtils  {
                 + ", primaryKeyFieldName"
                 + ", primaryKeyFieldValue"
                 + ", updateTime"
-                + ", binaryContent"
+                + ", sometext"
                 + ") VALUES (?,?,?,?,?,?)";
 
         Iterator<CSVRecord> it = records.listIterator();
@@ -378,6 +386,19 @@ public class TestUtils  {
         String[] arr = new String[list.size()];
         arr = list.toArray(arr);
         return arr;
+    }
+
+    public void deleteESTestIndex(){
+
+            String uri = "http://"+env.getProperty("elasticsearch.cluster.host")+":9200"+"/"+env.getProperty("elasticsearch.index.name");
+            HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(HttpClients.createDefault());
+            RestTemplate restTemplate = new RestTemplate(requestFactory);
+        try {
+            restTemplate.delete(uri);
+        }catch(HttpClientErrorException ex){
+            System.out.println("Index not deleted: " +ex.getLocalizedMessage());
+        }
+
     }
 
 }
