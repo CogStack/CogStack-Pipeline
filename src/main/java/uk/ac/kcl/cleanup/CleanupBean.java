@@ -12,10 +12,21 @@ import org.springframework.batch.core.launch.NoSuchJobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.core.env.Environment;
+import org.springframework.retry.RecoveryCallback;
+import org.springframework.retry.RetryCallback;
+import org.springframework.retry.RetryContext;
+import org.springframework.retry.backoff.FixedBackOffPolicy;
+import org.springframework.retry.policy.TimeoutRetryPolicy;
+import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Service;
+import uk.ac.kcl.exception.BiolarkProcessingFailedException;
+import uk.ac.kcl.exception.TurboLaserException;
 import uk.ac.kcl.scheduling.ScheduledJobLauncher;
 
 import javax.annotation.PreDestroy;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Set;
 
 /**
@@ -50,61 +61,77 @@ public class CleanupBean implements SmartLifecycle {
             scheduledJobLauncher.setContinueWork(false);
         }
         LOG.info("Attempting to stop running jobs");
-        Set<Long> jobExecs = null;
+        Set<Long> jobExecs = new HashSet<>();
         try {
-            jobExecs = jobOperator.getRunningExecutions(env.getProperty("jobName"));
+
+            jobExecs.addAll(jobOperator.getRunningExecutions(env.getProperty("jobName")));
         } catch (NoSuchJobException e) {
             LOG.error("Couldn't get job list to stop executions ",e);
         } catch (NullPointerException ex){
             //probably no running jobs?
         }
 
-        if(jobExecs == null) {
+
+
+        if(jobExecs.size() == 0) {
             LOG.info("No running jobs detected. Exiting now");
             return;
         }else if(jobExecs.size() > 1){
             LOG.warn("Detected more than one "+env.getProperty("jobName")+ " with status of running.");
         };
 
-        for(Long l : jobExecs){
 
+        int stoppedCount = 0;
+        for(Long l : jobExecs){
             try{
                 jobOperator.stop(l);
-            } catch (JobExecutionNotRunningException|NoSuchJobExecutionException e) {
-                LOG.error("Couldn't stop job ",e);
+            } catch (NoSuchJobExecutionException e) {
+                LOG.error("Job no longer exists ",e);
+                stoppedCount++;
+            }catch(JobExecutionNotRunningException e){
+                LOG.info("Job is no longer running ",e);
+                stoppedCount++;
             }
         }
 
-
-        long shutdownTimeout = Long.valueOf(env.getProperty("shutdownTimeout"));
-
-        long t1 = shutdownTimeout/6L;
-        int stoppedCount = 0;
-        stop_loop:
-        for(int i=0;i<=5;i++){
-            for(Long l : jobExecs){
-                JobExecution exec = jobExplorer.getJobExecution(l);
-                BatchStatus status = exec.getStatus();
-                LOG.info("Job name "+ exec.getJobInstance().getJobName() +" has status of "+ status );
-                if (status == BatchStatus.STOPPED ||
-                        status == BatchStatus.FAILED ||
-                        status == BatchStatus.COMPLETED ||
-                        status == BatchStatus.ABANDONED ) {
-                    stoppedCount++;
-                }
-                if(stoppedCount == jobExecs.size()) break stop_loop;
-            }
-            try {
-                Thread.sleep(t1);
-            } catch (InterruptedException e) {
-                LOG.warn("program exited before all jobs confirmed stopped. Job Repository may be in unknown state");
-                break;
-            }
-        }
         if(stoppedCount == jobExecs.size()){
             LOG.info("Jobs successfully stopped, completed or are known to have failed");
-        }else {
-            LOG.warn("Unable to gracefully stop jobs. Job Repository may be in unknown state");
+            return;
+        }else{
+            RetryTemplate retryTemplate = getRetryTemplate();
+            try {
+                stoppedCount = stoppedCount + retryTemplate.execute(new RetryCallback<Integer,TurboLaserException>() {
+                    public Integer doWithRetry(RetryContext context) {
+                        // business logic here
+                        for(Long l : jobExecs){
+                            JobExecution exec = jobExplorer.getJobExecution(l);
+                            BatchStatus status = exec.getStatus();
+                            LOG.info("Job name "+ exec.getJobInstance().getJobName() +" has status of "+ status );
+                            if (status == BatchStatus.STOPPED ||
+                                    status == BatchStatus.FAILED ||
+                                    status == BatchStatus.COMPLETED ||
+                                    status == BatchStatus.ABANDONED ) {
+                                context.setAttribute("stopped_jobs",(
+                                        Integer.valueOf(context.getAttribute("stopped_jobs").toString())+1));
+                            }
+                        }
+
+                        return Integer.valueOf(context.getAttribute("stopped_jobs").toString());
+                    }
+                }, new RecoveryCallback() {
+                    @Override
+                    public Object recover(RetryContext context) throws TurboLaserException {
+
+                        return context;
+                    }
+                });
+            } catch (TurboLaserException e) {
+                LOG.warn("Unable to gracefully stop jobs. Job Repository may be in unknown state");
+            }
+            if(stoppedCount == jobExecs.size()){
+                LOG.info("Jobs successfully stopped, completed or are known to have failed");
+                return;
+            }
         }
     }
 
@@ -141,4 +168,17 @@ public class CleanupBean implements SmartLifecycle {
     public int getPhase() {
         return Integer.MAX_VALUE;
     }
+
+    public RetryTemplate getRetryTemplate(){
+        TimeoutRetryPolicy retryPolicy = new TimeoutRetryPolicy();
+        retryPolicy.setTimeout(Long.valueOf(env.getProperty("shutdownTimeout")));
+        FixedBackOffPolicy backOffPolicy = new FixedBackOffPolicy();
+        backOffPolicy.setBackOffPeriod(5);
+
+        RetryTemplate template = new RetryTemplate();
+        template.setRetryPolicy(retryPolicy);
+        template.setBackOffPolicy(backOffPolicy);
+        return template;
+    }
+
 }

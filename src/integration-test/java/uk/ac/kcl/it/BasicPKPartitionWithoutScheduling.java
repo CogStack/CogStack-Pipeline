@@ -32,7 +32,6 @@ import uk.ac.kcl.testexecutionlisteners.BasicTestExecutionListener;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
-        "classpath:basicPKprofiles.properties",
         "classpath:jms.properties",
         "classpath:postgres_test.properties",
         "classpath:postgres_db.properties",

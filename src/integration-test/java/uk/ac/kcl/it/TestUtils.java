@@ -123,7 +123,7 @@ public class TestUtils  {
                 + ", primaryKeyFieldName"
                 + ", primaryKeyFieldValue"
                 + ", updateTime"
-                + ", binaryContent"
+                + ", sometext"
                 + ") VALUES (?,?,?,?,?,?)";
         for (int ii = 0; ii < docCount; ii++) {
             jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName", "fictionalPrimaryKeyFieldName", ii, new Timestamp(today), bytes);

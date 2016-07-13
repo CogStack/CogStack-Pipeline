@@ -37,7 +37,6 @@ import uk.ac.kcl.testexecutionlisteners.GateTestExecutionListener;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
-//        "classpath:fullPipelinePKprofiles.properties",
         "classpath:postgres_test.properties",
         "classpath:postgres_db.properties",
 //        "classpath:sql_server_test.properties",

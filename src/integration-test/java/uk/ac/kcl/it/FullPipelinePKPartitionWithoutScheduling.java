@@ -37,11 +37,10 @@ import uk.ac.kcl.testexecutionlisteners.FullPipelineTestExecutionListener;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
-        "classpath:fullPipelinePKprofiles.properties",
-//        "classpath:postgres_test.properties",
-//        "classpath:postgres_db.properties",
-        "classpath:sql_server_test.properties",
-        "classpath:sql_server_db.properties",
+        "classpath:postgres_test.properties",
+        "classpath:postgres_db.properties",
+//        "classpath:sql_server_test.properties",
+//        "classpath:sql_server_db.properties",
         "classpath:jms.properties",
         "classpath:tika.properties",
         "classpath:gate.properties",
@@ -61,8 +60,8 @@ import uk.ac.kcl.testexecutionlisteners.FullPipelineTestExecutionListener;
 @TestExecutionListeners(
         listeners = FullPipelineTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-//@ActiveProfiles({"biolark","deid","tika","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","postgres"})
-@ActiveProfiles({"deid","tika","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","sqlserver"})
+@ActiveProfiles({"biolark","deid","tika","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","postgres"})
+//@ActiveProfiles({"deid","tika","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","sqlserver"})
 public class FullPipelinePKPartitionWithoutScheduling {
 
     final static Logger logger = Logger.getLogger(FullPipelinePKPartitionWithoutScheduling.class);

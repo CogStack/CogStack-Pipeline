@@ -19,42 +19,51 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.env.Environment;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import uk.ac.kcl.scheduling.SingleJobLauncher;
-import uk.ac.kcl.testexecutionlisteners.SqlServerReindexTestExecutionListener;
+import uk.ac.kcl.scheduling.ScheduledJobLauncher;
+import uk.ac.kcl.testexecutionlisteners.BasicTestExecutionListener;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
-        "classpath:reindex.properties",
-        "classpath:sql_server_test_config_reindex.properties",
         "classpath:jms.properties",
-        "classpath:noScheduling.properties",
-        "classpath:sql_server_db.properties",
+        "classpath:postgres_test.properties",
+        "classpath:postgres_db.properties",
+//        "classpath:sql_server_test.properties",
+//        "classpath:sql_server_db.properties",
+        "classpath:scheduling.properties",
         "classpath:elasticsearch.properties",
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
+        PostGresTestUtils.class,
         SqlServerTestUtils.class,
-        SingleJobLauncher.class,
+        ScheduledJobLauncher.class,
         TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 @TestExecutionListeners(
-        listeners = SqlServerReindexTestExecutionListener.class,
+        listeners = BasicTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-public class SqlServerIntegrationTestsReindexPKPartitionWithoutScheduling {
+@ActiveProfiles({"basic","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","postgres"})
+//@ActiveProfiles({"basic","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","sqlserver"})
+public class BasicPkPartitionWithScheduling {
 
     @Autowired
-    SingleJobLauncher jobLauncher;
+    private TestUtils testUtils;
+
+    @Autowired
+    Environment env;
 
     @Test
     @DirtiesContext
-    public void SqlServerIntegrationTestsBasicPKPartitionWithoutSchedulingTest() {
-        jobLauncher.launchJob();
+    public void basicPkPartitionWithScheduling() {
+        testUtils.insertFreshDataIntoBasicTableAfterDelay(env.getProperty("tblInputDocs"),15000);
     }
 
 }

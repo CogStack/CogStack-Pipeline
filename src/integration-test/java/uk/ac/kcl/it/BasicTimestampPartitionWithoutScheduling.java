@@ -32,13 +32,12 @@ import uk.ac.kcl.testexecutionlisteners.BasicTestExecutionListener;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
-        "classpath:basicPKAndTimeStampProfiles.properties",
         "classpath:postgres_test.properties",
         "classpath:postgres_db.properties",
 //        "classpath:sql_server_test.properties",
 //        "classpath:sql_server_db.properties",
         "classpath:jms.properties",
-        "classpath:scheduling.properties",
+        "classpath:noScheduling.properties",
         "classpath:elasticsearch.properties",
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
@@ -50,7 +49,7 @@ import uk.ac.kcl.testexecutionlisteners.BasicTestExecutionListener;
 @TestExecutionListeners(
         listeners = BasicTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-@ActiveProfiles({"basic","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","postgres"})
+@ActiveProfiles({"basic","localPartitioning","jdbc","elasticsearch","primaryKeyAndTimeStampPartition","postgres"})
 //@ActiveProfiles({"basic","localPartitioning","jdbc","elasticsearch","primaryKeyAndTimeStampPartition","sqlserver"})
 public class BasicTimestampPartitionWithoutScheduling {
 

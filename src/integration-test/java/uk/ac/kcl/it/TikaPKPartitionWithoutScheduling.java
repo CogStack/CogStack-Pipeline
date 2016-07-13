@@ -15,46 +15,64 @@
  */
 package uk.ac.kcl.it;
 
+import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import uk.ac.kcl.scheduling.ScheduledJobLauncher;
-import uk.ac.kcl.testexecutionlisteners.SqlServerBasicTestExecutionListener;
+import uk.ac.kcl.scheduling.SingleJobLauncher;
+import uk.ac.kcl.testexecutionlisteners.TikaTestExecutionListener;
 
+/**
+ *
+ * @author rich
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
-        "classpath:basicPKAndTimeStampProfiles.properties",
-        "classpath:sql_server_test_config_basic.properties",
+        "classpath:postgres_test.properties",
+        "classpath:postgres_db.properties",
+//        "classpath:sql_server_test.properties",
+//        "classpath:sql_server_db.properties",
         "classpath:jms.properties",
-        "classpath:sql_server_db.properties",
+        "classpath:tika.properties",
+        "classpath:noScheduling.properties",
         "classpath:elasticsearch.properties",
-        "classpath:scheduling.properties",
+        "classpath:elasticgazetteer_test.properties",
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
+        SingleJobLauncher.class,
         SqlServerTestUtils.class,
-        ScheduledJobLauncher.class,
+        PostGresTestUtils.class,
         TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 @TestExecutionListeners(
-        listeners = SqlServerBasicTestExecutionListener.class,
+        listeners = TikaTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-public class SqlServerIntegrationTestsBasicTimestampPartitionWithScheduling {
+@ActiveProfiles({"tika","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","postgres"})
+//@ActiveProfiles({"tika","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","sqlserver"})
+public class TikaPKPartitionWithoutScheduling {
+
+    final static Logger logger = Logger.getLogger(TikaPKPartitionWithoutScheduling.class);
 
     @Autowired
-    private TestUtils testUtils;
+    SingleJobLauncher jobLauncher;
+
+
 
     @Test
     @DirtiesContext
-    public void SqlServerIntegrationTestsBasicTimestampPartitionWithSchedulingTest() {
-        testUtils.insertFreshDataIntoBasicTableAfterDelay("dbo.tblInputDocs",15000);
+    public void sqlServerikaPipelineTest() {
+        jobLauncher.launchJob();
     }
+
+
 
 }

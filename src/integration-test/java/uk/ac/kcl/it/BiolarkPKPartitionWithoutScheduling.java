@@ -37,11 +37,10 @@ import uk.ac.kcl.testexecutionlisteners.BasicTestExecutionListener;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
-        //"classpath:biolarkPKprofiles.properties",
-//        "classpath:postgres_test.properties",
-//        "classpath:postgres_db.properties",
-        "classpath:sql_server_test.properties",
-        "classpath:sql_server_db.properties",
+        "classpath:postgres_test.properties",
+        "classpath:postgres_db.properties",
+//        "classpath:sql_server_test.properties",
+//        "classpath:sql_server_db.properties",
         "classpath:jms.properties",
         "classpath:noScheduling.properties",
         "classpath:elasticsearch.properties",
@@ -56,8 +55,8 @@ import uk.ac.kcl.testexecutionlisteners.BasicTestExecutionListener;
 @TestExecutionListeners(
         listeners = BasicTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-//@ActiveProfiles({"biolark","basic","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","postgres"})
-@ActiveProfiles({"biolark","basic","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","sqlserver"})
+@ActiveProfiles({"biolark","basic","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","postgres"})
+//@ActiveProfiles({"biolark","basic","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","sqlserver"})
 public class BiolarkPKPartitionWithoutScheduling {
 
     final static Logger logger = Logger.getLogger(BiolarkPKPartitionWithoutScheduling.class);

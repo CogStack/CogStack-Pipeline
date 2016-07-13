@@ -15,59 +15,56 @@
  */
 package uk.ac.kcl.it;
 
-import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.env.Environment;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import uk.ac.kcl.scheduling.SingleJobLauncher;
-import uk.ac.kcl.testexecutionlisteners.SqlServerDeidTestExecutionListener;
+import uk.ac.kcl.scheduling.ScheduledJobLauncher;
+import uk.ac.kcl.testexecutionlisteners.BasicTestExecutionListener;
 
-/**
- *
- * @author rich
- */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
-        "classpath:deidPKprofiles.properties",
-        "classpath:sql_server_test_config_deid.properties",
         "classpath:jms.properties",
-        "classpath:noScheduling.properties",
-        "classpath:gate.properties",
-        "classpath:deidentification.properties",
-        "classpath:sql_server_db.properties",
+        "classpath:postgres_test.properties",
+        "classpath:postgres_db.properties",
+//        "classpath:sql_server_test.properties",
+//        "classpath:sql_server_db.properties",
+        "classpath:scheduling.properties",
+        "classpath:configured_start.properties",
         "classpath:elasticsearch.properties",
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
-        SingleJobLauncher.class,
+        PostGresTestUtils.class,
         SqlServerTestUtils.class,
+        ScheduledJobLauncher.class,
         TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 @TestExecutionListeners(
-        listeners = SqlServerDeidTestExecutionListener.class,
+        listeners = BasicTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-public class SqlServerIntegrationTestsDeIdentificationPKPartitionWithoutScheduling {
-
-    final static Logger logger = Logger.getLogger(SqlServerIntegrationTestsDeIdentificationPKPartitionWithoutScheduling.class);
+@ActiveProfiles({"basic","localPartitioning","jdbc","elasticsearch","primaryKeyAndTimeStampPartition","postgres"})
+//@ActiveProfiles({"basic","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","sqlserver"})
+public class BasicConfigurerdStartTimestampPartitionWithScheduling {
 
     @Autowired
-    SingleJobLauncher jobLauncher;
+    private TestUtils testUtils;
 
-
+    @Autowired
+    Environment env;
 
     @Test
     @DirtiesContext
-    public void sqlServerikaPipelineTest() {
-        jobLauncher.launchJob();
+    public void basicConfigurerdStartPkPartitionWithScheduling() {
+        testUtils.insertFreshDataIntoBasicTableAfterDelay(env.getProperty("tblInputDocs"),15000);
     }
-
-
 
 }

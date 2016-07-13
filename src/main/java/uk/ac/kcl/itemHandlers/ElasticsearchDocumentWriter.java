@@ -11,6 +11,9 @@ import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.common.xcontent.XContentFactory;
+import org.elasticsearch.common.xcontent.XContentParser;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.shield.ShieldPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,13 +23,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import uk.ac.kcl.exception.TurboLaserException;
 import uk.ac.kcl.model.Document;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
+
+import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 
 
 /**
@@ -88,10 +95,20 @@ public class ElasticsearchDocumentWriter implements ItemWriter<Document> {
         BulkRequestBuilder bulkRequest = client.prepareBulk();
 
         for (Document doc : documents) {
+                XContentParser parser = null;
+//                try {
+                    parser = XContentFactory.xContent(XContentType.JSON)
+                            .createParser(doc.getOutputData().getBytes());
+                    parser.close();
+                    XContentBuilder builder = jsonBuilder().copyCurrentStructure(parser);
+//                } catch (IOException e) {
+//                    throw new TurboLaserException("Couldn't parse JSON",e,false ,true);
+//                }
+
             IndexRequestBuilder request = client.prepareIndex(
                     env.getProperty("elasticsearch.index.name"),
                     env.getProperty("elasticsearch.type")).setSource(
-                    doc.getxContentBuilder());
+                    builder);
             request.setId(doc.getPrimaryKeyFieldValue());
             bulkRequest.add(request);
         }

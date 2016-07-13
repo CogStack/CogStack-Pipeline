@@ -19,7 +19,7 @@ class Document {
     Timestamp timeStamp
 
     //for catpuring itemProcessor output
-    XContentBuilder xContentBuilder
+    //XContentBuilder xContentBuilder
 
     String outputData;
 

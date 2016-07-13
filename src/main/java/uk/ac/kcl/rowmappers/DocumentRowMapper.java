@@ -120,13 +120,13 @@ public class DocumentRowMapper implements RowMapper<Document>{
                         if(meta.getColumnType(col)==91) {
                             Date dt = (Date)value;
                             DateTime dateTime = new DateTime(dt.getTime());
-                            doc.getAdditionalFields().put(meta.getColumnLabel(col), fmt.print(dateTime));
+                            doc.getAdditionalFields().put(meta.getColumnLabel(col).toLowerCase(), fmt.print(dateTime));
                         }else if (meta.getColumnType(col)==93){
                             Timestamp ts = (Timestamp) value;
                             DateTime dateTime = new DateTime(ts.getTime());
-                            doc.getAdditionalFields().put(meta.getColumnLabel(col), fmt.print(dateTime));
+                            doc.getAdditionalFields().put(meta.getColumnLabel(col).toLowerCase(), fmt.print(dateTime));
                         }else {
-                            doc.getAdditionalFields().put(meta.getColumnLabel(col), rs.getString(col));
+                            doc.getAdditionalFields().put(meta.getColumnLabel(col).toLowerCase(), rs.getString(col));
                         }
                     }
             }
@@ -134,20 +134,6 @@ public class DocumentRowMapper implements RowMapper<Document>{
                     value !=null
                     && meta.getColumnLabel(col).equalsIgnoreCase(binaryContentFieldName)){
                 doc.setBinaryContent(rs.getBytes(col));
-            }
-            if (reindexColumn !=null &&
-                    value !=null
-                    && meta.getColumnLabel(col).equalsIgnoreCase(reindexColumn)){
-                byte[] json = rs.getBytes(reindexColumn);
-                XContentParser parser = null;
-                try {
-                    parser = XContentFactory.xContent(XContentType.JSON).createParser(json);
-                parser.close();
-                XContentBuilder builder = jsonBuilder().copyCurrentStructure(parser);
-                doc.setxContentBuilder(builder);
-                } catch (IOException e) {
-                    throw new TurboLaserException("Couldn't parse JSON",e,false ,true);
-                }
             }
         }
     }

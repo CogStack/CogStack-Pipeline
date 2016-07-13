@@ -37,11 +37,10 @@ import uk.ac.kcl.testexecutionlisteners.DbLineFixerTestExecutionListener;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
-//        "classpath:fullPipelinePKprofiles.properties",
-//        "classpath:postgres_test.properties",
-//        "classpath:postgres_db.properties",
-        "classpath:sql_server_test.properties",
-        "classpath:sql_server_db.properties",
+        "classpath:postgres_test.properties",
+        "classpath:postgres_db.properties",
+//        "classpath:sql_server_test.properties",
+//        "classpath:sql_server_db.properties",
         "classpath:jms.properties",
         "classpath:noScheduling.properties",
         "classpath:elasticsearch.properties",
@@ -55,8 +54,8 @@ import uk.ac.kcl.testexecutionlisteners.DbLineFixerTestExecutionListener;
 @TestExecutionListeners(
         listeners = DbLineFixerTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-//@ActiveProfiles({"dBLineFixer","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","postgres"})
-@ActiveProfiles({"dBLineFixer","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","sqlserver"})
+@ActiveProfiles({"dBLineFixer","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","postgres"})
+//@ActiveProfiles({"dBLineFixer","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","sqlserver"})
 public class LineFixerPKPartitionWithoutScheduling {
 
     final static Logger logger = Logger.getLogger(LineFixerPKPartitionWithoutScheduling.class);
