@@ -54,7 +54,7 @@ import uk.ac.kcl.testexecutionlisteners.SqlServerDbLineFixerTestExecutionListene
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 public class SqlServerIntegrationTestsLineFixerPKPartitionWithoutScheduling {
 
-    final static Logger logger = Logger.getLogger(PostGresIntegrationTestsLineFixerPKPartitionWithoutScheduling.class);
+    final static Logger logger = Logger.getLogger(LineFixerPKPartitionWithoutScheduling.class);
 
     @Autowired
     SingleJobLauncher jobLauncher;

@@ -16,7 +16,6 @@
 package uk.ac.kcl.it;
 
 import org.apache.log4j.Logger;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
-import uk.ac.kcl.testexecutionlisteners.FullPipelineTestExecutionListener;
 import uk.ac.kcl.testexecutionlisteners.GateTestExecutionListener;
 
 /**
@@ -60,9 +58,9 @@ import uk.ac.kcl.testexecutionlisteners.GateTestExecutionListener;
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 @ActiveProfiles({"gate","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","postgres"})
 //@ActiveProfiles({"gate","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","sqlserver"})
-public class PostGresIntegrationTestsGATEPKPartitionWithoutScheduling {
+public class GATEPKPartitionWithoutScheduling {
 
-    final static Logger logger = Logger.getLogger(PostGresIntegrationTestsGATEPKPartitionWithoutScheduling.class);
+    final static Logger logger = Logger.getLogger(GATEPKPartitionWithoutScheduling.class);
 
     @Autowired
     SingleJobLauncher jobLauncher;

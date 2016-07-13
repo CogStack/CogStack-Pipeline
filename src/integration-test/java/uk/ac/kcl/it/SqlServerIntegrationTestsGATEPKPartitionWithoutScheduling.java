@@ -54,7 +54,7 @@ import uk.ac.kcl.testexecutionlisteners.SqlServerGateTestExecutionListener;
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 public class SqlServerIntegrationTestsGATEPKPartitionWithoutScheduling {
 
-    final static Logger logger = Logger.getLogger(PostGresIntegrationTestsGATEPKPartitionWithoutScheduling.class);
+    final static Logger logger = Logger.getLogger(GATEPKPartitionWithoutScheduling.class);
 
     @Autowired
     SingleJobLauncher jobLauncher;

@@ -21,7 +21,7 @@ public class SqlServerReindexTestExecutionListener extends AbstractTestExecution
         sqlServerTestUtils.createBasicOutputTable();
         TestUtils testUtils =
                 testContext.getApplicationContext().getBean(TestUtils.class);
-        testUtils.insertJsonsIntoOutputTable("dbo.tbloutputDocs");
+        testUtils.insertJsonsIntoInputTable("dbo.tbloutputDocs");
 
     }
 

@@ -23,6 +23,7 @@ public class GateTestExecutionListener extends AbstractTestExecutionListener {
 
         dbTestUtils.createJobRepository();
         dbTestUtils.createBasicInputTable();
+        dbTestUtils.createBasicOutputTable();
         TestUtils testUtils =
                 testContext.getApplicationContext().getBean(TestUtils.class);
         Environment env = testContext.getApplicationContext().getBean(Environment.class);

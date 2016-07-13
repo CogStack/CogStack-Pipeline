@@ -31,7 +31,7 @@ import uk.ac.kcl.testexecutionlisteners.SqlServerReindexTestExecutionListener;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
-        "classpath:reindexPKprofiles.properties",
+        "classpath:reindex.properties",
         "classpath:sql_server_test_config_reindex.properties",
         "classpath:jms.properties",
         "classpath:noScheduling.properties",

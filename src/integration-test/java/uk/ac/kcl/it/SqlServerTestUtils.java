@@ -148,15 +148,6 @@ public class SqlServerTestUtils implements DbmsTestUtils {
                 + ", LINE_ID BIGINT "
                 + ", LINE_TEXT VARCHAR(MAX) )"
         );
-        targetTemplate.execute("IF OBJECT_ID('dbo.tblOutputDocs', 'U') IS NOT NULL DROP TABLE  dbo.tblOutputDocs");
-        targetTemplate.execute("CREATE TABLE dbo.tblOutputDocs "
-                + "( ID  BIGINT IDENTITY(1,1) PRIMARY KEY"
-                + ", srcColumnFieldName varchar(max) "
-                + ", srcTableName varchar(max) "
-                + ", primaryKeyFieldName varchar(max) "
-                + ", primaryKeyFieldValue BIGINT "
-                + ", updateTime DATETIME "
-                + ", LINE_TEXT_CONCAT varchar(max) )");
     }
 
 

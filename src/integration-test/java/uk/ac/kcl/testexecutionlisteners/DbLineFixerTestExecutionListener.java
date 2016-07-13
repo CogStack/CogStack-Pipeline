@@ -11,25 +11,25 @@ import uk.ac.kcl.it.TestUtils;
 /**
  * Created by rich on 03/06/16.
  */
-public class DeidTestExecutionListener extends AbstractTestExecutionListener {
+public class DbLineFixerTestExecutionListener extends AbstractTestExecutionListener {
 
-    public DeidTestExecutionListener(){}
+    public DbLineFixerTestExecutionListener(){}
 
     @Override
     public void beforeTestClass(TestContext testContext) {
         DbmsTestUtils dbTestUtils =
                 testContext.getApplicationContext().getBean(DbmsTestUtils.class);
         dbTestUtils.createJobRepository();
-        dbTestUtils.createBasicInputTable();
+
+
         dbTestUtils.createBasicOutputTable();
-        dbTestUtils.createDeIdInputTable();
+        dbTestUtils.createMultiLineTextTable();
         TestUtils testUtils =
                 testContext.getApplicationContext().getBean(TestUtils.class);
         Environment env = testContext.getApplicationContext().getBean(Environment.class);
         testUtils.deleteESTestIndex();
-        testUtils.insertDataIntoBasicTable(env.getProperty("tblInputDocs"),true);
-        testUtils.insertTestDataForDeidentification(env.getProperty("tblIdentifiers"),env.getProperty("tblInputDocs"),
-                Integer.parseInt(env.getProperty("mutatortype")));
+        testUtils.insertDataIntoBasicTable(env.getProperty("tblInputDocs"),false);
+        testUtils.insertTestLinesForDBLineFixer(env.getProperty("tblDocLines"));
     }
 
 }

@@ -34,10 +34,10 @@ import uk.ac.kcl.testexecutionlisteners.BasicTestExecutionListener;
 @TestPropertySource({
         "classpath:basicPKprofiles.properties",
         "classpath:jms.properties",
-//        "classpath:postgres_test.properties",
-//        "classpath:postgres_db.properties",
-        "classpath:sql_server_test.properties",
-        "classpath:sql_server_db.properties",
+        "classpath:postgres_test.properties",
+        "classpath:postgres_db.properties",
+//        "classpath:sql_server_test.properties",
+//        "classpath:sql_server_db.properties",
         "classpath:noScheduling.properties",
         "classpath:elasticsearch.properties",
         "classpath:jobAndStep.properties"})
@@ -50,8 +50,8 @@ import uk.ac.kcl.testexecutionlisteners.BasicTestExecutionListener;
 @TestExecutionListeners(
         listeners = BasicTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-//@ActiveProfiles({"basic","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","postgres"})
-@ActiveProfiles({"basic","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","sqlserver"})
+@ActiveProfiles({"basic","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","postgres"})
+//@ActiveProfiles({"basic","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","sqlserver"})
 public class BasicPKPartitionWithoutScheduling {
 
     @Autowired

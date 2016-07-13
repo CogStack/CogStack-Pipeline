@@ -103,7 +103,7 @@ public class TestUtils  {
                 xhtmlString = new String(bytes, StandardCharsets.UTF_8);
                 jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName", "fictionalPrimaryKeyFieldName", docCount, null, xhtmlString);
             } catch (IOException ex) {
-                java.util.logging.Logger.getLogger(PostGresIntegrationTestsGATEPKPartitionWithoutScheduling.class.getName()).log(Level.SEVERE, null, ex);
+                java.util.logging.Logger.getLogger(GATEPKPartitionWithoutScheduling.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -131,7 +131,7 @@ public class TestUtils  {
         }
     }
 
-    public void insertDataIntoBasicTable( String tableName){
+    public void insertDataIntoBasicTable( String tableName,boolean includeText){
         JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
         int docCount = 75;
         int lineCountIncrementer = 1;
@@ -152,8 +152,13 @@ public class TestUtils  {
         }
         for (long i = 1; i <= docCount; i++) {
 
-            jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName",
-                    "fictionalPrimaryKeyFieldName", i, new Timestamp(today),biolarkTs, new Timestamp(today));
+            if(includeText) {
+                jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName",
+                        "fictionalPrimaryKeyFieldName", i, new Timestamp(today), biolarkTs, new Timestamp(today));
+            }else{
+                jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName",
+                        "fictionalPrimaryKeyFieldName", i, new Timestamp(today), null, new Timestamp(today));
+            }
 //            if (i==0) {
 //                //test for massive string in ES
 //                jdbcTemplate.update(sql, RandomString.nextString(50), "fictionalTableName",
@@ -300,14 +305,14 @@ public class TestUtils  {
         try {
             Thread.sleep(delay);
             System.out.println("********************* INSERTING FRESH DATA*******************");
-            insertDataIntoBasicTable(tablename);
+            insertDataIntoBasicTable(tablename,true);
             Thread.sleep(delay);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
 
-    public void insertJsonsIntoOutputTable(String s) {
+    public void insertJsonsIntoInputTable(String s) {
 
         JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
 
@@ -320,7 +325,7 @@ public class TestUtils  {
                 + ", primaryKeyFieldName"
                 + ", primaryKeyFieldValue"
                 + ", updateTime"
-                + ", output )"
+                + ", someText )"
                 + " VALUES (?,?,?,?,?,?)";
 
 

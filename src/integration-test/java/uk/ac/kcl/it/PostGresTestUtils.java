@@ -50,7 +50,7 @@ import java.util.Random;
 @Ignore
 public class PostGresTestUtils implements DbmsTestUtils{
 
-    final static Logger logger = Logger.getLogger(PostGresIntegrationTestsGATEPKPartitionWithoutScheduling.class);
+    final static Logger logger = Logger.getLogger(GATEPKPartitionWithoutScheduling.class);
     long today = System.currentTimeMillis();
     Random random = new Random();
 
@@ -148,17 +148,6 @@ public class PostGresTestUtils implements DbmsTestUtils{
                 + ", LINE_ID integer "
                 + ", LINE_TEXT text )"
         );
-
-
-        targetTemplate.execute("DROP TABLE IF EXISTS tblOutputDocs");
-        targetTemplate.execute("CREATE TABLE tblOutputDocs "
-                + "( ID  SERIAL PRIMARY KEY"
-                + ", srcColumnFieldName text "
-                + ", srcTableName text "
-                + ", primaryKeyFieldName text "
-                + ", primaryKeyFieldValue integer "
-                + ", updateTime TIMESTAMP "
-                + ", LINE_TEXT_CONCAT text )");
     }
 
 

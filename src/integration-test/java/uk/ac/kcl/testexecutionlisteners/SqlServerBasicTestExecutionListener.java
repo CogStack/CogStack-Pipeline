@@ -22,7 +22,7 @@ public class SqlServerBasicTestExecutionListener extends AbstractTestExecutionLi
         sqlServerTestUtils.createBasicOutputTable();
         TestUtils testUtils =
                 testContext.getApplicationContext().getBean(TestUtils.class);
-        testUtils.insertDataIntoBasicTable("dbo.tblInputDocs");
+        testUtils.insertDataIntoBasicTable("dbo.tblInputDocs",true);
     }
 
 }
