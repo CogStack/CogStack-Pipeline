@@ -98,13 +98,8 @@ public class BioLarkDocumentItemProcessor implements ItemProcessor<Document, Doc
                     }
                 }, new RecoveryCallback() {
                     @Override
-                    public Object recover(RetryContext context) throws Exception {
-                        LOG.warn("Biolark failed on document "+ doc.getDocName());
-                        ArrayList<LinkedHashMap<Object,Object>> al = new ArrayList<LinkedHashMap<Object, Object>>();
-                        LinkedHashMap<Object,Object> hm = new LinkedHashMap<Object, Object>();
-                        hm.put("error","see logs");
-                        al.add(hm);
-                        return al;
+                    public Object recover(RetryContext context) throws BiolarkProcessingFailedException {
+                        throw new BiolarkProcessingFailedException("Biolark failed on document "+ doc.getDocName());
                     }
                 });
 

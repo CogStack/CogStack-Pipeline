@@ -37,6 +37,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
+import uk.ac.kcl.exception.BiolarkProcessingFailedException;
 import uk.ac.kcl.itemProcessors.JSONMakerItemProcessor;
 import uk.ac.kcl.model.Document;
 import uk.ac.kcl.utils.LoggerHelper;
@@ -244,6 +245,7 @@ public class JobConfiguration {
                 .writer(writer)
                 .faultTolerant()
                 .skipLimit(Integer.parseInt(env.getProperty("skipLimit")))
+                .skip(BiolarkProcessingFailedException.class)
                 .noSkip(Exception.class)
                 .taskExecutor(taskExecutor)
                 .build();

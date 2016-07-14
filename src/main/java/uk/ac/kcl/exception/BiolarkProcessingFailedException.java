@@ -9,4 +9,8 @@ public class BiolarkProcessingFailedException extends RuntimeException {
         super(message, cause, enableSuppression, writableStackTrace);
 
     }
+    public BiolarkProcessingFailedException(String message){
+        super(message);
+
+    }
 }
