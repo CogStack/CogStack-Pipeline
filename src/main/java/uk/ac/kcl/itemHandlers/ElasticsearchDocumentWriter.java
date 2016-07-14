@@ -112,9 +112,12 @@ public class ElasticsearchDocumentWriter implements ItemWriter<Document> {
             request.setId(doc.getPrimaryKeyFieldValue());
             bulkRequest.add(request);
         }
-        BulkResponse response;
-        response = bulkRequest.execute().actionGet(timeout);
-        getResponses(response);
+        //check that no nonessential processes failed
+        if(documents.size()!=0) {
+            BulkResponse response;
+            response = bulkRequest.execute().actionGet(timeout);
+            getResponses(response);
+        }
     }
 
     private void getResponses(BulkResponse response) {

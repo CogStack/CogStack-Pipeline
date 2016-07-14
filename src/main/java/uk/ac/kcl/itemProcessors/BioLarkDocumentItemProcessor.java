@@ -85,13 +85,9 @@ public class BioLarkDocumentItemProcessor implements ItemProcessor<Document, Doc
 
         HashMap<String,Object> newMap = new HashMap<>();
         newMap.putAll(doc.getAdditionalFields());
-        doc.getAdditionalFields().forEach((k,v)->{
-            String newString = "";
-            if(fieldsToBioLark.contains(k)) {
-
-                Object json = null;
-
-                json = retryTemplate.execute(new RetryCallback<Object,BiolarkProcessingFailedException>() {
+        doc.getAdditionalFields().forEach((k,v)-> {
+            if (fieldsToBioLark.contains(k)) {
+                Object json = retryTemplate.execute(new RetryCallback<Object,BiolarkProcessingFailedException>() {
                     public Object doWithRetry(RetryContext context) {
                         // business logic here
                         return restTemplate.postForObject(endPoint, v, Object.class);
@@ -99,19 +95,24 @@ public class BioLarkDocumentItemProcessor implements ItemProcessor<Document, Doc
                 }, new RecoveryCallback() {
                     @Override
                     public Object recover(RetryContext context) throws BiolarkProcessingFailedException {
-                        throw new BiolarkProcessingFailedException("Biolark failed on document "+ doc.getDocName());
+//                        LOG.warn("Biolark failed on document "+ doc.getDocName());
+//                        ArrayList<LinkedHashMap<Object,Object>> al = new ArrayList<LinkedHashMap<Object, Object>>();
+//                        LinkedHashMap<Object,Object> hm = new LinkedHashMap<Object, Object>();
+//                        hm.put(fieldName,"biolark failed");
+//                        al.add(hm);
+                        //doc.getExceptions().add(new BiolarkProcessingFailedException("Biolark failed on document "+ doc.getDocName()));
+//                        return al;
+                        throw new  BiolarkProcessingFailedException("Biolark failed on document "+ doc.getDocName());
                     }
                 });
-
                     newMap.put(fieldName,json);
                 }
             });
-
-            doc.getAdditionalFields().clear();
-            doc.getAdditionalFields().putAll(newMap);
-            LOG.debug("finished " + this.getClass().getSimpleName() +" on doc " +doc.getDocName());
-            return doc;
-        }
+        doc.getAdditionalFields().clear();
+        doc.getAdditionalFields().putAll(newMap);
+        LOG.debug("finished " + this.getClass().getSimpleName() +" on doc " +doc.getDocName());
+        return doc;
+    }
 
     public void setFieldName(String fieldName) {
         this.fieldName = fieldName;

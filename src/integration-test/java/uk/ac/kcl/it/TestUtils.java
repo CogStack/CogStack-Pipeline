@@ -231,7 +231,7 @@ public class TestUtils  {
     public List<Mutant> insertTestDataForFullPipeline(String tableName1, String tableName2, int mutationLevel){
         JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
 
-        File idFile = new File(getClass().getClassLoader().getResource("identifiers_small.csv").getFile());
+        File idFile = new File(getClass().getClassLoader().getResource("identifiers.csv").getFile());
 
         List<CSVRecord> records = null;
         try {
@@ -268,7 +268,7 @@ public class TestUtils  {
                     ,biolarkText, mutationLevel);
             mutants.add(massiveDoc);
             jdbcTemplate.update(sql2, "fictionalColumnFieldName", "fictionalTableName", "fictionalPrimaryKeyFieldName", id,
-                    new Timestamp(today), convertObjectToByteArray(generateDocxDocument(massiveDoc.getFinalText())));
+                    new Timestamp(today), convertObjectToByteArray(generateDocxDocument(multiplyDocSize(massiveDoc.getFinalText(),5))));
             today = TestUtils.nextDay();
             jdbcTemplate.update(sql1, id, r.get(1), r.get(2), r.get(3), new Timestamp(today));
         }
@@ -404,6 +404,14 @@ public class TestUtils  {
             System.out.println("Index not deleted: " +ex.getLocalizedMessage());
         }
 
+    }
+
+    private String multiplyDocSize(String doc, int factor){
+        String newDoc = new String(doc);
+        for(int i=0;i<factor;i++) {
+            newDoc = newDoc + doc;
+        }
+        return newDoc;
     }
 
 }

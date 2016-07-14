@@ -17,6 +17,7 @@ class Document {
     String primaryKeyFieldName
     String primaryKeyFieldValue
     Timestamp timeStamp
+    HashSet<RuntimeException> exceptions = new HashSet<>()
 
     //for catpuring itemProcessor output
     //XContentBuilder xContentBuilder

@@ -18,6 +18,7 @@ package uk.ac.kcl.batch;
 
 import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.core.ItemProcessListener;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
@@ -43,6 +44,7 @@ import uk.ac.kcl.model.Document;
 import uk.ac.kcl.utils.LoggerHelper;
 
 import javax.sql.DataSource;
+import java.awt.event.ItemListener;
 
 /**
  *
@@ -52,6 +54,7 @@ import javax.sql.DataSource;
 @Configuration
 @ComponentScan({"uk.ac.kcl.rowmappers",
         "uk.ac.kcl.utils",
+        "uk.ac.kcl.listeners",
         "uk.ac.kcl.itemHandlers",
         "uk.ac.kcl.partitioners",
         "uk.ac.kcl.itemProcessors",
@@ -227,6 +230,9 @@ public class JobConfiguration {
     @Qualifier("runIdIncrementer")
     public RunIdIncrementer runIdIncrementer(){return new RunIdIncrementer();}
 
+
+
+
     @Bean
     @Qualifier("compositeSlaveStep")
     public Step compositeSlaveStep(
@@ -234,6 +240,8 @@ public class JobConfiguration {
             @Qualifier("compositeItemProcessor") ItemProcessor<Document, Document> processor,
             @Qualifier("compositeESandJdbcItemWriter") ItemWriter<Document> writer,
             @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor,
+            @Qualifier("nonFatalExceptionItemProcessorListener")
+                                ItemProcessListener nonFatalExceptionItemProcessorListener,
             //@Qualifier("targetDatasourceTransactionManager")PlatformTransactionManager manager,
             StepBuilderFactory stepBuilderFactory
     ) {
@@ -247,6 +255,7 @@ public class JobConfiguration {
                 .skipLimit(Integer.parseInt(env.getProperty("skipLimit")))
                 .skip(BiolarkProcessingFailedException.class)
                 .noSkip(Exception.class)
+         //       .listener(nonFatalExceptionItemProcessorListener)
                 .taskExecutor(taskExecutor)
                 .build();
     }

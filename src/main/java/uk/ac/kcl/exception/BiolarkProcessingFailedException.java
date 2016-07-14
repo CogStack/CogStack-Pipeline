@@ -13,4 +13,5 @@ public class BiolarkProcessingFailedException extends RuntimeException {
         super(message);
 
     }
+    public BiolarkProcessingFailedException(){};
 }
