@@ -177,21 +177,15 @@ allprojects {
 }
 
 task writeExampleConfigs  {
-    //profiles
-    String basicPKAndTimeStampProfiles = new File("src/integration-test/resources/basicPKAndTimeStampProfiles.properties").text
-    String basicPKprofiles = new File("src/integration-test/resources/basicPKprofiles.properties").text
-    String dbLineFixerPKprofiles = new File("src/integration-test/resources/dbLineFixerPKprofiles.properties").text
-    String deidPKprofiles = new File("src/integration-test/resources/deidPKprofiles.properties").text
-    String gatePKprofiles = new File("src/integration-test/resources/gatePKprofiles.properties").text
-    String tikaPKprofiles = new File("src/integration-test/resources/tikaPKprofiles.properties").text
-    String reindexPKprofiles = new File("src/integration-test/resources/reindexPKprofiles.properties").text
-    String biolarkPKprofiles = new File("src/integration-test/resources/biolarkPKprofiles.properties").text
-
     //ItemProcessors
     String deidentification = new File("src/integration-test/resources/deidentification.properties").text
+    String elasticgazetteer = new File("src/integration-test/resources/elasticgazetteer_test.properties").text
     String tika = new File("src/integration-test/resources/tika.properties").text
     String gate = new File("src/integration-test/resources/gate.properties").text
-    String dBLineFixer = new File("src/integration-test/resources/dBLineFixer.properties").text
+    String reindex = new File("src/integration-test/resources/reindex.properties").text
+
+    //moved to db specific config
+    //String dBLineFixer = new File("src/integration-test/resources/dBLineFixer.properties").text
     String biolark = new File("src/integration-test/resources/biolark.properties").text
 
     //Database connectivity
@@ -213,18 +207,6 @@ task writeExampleConfigs  {
     //Scheduling
     String scheduling = new File("src/integration-test/resources/scheduling.properties").text
 
-    String postgres_test_config_gate = new File("src/integration-test/resources/postgres_test_config_gate.properties").text
-    String postgres_test_config_tika = new File("src/integration-test/resources/postgres_test_config_tika.properties").text
-    String postgres_test_config_basic = new File("src/integration-test/resources/postgres_test_config_basic.properties").text
-    String postgres_test_config_dBLineFixer = new File("src/integration-test/resources/postgres_test_config_line_fixer.properties").text
-
-    String sql_server_test_config_gate = new File("src/integration-test/resources/sql_server_test_config_gate.properties").text
-    String sql_server_test_config_tika = new File("src/integration-test/resources/sql_server_test_config_tika.properties").text
-    String sql_server_test_config_basic = new File("src/integration-test/resources/sql_server_test_config_basic.properties").text
-    String sql_server_test_config_dBLineFixer = new File("src/integration-test/resources/sql_server_test_config_line_fixer.properties").text
-    String sql_server_test_config_deid = new File("src/integration-test/resources/sql_server_test_config_deid.properties").text
-    String sql_server_test_config_reindex = new File("src/integration-test/resources/sql_server_test_config_reindex.properties").text
-    String sql_server_test_config_biolark = new File("src/integration-test/resources/sql_server_test_config_biolark.properties").text
 
     new File("exampleConfigs").mkdir()
     def gateExample = new File("exampleConfigs/gateJob.properties")
@@ -232,11 +214,11 @@ task writeExampleConfigs  {
         writer.write(  "# EXAMPLE CONFIG FOR gateJob \n" +
                 elasticsearch
                 + "\n" + gate
-                + "\n" + gatePKprofiles
                 + "\n" + jms
                 + "\n" + jobAndStep
                 + "\n" + sql_server_db
-                + "\n" + sql_server_test_config_gate
+                + "\nspring.profiles.active=gate,localPartitioning,jdbc,elasticsearch,primaryKeyAndTimeStampPartition"
+
         )
     }
     def tikaExample = new File("exampleConfigs/tikaJob.properties")
@@ -244,58 +226,54 @@ task writeExampleConfigs  {
         writer.write ("# EXAMPLE CONFIG FOR tikaJob \n" +
                 elasticsearch
                 +"\n" + tika
-                +"\n" + tikaPKprofiles
                 +"\n" + jms
                 +"\n" + jobAndStep
                 + "\n" + sql_server_db
-                + "\n" + sql_server_test_config_tika
+                + "\nspring.profiles.active=tika,localPartitioning,jdbc,elasticsearch,primaryKeyAndTimeStampPartition"
         )
     }
     def basicExample = new File("exampleConfigs/basicJob.properties")
     basicExample.withWriter("UTF-8"){ writer ->
         writer.write("# EXAMPLE CONFIG FOR basicJob \n" +
                 elasticsearch
-                +"\n" + basicPKprofiles
                 +"\n" + jms
                 +"\n" + jobAndStep
                 + "\n" + sql_server_db
-                + "\n" + sql_server_test_config_basic
+                + "\nspring.profiles.active=basic,localPartitioning,jdbc,elasticsearch,primaryKeyAndTimeStampPartition"
         )
     }
     def biolarkExample = new File("exampleConfigs/biolarkJob.properties")
     biolarkExample.withWriter("UTF-8"){ writer ->
-        writer.write("# EXAMPLE CONFIG FOR basicJob \n" +
+        writer.write("# EXAMPLE CONFIG FOR biolark Job \n" +
                 elasticsearch
-                +"\n" + biolarkPKprofiles
                 +"\n" + biolark
                 +"\n" + jms
                 +"\n" + jobAndStep
                 + "\n" + sql_server_db
-                + "\n" + sql_server_test_config_biolark
+                + "\nspring.profiles.active=biolark,localPartitioning,jdbc,elasticsearch,primaryKeyAndTimeStampPartition"
         )
     }
     def reindexExample = new File("exampleConfigs/reindexJob.properties")
     reindexExample.withWriter("UTF-8"){ writer ->
-        writer.write("# EXAMPLE CONFIG FOR basicJob \n" +
+        writer.write("# EXAMPLE CONFIG FOR reindex Job \n" +
                 elasticsearch
-                +"\n" + reindexPKprofiles
+                +"\n" + reindex
                 +"\n" + jms
                 +"\n" + jobAndStep
                 + "\n" + sql_server_db
-                + "\n" + sql_server_test_config_reindex
+                + "\nspring.profiles.active=basic,localPartitioning,jdbc,elasticsearch,primaryKeyAndTimeStampPartition"
         )
     }
     def basicExample2 = new File("exampleConfigs/basicJob2.properties")
     basicExample2.withWriter("UTF-8"){ writer ->
         writer.write("# EXAMPLE CONFIG FOR basicJob with timestamp based processing, configured start date and scheduling on \n" +
                 elasticsearch
-                +"\n" + basicPKAndTimeStampProfiles
                 +"\n" + scheduling
                 +"\n" + configuredStart
                 +"\n" + jms
                 +"\n" + jobAndStep
                 + "\n" + sql_server_db
-                + "\n" + sql_server_test_config_basic
+                + "\nspring.profiles.active=basic,localPartitioning,jdbc,elasticsearch,primaryKeyAndTimeStampPartition"
         )
     }
 
@@ -303,13 +281,11 @@ task writeExampleConfigs  {
     dBLineFixerExample.withWriter("UTF-8"){ writer ->
         writer.write("# EXAMPLE CONFIG FOR dBLineFixerJob \n" +
                 elasticsearch
-                +"\n" + dBLineFixer
-                +"\n" + dbLineFixerPKprofiles
                 +"\n" + jms
                 +"\n" + elasticsearch
                 +"\n" + jobAndStep
                 + "\n" + sql_server_db
-                + "\n" + sql_server_test_config_dBLineFixer
+                + "\nspring.profiles.active=dBLineFixer,localPartitioning,jdbc,elasticsearch,primaryKeyAndTimeStampPartition"
         )
     }
 
@@ -317,12 +293,11 @@ task writeExampleConfigs  {
     deidentificationExample.withWriter("UTF-8"){ writer ->
         writer.write("# EXAMPLE CONFIG FOR deidentification Job \n" +
                 elasticsearch
-                +"\n" + deidPKprofiles
                 +"\n" + deidentification
                 +"\n" + jms
                 +"\n" + jobAndStep
                 + "\n" + sql_server_db
-                + "\n" + sql_server_test_config_deid
+                + "\nspring.profiles.active=deid,localPartitioning,jdbc,elasticsearch,primaryKeyAndTimeStampPartition"
         )
     }
 
