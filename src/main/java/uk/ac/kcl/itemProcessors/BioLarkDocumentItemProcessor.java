@@ -102,7 +102,7 @@ public class BioLarkDocumentItemProcessor implements ItemProcessor<Document, Doc
 //                        al.add(hm);
                         //doc.getExceptions().add(new BiolarkProcessingFailedException("Biolark failed on document "+ doc.getDocName()));
 //                        return al;
-                        throw new  BiolarkProcessingFailedException("Biolark failed on document "+ doc.getDocName());
+                        throw new  BiolarkProcessingFailedException("Biolark failed on document "+ doc.getDocName(),context.getLastThrowable());
                     }
                 });
                     newMap.put(fieldName,json);

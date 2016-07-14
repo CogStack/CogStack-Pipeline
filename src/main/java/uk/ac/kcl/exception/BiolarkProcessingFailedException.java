@@ -13,5 +13,10 @@ public class BiolarkProcessingFailedException extends RuntimeException {
         super(message);
 
     }
+    public BiolarkProcessingFailedException(String message, Throwable cause
+                                            ){
+        super(message, cause);
+
+    }
     public BiolarkProcessingFailedException(){};
 }
