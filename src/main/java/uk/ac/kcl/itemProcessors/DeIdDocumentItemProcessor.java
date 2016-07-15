@@ -53,7 +53,7 @@ public class DeIdDocumentItemProcessor implements ItemProcessor<Document, Docume
     private void init(){
 
         fieldsToDeId = Arrays.asList(env.getProperty("fieldsToDeId").toLowerCase().split(","));
-        replaceFields = Boolean.parseBoolean(env.getProperty("fieldsToDeId"));
+        replaceFields = Boolean.parseBoolean(env.getProperty("replaceFields"));
     }
 
     private List<String> fieldsToDeId;
