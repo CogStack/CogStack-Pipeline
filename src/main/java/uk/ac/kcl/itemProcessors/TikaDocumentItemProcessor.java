@@ -44,6 +44,7 @@ public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemPr
 
     private boolean keepTags;
     private String binaryFieldName;
+    private AutoDetectParser parser;
 
     public boolean isKeepTags() {
         return keepTags;
@@ -60,6 +61,7 @@ public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemPr
     public void init(){
         this.keepTags = env.getProperty("keepTags").equalsIgnoreCase("true");
         setFieldName(env.getProperty("tikaFieldName"));
+        parser = new AutoDetectParser();
     }
 
     @Override
@@ -71,7 +73,7 @@ public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemPr
         } else {
             handler = new BodyContentHandler();
         }
-        AutoDetectParser parser = new AutoDetectParser();
+        ;
         Metadata metadata = new Metadata();
         try (InputStream stream = new ByteArrayInputStream(doc.getBinaryContent())) {
             parser.parse(stream, handler, metadata);

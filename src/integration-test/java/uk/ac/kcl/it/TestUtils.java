@@ -268,7 +268,7 @@ public class TestUtils  {
                     ,biolarkText, mutationLevel);
             mutants.add(massiveDoc);
             jdbcTemplate.update(sql2, "fictionalColumnFieldName", "fictionalTableName", "fictionalPrimaryKeyFieldName", id,
-                    new Timestamp(today), convertObjectToByteArray(generateDocxDocument(multiplyDocSize(massiveDoc.getFinalText(),5))));
+                    new Timestamp(today), convertObjectToByteArray(generateDocxDocument(multiplyDocSize(massiveDoc.getFinalText(),0))));
             today = TestUtils.nextDay();
             jdbcTemplate.update(sql1, id, r.get(1), r.get(2), r.get(3), new Timestamp(today));
         }
