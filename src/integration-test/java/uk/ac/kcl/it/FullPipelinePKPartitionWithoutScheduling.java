@@ -60,8 +60,8 @@ import uk.ac.kcl.testexecutionlisteners.FullPipelineTestExecutionListener;
 @TestExecutionListeners(
         listeners = FullPipelineTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-@ActiveProfiles({"deid","tika","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","postgres"})
-//@ActiveProfiles({"deid","tika","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","sqlserver"})
+@ActiveProfiles({"biolark","deid","tika","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","postgres"})
+//@ActiveProfiles({"biolark","deid","tika","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","sqlserver"})
 public class FullPipelinePKPartitionWithoutScheduling {
 
     final static Logger logger = Logger.getLogger(FullPipelinePKPartitionWithoutScheduling.class);

@@ -83,6 +83,30 @@ public class BioLarkDocumentItemProcessor implements ItemProcessor<Document, Doc
     public Document process(final Document doc)  {
         LOG.debug("starting " + this.getClass().getSimpleName() +" on doc " +doc.getDocName());
 
+        executeWithRetryIgnoringExceptions(doc);
+        LOG.debug("finished " + this.getClass().getSimpleName() +" on doc " +doc.getDocName());
+        return doc;
+    }
+
+    public void setFieldName(String fieldName) {
+        this.fieldName = fieldName;
+    }
+
+    private RetryTemplate getRetryTemplate(){
+        TimeoutRetryPolicy retryPolicy = new TimeoutRetryPolicy();
+        retryPolicy.setTimeout(Long.valueOf(env.getProperty("biolarkRetryTimeout")));
+        FixedBackOffPolicy backOffPolicy = new FixedBackOffPolicy();
+        backOffPolicy.setBackOffPeriod(Long.valueOf(env.getProperty("biolarkRetryBackoff")));
+
+        RetryTemplate template = new RetryTemplate();
+        template.setRetryPolicy(retryPolicy);
+        template.setBackOffPolicy(backOffPolicy);
+        return template;
+    }
+
+
+    //not currently used but migh go back to this method
+    private Document  executeWithRetryThrowingExceptions(Document doc){
         HashMap<String,Object> newMap = new HashMap<>();
         newMap.putAll(doc.getAdditionalFields());
         doc.getAdditionalFields().forEach((k,v)-> {
@@ -96,37 +120,45 @@ public class BioLarkDocumentItemProcessor implements ItemProcessor<Document, Doc
                     @Override
                     public Object recover(RetryContext context) throws BiolarkProcessingFailedException {
                         LOG.warn("Biolark failed on document "+ doc.getDocName());
-//                        ArrayList<LinkedHashMap<Object,Object>> al = new ArrayList<LinkedHashMap<Object, Object>>();
-//                        LinkedHashMap<Object,Object> hm = new LinkedHashMap<Object, Object>();
-//                        hm.put(fieldName,"biolark failed");
-//                        al.add(hm);
-                        //doc.getExceptions().add(new BiolarkProcessingFailedException("Biolark failed on document "+ doc.getDocName()));
-//                        return al;
                         throw new  BiolarkProcessingFailedException("Biolark failed on document "+ doc.getDocName(),context.getLastThrowable());
                     }
                 });
-                    newMap.put(fieldName,json);
-                }
-            });
+                newMap.put(fieldName,json);
+            }
+        });
         doc.getAdditionalFields().clear();
         doc.getAdditionalFields().putAll(newMap);
-        LOG.debug("finished " + this.getClass().getSimpleName() +" on doc " +doc.getDocName());
         return doc;
     }
 
-    public void setFieldName(String fieldName) {
-        this.fieldName = fieldName;
+    private Document  executeWithRetryIgnoringExceptions(Document doc){
+        HashMap<String,Object> newMap = new HashMap<>();
+        newMap.putAll(doc.getAdditionalFields());
+        doc.getAdditionalFields().forEach((k,v)-> {
+            if (fieldsToBioLark.contains(k)) {
+                Object json = retryTemplate.execute(new RetryCallback<Object,BiolarkProcessingFailedException>() {
+                    public Object doWithRetry(RetryContext context) {
+                        // business logic here
+                        return restTemplate.postForObject(endPoint, v, Object.class);
+                    }
+                }, new RecoveryCallback() {
+                    @Override
+                    public Object recover(RetryContext context) throws BiolarkProcessingFailedException {
+                        LOG.warn("Biolark failed on document "+ doc.getDocName());
+                        ArrayList<LinkedHashMap<Object,Object>> al = new ArrayList<LinkedHashMap<Object, Object>>();
+                        LinkedHashMap<Object,Object> hm = new LinkedHashMap<Object, Object>();
+                        hm.put(fieldName,"biolark failed");
+                        al.add(hm);
+                        doc.getExceptions().add(new BiolarkProcessingFailedException("Biolark failed on document "+ doc.getDocName()));
+                        return al;
+                    }
+                });
+                newMap.put(fieldName,json);
+            }
+        });
+        doc.getAdditionalFields().clear();
+        doc.getAdditionalFields().putAll(newMap);
+        return doc;
     }
 
-    public RetryTemplate getRetryTemplate(){
-        TimeoutRetryPolicy retryPolicy = new TimeoutRetryPolicy();
-        retryPolicy.setTimeout(Long.valueOf(env.getProperty("biolarkRetryTimeout")));
-        FixedBackOffPolicy backOffPolicy = new FixedBackOffPolicy();
-        backOffPolicy.setBackOffPeriod(Long.valueOf(env.getProperty("biolarkRetryBackoff")));
-
-        RetryTemplate template = new RetryTemplate();
-        template.setRetryPolicy(retryPolicy);
-        template.setBackOffPolicy(backOffPolicy);
-        return template;
-    }
 }
