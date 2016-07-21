@@ -15,10 +15,8 @@
  */
 package uk.ac.kcl.rowmappers;
 
-import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.XContentFactory;
-import org.elasticsearch.common.xcontent.XContentParser;
-import org.elasticsearch.common.xcontent.XContentType;
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -28,15 +26,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
-import uk.ac.kcl.exception.TurboLaserException;
 import uk.ac.kcl.model.Document;
 import uk.ac.kcl.utils.BatchJobUtils;
 
 import javax.annotation.PostConstruct;
-import java.io.IOException;
 import java.sql.*;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 
@@ -49,7 +47,10 @@ public class DocumentRowMapper implements RowMapper<Document>{
     @Autowired
     BatchJobUtils batchJobUtils;
     private String reindexColumn;
-
+    private String esDatePattern;
+    private DateTimeFormatter fmt;
+    private boolean reindex;
+    private String reindexField;
 
     @PostConstruct
     public void init (){
@@ -72,7 +73,13 @@ public class DocumentRowMapper implements RowMapper<Document>{
         }else{
             reindexColumn = null;
         }
+        esDatePattern = env.getProperty("datePatternForES");
+        fmt = DateTimeFormat.forPattern(esDatePattern);
 
+        reindex = Boolean.valueOf(env.getProperty("reindex"));
+        if(reindex) {
+            this.reindexField = env.getProperty("reindexField").toLowerCase();
+        }
 
     }
     private String binaryContentFieldName;
@@ -86,49 +93,29 @@ public class DocumentRowMapper implements RowMapper<Document>{
 
 
     void mapFields(Document doc, ResultSet rs) throws SQLException {
-//implement later if database name/schema is requried
-//        if(rs.getString(env.getProperty("databaseName"))==null){
-//            doc.setDatabaseName(null);
-//        }else{
-//            doc.setDatabaseName(rs.getString(env.getProperty("databaseName")));
-//        }
-//        if(rs.getString(env.getProperty("databaseSchema"))==null){
-//            doc.setDatabaseSchema(null);
-//        }else{
-//            doc.setDatabaseSchema(rs.getString(env.getProperty("databaseName")));
-//        }
-        doc.setSrcTableName(rs.getString(srcTableName));
-        doc.setSrcColumnFieldName(rs.getString(srcColumnFieldName));
-        doc.setPrimaryKeyFieldName(rs.getString(primaryKeyFieldName));
-        doc.setPrimaryKeyFieldValue(rs.getString(primaryKeyFieldValue));
-        doc.setTimeStamp(rs.getTimestamp(timeStamp));
-
-
-        DateTimeFormatter fmt = DateTimeFormat.forPattern(env.getProperty("datePatternForES"));
+        mapMetadata(doc, rs);
         //add additional query fields for ES export
         ResultSetMetaData meta = rs.getMetaData();
-
-
 
         int colCount = meta.getColumnCount();
 
         for (int col=1; col <= colCount; col++){
             Object value = rs.getObject(col);
             if (value != null){
-                    String colLabel =meta.getColumnLabel(col).toLowerCase();
-                    if(!fieldsToIgnore.contains(colLabel)){
-                        if(meta.getColumnType(col)==91) {
-                            Date dt = (Date)value;
-                            DateTime dateTime = new DateTime(dt.getTime());
-                            doc.getAdditionalFields().put(meta.getColumnLabel(col).toLowerCase(), fmt.print(dateTime));
-                        }else if (meta.getColumnType(col)==93){
-                            Timestamp ts = (Timestamp) value;
-                            DateTime dateTime = new DateTime(ts.getTime());
-                            doc.getAdditionalFields().put(meta.getColumnLabel(col).toLowerCase(), fmt.print(dateTime));
-                        }else {
-                            doc.getAdditionalFields().put(meta.getColumnLabel(col).toLowerCase(), rs.getString(col));
-                        }
+                String colLabel =meta.getColumnLabel(col).toLowerCase();
+                if(!fieldsToIgnore.contains(colLabel)){
+                    if(meta.getColumnType(col)==91) {
+                        Date dt = (Date)value;
+                        DateTime dateTime = new DateTime(dt.getTime());
+                        doc.getAssociativeArray().put(meta.getColumnLabel(col).toLowerCase(), fmt.print(dateTime));
+                    }else if (meta.getColumnType(col)==93){
+                        Timestamp ts = (Timestamp) value;
+                        DateTime dateTime = new DateTime(ts.getTime());
+                        doc.getAssociativeArray().put(meta.getColumnLabel(col).toLowerCase(), fmt.print(dateTime));
+                    }else {
+                        doc.getAssociativeArray().put(meta.getColumnLabel(col).toLowerCase(), rs.getString(col));
                     }
+                }
             }
             if (binaryContentFieldName !=null &&
                     value !=null
@@ -138,10 +125,28 @@ public class DocumentRowMapper implements RowMapper<Document>{
         }
     }
 
+    private void mapMetadata(Document doc, ResultSet rs) throws SQLException {
+        doc.setSrcTableName(rs.getString(srcTableName));
+        doc.setSrcColumnFieldName(rs.getString(srcColumnFieldName));
+        doc.setPrimaryKeyFieldName(rs.getString(primaryKeyFieldName));
+        doc.setPrimaryKeyFieldValue(rs.getString(primaryKeyFieldValue));
+        doc.setTimeStamp(rs.getTimestamp(timeStamp));
+    }
+
     @Override
     public Document mapRow(ResultSet rs, int rowNum) throws SQLException {
         Document doc = new Document();
-        mapFields(doc,rs);
+        if(reindex){
+            mapAssociativeArray(doc, rs);            
+        }else {
+            mapFields(doc, rs);
+        }
         return doc;
+    }
+
+    private void mapAssociativeArray(Document doc, ResultSet rs) throws SQLException {
+        mapMetadata(doc, rs);
+        doc.setAssociativeArray(new Gson().fromJson(rs.getString(reindexField),
+                new TypeToken<HashMap<String, Object>>() {}.getType()));
     }
 }

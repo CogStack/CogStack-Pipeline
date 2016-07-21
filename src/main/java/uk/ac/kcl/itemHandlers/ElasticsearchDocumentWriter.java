@@ -47,6 +47,9 @@ public class ElasticsearchDocumentWriter implements ItemWriter<Document> {
     List<T> output = TransactionAwareProxyFactory.createTransactionalList();
     private ElasticsearchDocumentWriter() {}
 
+    private String indexName;
+    private String typeName;
+
     @Autowired
     Environment env;
 
@@ -84,6 +87,8 @@ public class ElasticsearchDocumentWriter implements ItemWriter<Document> {
         }
 
         timeout = Long.valueOf(env.getProperty("elasticsearch.response.timeout"));
+        indexName = env.getProperty("elasticsearch.index.name");
+        typeName = env.getProperty("elasticsearch.type");
     }
     @PreDestroy
     public void destroy(){
@@ -95,19 +100,16 @@ public class ElasticsearchDocumentWriter implements ItemWriter<Document> {
         BulkRequestBuilder bulkRequest = client.prepareBulk();
 
         for (Document doc : documents) {
-                XContentParser parser = null;
-//                try {
-                    parser = XContentFactory.xContent(XContentType.JSON)
-                            .createParser(doc.getOutputData().getBytes());
-                    parser.close();
-                    XContentBuilder builder = jsonBuilder().copyCurrentStructure(parser);
-//                } catch (IOException e) {
-//                    throw new TurboLaserException("Couldn't parse JSON",e,false ,true);
-//                }
+            XContentParser parser = null;
+            parser = XContentFactory.xContent(XContentType.JSON)
+                    .createParser(doc.getOutputData().getBytes());
+            parser.close();
+            XContentBuilder builder = jsonBuilder().copyCurrentStructure(parser);
+
 
             IndexRequestBuilder request = client.prepareIndex(
-                    env.getProperty("elasticsearch.index.name"),
-                    env.getProperty("elasticsearch.type")).setSource(
+                    indexName,
+                    typeName).setSource(
                     builder);
             request.setId(doc.getPrimaryKeyFieldValue());
             bulkRequest.add(request);

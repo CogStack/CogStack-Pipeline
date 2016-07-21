@@ -86,6 +86,7 @@ public class DeIdentificationPKPartitionWithoutScheduling {
     @Test
     @DirtiesContext
     public void postgresIntegrationTestsDeIdentificationPKPartitionWithoutScheduling() {
+
         jobLauncher.launchJob();
     }
 

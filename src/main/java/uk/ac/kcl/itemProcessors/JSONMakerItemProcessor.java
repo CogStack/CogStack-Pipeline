@@ -15,22 +15,14 @@
  */
 package uk.ac.kcl.itemProcessors;
 
-import com.google.gson.Gson;
 import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.XContentFactory;
-import org.elasticsearch.common.xcontent.XContentFactory.*;
-import org.elasticsearch.common.xcontent.XContentParser;
-import org.elasticsearch.common.xcontent.XContentType;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import uk.ac.kcl.exception.TurboLaserException;
 import uk.ac.kcl.model.Document;
 
 import javax.annotation.PostConstruct;
-
-import java.io.IOException;
 
 import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 
@@ -46,28 +38,21 @@ public class JSONMakerItemProcessor implements ItemProcessor<Document, Document>
 
     @Autowired
     Environment env;
-    private Boolean reindex;
-    private String reindexField;
 
     @PostConstruct
     public void init(){
-        this.reindex = Boolean.valueOf(env.getProperty("reindex"));
-        if(reindex) {
-            this.reindexField = env.getProperty("reindexField").toLowerCase();
-        }
+
     }
     @Override
     public Document process(final Document doc) throws Exception {
         LOG.debug("starting " + this.getClass().getSimpleName() +" on doc " +doc.getDocName());
-        //may already be populated if reindexing
-        //XContentBuilder builder = doc.getOutputData();
-        if(!reindex) {
-            XContentBuilder builder = jsonBuilder()
-                    .map(doc.getAdditionalFields());
-            doc.setOutputData(builder.string());
-        }else{
-            doc.setOutputData(doc.getAdditionalFields().get(reindexField).toString());
-        }
+        doc.setOutputData(doc.getGson().toJson(doc.getAssociativeArray()));
+//
+//        if(!reindex) {
+//
+//        }else{
+//            doc.setOutputData(doc.getAssociativeArray().get(reindexField).toString());
+//        }
 
         LOG.debug("finished " + this.getClass().getSimpleName() +" on doc " +doc.getDocName());
         return doc;

@@ -15,7 +15,6 @@
  */
 package uk.ac.kcl.itemProcessors;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
@@ -31,7 +30,6 @@ import org.springframework.retry.backoff.FixedBackOffPolicy;
 import org.springframework.retry.policy.TimeoutRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import uk.ac.kcl.exception.BiolarkProcessingFailedException;
 import uk.ac.kcl.model.Document;
@@ -108,8 +106,8 @@ public class BioLarkDocumentItemProcessor implements ItemProcessor<Document, Doc
     //not currently used but migh go back to this method
     private Document  executeWithRetryThrowingExceptions(Document doc){
         HashMap<String,Object> newMap = new HashMap<>();
-        newMap.putAll(doc.getAdditionalFields());
-        doc.getAdditionalFields().forEach((k,v)-> {
+        newMap.putAll(doc.getAssociativeArray());
+        doc.getAssociativeArray().forEach((k, v)-> {
             if (fieldsToBioLark.contains(k)) {
                 Object json = retryTemplate.execute(new RetryCallback<Object,BiolarkProcessingFailedException>() {
                     public Object doWithRetry(RetryContext context) {
@@ -126,15 +124,15 @@ public class BioLarkDocumentItemProcessor implements ItemProcessor<Document, Doc
                 newMap.put(fieldName,json);
             }
         });
-        doc.getAdditionalFields().clear();
-        doc.getAdditionalFields().putAll(newMap);
+        doc.getAssociativeArray().clear();
+        doc.getAssociativeArray().putAll(newMap);
         return doc;
     }
 
     private Document  executeWithRetryIgnoringExceptions(Document doc){
         HashMap<String,Object> newMap = new HashMap<>();
-        newMap.putAll(doc.getAdditionalFields());
-        doc.getAdditionalFields().forEach((k,v)-> {
+        newMap.putAll(doc.getAssociativeArray());
+        doc.getAssociativeArray().forEach((k, v)-> {
             if (fieldsToBioLark.contains(k)) {
                 Object json = retryTemplate.execute(new RetryCallback<Object,BiolarkProcessingFailedException>() {
                     public Object doWithRetry(RetryContext context) {
@@ -156,8 +154,8 @@ public class BioLarkDocumentItemProcessor implements ItemProcessor<Document, Doc
                 newMap.put(fieldName,json);
             }
         });
-        doc.getAdditionalFields().clear();
-        doc.getAdditionalFields().putAll(newMap);
+        doc.getAssociativeArray().clear();
+        doc.getAssociativeArray().putAll(newMap);
         return doc;
     }
 

@@ -1,5 +1,7 @@
 package uk.ac.kcl.model
 
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import org.elasticsearch.common.xcontent.XContentBuilder
 
 import java.sql.Timestamp
@@ -18,6 +20,7 @@ class Document {
     String primaryKeyFieldValue
     Timestamp timeStamp
     HashSet<RuntimeException> exceptions = new HashSet<>()
+    Gson gson = new GsonBuilder().create();
 
     //for catpuring itemProcessor output
     //XContentBuilder xContentBuilder
@@ -32,7 +35,7 @@ class Document {
 
 
     //for es
-    HashMap<String,Object> additionalFields = new HashMap<String,Object>();
+    HashMap<String,Object> associativeArray = new HashMap<String,Object>();
 
     public String getDocName(){
         return srcTableName+"_"+srcColumnFieldName+"_"+primaryKeyFieldValue

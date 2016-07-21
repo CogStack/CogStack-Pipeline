@@ -13,7 +13,7 @@ public abstract class TLItemProcessor {
     }
 
     void addField(Document doc, Object content){
-        doc.getAdditionalFields().put(fieldName, content);
+        doc.getAssociativeArray().put(fieldName, content);
 
     }
 

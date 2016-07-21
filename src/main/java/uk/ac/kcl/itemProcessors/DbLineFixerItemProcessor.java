@@ -54,32 +54,40 @@ public class DbLineFixerItemProcessor extends TLItemProcessor implements ItemPro
 
     @Resource
     Environment env;
-
+    private String documentKeyName;
+    private String lineKeyName;
+    private String srcTableName;
+    private String lineContents;
 
 
     @PostConstruct
     public void init(){
         this.template = new JdbcTemplate(ds);
         setFieldName(env.getProperty("dbLineFixerFieldName"));
+        documentKeyName = env.getProperty("lf.documentKeyName");
+        lineKeyName = env.getProperty("lf.lineKeyName");
+        srcTableName = env.getProperty("lf.srcTableName");
+        lineContents = env.getProperty("lf.lineContents");
+
     }
 
     @Override
     public Document process(final Document doc) throws Exception {
         LOG.debug("starting " + this.getClass().getSimpleName() +" on doc " +doc.getDocName());
         String sql = "SELECT " +
-                env.getProperty("lf.documentKeyName") +
+                documentKeyName +
                 ", " +
-                env.getProperty("lf.lineKeyName") +
+                lineKeyName +
                 ", " +
-                env.getProperty("lf.lineContents") +
+                lineContents +
                 " FROM " +
-                env.getProperty("lf.srcTableName") +
+                srcTableName +
                 " WHERE " +
-                env.getProperty("lf.documentKeyName") +
+                documentKeyName +
                 " = '" +
                 doc.getPrimaryKeyFieldValue() +
                 "' ORDER BY " +
-                env.getProperty("lf.lineKeyName") +
+                lineKeyName +
                 " DESC";
 
         List<MultilineDocument> docs = template.query(sql, simpleMapper);

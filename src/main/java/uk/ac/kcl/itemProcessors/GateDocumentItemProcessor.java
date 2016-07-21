@@ -25,7 +25,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
-import uk.ac.kcl.exception.GateProcessingFailedException;
 import uk.ac.kcl.model.Document;
 import uk.ac.kcl.service.GateService;
 
@@ -70,8 +69,8 @@ public class GateDocumentItemProcessor extends TLItemProcessor implements ItemPr
     public Document process(final Document doc) throws Exception {
         LOG.debug("starting " + this.getClass().getSimpleName() +" on doc " +doc.getDocName());
         HashMap<String,Object> newMap = new HashMap<>();
-        newMap.putAll(doc.getAdditionalFields());
-        doc.getAdditionalFields().forEach((k,v)-> {
+        newMap.putAll(doc.getAssociativeArray());
+        doc.getAssociativeArray().forEach((k, v)-> {
             if (fieldsToGate.contains(k)) {
                 gate.Document gateDoc = null;
                 try {
@@ -99,8 +98,8 @@ public class GateDocumentItemProcessor extends TLItemProcessor implements ItemPr
                 }
             }
         });
-        doc.getAdditionalFields().clear();
-        doc.getAdditionalFields().putAll(newMap);
+        doc.getAssociativeArray().clear();
+        doc.getAssociativeArray().putAll(newMap);
         LOG.debug("finished " + this.getClass().getSimpleName() +" on doc " +doc.getDocName());
         return doc;
     }

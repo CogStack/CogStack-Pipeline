@@ -67,8 +67,8 @@ public class DeIdDocumentItemProcessor implements ItemProcessor<Document, Docume
     public Document process(final Document doc)  {
         LOG.debug("starting " + this.getClass().getSimpleName() +" on doc " +doc.getDocName());
         HashMap<String,Object> newMap = new HashMap<>();
-        newMap.putAll(doc.getAdditionalFields());
-        doc.getAdditionalFields().forEach((k,v)->{
+        newMap.putAll(doc.getAssociativeArray());
+        doc.getAssociativeArray().forEach((k, v)->{
             String newString = "";
             if(fieldsToDeId.contains(k.toLowerCase())) {
                 try {
@@ -94,8 +94,8 @@ public class DeIdDocumentItemProcessor implements ItemProcessor<Document, Docume
             }
         });
 
-        doc.getAdditionalFields().clear();
-        doc.getAdditionalFields().putAll(newMap);
+        doc.getAssociativeArray().clear();
+        doc.getAssociativeArray().putAll(newMap);
         LOG.debug("finished " + this.getClass().getSimpleName() +" on doc " +doc.getDocName());
         return doc;
     }
