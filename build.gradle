@@ -217,6 +217,7 @@ task writeExampleConfigs  {
                 + "\n" + jms
                 + "\n" + jobAndStep
                 + "\n" + sql_server_db
+                + "\n" + scheduling
                 + "\nspring.profiles.active=gate,localPartitioning,jdbc,elasticsearch,primaryKeyAndTimeStampPartition"
 
         )
@@ -229,6 +230,7 @@ task writeExampleConfigs  {
                 +"\n" + jms
                 +"\n" + jobAndStep
                 + "\n" + sql_server_db
+                + "\n" + scheduling
                 + "\nspring.profiles.active=tika,localPartitioning,jdbc,elasticsearch,primaryKeyAndTimeStampPartition"
         )
     }
@@ -239,6 +241,7 @@ task writeExampleConfigs  {
                 +"\n" + jms
                 +"\n" + jobAndStep
                 + "\n" + sql_server_db
+                + "\n" + scheduling
                 + "\nspring.profiles.active=basic,localPartitioning,jdbc,elasticsearch,primaryKeyAndTimeStampPartition"
         )
     }
@@ -250,6 +253,7 @@ task writeExampleConfigs  {
                 +"\n" + jms
                 +"\n" + jobAndStep
                 + "\n" + sql_server_db
+                + "\n" + scheduling
                 + "\nspring.profiles.active=biolark,localPartitioning,jdbc,elasticsearch,primaryKeyAndTimeStampPartition"
         )
     }
@@ -261,6 +265,7 @@ task writeExampleConfigs  {
                 +"\n" + jms
                 +"\n" + jobAndStep
                 + "\n" + sql_server_db
+                + "\n" + scheduling
                 + "\nspring.profiles.active=basic,localPartitioning,jdbc,elasticsearch,primaryKeyAndTimeStampPartition"
         )
     }
@@ -273,6 +278,7 @@ task writeExampleConfigs  {
                 +"\n" + jms
                 +"\n" + jobAndStep
                 + "\n" + sql_server_db
+                + "\n" + scheduling
                 + "\nspring.profiles.active=basic,localPartitioning,jdbc,elasticsearch,primaryKeyAndTimeStampPartition"
         )
     }
@@ -285,6 +291,7 @@ task writeExampleConfigs  {
                 +"\n" + elasticsearch
                 +"\n" + jobAndStep
                 + "\n" + sql_server_db
+                + "\n" + scheduling
                 + "\nspring.profiles.active=dBLineFixer,localPartitioning,jdbc,elasticsearch,primaryKeyAndTimeStampPartition"
         )
     }
@@ -297,7 +304,22 @@ task writeExampleConfigs  {
                 +"\n" + jms
                 +"\n" + jobAndStep
                 + "\n" + sql_server_db
+                + "\n" + scheduling
                 + "\nspring.profiles.active=deid,localPartitioning,jdbc,elasticsearch,primaryKeyAndTimeStampPartition"
+        )
+    }
+
+    def fullPipeline = new File("exampleConfigs/fullPipelineJob.properties")
+    fullPipeline.withWriter("UTF-8"){ writer ->
+        writer.write("# EXAMPLE CONFIG FOR deidentification Job \n" +
+                elasticsearch
+                +"\n" + deidentification
+                +"\n" + biolark
+                +"\n" + jms
+                +"\n" + jobAndStep
+                + "\n" + postgres_db
+                + "\n" + scheduling
+                + "\nspring.profiles.active=deid,biolark,localPartitioning,jdbc,elasticsearch,primaryKeyAndTimeStampPartition"
         )
     }
 

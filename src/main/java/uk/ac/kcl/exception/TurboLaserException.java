@@ -8,4 +8,8 @@ public class TurboLaserException extends RuntimeException {
         super(message, cause);
 
     }
+    public TurboLaserException(String message){
+        super(message);
+
+    }
 }

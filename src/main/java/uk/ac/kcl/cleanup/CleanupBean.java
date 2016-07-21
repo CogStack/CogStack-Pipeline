@@ -81,58 +81,59 @@ public class CleanupBean implements SmartLifecycle {
         };
 
 
-        int stoppedCount = 0;
+        boolean stopped;
         for(Long l : jobExecs){
             try{
-                jobOperator.stop(l);
+                stopped = jobOperator.stop(l);
+                if(stopped){
+                    LOG.info("Stop message successfully sent to repository");
+                }
             } catch (NoSuchJobExecutionException e) {
                 LOG.error("Job no longer exists ",e);
-                stoppedCount++;
             }catch(JobExecutionNotRunningException e){
                 LOG.info("Job is no longer running ",e);
-                stoppedCount++;
             }
         }
 
-        if(stoppedCount == jobExecs.size()){
-            LOG.info("Jobs successfully stopped, completed or are known to have failed");
-            return;
-        }else{
-            RetryTemplate retryTemplate = getRetryTemplate();
-            try {
-                stoppedCount = stoppedCount + retryTemplate.execute(new RetryCallback<Integer,TurboLaserException>() {
-                    public Integer doWithRetry(RetryContext context) {
-                        // business logic here
-                        for(Long l : jobExecs){
-                            JobExecution exec = jobExplorer.getJobExecution(l);
-                            BatchStatus status = exec.getStatus();
-                            LOG.info("Job name "+ exec.getJobInstance().getJobName() +" has status of "+ status );
-                            if (status == BatchStatus.STOPPED ||
-                                    status == BatchStatus.FAILED ||
-                                    status == BatchStatus.COMPLETED ||
-                                    status == BatchStatus.ABANDONED ) {
-                                context.setAttribute("stopped_jobs",(
-                                        Integer.valueOf(context.getAttribute("stopped_jobs").toString())+1));
-                            }
+
+
+        RetryTemplate retryTemplate = getRetryTemplate();
+        LOG.info("Waiting for job to stop");
+        boolean confirmedStopped = false;
+
+        try {
+            confirmedStopped =retryTemplate.execute(new RetryCallback<Boolean,TurboLaserException>() {
+                public Boolean doWithRetry(RetryContext context) {
+                    // business logic here
+                    for(Long l : jobExecs){
+                        JobExecution exec = jobExplorer.getJobExecution(l);
+                        BatchStatus status = exec.getStatus();
+                        LOG.info("Job name "+ exec.getJobInstance().getJobName() +" has status of "+ status );
+                        if (status == BatchStatus.STOPPED ||
+                                status == BatchStatus.FAILED ||
+                                status == BatchStatus.COMPLETED ||
+                                status == BatchStatus.ABANDONED ) {
+                            return true;
                         }
-
-                        return Integer.valueOf(context.getAttribute("stopped_jobs").toString());
                     }
-                }, new RecoveryCallback() {
-                    @Override
-                    public Object recover(RetryContext context) throws TurboLaserException {
-
-                        return context;
-                    }
-                });
-            } catch (TurboLaserException e) {
-                LOG.warn("Unable to gracefully stop jobs. Job Repository may be in unknown state");
-            }
-            if(stoppedCount == jobExecs.size()){
-                LOG.info("Jobs successfully stopped, completed or are known to have failed");
-                return;
-            }
+                    throw new TurboLaserException("Job did not stop within timeout");
+                }
+            }, new RecoveryCallback() {
+                @Override
+                public Object recover(RetryContext context) throws TurboLaserException {
+                    //maybe add logic to abandon job?
+                    LOG.info("Unable to gracefully stop jobs. Job Repository may be in unknown state",context.getLastThrowable());
+                    return context;
+                }
+            });
+        } catch (TurboLaserException e) {
+            LOG.warn("Unable to gracefully stop jobs. Job Repository may be in unknown state");
         }
+
+        if(confirmedStopped){
+            LOG.info("Job successfully stopped, completed or are known to have failed");
+        }
+
     }
 
     @Override
@@ -173,7 +174,7 @@ public class CleanupBean implements SmartLifecycle {
         TimeoutRetryPolicy retryPolicy = new TimeoutRetryPolicy();
         retryPolicy.setTimeout(Long.valueOf(env.getProperty("shutdownTimeout")));
         FixedBackOffPolicy backOffPolicy = new FixedBackOffPolicy();
-        backOffPolicy.setBackOffPeriod(5);
+        backOffPolicy.setBackOffPeriod(5000);
 
         RetryTemplate template = new RetryTemplate();
         template.setRetryPolicy(retryPolicy);

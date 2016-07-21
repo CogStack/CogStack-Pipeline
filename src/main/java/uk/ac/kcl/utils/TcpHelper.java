@@ -14,31 +14,37 @@ import java.net.SocketImplFactory;
  */
 public class TcpHelper {
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(TcpHelper.class);
+    private static boolean firstCalled = true;
     public static void setSocketTimeout(int timeout)  {
-        try {
-            Socket.setSocketImplFactory(new SocketImplFactory() {
-                @Override
-                public SocketImpl createSocketImpl() {
-                    try {
-                        // Construct an instance of PlainSocketImpl using reflection
-                        Constructor constructor = Class.forName("java.net.PlainSocketImpl").getDeclaredConstructor();
-                        constructor.setAccessible(true);
-                        SocketImpl socketImpl = (SocketImpl) constructor.newInstance();
+        if(firstCalled) {
+            try {
+                Socket.setSocketImplFactory(new SocketImplFactory() {
+                    @Override
+                    public SocketImpl createSocketImpl() {
+                        try {
+                            // Construct an instance of PlainSocketImpl using reflection
+                            Constructor constructor = Class.forName("java.net.PlainSocketImpl").getDeclaredConstructor();
 
-                        // Set the private "timeout" member using reflection
-                        Field timeoutField = Class.forName("java.net.AbstractPlainSocketImpl").getDeclaredField("timeout");
-                        timeoutField.setAccessible(true);
-                        timeoutField.setInt(socketImpl, timeout);
+                            constructor.setAccessible(true);
+                            SocketImpl socketImpl = (SocketImpl) constructor.newInstance();
 
-                        return socketImpl;
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
+                            // Set the private "timeout" member using reflection
+                            Field timeoutField = Class.forName("java.net.AbstractPlainSocketImpl").getDeclaredField
+                                    ("timeout");
+                            timeoutField.setAccessible(true);
+                            timeoutField.setInt(socketImpl, timeout);
+
+                            return socketImpl;
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
                     }
-                }
-            });
-        } catch (IOException e) {
-            e.printStackTrace();
+                });
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            LOG.info("Global socket timeout set to " + timeout + " ms");
+            firstCalled = false;
         }
-        LOG.info("Global socket timeout set to " + timeout +" ms");
     }
 }

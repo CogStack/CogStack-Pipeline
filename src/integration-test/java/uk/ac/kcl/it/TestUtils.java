@@ -231,7 +231,7 @@ public class TestUtils  {
     public List<Mutant> insertTestDataForFullPipeline(String tableName1, String tableName2, int mutationLevel){
         JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
 
-        File idFile = new File(getClass().getClassLoader().getResource("identifiers.csv").getFile());
+        File idFile = new File(getClass().getClassLoader().getResource("identifiers_small.csv").getFile());
 
         List<CSVRecord> records = null;
         try {
