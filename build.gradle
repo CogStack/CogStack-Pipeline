@@ -191,6 +191,11 @@ task buildPostgresContainer(type:Exec) {
     commandLine 'docker','build','-t','richjackson/postgres','.'
 }
 
+task buildBiolarkContainer(type:Exec) {
+    workingDir 'docker-cogstack/docker-compose/biolark'
+    commandLine 'docker','build','-t','richjackson/biolark','.'
+}
+
 
 task writeExampleConfigs  {
     //ItemProcessors

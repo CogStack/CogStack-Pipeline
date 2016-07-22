@@ -1,4 +1,5 @@
 FROM java:8
+MAINTAINER richgjackson@gmail.com
 RUN apt-get update && apt-get install -y imagemagick --fix-missing  tesseract-ocr
 
 COPY ./turbolaser/ /usr/src/turbolaser
