@@ -1,4 +1,6 @@
 FROM java:8
-COPY ./hpo_cr_web/ /usr/src/biolark
-WORKDIR /usr/src/biolark
-CMD ["sh","/usr/src/biolark/start.sh"]
+WORKDIR /usr/src/hpo_cr_web
+ADD 'http://bio-lark.org/hpo/hpo_cr_web.tar.gz' /usr/src
+COPY ./application-prod.yml /usr/src/hpo_cr_web/application-prod.yml
+COPY ./start.sh /usr/src/hpo_cr_web/start.sh
+CMD ["sh","/usr/src/hpo_cr_web/start.sh"]

@@ -1,0 +1,10 @@
+server:
+    port: 5555
+    
+cr:
+    resources: /usr/src/hpo_cr_web/resources/
+    maxThreads: 1
+    spellCheck: FALSE
+    noncanonical: FALSE
+    negation: TRUE
+        
