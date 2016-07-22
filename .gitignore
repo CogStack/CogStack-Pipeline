@@ -7,3 +7,4 @@ nbproject/*
 .nb-gradle-properties
 .idea/*
 turbo-laser*log
+*.jar

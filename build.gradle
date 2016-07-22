@@ -176,6 +176,22 @@ allprojects {
     }
 }
 
+task copyToDocker(type:Copy) {
+    from 'build/libs/turbo-laser-0.3.0.jar'
+    into 'docker-cogstack/docker-compose/turbo-laser/turbolaser/'
+}
+
+task buildTLContainer(type:Exec) {
+    workingDir 'docker-cogstack/docker-compose/turbo-laser'
+    commandLine 'docker','build','-t','richjackson/turbolaser','.'
+}
+
+task buildPostgresContainer(type:Exec) {
+    workingDir 'docker-cogstack/docker-compose/postgres'
+    commandLine 'docker','build','-t','richjackson/postgres','.'
+}
+
+
 task writeExampleConfigs  {
     //ItemProcessors
     String deidentification = new File("src/integration-test/resources/deidentification.properties").text
@@ -301,6 +317,7 @@ task writeExampleConfigs  {
         writer.write("# EXAMPLE CONFIG FOR deidentification Job \n" +
                 elasticsearch
                 +"\n" + deidentification
+                +"\n" + elasticgazetteer
                 +"\n" + jms
                 +"\n" + jobAndStep
                 + "\n" + sql_server_db

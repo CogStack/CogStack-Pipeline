@@ -79,73 +79,58 @@ public class SingleJobLauncher {
     @Autowired
     JobOperator jobOperator;
 
-    @Autowired
-    CleanupBean cleanupBean;
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(SingleJobLauncher.class);
 
 
     public void launchJob()  {
-        JobExecution lastJobExecution = null;
-        JobExecution lastSuccessfulJobExecution = null;
+        JobExecution lastJobExecution = getLastJobExecution();
         try {
-            BatchStatus lastJobStatus = null;
-            try {
-                lastSuccessfulJobExecution = batchJobUtils.getLastSuccessfulJobExecution();
-            } catch (NullPointerException e) {
-                LOG.info("No previous successful jobs found");
-            }
-            try {
-                lastJobExecution = batchJobUtils.getLastJobExecution();
-                lastJobStatus = lastJobExecution.getStatus();
-            } catch (NullPointerException e) {
-                LOG.info("No previous jobs found");
-            }
-
-                try {
-                    switch (lastJobStatus) {
-                        case COMPLETED:
-                            LOG.info("Last job execution was successful");
-                            startNextInstance();
-                            break;
-                        case STARTED:
-                        case STARTING:
-                        case STOPPING:
-                            LOG.info("Job is already running. Repository in unknown state." +
-                                    " Attempting to repair and restart from last successful job");
-                            abandonAllJobsStartedAfterLastSuccessfulJob();
-                            startNextInstance();
-                            break;
-                        case FAILED:
-                            LOG.info("Last job failed. Attempting restart");
-                            startNextInstance();
-                            break;
-                        case ABANDONED:
-                            LOG.info("Last job was abandoned. Attempting start from last successful job");
-                            abandonAllJobsStartedAfterLastSuccessfulJob();
-                            startNextInstance();
-                            break;
-                        case STOPPED:
-                            LOG.info("Last job was stopped. Attempting restart")       ;
-                            startNextInstance();
-                            break;
-                        case UNKNOWN:
-                            LOG.info("Last job has unknown status. Marking as abandoned and attempting restart from last successful job");
-                            abandonAllJobsStartedAfterLastSuccessfulJob();
-                            startNextInstance();
-                            break;
-                        default:
-                            LOG.error("Should be unreachable");
-                            break;
-                    }
-                }catch(NullPointerException ex){
-                    LOG.info("No previous completed jobs found");
-                    startNextInstance();
+            if(lastJobExecution != null){
+                BatchStatus lastJobStatus = lastJobExecution.getStatus();
+                switch (lastJobStatus) {
+                    case COMPLETED:
+                        LOG.info("Last job execution was successful");
+                        startNextInstance();
+                        break;
+                    case STARTED:
+                    case STARTING:
+                    case STOPPING:
+                        LOG.info("Job is already running. Repository in unknown state." +
+                                " Attempting to repair and restart from last successful job");
+                        abandonAllJobsStartedAfterLastSuccessfulJob();
+                        startNextInstance();
+                        break;
+                    case FAILED:
+                        LOG.info("Last job failed. Attempting restart");
+                        startNextInstance();
+                        break;
+                    case ABANDONED:
+                        LOG.info("Last job was abandoned. Attempting start from last successful job");
+                        abandonAllJobsStartedAfterLastSuccessfulJob();
+                        startNextInstance();
+                        break;
+                    case STOPPED:
+                        LOG.info("Last job was stopped. Attempting restart");
+                        startNextInstance();
+                        break;
+                    case UNKNOWN:
+                        LOG.info("Last job has unknown status. Marking as abandoned and attempting restart from last successful job");
+                        abandonAllJobsStartedAfterLastSuccessfulJob();
+                        startNextInstance();
+                        break;
+                    default:
+                        LOG.error("Should be unreachable");
+                        break;
                 }
+            }else{
+                LOG.info("No previous completed jobs found");
+                startNextInstance();
+            }
         } catch (JobInstanceAlreadyCompleteException|
                 JobExecutionAlreadyRunningException|
                 JobParametersInvalidException
-                 e) {
+                e) {
             LOG.error("Cannot start job", e);
         } catch (JobRestartException e){
             LOG.error("Cannot restart job. Attempting start from last successful job", e);
@@ -191,4 +176,22 @@ public class SingleJobLauncher {
             }
         }
     }
+
+    private JobExecution getLastJobExecution(){
+        JobExecution lastJobExecution = null;
+        try {
+            lastJobExecution = batchJobUtils.getLastSuccessfulJobExecution();
+        } catch (NullPointerException e) {
+            LOG.info("No previous successful jobs found");
+        }
+        if(lastJobExecution == null){
+            try{
+                lastJobExecution = batchJobUtils.getLastJobExecution();
+            } catch (NullPointerException e) {
+                LOG.info("No previous jobs found");
+            }
+        }
+        return lastJobExecution;
+    }
+
 }

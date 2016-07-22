@@ -9,8 +9,12 @@ import org.springframework.batch.core.launch.JobExecutionNotRunningException;
 import org.springframework.batch.core.launch.JobOperator;
 import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.batch.core.launch.NoSuchJobExecutionException;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.SmartLifecycle;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.retry.RecoveryCallback;
 import org.springframework.retry.RetryCallback;
@@ -33,7 +37,7 @@ import java.util.Set;
  * Created by rich on 14/06/16.
  */
 @Service
-public class CleanupBean implements SmartLifecycle {
+public class CleanupBean implements SmartLifecycle, ApplicationContextAware {
     private static final Logger LOG = LoggerFactory.getLogger(CleanupBean.class);
     @Autowired
     JobOperator jobOperator;
@@ -42,6 +46,7 @@ public class CleanupBean implements SmartLifecycle {
 
     @Autowired(required = false)
     ScheduledJobLauncher scheduledJobLauncher;
+    private ApplicationContext applicationContext;
 
     public void setJobExecutionId(long jobExecutionId) {
         this.jobExecutionId = jobExecutionId;
@@ -133,7 +138,6 @@ public class CleanupBean implements SmartLifecycle {
         if(confirmedStopped){
             LOG.info("Job successfully stopped, completed or are known to have failed");
         }
-
     }
 
     @Override
@@ -182,4 +186,8 @@ public class CleanupBean implements SmartLifecycle {
         return template;
     }
 
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
 }

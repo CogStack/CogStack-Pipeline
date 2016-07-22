@@ -4,10 +4,7 @@
             <pattern>%X{contextID}%d{HH:mm:ss.SSS}%thread%level%logger%line%msg</pattern>
         </encoder>
     </appender>
-    <root level="${LOG_LEVEL}">
-        <appender-ref ref="ROLLING" />
-        <appender-ref ref="STDOUT" />
-    </root>
+
 
 
     <!--<logger name="filelogger" level="${FILE_LOG_LEVEL}">-->
@@ -20,24 +17,29 @@
 
 
 
-    <!--<appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
-        <!--<file>${LOG_FILE_NAME}.html</file>-->
-        <!--<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
-            <!--&lt;!&ndash; daily rollover &ndash;&gt;-->
-            <!--<fileNamePattern>${LOG_FILE_NAME}-date.%d{yyyy-MM-dd}.%i.html</fileNamePattern>-->
-            <!--<timeBasedFileNamingAndTriggeringPolicy-->
-                    <!--class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">-->
-            <!--&lt;!&ndash; or whenever the file size reaches 50MB &ndash;&gt;-->
-            <!--<maxFileSize>100MB</maxFileSize>-->
-            <!--</timeBasedFileNamingAndTriggeringPolicy>-->
-            <!--&lt;!&ndash; keep 1 days' worth of history &ndash;&gt;-->
-            <!--<maxHistory>7</maxHistory>-->
-        <!--</rollingPolicy>-->
-        <!--<encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">-->
-            <!--<charset>UTF-8</charset>-->
-            <!--<layout class="ch.qos.logback.classic.html.HTMLLayout">-->
-                <!--<pattern>%X{contextID}%d{HH:mm:ss.SSS}%thread%level%logger%line%msg</pattern>-->
-            <!--</layout>-->
-        <!--</encoder>-->
-    <!--</appender>-->
+    <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_FILE_NAME}.html</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>${LOG_FILE_NAME}-date.%d{yyyy-MM-dd}.%i.html</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+            <!-- or whenever the file size reaches 50MB -->
+            <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <!-- keep 1 days' worth of history -->
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <charset>UTF-8</charset>
+            <layout class="ch.qos.logback.classic.html.HTMLLayout">
+                <pattern>%X{contextID}%d{HH:mm:ss.SSS}%thread%level%logger%line%msg</pattern>
+            </layout>
+        </encoder>
+    </appender>
+
+    <root level="${LOG_LEVEL}">
+        <appender-ref ref="ROLLING" />
+        <appender-ref ref="STDOUT" />
+    </root>
 </configuration>

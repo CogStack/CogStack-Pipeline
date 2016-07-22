@@ -24,12 +24,9 @@ services:
       - 61616:61616
       - 61613:61613
   postgres:
-    image: postgres:9.5.3
-    environment:
-      - POSTGRES_PASSWORD=mysecretpassword
-      - POSTGRES_USER=cogstack
+    image: richjackson/postgres
     ports:
-      - 5432:5432
+      - 5431:5432
   biolark:
     cpu_quota: 100000
     image: richjackson/biolark
@@ -50,7 +47,7 @@ services:
   turbo_laser_master:
     image: richjackson/turbolaser
     volumes:
-      - /home/rich/junk/tlconfig/master:/usr/src/turbolaser_conf
+      - /home/rich/java-projects/turbo-laser/docker-cogstack/master:/usr/src/turbolaser_conf
     environment:
       - LOG_LEVEL=info
       - FILE_LOG_LEVEL=off
@@ -61,5 +58,5 @@ services:
       - LOG_LEVEL=info
       - FILE_LOG_LEVEL=off
     volumes:
-      - /home/rich/junk/tlconfig/slave:/usr/src/turbolaser_conf
+      - /home/rich/java-projects/turbo-laser/docker-cogstack/slave:/usr/src/turbolaser_conf
     restart: on-failure

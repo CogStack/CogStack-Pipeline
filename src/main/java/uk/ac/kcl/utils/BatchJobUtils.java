@@ -7,6 +7,7 @@ import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -179,7 +180,5 @@ public class BatchJobUtils {
                 env.getProperty("jobName") + "'";
         LOG.info("retrieving list of job executions to mark as abandoned " + sql);
         return template.queryForList(sql, Long.class);
-
-
     }
 }
