@@ -20,6 +20,7 @@ import org.springframework.retry.RecoveryCallback;
 import org.springframework.retry.RetryCallback;
 import org.springframework.retry.RetryContext;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
+import org.springframework.retry.policy.AlwaysRetryPolicy;
 import org.springframework.retry.policy.TimeoutRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Service;
@@ -121,7 +122,7 @@ public class CleanupBean implements SmartLifecycle, ApplicationContextAware {
                             return true;
                         }
                     }
-                    throw new TurboLaserException("Job did not stop within timeout");
+                    throw new TurboLaserException("Job did not stop");
                 }
             }, new RecoveryCallback() {
                 @Override
@@ -147,7 +148,8 @@ public class CleanupBean implements SmartLifecycle, ApplicationContextAware {
 
     @Override
     public void stop(Runnable callback) {
-        LOG.info("****************SHUTDOWN INITIATED*********************");
+        LOG.info("****************CONTROLLED SHUTDOWN INITIATED*********************\n\n" +
+                "Hit quit command to terminate immediatly");
         cleanup();
         stop();
         callback.run();
@@ -175,8 +177,9 @@ public class CleanupBean implements SmartLifecycle, ApplicationContextAware {
     }
 
     public RetryTemplate getRetryTemplate(){
-        TimeoutRetryPolicy retryPolicy = new TimeoutRetryPolicy();
-        retryPolicy.setTimeout(Long.valueOf(env.getProperty("shutdownTimeout")));
+//        TimeoutRetryPolicy retryPolicy = new TimeoutRetryPolicy();
+//        retryPolicy.setTimeout(Long.valueOf(env.getProperty("shutdownTimeout")));
+        AlwaysRetryPolicy retryPolicy = new AlwaysRetryPolicy();
         FixedBackOffPolicy backOffPolicy = new FixedBackOffPolicy();
         backOffPolicy.setBackOffPeriod(5000);
 
