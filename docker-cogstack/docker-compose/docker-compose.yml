@@ -28,7 +28,7 @@ services:
     ports:
       - 5431:5432
   biolark:
-    cpu_quota: 100000
+    cpu_quota: 800000
     image: richjackson/biolark
     ports:
       - 5555

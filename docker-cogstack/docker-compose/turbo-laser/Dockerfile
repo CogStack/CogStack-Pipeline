@@ -9,4 +9,4 @@ ENV FILE_LOG_LEVEL off
 ENV LOG_FILE_NAME log
 WORKDIR /usr/src/turbolaser
 
-CMD ./wait-for-it.sh postgres:5432 --timeout=30 --strict -- java -DLOG_FILE_NAME=$LOG_FILE_NAME -DLOG_LEVEL=$LOG_LEVEL -DFILE_LOG_LEVEL=$FILE_LOG_LEVEL -jar /usr/src/turbolaser/turbo-laser-0.3.0.jar /usr/src/turbolaser_conf
+CMD ./test.sh
