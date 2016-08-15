@@ -15,6 +15,8 @@
  */
 package uk.ac.kcl.itemProcessors;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import gate.Factory;
 import gate.creole.ExecutionException;
 import gate.creole.ResourceInstantiationException;
@@ -45,8 +47,8 @@ public class GateDocumentItemProcessor extends TLItemProcessor implements ItemPr
     @Autowired
     private Environment env;
     private List<String> fieldsToGate;
-    private Boolean jsonOutput;
     private String fieldName;
+    private JsonParser jsonParser;
 
     public void setGateService(GateService gateService) {
         this.gateService = gateService;
@@ -56,8 +58,8 @@ public class GateDocumentItemProcessor extends TLItemProcessor implements ItemPr
     public void init(){
 
         fieldsToGate = Arrays.asList(env.getProperty("fieldsToGate").toLowerCase().split(","));
-        jsonOutput = Boolean.valueOf(env.getProperty("gateJSON"));
         fieldName = env.getProperty("gateFieldName");
+        this.jsonParser = new JsonParser();
 
     }
 
@@ -77,22 +79,14 @@ public class GateDocumentItemProcessor extends TLItemProcessor implements ItemPr
                     gateDoc = Factory
                             .newDocument((String) v);
                     gateService.processDoc(gateDoc);
-                    if (jsonOutput) {
-                        newMap.put(fieldName, gateService.convertDocToJSON(gateDoc));
-                    } else {
-                        newMap.put(fieldName, gateDoc.toXml());
-                    }
-
+                    newMap.put(fieldName, gateService.convertDocToJSON(gateDoc));
                 } catch (ExecutionException | IOException | ResourceInstantiationException e) {
-                    LOG.debug("gate failed on doc " + doc.getDocName() + " ", e);
-                    LOG.warn("Biolark failed on document " + doc.getDocName());
+                    LOG.warn("gate failed on doc " + doc.getDocName() + " ", e);
                     ArrayList<LinkedHashMap<Object, Object>> al = new ArrayList<LinkedHashMap<Object, Object>>();
-
                     LinkedHashMap<Object, Object> hm = new LinkedHashMap<Object, Object>();
                     hm.put("error", "see logs");
                     al.add(hm);
                     newMap.put(fieldName,hm);
-
                 } finally {
                     Factory.deleteResource(gateDoc);
                 }

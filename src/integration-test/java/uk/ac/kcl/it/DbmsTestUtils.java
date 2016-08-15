@@ -21,4 +21,6 @@ public interface DbmsTestUtils {
     void createJobRepository();
 
     void createDeIdInputTable();
+
+    int countRowsInOutputTable();
 }

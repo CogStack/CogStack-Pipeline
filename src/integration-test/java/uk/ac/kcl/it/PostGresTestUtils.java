@@ -181,5 +181,11 @@ public class PostGresTestUtils implements DbmsTestUtils{
                 "  select primarykeyfieldvalue, postcode as identifier  from tblidentifiers");
     }
 
+    @Override
+    public int countRowsInOutputTable() {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(targetDataSource);
+        return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM tblOutputDocs", Integer.class);
+    }
+
 
 }

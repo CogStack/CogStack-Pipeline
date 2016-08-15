@@ -5,7 +5,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.support.AbstractTestExecutionListener;
 import uk.ac.kcl.it.DbmsTestUtils;
-import uk.ac.kcl.it.PostGresTestUtils;
 import uk.ac.kcl.it.TestUtils;
 
 /**
@@ -25,7 +24,7 @@ public class TikaTestExecutionListener extends AbstractTestExecutionListener {
         TestUtils testUtils =
                 testContext.getApplicationContext().getBean(TestUtils.class);
         Environment env = testContext.getApplicationContext().getBean(Environment.class);
-        testUtils.deleteESTestIndex();
+        testUtils.deleteESTestIndexAndSetUpMapping();
         testUtils.insertTestBinariesForTika("tblInputDocs");
 
     }

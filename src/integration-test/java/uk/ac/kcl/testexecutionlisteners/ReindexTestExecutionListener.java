@@ -23,7 +23,7 @@ public class ReindexTestExecutionListener extends AbstractTestExecutionListener 
         TestUtils testUtils =
                 testContext.getApplicationContext().getBean(TestUtils.class);
         Environment env = testContext.getApplicationContext().getBean(Environment.class);
-        testUtils.deleteESTestIndex();
+        testUtils.deleteESTestIndexAndSetUpMapping();
         testUtils.insertJsonsIntoInputTable(env.getProperty("tblInputDocs"));
     }
 

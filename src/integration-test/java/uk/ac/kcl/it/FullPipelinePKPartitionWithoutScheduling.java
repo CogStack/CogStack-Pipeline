@@ -30,6 +30,8 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
 import uk.ac.kcl.testexecutionlisteners.FullPipelineTestExecutionListener;
 
+import static org.junit.Assert.assertEquals;
+
 /**
  *
  * @author rich
@@ -69,12 +71,23 @@ public class FullPipelinePKPartitionWithoutScheduling {
     @Autowired
     SingleJobLauncher jobLauncher;
 
+    @Autowired
+    TestUtils testUtils;
 
+    @Autowired
+    DbmsTestUtils dbmsTestUtils;
 
     @Test
     @DirtiesContext
     public void fullPipelineTest() {
         jobLauncher.launchJob();
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        assertEquals(31,testUtils.countOutputDocsInES());
+        assertEquals(31,dbmsTestUtils.countRowsInOutputTable());
     }
 
 

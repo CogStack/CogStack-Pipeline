@@ -197,4 +197,10 @@ public class SqlServerTestUtils implements DbmsTestUtils {
 //                + ", someText VARCHAR (MAX)"
 //                + ", anotherTime DateTIME )");
     }
+
+    @Override
+    public int countRowsInOutputTable() {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(targetDataSource);
+        return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM dbo.tblOutputDocs", Integer.class);
+    }
 }

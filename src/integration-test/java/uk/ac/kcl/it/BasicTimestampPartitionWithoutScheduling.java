@@ -19,6 +19,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.env.Environment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -28,6 +29,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
 import uk.ac.kcl.testexecutionlisteners.BasicTestExecutionListener;
+
+import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
@@ -56,10 +59,23 @@ public class BasicTimestampPartitionWithoutScheduling {
     @Autowired
     SingleJobLauncher jobLauncher;
 
+    @Autowired
+    private TestUtils testUtils;
+
+    @Autowired
+    DbmsTestUtils dbmsTestUtils;
+
     @Test
     @DirtiesContext
-    public void postgresBasicPipelineTest() {
+    public void basicTimestampPartitionWithoutSchedulingTest() {
         jobLauncher.launchJob();
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        assertEquals(75,testUtils.countOutputDocsInES());
+        assertEquals(75,dbmsTestUtils.countRowsInOutputTable());
     }
 
 }

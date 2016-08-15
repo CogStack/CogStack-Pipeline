@@ -27,7 +27,7 @@ public class GateTestExecutionListener extends AbstractTestExecutionListener {
         TestUtils testUtils =
                 testContext.getApplicationContext().getBean(TestUtils.class);
         Environment env = testContext.getApplicationContext().getBean(Environment.class);
-        testUtils.deleteESTestIndex();
+        testUtils.deleteESTestIndexAndSetUpMapping();
         testUtils.insertTestXHTMLForGate(env.getProperty("tblInputDocs"),false);
 
 

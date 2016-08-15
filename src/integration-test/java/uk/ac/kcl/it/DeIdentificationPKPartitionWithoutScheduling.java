@@ -47,6 +47,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static org.junit.Assert.assertEquals;
+
 /**
  *
  * @author rich
@@ -85,9 +87,16 @@ public class DeIdentificationPKPartitionWithoutScheduling {
 
     @Test
     @DirtiesContext
-    public void postgresIntegrationTestsDeIdentificationPKPartitionWithoutScheduling() {
+    public void deIdentificationTest() {
 
         jobLauncher.launchJob();
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        assertEquals(106,testUtils.countOutputDocsInES());
+        assertEquals(106,dbmsTestUtils.countRowsInOutputTable());
     }
 
 
@@ -114,7 +123,7 @@ public class DeIdentificationPKPartitionWithoutScheduling {
     private int mutatortype;
 
     @Test
-    public void performanceTest() {
+    public void deidentificationPerformanceTest() {
         dbmsTestUtils.createBasicInputTable();
         dbmsTestUtils.createBasicOutputTable();
         dbmsTestUtils.createDeIdInputTable();

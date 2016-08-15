@@ -29,6 +29,8 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
 import uk.ac.kcl.testexecutionlisteners.BasicTestExecutionListener;
 
+import static org.junit.Assert.assertEquals;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
@@ -56,10 +58,26 @@ public class BasicPKPartitionWithoutScheduling {
     @Autowired
     SingleJobLauncher jobLauncher;
 
+    @Autowired
+    TestUtils testUtils;
+
+    @Autowired
+    DbmsTestUtils dbmsTestUtils;
+
     @Test
     @DirtiesContext
-    public void PostGresIntegrationTestsBasicPKPartitionWithoutSchedulingTest() {
+    public void basicPkPartitionWithoutSchedulingTest() {
         jobLauncher.launchJob();
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        assertEquals(75,testUtils.countOutputDocsInES());
+        assertEquals(75,dbmsTestUtils.countRowsInOutputTable());
+
+
     }
 
 }

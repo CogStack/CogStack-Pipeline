@@ -15,6 +15,8 @@
  */
 package uk.ac.kcl.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gate.*;
 import gate.creole.ExecutionException;
 import gate.util.GateException;
@@ -48,7 +50,8 @@ public class GateService {
 
     private LinkedBlockingQueue<CorpusController> genericQueue;
     private int poolSize;
-    private Iterable<String> annotationSets;
+    private Collection<String> annotationSets;
+    private Collection<String> annotationTypes;
 
     private LinkedBlockingQueue<CorpusController> deIdQueue;
 
@@ -81,7 +84,18 @@ public class GateService {
 
         if(activeProfiles.contains("gate")){
             File gateApp = new File(env.getProperty("gateApp"));
-            annotationSets = Arrays.asList(env.getProperty("gateAnnotationSets").split(","));
+            annotationSets = new ArrayList<>();
+            try{
+                annotationSets.addAll(Arrays.asList(env.getProperty("gateAnnotationSets").split(",")));
+            }catch(NullPointerException ex){
+                LOG.info("No annotation sets listed for extraction. Using default set");
+            }
+            annotationTypes = new ArrayList<>();
+            try{
+                annotationTypes.addAll(Arrays.asList(env.getProperty("gateAnnotationTypes").split(",")));
+            }catch(NullPointerException ex){
+                LOG.info("No annotation types listed for extraction. Extracting all types");
+            }
             genericQueue = new LinkedBlockingQueue<>();
             Corpus corpus = Factory.newCorpus("Corpus");
             CorpusController pipeline = (CorpusController) PersistenceManager
@@ -157,16 +171,30 @@ public class GateService {
     }
 
 
-    public String convertDocToJSON(gate.Document doc) throws IOException {
-        Map<String, Collection<Annotation>> map = new HashMap<>();
-        //code to retrive specific annotation sets. revisit later        
-        for (String ASName : annotationSets) {
-            if (ASName != null) {
-                map.put(ASName, doc.getAnnotations(ASName));
-            } else {
-                map.put("", doc.getAnnotations(null));
+    public Object convertDocToJSON(gate.Document doc) throws IOException {
+        Map<String, Collection<Annotation>> gateMap = new HashMap<>();
+
+        if(annotationSets.size() == 0){
+            addTypes(doc, gateMap);
+        }else if (annotationSets.size() > 0){
+            addTypes(doc, gateMap);
+        }
+
+        Object result =
+                new ObjectMapper().readValue(gate.corpora.DocumentJsonUtils.toJson(doc, gateMap), Object.class);
+
+
+        return result;
+    }
+
+
+    private void addTypes(Document doc, Map<String, Collection<Annotation>> map) {
+        if(annotationTypes.size() == 0) {
+            map.put("default", doc.getAnnotations());
+        }else if(annotationTypes.size() >0) {
+            for (String type : annotationTypes) {
+                map.put(type, doc.getAnnotations().get(type));
             }
         }
-        return gate.corpora.DocumentJsonUtils.toJson(doc, map);
     }
 }

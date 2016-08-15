@@ -30,6 +30,8 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
 import uk.ac.kcl.testexecutionlisteners.BasicTestExecutionListener;
 
+import static org.junit.Assert.assertEquals;
+
 /**
  *
  * @author rich
@@ -63,11 +65,21 @@ public class BiolarkPKPartitionWithoutScheduling {
 
     @Autowired
     SingleJobLauncher jobLauncher;
-
+    @Autowired
+    private TestUtils testUtils;
+    @Autowired
+    DbmsTestUtils dbmsTestUtils;
     @Test
     @DirtiesContext
-    public void postgresBiolarkPipelineTest() {
+    public void biolarkTest() {
         jobLauncher.launchJob();
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        assertEquals(75,testUtils.countOutputDocsInES());
+        assertEquals(75,dbmsTestUtils.countRowsInOutputTable());
     }
 
 

@@ -30,6 +30,8 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
 import uk.ac.kcl.testexecutionlisteners.TikaTestExecutionListener;
 
+import static org.junit.Assert.assertEquals;
+
 /**
  *
  * @author rich
@@ -64,15 +66,20 @@ public class TikaPKPartitionWithoutScheduling {
 
     @Autowired
     SingleJobLauncher jobLauncher;
-
+    @Autowired
+    TestUtils testUtils;
 
 
     @Test
     @DirtiesContext
-    public void sqlServerikaPipelineTest() {
+    public void tikaPipelineTest() {
         jobLauncher.launchJob();
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        assertEquals(1000,testUtils.countOutputDocsInES());
     }
-
-
-
 }

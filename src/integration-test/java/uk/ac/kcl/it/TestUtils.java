@@ -1,5 +1,7 @@
 package uk.ac.kcl.it;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -52,7 +54,7 @@ public class TestUtils  {
 
     @Autowired
     @Qualifier("targetDataSource")
-    public DataSource jdbcTargetDocumentFinder;
+    public DataSource targetDataSource;
 
     @Autowired
     StringMutatorService stringMutatorService;
@@ -393,18 +395,68 @@ public class TestUtils  {
         return arr;
     }
 
-    public void deleteESTestIndex(){
+    public void deleteESTestIndexAndSetUpMapping(){
 
-            String uri = "http://"+env.getProperty("elasticsearch.cluster.host")+":9200"+"/"+env.getProperty("elasticsearch.index.name");
-            HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(HttpClients.createDefault());
-            RestTemplate restTemplate = new RestTemplate(requestFactory);
+        String uri = "http://"+env.getProperty("elasticsearch.cluster.host")+":9200"+"/"+env.getProperty("elasticsearch.index.name");
+        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(HttpClients.createDefault());
+        RestTemplate restTemplate = new RestTemplate(requestFactory);
         try {
             restTemplate.delete(uri);
         }catch(HttpClientErrorException ex){
             System.out.println("Index not deleted: " +ex.getLocalizedMessage());
         }
+        setUpESMapping();
+    }
+
+    private void setUpESMapping(){
+        String uri = "http://"+env.getProperty("elasticsearch.cluster.host")+":9200"+"/"+
+                env.getProperty("elasticsearch.index.name");
+        String mapping =     "{" +
+                "  \"mappings\": {" +
+                "    \""+env.getProperty("elasticsearch.type")+"\": {" +
+                "      \"properties\": {" +
+                "        \""+env.getProperty("biolarkFieldName")+"\": {" +
+                "          \"type\": \"nested\" " +
+                "        }," +
+                "        \""+env.getProperty("gateFieldName")+"\": {" +
+                "          \"type\": \"nested\" " +
+                "        }" +
+                "      }" +
+                "    }" +
+                "  }" +
+                "}";
+
+        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(HttpClients.createDefault());
+        RestTemplate restTemplate = new RestTemplate(requestFactory);
+        try {
+            restTemplate.put(uri,mapping,String.class);
+        }catch(HttpClientErrorException ex){
+            System.out.println("mapping not set up: " +ex.getLocalizedMessage());
+        }
+
+
+
 
     }
+
+
+
+
+    public int countOutputDocsInES(){
+        String uri = "http://"+env.getProperty("elasticsearch.cluster.host")+":9200"+
+                "/"+env.getProperty("elasticsearch.index.name")+"/"
+                +env.getProperty("elasticsearch.type")+"/_count";
+        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(HttpClients.createDefault());
+        RestTemplate restTemplate = new RestTemplate(requestFactory);
+        JsonObject jsonObject = null;
+        try {
+            jsonObject = new JsonParser().parse(restTemplate.getForObject(uri,String.class)).getAsJsonObject();
+        }catch(HttpClientErrorException ex){
+            System.out.println("Cannot execute REST request: " +ex.getLocalizedMessage());
+        }
+        return jsonObject.get("count").getAsInt();
+    }
+
 
     private String multiplyDocSize(String doc, int factor){
         String newDoc = new String(doc);

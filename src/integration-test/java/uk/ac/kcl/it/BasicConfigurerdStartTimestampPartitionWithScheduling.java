@@ -30,6 +30,8 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.scheduling.ScheduledJobLauncher;
 import uk.ac.kcl.testexecutionlisteners.BasicTestExecutionListener;
 
+import static org.junit.Assert.assertEquals;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
@@ -57,14 +59,24 @@ public class BasicConfigurerdStartTimestampPartitionWithScheduling {
 
     @Autowired
     private TestUtils testUtils;
-
+    @Autowired
+    DbmsTestUtils dbmsTestUtils;
     @Autowired
     Environment env;
 
     @Test
     @DirtiesContext
-    public void basicConfigurerdStartPkPartitionWithScheduling() {
+    public void basicConfigurerdStartTimestampWithSchedulingTest() {
         testUtils.insertFreshDataIntoBasicTableAfterDelay(env.getProperty("tblInputDocs"),15000);
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        //note, in this test, we upsert documents, overriding existng ones. hence why ther ate 75 in the index and 150
+        //in the db
+        assertEquals(75,testUtils.countOutputDocsInES());
+        assertEquals(150,dbmsTestUtils.countRowsInOutputTable());
     }
 
 }
