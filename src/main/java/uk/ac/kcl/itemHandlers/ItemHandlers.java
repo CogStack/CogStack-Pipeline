@@ -90,6 +90,10 @@ public class ItemHandlers {
     @Qualifier("jsonFileItemWriter")
     ItemWriter<Document> jsonFileItemWriter;
 
+    @Autowired(required = false)
+    @Qualifier("binaryFileItemWriter")
+    ItemWriter<Document> binaryFileItemWriter;
+
     @Bean
     @Qualifier("compositeItemWriter")
     public ItemWriter<Document> compositeESandJdbcItemWriter() {
@@ -103,6 +107,9 @@ public class ItemHandlers {
         }
         if(jsonFileItemWriter !=null){
             delegates.add(jsonFileItemWriter);
+        }
+        if(binaryFileItemWriter !=null){
+            delegates.add(binaryFileItemWriter);
         }
         writer.setDelegates(delegates);
         return writer;
