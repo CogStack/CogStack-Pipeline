@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2016 King's College London, Richard Jackson <richgjackson@gmail.com>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,9 +28,9 @@ import org.springframework.stereotype.Service;
 import org.xml.sax.ContentHandler;
 import uk.ac.kcl.model.Document;
 
-import javax.annotation.PostConstruct;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import javax.annotation.PostConstruct;
 
 /**
  *
@@ -73,13 +73,13 @@ public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemPr
         } else {
             handler = new BodyContentHandler();
         }
-        ;
+
         Metadata metadata = new Metadata();
         try (InputStream stream = new ByteArrayInputStream(doc.getBinaryContent())) {
             parser.parse(stream, handler, metadata);
             addField(doc, handler.toString());
         } catch (Exception ex) {
-            addField(doc,ex.getMessage());
+            addField(doc, ex.getMessage());
         }
         LOG.debug("finished " + this.getClass().getSimpleName() +" on doc " +doc.getDocName());
         return doc;
