@@ -15,8 +15,11 @@
  */
 package uk.ac.kcl.itemProcessors;
 
+import org.apache.tika.config.TikaConfig;
+import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
+import org.apache.tika.parser.ParseContext;
 import org.apache.tika.sax.BodyContentHandler;
 import org.apache.tika.sax.ToXMLContentHandler;
 import org.slf4j.LoggerFactory;
@@ -26,10 +29,15 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
 import uk.ac.kcl.model.Document;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import javax.annotation.PostConstruct;
 
 /**
@@ -45,6 +53,7 @@ public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemPr
     private boolean keepTags;
     private String binaryFieldName;
     private AutoDetectParser parser;
+    private TikaConfig config;
 
     public boolean isKeepTags() {
         return keepTags;
@@ -58,10 +67,13 @@ public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemPr
     Environment env;
 
     @PostConstruct
-    public void init(){
+    public void init() throws IOException, SAXException, TikaException{
         this.keepTags = env.getProperty("keepTags").equalsIgnoreCase("true");
         setFieldName(env.getProperty("tikaFieldName"));
-        parser = new AutoDetectParser();
+
+        config = new TikaConfig(this.getClass().getClassLoader()
+                                .getResourceAsStream("tika-config.xml"));
+        parser = new AutoDetectParser(config);
     }
 
     @Override
@@ -76,7 +88,20 @@ public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemPr
 
         Metadata metadata = new Metadata();
         try (InputStream stream = new ByteArrayInputStream(doc.getBinaryContent())) {
-            parser.parse(stream, handler, metadata);
+            ParseContext context = new ParseContext();
+            context.set(TikaConfig.class, config);
+            parser.parse(stream, handler, metadata, context);
+
+            Set<String> metaKeys = new HashSet<String>(Arrays.asList(
+                                                          metadata.names()));
+            if (metaKeys.contains("X-PDFPREPROC-OCR-APPLIED")) {
+                doc.getAssociativeArray().put("X-PDFPREPROC-OCR-APPLIED",
+                    metadata.get("X-PDFPREPROC-OCR-APPLIED"));
+            }
+            if (metaKeys.contains("X-PDFPREPROC-ORIGINAL")) {
+                doc.getAssociativeArray().put("X-PDFPREPROC-ORIGINAL",
+                    metadata.get("X-PDFPREPROC-ORIGINAL"));
+            }
             addField(doc, handler.toString());
         } catch (Exception ex) {
             addField(doc, ex.getMessage());
