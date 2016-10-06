@@ -128,8 +128,13 @@ public class PDFPreprocessorParser extends AbstractParser {
         //if there's content - reparse with official handlers/metadata. What else can you do? Also check imagemagick is available
         if (body.toString().length() > 100 || !hasImageMagick(config)) {
             pdfParser.parse(stream, handler, metadata, context);
+            metadata.set("X-PDFPREPROC-OCR-APPLIED", "NA");
             return;
         } else {
+            metadata.set("X-PDFPREPROC-ORIGINAL", body.toString());
+            metadata.set("X-PDFPREPROC-OCR-APPLIED", "FAIL");
+            // "FAIL" will be overwritten if it succeeds later
+
             //add the PDF metadata to the official metadata object
             Arrays.asList(pdfMetadata.names()).stream().forEach(name -> {
                 metadata.add(name, pdfMetadata.get(name));
@@ -147,6 +152,7 @@ public class PDFPreprocessorParser extends AbstractParser {
             if (tiffFileOfPDF.exists()) {
                 TesseractOCRParser tesseract = new TesseractOCRParser();
                 tesseract.parse(FileUtils.openInputStream(tiffFileOfPDF), handler, metadata, context);
+                metadata.set("X-PDFPREPROC-OCR-APPLIED", "SUCCESS");
             }
         } finally {
             if (tiffFileOfPDF.exists()) {
