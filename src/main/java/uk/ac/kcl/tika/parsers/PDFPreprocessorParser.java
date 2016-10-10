@@ -169,8 +169,12 @@ public class PDFPreprocessorParser extends AbstractParser {
     }
 
     private File makeTiffFromPDF(File input, File output, ImageMagickConfig config) throws IOException, TikaException {
-        String[] cmd = {config.getImageMagickPath() + getImageMagickProg(), "-density", config.getDensity(),
-                input.getPath(), "-depth", config.getDepth(), "-quality", config.getQuality(), output.getPath()};
+        String[] cmd = {config.getImageMagickPath() + getImageMagickProg(),
+                        "-density", config.getDensity(), input.getPath(),
+                        "-depth", config.getDepth(),
+                        "-quality", config.getQuality(),
+                        "-background", "white", "-flatten", "+matte",
+                        output.getPath()};
 
         ProcessBuilder pb = new ProcessBuilder(cmd);
         //setEnv(config, pb);
