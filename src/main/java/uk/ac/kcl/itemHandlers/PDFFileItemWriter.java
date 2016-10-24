@@ -76,7 +76,7 @@ public class PDFFileItemWriter implements ItemWriter<Document> {
             );
     }
 
-    private void handleMSWord(Document doc) throws IOException, InterruptedException, ExecutionException, TimeoutException {
+    private void handleMSWord(Document doc) throws IOException {
         // Create a temp directory for each input document
         Path tempPath = Files.createTempDirectory(doc.getDocName());
 
@@ -87,6 +87,7 @@ public class PDFFileItemWriter implements ItemWriter<Document> {
         String[] cmd = { getLibreOfficeProg(), "--convert-to", "pdf",
                          tempInputFile.getAbsolutePath(), "--headless",
                          "--outdir", tempPath.toString()};
+
         Process process = new ProcessBuilder(cmd).start();
         IOUtils.closeQuietly(process.getOutputStream());
         InputStream processInputStream = process.getInputStream();
@@ -94,12 +95,29 @@ public class PDFFileItemWriter implements ItemWriter<Document> {
         FutureTask<Integer> waitTask = new FutureTask<>(process::waitFor);
         Thread waitThread = new Thread(waitTask);
         waitThread.start();
-        waitTask.get(30, TimeUnit.SECONDS);
+        try {
+            waitTask.get(30, TimeUnit.SECONDS);
 
-        // Move the file to the configured output path
-        Path tempOutputFile = tempPath.resolve("file.pdf");
-        Path outputFile = Paths.get(outputPath, doc.getDocName() + ".pdf");
-        Files.move(tempOutputFile, outputFile);
+            // Move the file to the configured output path
+            Path tempOutputFile = tempPath.resolve("file.pdf");
+            Path outputFile = Paths.get(outputPath, doc.getDocName() + ".pdf");
+            Files.move(tempOutputFile, outputFile);
+
+        } catch (InterruptedException e) {
+            waitThread.interrupt();
+            process.destroy();
+            Thread.currentThread().interrupt();
+        } catch (ExecutionException e) {
+            // should not be thrown
+            LOG.error(e.getMessage());
+        } catch (TimeoutException e) {
+            waitThread.interrupt();
+            process.destroy();
+            LOG.error(e.getMessage());
+        } finally {
+            tempInputFile.delete();
+            tempPath.toFile().delete();
+        }
     }
 
     private String getLibreOfficeProg() {
