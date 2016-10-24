@@ -42,7 +42,6 @@ public class ThumbnailFileItemWriter implements ItemWriter<Document> {
         this.imageMagickProg = System.getProperty("os.name").startsWith("Windows") ? "convert.exe" : "convert";
         this.thumbnailDensity = env.getProperty("thumbnailDensity");
 
-        // TODO: fix this
         this.pdfOutputPath = env.getProperty("fileOutputDirectory.pdf");
     }
 
@@ -55,11 +54,6 @@ public class ThumbnailFileItemWriter implements ItemWriter<Document> {
     public final void write(List<? extends Document> documents) throws Exception {
 
         for (Document doc : documents) {
-            FileUtils.writeByteArrayToFile(
-                new File(outputPath + File.separator + doc.getDocName()),
-                doc.getBinaryContent()
-            );
-
             String[] cmd = {
               imageMagickProg,
               "-density",
@@ -70,8 +64,8 @@ public class ThumbnailFileItemWriter implements ItemWriter<Document> {
               "85",
               "-resize",
               "1600x800",
-              pdfOutputPath + File.separator + doc.getDocName() + "[0]",
-              outputPath + File.separator + doc.getDocName()
+              pdfOutputPath + File.separator + doc.getDocName() + ".pdf[0]",
+              outputPath + File.separator + doc.getDocName() + ".png"
             };
 
             try {
