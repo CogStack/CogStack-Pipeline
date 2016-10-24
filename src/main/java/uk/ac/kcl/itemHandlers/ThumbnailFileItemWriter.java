@@ -43,7 +43,7 @@ public class ThumbnailFileItemWriter implements ItemWriter<Document> {
         this.thumbnailDensity = env.getProperty("thumbnailDensity");
 
         // TODO: fix this
-        this.pdfOutputPath = env.getProperty("fileOutputDirectory.binary");
+        this.pdfOutputPath = env.getProperty("fileOutputDirectory.pdf");
     }
 
     @PreDestroy
