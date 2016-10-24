@@ -63,6 +63,9 @@ public class PDFFileItemWriter implements ItemWriter<Document> {
             case "application/msword":
                 handleMSWord(doc);
                 break;
+            case "image/tiff":
+                handleTiff(doc);
+                break;
             default:
                 break;
             }
@@ -70,6 +73,8 @@ public class PDFFileItemWriter implements ItemWriter<Document> {
     }
 
     private void handlePdf(Document doc) throws IOException {
+        // Simply dump the binary content to pdf
+
         FileUtils.writeByteArrayToFile(
             new File(outputPath + File.separator + doc.getDocName() + ".pdf"),
             doc.getBinaryContent()
@@ -77,6 +82,8 @@ public class PDFFileItemWriter implements ItemWriter<Document> {
     }
 
     private void handleMSWord(Document doc) throws IOException {
+        // Use Libreoffice to convert the MS word document to pdf
+
         // Create a temp directory for each input document
         Path tempPath = Files.createTempDirectory(doc.getDocName());
 
@@ -87,6 +94,42 @@ public class PDFFileItemWriter implements ItemWriter<Document> {
         String[] cmd = { getLibreOfficeProg(), "--convert-to", "pdf",
                          tempInputFile.getAbsolutePath(), "--headless",
                          "--outdir", tempPath.toString()};
+
+        try {
+            externalProcessHandler(tempPath, cmd, doc.getDocName());
+        }
+        finally {
+            tempInputFile.delete();
+            tempPath.toFile().delete();
+        }
+    }
+
+    private void handleTiff(Document doc) throws IOException {
+        // Use ImageMagick to convert the tiff image to pdf
+
+        // Create a temp directory for each input document
+        Path tempPath = Files.createTempDirectory(doc.getDocName());
+
+        // Dump the binary content to a file in the temp directory
+        File tempInputFile = new File(tempPath + File.separator + "file.tiff");
+        FileUtils.writeByteArrayToFile(tempInputFile, doc.getBinaryContent());
+
+        File tempOutputPdfFile = new File(tempPath + File.separator + "file.pdf");
+        String[] cmd = { getImageMagickProg(), tempInputFile.getAbsolutePath(),
+                         tempOutputPdfFile.getAbsolutePath()};
+
+        try {
+            externalProcessHandler(tempPath, cmd, doc.getDocName());
+        }
+        finally {
+            tempInputFile.delete();
+            tempPath.toFile().delete();
+        }
+    }
+
+    private void externalProcessHandler(Path tempPath, String[] cmd,
+                                        String docName
+                                        ) throws IOException {
 
         Process process = new ProcessBuilder(cmd).start();
         IOUtils.closeQuietly(process.getOutputStream());
@@ -100,7 +143,7 @@ public class PDFFileItemWriter implements ItemWriter<Document> {
 
             // Move the file to the configured output path
             Path tempOutputFile = tempPath.resolve("file.pdf");
-            Path outputFile = Paths.get(outputPath, doc.getDocName() + ".pdf");
+            Path outputFile = Paths.get(outputPath, docName + ".pdf");
             Files.move(tempOutputFile, outputFile);
 
         } catch (InterruptedException e) {
@@ -114,10 +157,11 @@ public class PDFFileItemWriter implements ItemWriter<Document> {
             waitThread.interrupt();
             process.destroy();
             LOG.error(e.getMessage());
-        } finally {
-            tempInputFile.delete();
-            tempPath.toFile().delete();
         }
+    }
+
+    public static String getImageMagickProg() {
+        return System.getProperty("os.name").startsWith("Windows") ? "convert.exe" : "convert";
     }
 
     private String getLibreOfficeProg() {
