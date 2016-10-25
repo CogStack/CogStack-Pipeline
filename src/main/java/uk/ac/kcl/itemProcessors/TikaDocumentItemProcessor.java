@@ -102,6 +102,14 @@ public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemPr
                 doc.getAssociativeArray().put("X-PDFPREPROC-ORIGINAL",
                     metadata.get("X-PDFPREPROC-ORIGINAL"));
             }
+
+            if (metaKeys.contains("Content-Type")) {
+                doc.getAssociativeArray().put("X-TL-CONTENT-TYPE",
+                    metadata.get("Content-Type"));
+            } else {
+                doc.getAssociativeArray().put("X-TL-CONTENT-TYPE",
+                    "TL_CONTENT_TYPE_UNKNOWN");
+            }
             addField(doc, handler.toString());
         } catch (Exception ex) {
             addField(doc, ex.getMessage());
