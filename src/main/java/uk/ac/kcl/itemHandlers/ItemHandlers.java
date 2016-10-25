@@ -94,6 +94,10 @@ public class ItemHandlers {
     @Qualifier("pdfFileItemWriter")
     ItemWriter<Document> pdfFileItemWriter;
 
+    @Autowired(required = false)
+    @Qualifier("thumbnailFileItemWriter")
+    ItemWriter<Document> thumbnailFileItemWriter;
+
     @Bean
     @Qualifier("compositeItemWriter")
     public ItemWriter<Document> compositeESandJdbcItemWriter() {
@@ -110,6 +114,9 @@ public class ItemHandlers {
         }
         if(pdfFileItemWriter != null){
             delegates.add(pdfFileItemWriter);
+        }
+        if(thumbnailFileItemWriter !=null){
+            delegates.add(thumbnailFileItemWriter);
         }
         writer.setDelegates(delegates);
         return writer;

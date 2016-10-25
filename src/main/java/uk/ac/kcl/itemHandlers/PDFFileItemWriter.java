@@ -30,7 +30,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 @Service("pdfFileItemWriter")
-@Profile("pdfFileWriter")
+@Profile({"pdfFileWriter", "thumbnailFileWriter"})
 public class PDFFileItemWriter implements ItemWriter<Document> {
     private static final Logger LOG = LoggerFactory.getLogger(PDFFileItemWriter.class);
 
