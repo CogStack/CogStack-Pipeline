@@ -99,6 +99,8 @@ public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemPr
 
             extractContentTypeMetadata(doc, metaKeys, metadata);
 
+            extractPageCountMetadata(doc, metaKeys, metadata);
+
             addField(doc, handler.toString());
         } catch (Exception ex) {
             addField(doc, ex.getMessage());
@@ -127,6 +129,26 @@ public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemPr
         } else {
             doc.getAssociativeArray().put("X-TL-CONTENT-TYPE",
                 "TL_CONTENT_TYPE_UNKNOWN");
+        }
+    }
+
+    private void extractPageCountMetadata(Document doc, Set<String> metaKeys,
+                                          Metadata metadata) {
+        if (metaKeys.contains("xmpTPg:NPages")) {
+            doc.getAssociativeArray().put("X-TL-PAGE-COUNT",
+                metadata.get("xmpTPg:NPages"));
+
+        } else if (metaKeys.contains("Page-Count")) {
+            doc.getAssociativeArray().put("X-TL-PAGE-COUNT",
+                metadata.get("Page-Count"));
+
+        } else if (metaKeys.contains("meta:page-count")) {
+            doc.getAssociativeArray().put("X-TL-PAGE-COUNT",
+                metadata.get("meta:page-count"));
+
+        } else {
+            doc.getAssociativeArray().put("X-TL-PAGE-COUNT",
+                "TL_PAGE_COUNT_UNKNOWN");
         }
     }
 }
