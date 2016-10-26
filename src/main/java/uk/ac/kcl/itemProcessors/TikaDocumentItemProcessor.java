@@ -94,22 +94,11 @@ public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemPr
 
             Set<String> metaKeys = new HashSet<String>(Arrays.asList(
                                                           metadata.names()));
-            if (metaKeys.contains("X-PDFPREPROC-OCR-APPLIED")) {
-                doc.getAssociativeArray().put("X-PDFPREPROC-OCR-APPLIED",
-                    metadata.get("X-PDFPREPROC-OCR-APPLIED"));
-            }
-            if (metaKeys.contains("X-PDFPREPROC-ORIGINAL")) {
-                doc.getAssociativeArray().put("X-PDFPREPROC-ORIGINAL",
-                    metadata.get("X-PDFPREPROC-ORIGINAL"));
-            }
 
-            if (metaKeys.contains("Content-Type")) {
-                doc.getAssociativeArray().put("X-TL-CONTENT-TYPE",
-                    metadata.get("Content-Type"));
-            } else {
-                doc.getAssociativeArray().put("X-TL-CONTENT-TYPE",
-                    "TL_CONTENT_TYPE_UNKNOWN");
-            }
+            extractOCRMetadata(doc, metaKeys, metadata);
+
+            extractContentTypeMetadata(doc, metaKeys, metadata);
+
             addField(doc, handler.toString());
         } catch (Exception ex) {
             addField(doc, ex.getMessage());
@@ -118,5 +107,26 @@ public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemPr
         return doc;
     }
 
+    private void extractOCRMetadata(Document doc, Set<String> metaKeys,
+                                    Metadata metadata) {
+        if (metaKeys.contains("X-PDFPREPROC-OCR-APPLIED")) {
+            doc.getAssociativeArray().put("X-PDFPREPROC-OCR-APPLIED",
+                metadata.get("X-PDFPREPROC-OCR-APPLIED"));
+        }
+        if (metaKeys.contains("X-PDFPREPROC-ORIGINAL")) {
+            doc.getAssociativeArray().put("X-PDFPREPROC-ORIGINAL",
+                metadata.get("X-PDFPREPROC-ORIGINAL"));
+        }
+    }
 
+    private void extractContentTypeMetadata(Document doc, Set<String> metaKeys,
+                                            Metadata metadata) {
+        if (metaKeys.contains("Content-Type")) {
+            doc.getAssociativeArray().put("X-TL-CONTENT-TYPE",
+                metadata.get("Content-Type"));
+        } else {
+            doc.getAssociativeArray().put("X-TL-CONTENT-TYPE",
+                "TL_CONTENT_TYPE_UNKNOWN");
+        }
+    }
 }
