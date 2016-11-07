@@ -79,6 +79,7 @@ public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemPr
     @Override
     public Document process(final Document doc) throws Exception {
         LOG.debug("starting " + this.getClass().getSimpleName() +" on doc " +doc.getDocName());
+        long startTime = System.currentTimeMillis();
         ContentHandler handler;
         if (keepTags) {
             handler = new ToXMLContentHandler();
@@ -87,6 +88,7 @@ public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemPr
         }
 
         Metadata metadata = new Metadata();
+        String contentType = "TL_CONTENT_TYPE_UNKNOWN";
         try (InputStream stream = new ByteArrayInputStream(doc.getBinaryContent())) {
             ParseContext context = new ParseContext();
             context.set(TikaConfig.class, config);
@@ -104,8 +106,8 @@ public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemPr
             }
 
             if (metaKeys.contains("Content-Type")) {
-                doc.getAssociativeArray().put("X-TL-CONTENT-TYPE",
-                    metadata.get("Content-Type"));
+                contentType = metadata.get("Content-Type");
+                doc.getAssociativeArray().put("X-TL-CONTENT-TYPE", contentType);
             } else {
                 doc.getAssociativeArray().put("X-TL-CONTENT-TYPE",
                     "TL_CONTENT_TYPE_UNKNOWN");
@@ -114,6 +116,11 @@ public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemPr
         } catch (Exception ex) {
             addField(doc, ex.getMessage());
         }
+        long endTime = System.currentTimeMillis();
+        LOG.info("{};Content-Type:{};Time:{} ms",
+                 this.getClass().getSimpleName(),
+                 contentType,
+                 endTime - startTime);
         LOG.debug("finished " + this.getClass().getSimpleName() +" on doc " +doc.getDocName());
         return doc;
     }

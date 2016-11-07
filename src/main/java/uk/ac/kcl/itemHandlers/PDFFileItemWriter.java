@@ -53,6 +53,7 @@ public class PDFFileItemWriter implements ItemWriter<Document> {
     public final void write(List<? extends Document> documents) throws Exception {
 
         for (Document doc : documents) {
+            long startTime = System.currentTimeMillis();
             String contentType = ((String) doc.getAssociativeArray()
                                   .getOrDefault("X-TL-CONTENT-TYPE", "TL_CONTENT_TYPE_UNKNOWN")
                                   ).toLowerCase();
@@ -69,6 +70,11 @@ public class PDFFileItemWriter implements ItemWriter<Document> {
             default:
                 break;
             }
+            long endTime = System.currentTimeMillis();
+            LOG.info("{};Content-Type:{};Time:{} ms",
+                     this.getClass().getSimpleName(),
+                     contentType,
+                     endTime - startTime);
         }
     }
 
