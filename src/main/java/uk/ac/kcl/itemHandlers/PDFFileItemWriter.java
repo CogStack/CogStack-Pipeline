@@ -21,6 +21,7 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.NoSuchFileException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
@@ -146,17 +147,22 @@ public class PDFFileItemWriter implements ItemWriter<Document> {
             Path outputFile = Paths.get(outputPath, docName + ".pdf");
             Files.move(tempOutputFile, outputFile);
 
+        } catch (NoSuchFileException e) {
+            LOG.error("NoSuchFileException for processing {}, message: {}",
+                      docName, e.getMessage());
         } catch (InterruptedException e) {
             waitThread.interrupt();
             process.destroy();
             Thread.currentThread().interrupt();
         } catch (ExecutionException e) {
             // should not be thrown
-            LOG.error(e.getMessage());
+            LOG.error("ExecutionException for processing {}, message: {}",
+                      docName, e.getMessage());
         } catch (TimeoutException e) {
             waitThread.interrupt();
             process.destroy();
-            LOG.error(e.getMessage());
+            LOG.error("TimeoutException for processing {}, message: {}",
+                      docName, e.getMessage());
         }
     }
 
