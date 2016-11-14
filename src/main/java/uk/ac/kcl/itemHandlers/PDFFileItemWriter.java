@@ -58,6 +58,10 @@ public class PDFFileItemWriter implements ItemWriter<Document> {
             String contentType = ((String) doc.getAssociativeArray()
                                   .getOrDefault("X-TL-CONTENT-TYPE", "TL_CONTENT_TYPE_UNKNOWN")
                                   ).toLowerCase();
+            if (contentType.startsWith("text/plain;")) {
+                // Because plain text files are usually associated with the char set
+                contentType = "text/plain";
+            }
             switch (contentType) {
             case "application/pdf":
                 handlePdf(doc);
@@ -67,6 +71,10 @@ public class PDFFileItemWriter implements ItemWriter<Document> {
                 break;
             case "application/rtf":
                 handleByLibreOffice(doc, "rtf");
+                break;
+            case "message/rfc822":
+            case "text/plain":
+                handleByLibreOffice(doc, "txt");
                 break;
             case "image/tiff":
                 handleTiff(doc);
