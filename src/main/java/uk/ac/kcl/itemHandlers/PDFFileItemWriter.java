@@ -62,6 +62,10 @@ public class PDFFileItemWriter implements ItemWriter<Document> {
                 // Because plain text files are usually associated with the char set
                 contentType = "text/plain";
             }
+            if (contentType.startsWith("text/html;")) {
+                // Because plain text files are usually associated with the char set
+                contentType = "text/html";
+            }
             switch (contentType) {
             case "application/pdf":
                 handlePdf(doc);
@@ -81,6 +85,9 @@ public class PDFFileItemWriter implements ItemWriter<Document> {
             case "message/rfc822":
             case "text/plain":
                 handleByLibreOffice(doc, "txt");
+                break;
+            case "text/html":
+                handleByLibreOffice(doc, "html");
                 break;
             case "image/tiff":
                 handleByImageMagick(doc, "tiff");
