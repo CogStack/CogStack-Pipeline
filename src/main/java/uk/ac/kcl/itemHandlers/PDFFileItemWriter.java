@@ -77,7 +77,10 @@ public class PDFFileItemWriter implements ItemWriter<Document> {
                 handleByLibreOffice(doc, "txt");
                 break;
             case "image/tiff":
-                handleTiff(doc);
+                handleByImageMagick(doc, "tiff");
+                break;
+            case "image/jpeg":
+                handleByImageMagick(doc, "jpeg");
                 break;
             default:
                 break;
@@ -122,14 +125,14 @@ public class PDFFileItemWriter implements ItemWriter<Document> {
         }
     }
 
-    private void handleTiff(Document doc) throws IOException {
-        // Use ImageMagick to convert the tiff image to pdf
+    private void handleByImageMagick(Document doc, String fileNameSuffix) throws IOException {
+        // Use ImageMagick to convert the image to pdf
 
         // Create a temp directory for each input document
         Path tempPath = Files.createTempDirectory(doc.getDocName());
 
         // Dump the binary content to a file in the temp directory
-        File tempInputFile = new File(tempPath + File.separator + "file.tiff");
+        File tempInputFile = new File(tempPath + File.separator + "file." + fileNameSuffix);
         FileUtils.writeByteArrayToFile(tempInputFile, doc.getBinaryContent());
 
         File tempOutputPdfFile = new File(tempPath + File.separator + "file.pdf");
