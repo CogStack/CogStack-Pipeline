@@ -63,7 +63,10 @@ public class PDFFileItemWriter implements ItemWriter<Document> {
                 handlePdf(doc);
                 break;
             case "application/msword":
-                handleMSWord(doc);
+                handleByLibreOffice(doc, "doc");
+                break;
+            case "application/rtf":
+                handleByLibreOffice(doc, "rtf");
                 break;
             case "image/tiff":
                 handleTiff(doc);
@@ -88,14 +91,14 @@ public class PDFFileItemWriter implements ItemWriter<Document> {
             );
     }
 
-    private void handleMSWord(Document doc) throws IOException {
-        // Use Libreoffice to convert the MS word document to pdf
+    private void handleByLibreOffice(Document doc, String fileNameSuffix) throws IOException {
+        // Use Libreoffice to convert the document to pdf
 
         // Create a temp directory for each input document
         Path tempPath = Files.createTempDirectory(doc.getDocName());
 
-        // Dump the MS Word content to a file in the temp directory
-        File tempInputFile = new File(tempPath + File.separator + "file.doc");
+        // Dump the document content to a file in the temp directory
+        File tempInputFile = new File(tempPath + File.separator + "file." + fileNameSuffix);
         FileUtils.writeByteArrayToFile(tempInputFile, doc.getBinaryContent());
 
         String[] cmd = { getLibreOfficeProg(), "--convert-to", "pdf",
