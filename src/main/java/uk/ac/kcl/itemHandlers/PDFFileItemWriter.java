@@ -72,6 +72,9 @@ public class PDFFileItemWriter implements ItemWriter<Document> {
             case "application/rtf":
                 handleByLibreOffice(doc, "rtf");
                 break;
+            case "application/vnd.ms-excel":
+                handleByLibreOffice(doc, "xls");
+                break;
             case "message/rfc822":
             case "text/plain":
                 handleByLibreOffice(doc, "txt");
