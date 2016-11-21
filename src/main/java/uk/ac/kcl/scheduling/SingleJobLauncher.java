@@ -54,9 +54,6 @@ public class SingleJobLauncher {
     Environment env;
 
     @Autowired(required=false)
-    JobLauncher jobLauncher;
-
-    @Autowired(required=false)
     Job job;
 
     @Autowired(required=false)
