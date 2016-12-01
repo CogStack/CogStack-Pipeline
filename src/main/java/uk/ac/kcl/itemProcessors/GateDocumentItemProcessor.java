@@ -73,7 +73,7 @@ public class GateDocumentItemProcessor extends TLItemProcessor implements ItemPr
         HashMap<String,Object> newMap = new HashMap<>();
         newMap.putAll(doc.getAssociativeArray());
         doc.getAssociativeArray().forEach((k, v)-> {
-            if (fieldsToGate.contains(k)) {
+            if (fieldsToGate.contains(k.toLowerCase())) {
                 gate.Document gateDoc = null;
                 try {
                     gateDoc = Factory
