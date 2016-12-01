@@ -38,7 +38,6 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import uk.ac.kcl.exception.BiolarkProcessingFailedException;
 import uk.ac.kcl.itemProcessors.JSONMakerItemProcessor;
 import uk.ac.kcl.model.Document;
@@ -98,8 +97,6 @@ public class JobConfiguration {
     @Bean
     @Qualifier("slaveTaskExecutor")
     public TaskExecutor taskExecutor() {
-//        ThreadPoolTaskExecutor exec = new ThreadPoolTaskExecutor();
-//        exec.setMaxPoolSize(Integer.parseInt(env.getProperty("concurrencyLimit")));
         SimpleAsyncTaskExecutor exec = new SimpleAsyncTaskExecutor();
         exec.setConcurrencyLimit(Integer.parseInt(env.getProperty("concurrencyLimit")));
         return exec;

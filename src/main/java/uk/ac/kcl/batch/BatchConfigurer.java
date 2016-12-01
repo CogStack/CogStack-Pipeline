@@ -26,7 +26,6 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.JobOperator;
 import org.springframework.batch.core.launch.support.SimpleJobLauncher;
 import org.springframework.batch.core.launch.support.SimpleJobOperator;
-import org.springframework.batch.core.partition.support.TaskExecutorPartitionHandler;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.support.JobRepositoryFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +33,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -115,7 +113,7 @@ public class BatchConfigurer extends DefaultBatchConfigurer {
         factory.afterPropertiesSet();
         return factory.getObject();
     }
-
+    
     @Bean
     public JobLauncher jobLauncher() {
         SimpleJobLauncher jobLauncher = new SimpleJobLauncher();
@@ -137,7 +135,7 @@ public class BatchConfigurer extends DefaultBatchConfigurer {
         
     @Bean
     public JobOperator jobOperator(
-            JobExplorer jobExplorer,
+            JobExplorer jobExplorer, 
             JobLauncher jobLauncher, 
             JobRegistry jobRegistry, 
             JobRepository jobRepository) {
