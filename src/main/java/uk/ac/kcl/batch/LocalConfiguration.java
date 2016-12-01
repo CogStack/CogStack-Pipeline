@@ -29,6 +29,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
+import org.springframework.core.task.TaskExecutor;
 import uk.ac.kcl.jobParametersIncrementers.TLJobParametersIncrementer;
 import uk.ac.kcl.listeners.JobCompleteNotificationListener;
 
@@ -46,11 +47,12 @@ public class LocalConfiguration {
 
     @Bean
     public TaskExecutorPartitionHandler partitionHandler(
-            @Qualifier("compositeSlaveStep")
-            Step compositeSlaveStep) {
+            @Qualifier("compositeSlaveStep")Step compositeSlaveStep,
+            @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor) {
         TaskExecutorPartitionHandler handler = new TaskExecutorPartitionHandler();
         handler.setGridSize(Integer.parseInt(env.getProperty("gridSize")));
         handler.setStep(compositeSlaveStep);
+        handler.setTaskExecutor(taskExecutor);
         return handler;
     }
 
