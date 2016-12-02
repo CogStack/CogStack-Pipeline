@@ -130,9 +130,19 @@ public class GateService {
             LOG.warn("GATE app execution interrupted", ex);
         }
         assert controller != null;
-        controller.getCorpus().add(doc);
-        controller.execute();
-        controller.getCorpus().clear();
+        try {
+            controller.getCorpus().add(doc);
+            controller.execute();
+            controller.getCorpus().clear();
+        } catch (ExecutionException e) {
+            LOG.error("Caught ExecutionException, attempt to release blocking queue.", e);
+            try {
+                genericQueue.put(controller);
+            } catch (InterruptedException ex) {
+                LOG.info("Interrupted", ex);
+            }
+            throw e;
+        }
         try {
             genericQueue.put(controller);
         } catch (InterruptedException ex) {
