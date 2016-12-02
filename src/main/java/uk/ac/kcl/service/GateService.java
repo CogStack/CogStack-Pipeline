@@ -130,9 +130,19 @@ public class GateService {
             LOG.warn("GATE app execution interrupted", ex);
         }
         assert controller != null;
-        controller.getCorpus().add(doc);
-        controller.execute();
-        controller.getCorpus().clear();
+        try {
+            controller.getCorpus().add(doc);
+            controller.execute();
+            controller.getCorpus().clear();
+        } catch (ExecutionException e) {
+            LOG.error("Caught ExecutionException, attempt to release blocking queue.", e);
+            try {
+                genericQueue.put(controller);
+            } catch (InterruptedException ex) {
+                LOG.info("Interrupted", ex);
+            }
+            throw e;
+        }
         try {
             genericQueue.put(controller);
         } catch (InterruptedException ex) {
@@ -174,10 +184,12 @@ public class GateService {
     public Object convertDocToJSON(gate.Document doc) throws IOException {
         Map<String, Collection<Annotation>> gateMap = new HashMap<>();
 
-        if(annotationSets.size() == 0){
-            addTypes(doc, gateMap);
-        }else if (annotationSets.size() > 0){
-            addTypes(doc, gateMap);
+        if (annotationSets.size() == 0) {
+            addTypes("default", doc.getAnnotations(), gateMap);
+        } else if (annotationSets.size() > 0) {
+            for (String setName: annotationSets) {
+                addTypes(setName, doc.getAnnotations(setName), gateMap);
+            }
         }
 
         Object result =
@@ -188,12 +200,12 @@ public class GateService {
     }
 
 
-    private void addTypes(Document doc, Map<String, Collection<Annotation>> map) {
-        if(annotationTypes.size() == 0) {
-            map.put("default", doc.getAnnotations());
-        }else if(annotationTypes.size() >0) {
-            for (String type : annotationTypes) {
-                map.put(type, doc.getAnnotations().get(type));
+    private void addTypes(String setName, gate.AnnotationSet annotationSet, Map<String, Collection<Annotation>> map) {
+        if (annotationTypes.size() == 0) {
+            map.put(setName, annotationSet);
+        } else if (annotationTypes.size() > 0) {
+            for (String type: annotationTypes) {
+                map.put(setName + "_" + type, annotationSet.get(type));
             }
         }
     }
