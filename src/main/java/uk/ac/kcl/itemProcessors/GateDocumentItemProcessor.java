@@ -70,16 +70,29 @@ public class GateDocumentItemProcessor extends TLItemProcessor implements ItemPr
     @Override
     public Document process(final Document doc) throws Exception {
         LOG.debug("starting " + this.getClass().getSimpleName() +" on doc " +doc.getDocName());
+        long startTime = System.currentTimeMillis();
+        int contentLength = doc.getAssociativeArray().keySet()
+                               .stream()
+                               .filter(k -> fieldsToGate.contains(k.toLowerCase()))
+                               .mapToInt(k -> ((String) doc.getAssociativeArray().get(k)).length())
+                               .sum();
+
         HashMap<String,Object> newMap = new HashMap<>();
         newMap.putAll(doc.getAssociativeArray());
+        List<String> failedFieldsList = new ArrayList<String>(fieldsToGate);
+
         doc.getAssociativeArray().forEach((k, v)-> {
             if (fieldsToGate.contains(k)) {
                 gate.Document gateDoc = null;
                 try {
                     gateDoc = Factory
                             .newDocument((String) v);
+                    LOG.info("Going to process key: {}, content length: {}", k, ((String) v).length());
                     gateService.processDoc(gateDoc);
                     newMap.put(fieldName, gateService.convertDocToJSON(gateDoc));
+
+                    // Remove the key from the list if GATE is successful
+                    failedFieldsList.remove(k.toLowerCase());
                 } catch (ExecutionException | IOException | ResourceInstantiationException e) {
                     LOG.warn("gate failed on doc " + doc.getDocName() + " ", e);
                     ArrayList<LinkedHashMap<Object, Object>> al = new ArrayList<LinkedHashMap<Object, Object>>();
@@ -92,8 +105,19 @@ public class GateDocumentItemProcessor extends TLItemProcessor implements ItemPr
                 }
             }
         });
+        if (failedFieldsList.size() == 0) {
+            newMap.put("X-TL-GATE", "Success");
+        } else {
+            newMap.put("X-TL-GATE", "Failed fields: " + String.join(", ", failedFieldsList));
+        }
         doc.getAssociativeArray().clear();
         doc.getAssociativeArray().putAll(newMap);
+        long endTime = System.currentTimeMillis();
+        LOG.info("{};Document-ID:{};Total-Content-Length:{};Time:{} ms",
+                 this.getClass().getSimpleName(),
+                 doc.getPrimaryKeyFieldValue(),
+                 contentLength,
+                 endTime - startTime);
         LOG.debug("finished " + this.getClass().getSimpleName() +" on doc " +doc.getDocName());
         return doc;
     }
