@@ -108,7 +108,7 @@ public class BioLarkDocumentItemProcessor implements ItemProcessor<Document, Doc
         HashMap<String,Object> newMap = new HashMap<>();
         newMap.putAll(doc.getAssociativeArray());
         doc.getAssociativeArray().forEach((k, v)-> {
-            if (fieldsToBioLark.contains(k)) {
+            if (fieldsToBioLark.contains(k.toLowerCase())) {
                 Object json = retryTemplate.execute(new RetryCallback<Object,BiolarkProcessingFailedException>() {
                     public Object doWithRetry(RetryContext context) {
                         // business logic here
@@ -133,7 +133,7 @@ public class BioLarkDocumentItemProcessor implements ItemProcessor<Document, Doc
         HashMap<String,Object> newMap = new HashMap<>();
         newMap.putAll(doc.getAssociativeArray());
         doc.getAssociativeArray().forEach((k, v)-> {
-            if (fieldsToBioLark.contains(k)) {
+            if (fieldsToBioLark.contains(k.toLowerCase())) {
                 Object json = retryTemplate.execute(new RetryCallback<Object,BiolarkProcessingFailedException>() {
                     public Object doWithRetry(RetryContext context) {
                         // business logic here
