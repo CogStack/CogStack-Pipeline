@@ -173,7 +173,7 @@ public class PDFPreprocessorParser extends AbstractParser {
                         "-density", config.getDensity(), input.getPath(),
                         "-depth", config.getDepth(),
                         "-quality", config.getQuality(),
-                        "-background", "white", "-flatten", "+matte",
+                        "-background", "white", "+matte",
                         output.getPath()};
 
         ProcessBuilder pb = new ProcessBuilder(cmd);
