@@ -49,56 +49,67 @@ public class PDFGenerationProcessor extends TLItemProcessor implements ItemProce
         LOG.debug("starting " + this.getClass().getSimpleName() + " on doc " +doc.getDocName());
         Map<String, Object> associativeArray = doc.getAssociativeArray();
 
-        long startTime = System.currentTimeMillis();
-        String contentType = ((String) doc.getAssociativeArray()
-                              .getOrDefault("X-TL-CONTENT-TYPE", "TL_CONTENT_TYPE_UNKNOWN")
-                              ).toLowerCase();
-        if (contentType.startsWith("text/plain;")) {
-            // Because plain text file content types are usually followed by the char set
-            contentType = "text/plain";
-        }
-        if (contentType.startsWith("text/html;")) {
-            // Because plain text file content types are usually followed by the char set
-            contentType = "text/html";
-        }
+        try {
+            long startTime = System.currentTimeMillis();
+            String contentType = ((String) doc.getAssociativeArray()
+                                  .getOrDefault("X-TL-CONTENT-TYPE", "TL_CONTENT_TYPE_UNKNOWN")
+                                  ).toLowerCase();
+            if (contentType.startsWith("text/plain;")) {
+                // Because plain text file content types are usually followed by the char set
+                contentType = "text/plain";
+            }
+            if (contentType.startsWith("text/html;")) {
+                // Because plain text file content types are usually followed by the char set
+                contentType = "text/html";
+            }
 
-        switch (contentType) {
-        case "application/pdf":
-            handlePdf(doc);
-            break;
-        case "application/msword":
-            handleByLibreOffice(doc, "doc");
-            break;
-        case "application/rtf":
-            handleByLibreOffice(doc, "rtf");
-            break;
-        case "application/vnd.ms-excel":
-            handleByLibreOffice(doc, "xls");
-            break;
-        case "application/vnd.ms-powerpoint":
-            handleByLibreOffice(doc, "ppt");
-            break;
-        case "message/rfc822":
-        case "text/plain":
-            handleByLibreOffice(doc, "txt");
-            break;
-        case "text/html":
-            handleByLibreOffice(doc, "html");
-            break;
-        case "image/tiff":
-            handleByImageMagick(doc, "tiff");
-            break;
-        case "image/jpeg":
-            handleByImageMagick(doc, "jpeg");
-            break;
-        default:
-            break;
+            switch (contentType) {
+            case "application/pdf":
+                handlePdf(doc);
+                break;
+            case "application/msword":
+                handleByLibreOffice(doc, "doc");
+                break;
+            case "application/rtf":
+                handleByLibreOffice(doc, "rtf");
+                break;
+            case "application/vnd.ms-excel":
+                handleByLibreOffice(doc, "xls");
+                break;
+            case "application/vnd.ms-powerpoint":
+                handleByLibreOffice(doc, "ppt");
+                break;
+            case "message/rfc822":
+            case "text/plain":
+                handleByLibreOffice(doc, "txt");
+                break;
+            case "text/html":
+                handleByLibreOffice(doc, "html");
+                break;
+            case "image/tiff":
+                handleByImageMagick(doc, "tiff");
+                break;
+            case "image/jpeg":
+                handleByImageMagick(doc, "jpeg");
+                break;
+            default:
+                break;
+            }
+            long endTime = System.currentTimeMillis();
+            LOG.info("{};Content-Type:{};Time:{} ms",
+                     this.getClass().getSimpleName(),
+                     contentType,
+                     endTime - startTime);
+            associativeArray.put("X-TL-PDF-GENERATION", "SUCCESS");
+        } catch (Exception e) {
+            // Consider this processor as optional - any exception will not
+            // cause the processing to fail
+            associativeArray.put("X-TL-PDF-GENERATION", "FAIL");
+            LOG.error("Exception caught for optional processor {} for document: {}. Exception: {}",
+                      this.getClass().getSimpleName(),
+                      doc.getDocName(),
+                      e);
         }
-        long endTime = System.currentTimeMillis();
-        LOG.info("{};Content-Type:{};Time:{} ms",
-                 this.getClass().getSimpleName(),
-                 contentType,
-                 endTime - startTime);
 
         LOG.debug("finished " + this.getClass().getSimpleName() + " on doc " +doc.getDocName());
         return doc;

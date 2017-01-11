@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.nio.file.NoSuchFileException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
@@ -50,55 +52,68 @@ public class ThumbnailGenerationProcessor extends TLItemProcessor implements Ite
     public Document process(final Document doc) throws Exception {
         LOG.debug("starting " + this.getClass().getSimpleName() + " on doc " +doc.getDocName());
         Map<String, Object> associativeArray = doc.getAssociativeArray();
-
-        long startTime = System.currentTimeMillis();
-        String[] cmd = {
-          imageMagickProg,
-          "-density",
-          thumbnailDensity,
-          "-depth",
-          "8",
-          "-quality",
-          "85",
-          "-resize",
-          "1600x800",
-          pdfOutputPath + File.separator + doc.getDocName() + ".pdf[0]",
-          outputPath + File.separator + doc.getDocName() + ".png"
-        };
-
         try {
-            Process process = new ProcessBuilder(cmd).start();
-            IOUtils.closeQuietly(process.getOutputStream());
-            InputStream processInputStream = process.getInputStream();
-            logStream(processInputStream);
-            FutureTask<Integer> waitTask = new FutureTask<>(process::waitFor);
-            Thread waitThread = new Thread(waitTask);
-            waitThread.start();
+            long startTime = System.currentTimeMillis();
+            String[] cmd = {
+              imageMagickProg,
+              "-density",
+              thumbnailDensity,
+              "-depth",
+              "8",
+              "-quality",
+              "85",
+              "-resize",
+              "1600x800",
+              pdfOutputPath + File.separator + doc.getDocName() + ".pdf[0]",
+              outputPath + File.separator + doc.getDocName() + ".png"
+            };
+
             try {
-                waitTask.get(30, TimeUnit.SECONDS);
-            } catch (Exception e) {
-                LOG.error(e.getMessage());
-                waitThread.interrupt();
-                process.destroy();
-                waitTask.cancel(true);
-            } finally {
-                IOUtils.closeQuietly(processInputStream);
-                process.destroy();
-                waitThread.interrupt();
-                waitTask.cancel(true);
+                Process process = new ProcessBuilder(cmd).start();
+                IOUtils.closeQuietly(process.getOutputStream());
+                InputStream processInputStream = process.getInputStream();
+                logStream(processInputStream);
+                FutureTask<Integer> waitTask = new FutureTask<>(process::waitFor);
+                Thread waitThread = new Thread(waitTask);
+                waitThread.start();
+                try {
+                    waitTask.get(30, TimeUnit.SECONDS);
+                } catch (Exception e) {
+                    LOG.error(e.getMessage());
+                    waitThread.interrupt();
+                    process.destroy();
+                    waitTask.cancel(true);
+                } finally {
+                    IOUtils.closeQuietly(processInputStream);
+                    process.destroy();
+                    waitThread.interrupt();
+                    waitTask.cancel(true);
+                }
+            } catch (IOException e) {
+
             }
-        } catch (IOException e) {
 
+            if (Files.notExists(Paths.get(outputPath, doc.getDocName() + ".png"))) {
+                throw new NoSuchFileException(outputPath + File.separator + doc.getDocName() + ".png");
+            }
+            long endTime = System.currentTimeMillis();
+            String contentType = ((String) doc.getAssociativeArray()
+                                  .getOrDefault("X-TL-CONTENT-TYPE", "TL_CONTENT_TYPE_UNKNOWN")
+                                  ).toLowerCase();
+            LOG.info("{};Content-Type:{};Time:{} ms",
+                     this.getClass().getSimpleName(),
+                     contentType,
+                     endTime - startTime);
+            associativeArray.put("X-TL-THUMBNAIL-GENERATION", "SUCCESS");
+        } catch (Exception e) {
+           // Consider this processor as optional - any exception will not
+           // cause the processing to fail
+           associativeArray.put("X-TL-THUMBNAIL-GENERATION", "FAIL");
+           LOG.error("Exception caught for optional processor {} for document: {}. Exception: {}",
+                     this.getClass().getSimpleName(),
+                     doc.getDocName(),
+                     e);
         }
-        long endTime = System.currentTimeMillis();
-        String contentType = ((String) doc.getAssociativeArray()
-                              .getOrDefault("X-TL-CONTENT-TYPE", "TL_CONTENT_TYPE_UNKNOWN")
-                              ).toLowerCase();
-        LOG.info("{};Content-Type:{};Time:{} ms",
-                 this.getClass().getSimpleName(),
-                 contentType,
-                 endTime - startTime);
-
         LOG.debug("finished " + this.getClass().getSimpleName() + " on doc " +doc.getDocName());
         return doc;
     }
