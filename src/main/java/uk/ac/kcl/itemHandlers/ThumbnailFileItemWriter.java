@@ -54,6 +54,7 @@ public class ThumbnailFileItemWriter implements ItemWriter<Document> {
     public final void write(List<? extends Document> documents) throws Exception {
 
         for (Document doc : documents) {
+            long startTime = System.currentTimeMillis();
             String[] cmd = {
               imageMagickProg,
               "-density",
@@ -92,6 +93,14 @@ public class ThumbnailFileItemWriter implements ItemWriter<Document> {
             } catch (IOException e) {
 
             }
+            long endTime = System.currentTimeMillis();
+            String contentType = ((String) doc.getAssociativeArray()
+                                  .getOrDefault("X-TL-CONTENT-TYPE", "TL_CONTENT_TYPE_UNKNOWN")
+                                  ).toLowerCase();
+            LOG.info("{};Content-Type:{};Time:{} ms",
+                     this.getClass().getSimpleName(),
+                     contentType,
+                     endTime - startTime);
         }
     }
 

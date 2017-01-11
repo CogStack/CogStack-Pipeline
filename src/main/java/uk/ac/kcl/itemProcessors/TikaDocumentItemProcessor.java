@@ -79,6 +79,7 @@ public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemPr
     @Override
     public Document process(final Document doc) throws Exception {
         LOG.debug("starting " + this.getClass().getSimpleName() +" on doc " +doc.getDocName());
+        long startTime = System.currentTimeMillis();
         ContentHandler handler;
         if (keepTags) {
             handler = new ToXMLContentHandler();
@@ -87,6 +88,7 @@ public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemPr
         }
 
         Metadata metadata = new Metadata();
+        String contentType = "TL_CONTENT_TYPE_UNKNOWN";
         try (InputStream stream = new ByteArrayInputStream(doc.getBinaryContent())) {
             ParseContext context = new ParseContext();
             context.set(TikaConfig.class, config);
@@ -94,29 +96,68 @@ public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemPr
 
             Set<String> metaKeys = new HashSet<String>(Arrays.asList(
                                                           metadata.names()));
-            if (metaKeys.contains("X-PDFPREPROC-OCR-APPLIED")) {
-                doc.getAssociativeArray().put("X-PDFPREPROC-OCR-APPLIED",
-                    metadata.get("X-PDFPREPROC-OCR-APPLIED"));
-            }
-            if (metaKeys.contains("X-PDFPREPROC-ORIGINAL")) {
-                doc.getAssociativeArray().put("X-PDFPREPROC-ORIGINAL",
-                    metadata.get("X-PDFPREPROC-ORIGINAL"));
-            }
 
-            if (metaKeys.contains("Content-Type")) {
-                doc.getAssociativeArray().put("X-TL-CONTENT-TYPE",
-                    metadata.get("Content-Type"));
-            } else {
-                doc.getAssociativeArray().put("X-TL-CONTENT-TYPE",
-                    "TL_CONTENT_TYPE_UNKNOWN");
-            }
+            extractOCRMetadata(doc, metaKeys, metadata);
+
+            contentType = extractContentTypeMetadata(doc, metaKeys, metadata);
+
+            extractPageCountMetadata(doc, metaKeys, metadata);
+
             addField(doc, handler.toString());
         } catch (Exception ex) {
             addField(doc, ex.getMessage());
         }
+        long endTime = System.currentTimeMillis();
+        LOG.info("{};Content-Type:{};Time:{} ms",
+                 this.getClass().getSimpleName(),
+                 contentType,
+                 endTime - startTime);
         LOG.debug("finished " + this.getClass().getSimpleName() +" on doc " +doc.getDocName());
         return doc;
     }
 
+    private void extractOCRMetadata(Document doc, Set<String> metaKeys,
+                                    Metadata metadata) {
+        if (metaKeys.contains("X-PDFPREPROC-OCR-APPLIED")) {
+            doc.getAssociativeArray().put("X-PDFPREPROC-OCR-APPLIED",
+                metadata.get("X-PDFPREPROC-OCR-APPLIED"));
+        }
+        if (metaKeys.contains("X-PDFPREPROC-ORIGINAL")) {
+            doc.getAssociativeArray().put("X-PDFPREPROC-ORIGINAL",
+                metadata.get("X-PDFPREPROC-ORIGINAL"));
+        }
+    }
 
+    private String extractContentTypeMetadata(Document doc, Set<String> metaKeys,
+                                              Metadata metadata) {
+        if (metaKeys.contains("Content-Type")) {
+            doc.getAssociativeArray().put("X-TL-CONTENT-TYPE",
+                metadata.get("Content-Type"));
+            return metadata.get("Content-Type");
+        } else {
+            doc.getAssociativeArray().put("X-TL-CONTENT-TYPE",
+                "TL_CONTENT_TYPE_UNKNOWN");
+            return "TL_CONTENT_TYPE_UNKNOWN";
+        }
+    }
+
+    private void extractPageCountMetadata(Document doc, Set<String> metaKeys,
+                                          Metadata metadata) {
+        if (metaKeys.contains("xmpTPg:NPages")) {
+            doc.getAssociativeArray().put("X-TL-PAGE-COUNT",
+                metadata.get("xmpTPg:NPages"));
+
+        } else if (metaKeys.contains("Page-Count")) {
+            doc.getAssociativeArray().put("X-TL-PAGE-COUNT",
+                metadata.get("Page-Count"));
+
+        } else if (metaKeys.contains("meta:page-count")) {
+            doc.getAssociativeArray().put("X-TL-PAGE-COUNT",
+                metadata.get("meta:page-count"));
+
+        } else {
+            doc.getAssociativeArray().put("X-TL-PAGE-COUNT",
+                "TL_PAGE_COUNT_UNKNOWN");
+        }
+    }
 }

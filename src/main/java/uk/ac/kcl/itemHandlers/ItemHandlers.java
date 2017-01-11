@@ -137,6 +137,10 @@ public class ItemHandlers {
     ItemProcessor<Document, Document> tikaItemProcessor;
 
     @Autowired(required = false)
+    @Qualifier("metadataItemProcessor")
+    ItemProcessor<Document, Document> metadataItemProcessor;
+
+    @Autowired(required = false)
     @Qualifier("deIdDocumentItemProcessor")
     ItemProcessor<Document, Document> deIdDocumentItemProcessor;
 
@@ -158,6 +162,10 @@ public class ItemHandlers {
 
         if(tikaItemProcessor !=null) {
             delegates.add(tikaItemProcessor);
+        }
+
+        if(metadataItemProcessor !=null) {
+            delegates.add(metadataItemProcessor);
         }
 
         if(dBLineFixerItemProcessor !=null) {
