@@ -90,10 +90,6 @@ public class ItemHandlers {
     @Qualifier("jsonFileItemWriter")
     ItemWriter<Document> jsonFileItemWriter;
 
-    @Autowired(required = false)
-    @Qualifier("thumbnailFileItemWriter")
-    ItemWriter<Document> thumbnailFileItemWriter;
-
     @Bean
     @Qualifier("compositeItemWriter")
     public ItemWriter<Document> compositeESandJdbcItemWriter() {
@@ -107,9 +103,6 @@ public class ItemHandlers {
         }
         if(jsonFileItemWriter !=null){
             delegates.add(jsonFileItemWriter);
-        }
-        if(thumbnailFileItemWriter !=null){
-            delegates.add(thumbnailFileItemWriter);
         }
         writer.setDelegates(delegates);
         return writer;
@@ -144,6 +137,10 @@ public class ItemHandlers {
     @Autowired(required = false)
     @Qualifier("pdfGenerationProcessor")
     ItemProcessor<Document, Document> pdfGenerationProcessor;
+
+    @Autowired(required = false)
+    @Qualifier("thumbnailGenerationProcessor")
+    ItemProcessor<Document, Document> thumbnailGenerationProcessor;
 
     @Autowired
     @Qualifier("jsonMakerItemProcessor")
@@ -181,6 +178,10 @@ public class ItemHandlers {
 
         if(pdfGenerationProcessor !=null) {
             delegates.add(pdfGenerationProcessor);
+        }
+
+        if(thumbnailGenerationProcessor !=null) {
+            delegates.add(thumbnailGenerationProcessor);
         }
 
         delegates.add(jsonMakerItemProcessor);
