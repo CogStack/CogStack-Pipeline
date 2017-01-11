@@ -1,16 +1,14 @@
-package uk.ac.kcl.itemHandlers;
-
+package uk.ac.kcl.itemProcessors;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.tika.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
-
 import uk.ac.kcl.model.Document;
 
 import java.io.File;
@@ -22,18 +20,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.NoSuchFileException;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.Map;
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 
-@Service("pdfFileItemWriter")
-@Profile({"pdfFileWriter", "thumbnailFileWriter"})
-public class PDFFileItemWriter implements ItemWriter<Document> {
-    private static final Logger LOG = LoggerFactory.getLogger(PDFFileItemWriter.class);
+
+@Profile({"pdfGeneration", "thumbnailGeneration"})
+@Service("pdfGenerationProcessor")
+public class PDFGenerationProcessor extends TLItemProcessor implements ItemProcessor<Document, Document> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PDFGenerationProcessor.class);
 
     @Autowired
     Environment env;
@@ -41,69 +40,68 @@ public class PDFFileItemWriter implements ItemWriter<Document> {
     String outputPath;
 
     @PostConstruct
-    public void init()  {
+    public void init() {
         this.outputPath = env.getProperty("fileOutputDirectory.pdf");
     }
 
-    @PreDestroy
-    public void destroy(){
-
-    }
-
     @Override
-    public final void write(List<? extends Document> documents) throws Exception {
+    public Document process(final Document doc) throws Exception {
+        LOG.debug("starting " + this.getClass().getSimpleName() + " on doc " +doc.getDocName());
+        Map<String, Object> associativeArray = doc.getAssociativeArray();
 
-        for (Document doc : documents) {
-            long startTime = System.currentTimeMillis();
-            String contentType = ((String) doc.getAssociativeArray()
-                                  .getOrDefault("X-TL-CONTENT-TYPE", "TL_CONTENT_TYPE_UNKNOWN")
-                                  ).toLowerCase();
-            if (contentType.startsWith("text/plain;")) {
-                // Because plain text files are usually associated with the char set
-                contentType = "text/plain";
-            }
-            if (contentType.startsWith("text/html;")) {
-                // Because plain text files are usually associated with the char set
-                contentType = "text/html";
-            }
-            switch (contentType) {
-            case "application/pdf":
-                handlePdf(doc);
-                break;
-            case "application/msword":
-                handleByLibreOffice(doc, "doc");
-                break;
-            case "application/rtf":
-                handleByLibreOffice(doc, "rtf");
-                break;
-            case "application/vnd.ms-excel":
-                handleByLibreOffice(doc, "xls");
-                break;
-            case "application/vnd.ms-powerpoint":
-                handleByLibreOffice(doc, "ppt");
-                break;
-            case "message/rfc822":
-            case "text/plain":
-                handleByLibreOffice(doc, "txt");
-                break;
-            case "text/html":
-                handleByLibreOffice(doc, "html");
-                break;
-            case "image/tiff":
-                handleByImageMagick(doc, "tiff");
-                break;
-            case "image/jpeg":
-                handleByImageMagick(doc, "jpeg");
-                break;
-            default:
-                break;
-            }
-            long endTime = System.currentTimeMillis();
-            LOG.info("{};Content-Type:{};Time:{} ms",
-                     this.getClass().getSimpleName(),
-                     contentType,
-                     endTime - startTime);
+        long startTime = System.currentTimeMillis();
+        String contentType = ((String) doc.getAssociativeArray()
+                              .getOrDefault("X-TL-CONTENT-TYPE", "TL_CONTENT_TYPE_UNKNOWN")
+                              ).toLowerCase();
+        if (contentType.startsWith("text/plain;")) {
+            // Because plain text file content types are usually followed by the char set
+            contentType = "text/plain";
         }
+        if (contentType.startsWith("text/html;")) {
+            // Because plain text file content types are usually followed by the char set
+            contentType = "text/html";
+        }
+
+        switch (contentType) {
+        case "application/pdf":
+            handlePdf(doc);
+            break;
+        case "application/msword":
+            handleByLibreOffice(doc, "doc");
+            break;
+        case "application/rtf":
+            handleByLibreOffice(doc, "rtf");
+            break;
+        case "application/vnd.ms-excel":
+            handleByLibreOffice(doc, "xls");
+            break;
+        case "application/vnd.ms-powerpoint":
+            handleByLibreOffice(doc, "ppt");
+            break;
+        case "message/rfc822":
+        case "text/plain":
+            handleByLibreOffice(doc, "txt");
+            break;
+        case "text/html":
+            handleByLibreOffice(doc, "html");
+            break;
+        case "image/tiff":
+            handleByImageMagick(doc, "tiff");
+            break;
+        case "image/jpeg":
+            handleByImageMagick(doc, "jpeg");
+            break;
+        default:
+            break;
+        }
+        long endTime = System.currentTimeMillis();
+        LOG.info("{};Content-Type:{};Time:{} ms",
+                 this.getClass().getSimpleName(),
+                 contentType,
+                 endTime - startTime);
+
+        LOG.debug("finished " + this.getClass().getSimpleName() + " on doc " +doc.getDocName());
+        return doc;
     }
 
     private void handlePdf(Document doc) throws IOException {
@@ -227,4 +225,5 @@ public class PDFFileItemWriter implements ItemWriter<Document> {
             }
         }.start();
     }
+
 }

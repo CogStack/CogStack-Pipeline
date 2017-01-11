@@ -91,10 +91,6 @@ public class ItemHandlers {
     ItemWriter<Document> jsonFileItemWriter;
 
     @Autowired(required = false)
-    @Qualifier("pdfFileItemWriter")
-    ItemWriter<Document> pdfFileItemWriter;
-
-    @Autowired(required = false)
     @Qualifier("thumbnailFileItemWriter")
     ItemWriter<Document> thumbnailFileItemWriter;
 
@@ -111,9 +107,6 @@ public class ItemHandlers {
         }
         if(jsonFileItemWriter !=null){
             delegates.add(jsonFileItemWriter);
-        }
-        if(pdfFileItemWriter != null){
-            delegates.add(pdfFileItemWriter);
         }
         if(thumbnailFileItemWriter !=null){
             delegates.add(thumbnailFileItemWriter);
@@ -148,6 +141,10 @@ public class ItemHandlers {
     @Qualifier("biolarkDocumentItemProcessor")
     ItemProcessor<Document, Document> biolarkDocumentItemProcessor;
 
+    @Autowired(required = false)
+    @Qualifier("pdfGenerationProcessor")
+    ItemProcessor<Document, Document> pdfGenerationProcessor;
+
     @Autowired
     @Qualifier("jsonMakerItemProcessor")
     ItemProcessor<Document, Document> jsonMakerItemProcessor;
@@ -180,6 +177,10 @@ public class ItemHandlers {
         }
         if(biolarkDocumentItemProcessor !=null) {
             delegates.add(biolarkDocumentItemProcessor);
+        }
+
+        if(pdfGenerationProcessor !=null) {
+            delegates.add(pdfGenerationProcessor);
         }
 
         delegates.add(jsonMakerItemProcessor);
