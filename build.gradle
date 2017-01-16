@@ -43,6 +43,17 @@ sourceSets {
         compileClasspath += sourceSets.main.output + sourceSets.test.output + configurations.testRuntime
         runtimeClasspath += sourceSets.main.output + sourceSets.test.output + configurations.testRuntime
     }
+    acceptTest {
+        java { srcDirs = [] }
+        groovy {
+            srcDirs = ["src/acceptance-test/java"]
+        }
+        resources {
+            srcDirs = ['src/acceptance-test/resources']
+        }
+        compileClasspath += sourceSets.main.output + sourceSets.test.output + sourceSets.integTest.output + configurations.testRuntime
+        runtimeClasspath += sourceSets.main.output + sourceSets.test.output + sourceSets.integTest.output + configurations.testRuntime
+    }
 }
 
 
@@ -84,6 +95,10 @@ task integTest(type: Test) {
     classpath = sourceSets.integTest.runtimeClasspath
 }
 
+task acceptTest(type: Test) {
+    testClassesDir = sourceSets.acceptTest.output.classesDir
+    classpath = sourceSets.acceptTest.runtimeClasspath
+}
 
 
 jar {
