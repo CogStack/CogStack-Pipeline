@@ -63,7 +63,7 @@ public class MetadataItemProcessor extends TLItemProcessor implements ItemProces
         return doc;
     }
 
-    private void countPageInTiff(Document doc) throws IOException {
+    public void countPageInTiff(Document doc) throws IOException {
         // Use identify to count the number of pages in tiff
 
         File tempFile = File.createTempFile(doc.getDocName(), ".tiff");

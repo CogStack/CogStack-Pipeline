@@ -104,18 +104,23 @@ public class PDFPreprocessorParserTest {
         // DefaultParser will not select the PDFPreprocessorParser, unless configured in tika config
         //assertEquals(PDFPreprocessorParser.class, defaultParser.getParsers(parseContext).get(pdf).getClass());
     }
-    @Ignore
+
     @Test
     public void testParseRequiringOCR() throws Exception {
         System.out.println("parse");
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf_ocr_test.pdf");
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("tika/testdocs/pdf_ocr_test.pdf");
         AutoDetectParser parser = new AutoDetectParser(config);
         //PDFPreprocessorParser parser = new PDFPreprocessorParser();
         BodyContentHandler body = new BodyContentHandler();
         Metadata metadata = new Metadata();
         parser.parse(stream, body, metadata);
-        assertTrue(body.toString().contains("Father or mother"));
+        String parsedString = body.toString();
+        // From first page
+        assertTrue(parsedString.contains("Father er mother"));
+        // From second (last) page
+        assertTrue(parsedString.contains("how you have determined who is the Nearest"));
     }
+
     @Ignore
     @Test
     public void testMassiveOCRDoc() throws Exception {
