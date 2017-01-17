@@ -19,14 +19,11 @@ import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
@@ -38,13 +35,13 @@ import uk.ac.kcl.mutators.Mutant;
 import uk.ac.kcl.rowmappers.DocumentRowMapper;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
 import uk.ac.kcl.service.ElasticGazetteerService;
-import uk.ac.kcl.testexecutionlisteners.DeidTestExecutionListener;
 
-import javax.sql.DataSource;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
@@ -79,9 +76,9 @@ import static org.junit.Assert.assertEquals;
         loader = AnnotationConfigContextLoader.class)
 @ActiveProfiles({"deid","basic","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","postgres"})
 //@ActiveProfiles({"deid","basic","localPartitioning","jdbc","primaryKeyPartition","sqlserver"})
-public class DeIdentificationPKPartitionWithoutScheduling {
+public class ElasticGazetteerAcceptanceTest {
 
-    final static Logger logger = Logger.getLogger(DeIdentificationPKPartitionWithoutScheduling.class);
+    final static Logger logger = Logger.getLogger(ElasticGazetteerAcceptanceTest.class);
 
 
 
@@ -108,14 +105,17 @@ public class DeIdentificationPKPartitionWithoutScheduling {
         dbmsTestUtils.createBasicInputTable();
         dbmsTestUtils.createBasicOutputTable();
         dbmsTestUtils.createDeIdInputTable();
-        List<Mutant> mutants = testUtils.insertTestDataForDeidentification(env.getProperty("tblIdentifiers"),env.getProperty("tblInputDocs"),mutatortype);
+        List<Mutant> mutants = testUtils.insertTestDataForDeidentification(env.getProperty("tblIdentifiers"),
+                env.getProperty("tblInputDocs"), mutatortype,true);
+
         int totalTruePositives = 0;
         int totalFalsePositives = 0;
         int totalFalseNegatives = 0;
 
         for (Mutant mutant : mutants) {
             Set<Pattern> mutatedPatterns = new HashSet<>();
-            mutant.setDeidentifiedString(elasticGazetteerService.deIdentifyString(mutant.getFinalText(), String.valueOf(mutant.getDocumentid())));
+            mutant.setDeidentifiedString(elasticGazetteerService.deIdentifyString(mutant.getFinalText(),
+                    String.valueOf(mutant.getDocumentid())));
             Set<String> set = new HashSet<>(mutant.getOutputTokens());
             mutatedPatterns.addAll(set.stream().map(string -> Pattern.compile(Pattern.quote(string), Pattern.CASE_INSENSITIVE)).collect(Collectors.toSet()));
             List<MatchResult> results = new ArrayList<>();
@@ -172,11 +172,18 @@ public class DeIdentificationPKPartitionWithoutScheduling {
             totalFalsePositives += falsePositives;
             totalFalseNegatives += falseNegatives;
         }
+        DecimalFormat df = new DecimalFormat("#.#");
+        df.setRoundingMode(RoundingMode.CEILING);
+
         System.out.println();
         System.out.println();
         System.out.println("THIS RUN TP: " + totalTruePositives + " FP: " + totalFalsePositives + " FN: " + totalFalseNegatives);
         System.out.println("Doc ID precision " + calcPrecision(totalFalsePositives, totalTruePositives));
         System.out.println("Doc ID recall " + calcRecall(totalFalseNegatives, totalTruePositives));
+        System.out.println(totalTruePositives + " & " + totalFalsePositives + " & " +totalFalseNegatives + " & " + df.format(calcPrecision(totalFalsePositives, totalTruePositives))
+                + " & " + df.format(calcRecall(totalFalseNegatives, totalTruePositives)) + " \\\\");
+
+
         if (env.getProperty("elasticgazetteerTestOutput") != null) {
             try {
                 try (BufferedWriter bw = new BufferedWriter(new FileWriter(

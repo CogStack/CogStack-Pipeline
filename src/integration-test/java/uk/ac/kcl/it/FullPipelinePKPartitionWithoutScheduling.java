@@ -51,7 +51,6 @@ import static org.junit.Assert.assertEquals;
         "classpath:noScheduling.properties",
         "classpath:elasticsearch.properties",
         "classpath:jsonFileItemWriter.properties",
-        "classpath:elasticgazetteer_test.properties",
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
         SingleJobLauncher.class,

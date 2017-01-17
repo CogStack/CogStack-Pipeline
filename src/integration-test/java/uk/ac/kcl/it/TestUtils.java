@@ -175,10 +175,16 @@ public class TestUtils  {
 
 
 
-    public List<Mutant> insertTestDataForDeidentification(String tableName1, String tableName2, int mutationLevel){
+    public List<Mutant> insertTestDataForDeidentification(String tableName1, String tableName2,
+                                                          int mutationLevel,boolean useBigList){
         JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
 
-        File idFile = new File(getClass().getClassLoader().getResource("identifiers_small.csv").getFile());
+        File idFile;
+        if(useBigList) {
+            idFile = new File(getClass().getClassLoader().getResource("identifiers.csv").getFile());
+        }else{
+            idFile = new File(getClass().getClassLoader().getResource("identifiers_small.csv").getFile());
+        }
 
         List<CSVRecord> records = null;
         try {
@@ -186,7 +192,6 @@ public class TestUtils  {
         } catch (IOException e) {
             logger.error(e);
         }
-
 
         String sql1 = "INSERT INTO  " + tableName1
                 + "( primaryKeyFieldValue "
@@ -214,15 +219,14 @@ public class TestUtils  {
             CSVRecord r = it.next();
 
 
-            String[] stringToMutate = convertCsvRecordToStringArray(r);
+            String[] stringToMutate = convertCsvRecordToStringArrayAddressOnly(r);
             Mutant mutant = stringMutatorService.generateMutantDocument(stringToMutate, mutationLevel);
             mutant.setDocumentid(Long.valueOf(r.get(0)));
             mutants.add(mutant);
             jdbcTemplate.update(sql1, Long.valueOf(r.get(0)),r.get(1),r.get(2),r.get(3), new Timestamp(today));
             jdbcTemplate.update(sql2, "fictionalColumnFieldName", "fictionalTableName",
                     "fictionalPrimaryKeyFieldName", Long.valueOf(r.get(0)),
-                    new Timestamp(today),mutant.getFinalText()
-                    ,
+                    new Timestamp(today),mutant.getFinalText(),
                     new Timestamp(today));
             today = TestUtils.nextDay();
         }
@@ -394,6 +398,15 @@ public class TestUtils  {
         arr = list.toArray(arr);
         return arr;
     }
+
+    public static String[] convertCsvRecordToStringArrayAddressOnly(CSVRecord r){
+        ArrayList<String> list = new ArrayList<>();
+        list.add(r.get(2) + r.get(3));
+        String[] arr = new String[list.size()];
+        arr = list.toArray(arr);
+        return arr;
+    }
+
 
     public void deleteESTestIndexAndSetUpMapping(){
 

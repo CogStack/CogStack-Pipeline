@@ -215,7 +215,8 @@ task buildBiolarkContainer(type:Exec) {
 task writeExampleConfigs  {
     //ItemProcessors
     String deidentification = new File("src/integration-test/resources/deidentification.properties").text
-    String elasticgazetteer = new File("src/integration-test/resources/elasticgazetteer_test.properties").text
+    //moved to acceptance test
+    // String elasticgazetteer = new File("src/integration-test/resources/elasticgazetteer_test.properties").text
     String tika = new File("src/integration-test/resources/tika.properties").text
     String gate = new File("src/integration-test/resources/gate.properties").text
     String reindex = new File("src/integration-test/resources/reindex.properties").text
@@ -337,7 +338,8 @@ task writeExampleConfigs  {
         writer.write("# EXAMPLE CONFIG FOR deidentification Job \n" +
                 elasticsearch
                 +"\n" + deidentification
-                +"\n" + elasticgazetteer
+                //moved to acceptance test
+               // +"\n" + elasticgazetteer
                 +"\n" + jms
                 +"\n" + jobAndStep
                 + "\n" + sql_server_db

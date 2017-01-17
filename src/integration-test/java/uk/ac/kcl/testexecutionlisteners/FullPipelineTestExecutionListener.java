@@ -26,8 +26,9 @@ public class FullPipelineTestExecutionListener extends AbstractTestExecutionList
                 testContext.getApplicationContext().getBean(TestUtils.class);
         Environment env = testContext.getApplicationContext().getBean(Environment.class);
         testUtils.deleteESTestIndexAndSetUpMapping();
+        //no mutations for integration tests. See acceptance tests for usage
         testUtils.insertTestDataForFullPipeline(env.getProperty("tblIdentifiers"),env.getProperty("tblInputDocs"),
-                Integer.parseInt(env.getProperty("mutatortype")));
+                0);
 
     }
 

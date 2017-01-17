@@ -65,7 +65,6 @@ import static org.junit.Assert.assertEquals;
         "classpath:gate.properties",
         "classpath:deidentification.properties",
         "classpath:elasticsearch.properties",
-        "classpath:elasticgazetteer_test.properties",
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
         SingleJobLauncher.class,

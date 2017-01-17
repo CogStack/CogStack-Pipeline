@@ -27,8 +27,9 @@ public class DeidTestExecutionListener extends AbstractTestExecutionListener {
         Environment env = testContext.getApplicationContext().getBean(Environment.class);
         testUtils.deleteESTestIndexAndSetUpMapping();
         testUtils.insertDataIntoBasicTable(env.getProperty("tblInputDocs"),true);
+        //don't use any mutations for integration tests (see acceptance tests for usage)
         testUtils.insertTestDataForDeidentification(env.getProperty("tblIdentifiers"),env.getProperty("tblInputDocs"),
-                Integer.parseInt(env.getProperty("mutatortype")));
+                0,false);
     }
 
 }

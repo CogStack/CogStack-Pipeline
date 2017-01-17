@@ -17,7 +17,7 @@ import java.util.StringTokenizer;
  */
 @Service
 public class SubstituteCharactersMutator implements Mutator {
-
+    private Random random = new Random();
     private Map<Character, Integer> charTotals;
     @Autowired
     private MagicSquare ms;

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.Map;
+import java.util.Random;
 import java.util.StringTokenizer;
 
 /**
@@ -14,7 +15,7 @@ import java.util.StringTokenizer;
 @Service
 public class StringTokenTruncatorMutator implements Mutator {
 
-
+    private Random random = new Random();
     private ImmutableMap<String, String> addressAbbrevMap;
     @Value("#{'${removeTokenRate:100}'}")
     private int removeTokenRate;
@@ -36,7 +37,10 @@ public class StringTokenTruncatorMutator implements Mutator {
             String token = st.nextToken();
             mutant.getInputTokens().add(token);
             mutant.getOutputTokens().add(token);
-            if (i <= minTokenCount || i > minTokenCount && random.nextInt(100) >= removeTokenRate) {
+            int randInt = random.nextInt(100);
+            if (((i > minTokenCount - 1) && randInt > removeTokenRate)) {
+                documentSB.append(token).append(" ");
+            } else if (i <= (minTokenCount - 1)) {
                 documentSB.append(token).append(" ");
             } else {
                 break;
