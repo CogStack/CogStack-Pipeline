@@ -140,6 +140,8 @@ dependencies {
     //switch for ms driver
     //compile files('libs/sqljdbc42.jar')
     compile ('com.microsoft.sqlserver:sqljdbc42:4.2')
+    //MySQL for Docman sources
+    compile group: 'mysql', name: 'mysql-connector-java', version: '6.0.5'
     compile 'net.sourceforge.jtds:jtds:1.3.1'
     compile group: 'org.springframework', name: 'spring-web', version: '4.2.6.RELEASE'
     compile("org.springframework.boot:spring-boot-starter-batch")
