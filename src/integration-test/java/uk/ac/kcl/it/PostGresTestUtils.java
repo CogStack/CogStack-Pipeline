@@ -187,5 +187,19 @@ public class PostGresTestUtils implements DbmsTestUtils{
         return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM tblOutputDocs", Integer.class);
     }
 
+    @Override
+    public void createDocManInputTable() {
+        sourceTemplate.execute("DROP TABLE IF EXISTS tblInputDocs");
+        sourceTemplate.execute("CREATE TABLE tblInputDocs"
+                + "( ID  SERIAL PRIMARY KEY"
+                + ", srcColumnFieldName text "
+                + ", srcTableName text "
+                + ", primaryKeyFieldName text "
+                + ", primaryKeyFieldValue integer "
+                + ", updateTime TIMESTAMP "
+                + ", someText TEXT"
+                + ", path TEXT )");
+    }
+
 
 }

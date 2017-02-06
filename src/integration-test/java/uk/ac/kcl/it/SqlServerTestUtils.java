@@ -203,4 +203,9 @@ public class SqlServerTestUtils implements DbmsTestUtils {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(targetDataSource);
         return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM dbo.tblOutputDocs", Integer.class);
     }
+
+    @Override
+    public void createDocManInputTable() {
+        throw new UnsupportedOperationException("Not added yet for Sql Server. Try with Postgres");
+    }
 }

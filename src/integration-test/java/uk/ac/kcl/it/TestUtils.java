@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -173,6 +175,27 @@ public class TestUtils  {
         }
     }
 
+    public void insertDataIntoDocmanTable( String tableName){
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
+        String sql = "INSERT INTO  " + tableName
+                + "( srcColumnFieldName"
+                + ", srcTableName"
+                + ", primaryKeyFieldName"
+                + ", primaryKeyFieldValue"
+                + ", updateTime"
+                + ", someText"
+                + ", path"
+                + ") VALUES (?,?,?,?,?,?,?)";
+
+            jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName",
+                        "fictionalPrimaryKeyFieldName", 1, new Timestamp(today), "patient 1 document",
+                        "tika/testdocs/pat_id_1.doc");
+            today = TestUtils.nextDay();
+            jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName",
+                    "fictionalPrimaryKeyFieldName", 2, new Timestamp(today), "patient 2 document",
+                    "tika/testdocs/pat_id_2.doc");
+    }
+
 
 
     public List<Mutant> insertTestDataForDeidentification(String tableName1, String tableName2,
@@ -306,6 +329,8 @@ public class TestUtils  {
             }
         }
     }
+
+
 
     public void insertFreshDataIntoBasicTableAfterDelay(String tablename,long delay) {
         try {
@@ -468,6 +493,21 @@ public class TestUtils  {
             System.out.println("Cannot execute REST request: " +ex.getLocalizedMessage());
         }
         return jsonObject.get("count").getAsInt();
+    }
+
+    public String getStringInEsDoc(String id){
+        String uri = "http://"+env.getProperty("elasticsearch.cluster.host")+":9200"+
+                "/"+env.getProperty("elasticsearch.index.name")+"/"
+                +env.getProperty("elasticsearch.type")+"/"+id;
+        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(HttpClients.createDefault());
+        RestTemplate restTemplate = new RestTemplate(requestFactory);
+        JsonObject jsonObject = null;
+//        try {
+            jsonObject = new JsonParser().parse(restTemplate.getForObject(uri,String.class)).getAsJsonObject();
+//        }catch(HttpClientErrorException ex){
+//            System.out.println("Cannot execute REST request: " +ex.getLocalizedMessage());
+//        }
+        return jsonObject.toString();
     }
 
 

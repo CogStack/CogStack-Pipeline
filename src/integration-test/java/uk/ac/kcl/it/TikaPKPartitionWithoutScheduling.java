@@ -44,10 +44,9 @@ import static org.junit.Assert.assertEquals;
 //        "classpath:sql_server_test.properties",
 //        "classpath:sql_server_db.properties",
         "classpath:jms.properties",
-        "classpath:tika.properties",
+        "classpath:tika_db.properties",
         "classpath:noScheduling.properties",
         "classpath:elasticsearch.properties",
-        "classpath:elasticgazetteer_test.properties",
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
         SingleJobLauncher.class,
@@ -58,7 +57,7 @@ import static org.junit.Assert.assertEquals;
 @TestExecutionListeners(
         listeners = TikaTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-@ActiveProfiles({"tika","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","postgres"})
+@ActiveProfiles({"tika_","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","postgres"})
 //@ActiveProfiles({"tika","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","sqlserver"})
 public class TikaPKPartitionWithoutScheduling {
 

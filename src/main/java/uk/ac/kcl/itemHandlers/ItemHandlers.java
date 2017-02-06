@@ -44,6 +44,7 @@ public class ItemHandlers {
     @Bean
     @StepScope
     @Qualifier("documentItemReader")
+    @Profile("jdbc")
     public ItemReader<Document> documentItemReader(
             @Value("#{stepExecutionContext[minValue]}") String minValue,
             @Value("#{stepExecutionContext[maxValue]}") String maxValue,

@@ -17,19 +17,24 @@ package uk.ac.kcl.rowmappers;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import org.apache.pdfbox.io.IOUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import uk.ac.kcl.model.Document;
 import uk.ac.kcl.utils.BatchJobUtils;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.sql.*;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -46,27 +51,42 @@ public class DocumentRowMapper implements RowMapper<Document>{
 
     @Autowired
     BatchJobUtils batchJobUtils;
+    @Autowired
+    ApplicationContext context;
     private String reindexColumn;
     private String esDatePattern;
     private DateTimeFormatter fmt;
     private boolean reindex;
     private String reindexField;
+    private String pathPrefix;
+    private String binaryContentSource;
 
     @PostConstruct
-    public void init (){
+    public void init () {
         srcTableName = env.getProperty("srcTableName");
         srcColumnFieldName = env.getProperty("srcColumnFieldName");
         primaryKeyFieldName =env.getProperty("primaryKeyFieldName");
         primaryKeyFieldValue = env.getProperty("primaryKeyFieldValue");
         timeStamp = env.getProperty("timeStamp");
-        fieldsToIgnore = Arrays.asList(env.getProperty("elasticsearch.excludeFromIndexing").toLowerCase().split(","));
-        //for tika
 
-        if(env.getProperty("binaryFieldName")!=null){
-            binaryContentFieldName = env.getProperty("binaryFieldName");
+        fieldsToIgnore = Arrays.asList(env.getProperty("elasticsearch.excludeFromIndexing")
+                .toLowerCase().split(","));
+
+        //for tika
+        if(env.getProperty("binaryContentSource")!=null){
+            binaryContentSource = env.getProperty("binaryContentSource");
+            if(binaryContentSource.equals("database")){
+                    binaryContentFieldName = env.getProperty("binaryFieldName");
+            }else if (binaryContentSource.equals("fileSystemWithDBPath")){
+                pathPrefix = env.getProperty("binaryPathPrefix");
+                binaryContentFieldName = env.getProperty("binaryFieldName");
+            }
         }else{
-            binaryContentFieldName = null;
+            binaryContentSource = null;
         }
+
+
+
 
         if(env.getProperty("reindexColumn")!=null){
             reindexColumn = env.getProperty("reindexColumn");
@@ -92,7 +112,7 @@ public class DocumentRowMapper implements RowMapper<Document>{
 
 
 
-    void mapFields(Document doc, ResultSet rs) throws SQLException {
+    void mapFields(Document doc, ResultSet rs) throws SQLException, IOException {
         mapMetadata(doc, rs);
         //add additional query fields for ES export
         ResultSetMetaData meta = rs.getMetaData();
@@ -117,10 +137,19 @@ public class DocumentRowMapper implements RowMapper<Document>{
                     }
                 }
             }
-            if (binaryContentFieldName !=null &&
-                    value !=null
-                    && meta.getColumnLabel(col).equalsIgnoreCase(binaryContentFieldName)){
-                doc.setBinaryContent(rs.getBytes(col));
+            if (binaryContentSource!= null) {
+                if (binaryContentSource.equals("database")) {
+                    if (binaryContentFieldName != null &&
+                            value != null
+                            && meta.getColumnLabel(col).equalsIgnoreCase(binaryContentFieldName)) {
+                        doc.setBinaryContent(rs.getBytes(col));
+                    }
+                } else if (binaryContentSource.equals("fileSystemWithDBPath") &&
+                        value != null
+                        && meta.getColumnLabel(col).equalsIgnoreCase(binaryContentFieldName)) {
+                    Resource resource = context.getResource(pathPrefix + rs.getString(col));
+                    doc.setBinaryContent(IOUtils.toByteArray(resource.getInputStream()));
+                }
             }
         }
     }
@@ -139,7 +168,12 @@ public class DocumentRowMapper implements RowMapper<Document>{
         if(reindex){
             mapAssociativeArray(doc, rs);            
         }else {
-            mapFields(doc, rs);
+            try {
+                mapFields(doc, rs);
+            } catch (IOException e) {
+                LOG.error("DocumentRowMapper could not map file based binary");
+                throw new SQLException("DocumentRowMapper could not map file based binary");
+            }
         }
         return doc;
     }

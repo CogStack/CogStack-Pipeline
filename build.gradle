@@ -217,7 +217,7 @@ task writeExampleConfigs  {
     String deidentification = new File("src/integration-test/resources/deidentification.properties").text
     //moved to acceptance test
     // String elasticgazetteer = new File("src/integration-test/resources/elasticgazetteer_test.properties").text
-    String tika = new File("src/integration-test/resources/tika.properties").text
+    String tika = new File("src/integration-test/resources/tika_db.properties").text
     String gate = new File("src/integration-test/resources/gate.properties").text
     String reindex = new File("src/integration-test/resources/reindex.properties").text
 

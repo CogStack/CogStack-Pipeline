@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.env.Environment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -28,9 +29,11 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
-import uk.ac.kcl.testexecutionlisteners.FullPipelineTestExecutionListener;
+import uk.ac.kcl.testexecutionlisteners.BasicTestExecutionListener;
+import uk.ac.kcl.testexecutionlisteners.DocmanReaderTestExecutionListener;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  *
@@ -44,49 +47,51 @@ import static org.junit.Assert.assertEquals;
 //        "classpath:sql_server_test.properties",
 //        "classpath:sql_server_db.properties",
         "classpath:jms.properties",
-        "classpath:tika_db.properties",
-        "classpath:gate.properties",
-        "classpath:deidentification.properties",
-        "classpath:biolark.properties",
         "classpath:noScheduling.properties",
         "classpath:elasticsearch.properties",
-        "classpath:jsonFileItemWriter.properties",
+        "classpath:tika_filesystem.properties",
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
-        SingleJobLauncher.class,
-        SqlServerTestUtils.class,
         PostGresTestUtils.class,
+        SqlServerTestUtils.class,
+        SingleJobLauncher.class,
         TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 @TestExecutionListeners(
-        listeners = FullPipelineTestExecutionListener.class,
+        listeners = DocmanReaderTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-@ActiveProfiles({"biolark","deid","tika","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","postgres"})
-//@ActiveProfiles({"biolark","deid","tika","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","sqlserver"})
-public class FullPipelinePKPartitionWithoutScheduling {
+@ActiveProfiles({"docman","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","postgres","tika"})
+//@ActiveProfiles({"biolark","basic","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","sqlserver"})
+public class DocmanReaderPKPartitionWithoutScheduling {
 
-    final static Logger logger = Logger.getLogger(FullPipelinePKPartitionWithoutScheduling.class);
+    final static Logger logger = Logger.getLogger(DocmanReaderPKPartitionWithoutScheduling.class);
 
     @Autowired
     SingleJobLauncher jobLauncher;
-
     @Autowired
-    TestUtils testUtils;
-
+    private TestUtils testUtils;
     @Autowired
     DbmsTestUtils dbmsTestUtils;
+    @Autowired
+    Environment env;
 
     @Test
     @DirtiesContext
-    public void fullPipelineTest() {
+    public void docmanReaderTest() {
         jobLauncher.launchJob();
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        assertEquals(31,testUtils.countOutputDocsInES());
-        assertEquals(31,dbmsTestUtils.countRowsInOutputTable());
+        assertEquals(2,testUtils.countOutputDocsInES());
+        assertEquals(2,dbmsTestUtils.countRowsInOutputTable());
+
+        assertTrue(testUtils.getStringInEsDoc("1")
+                .contains("The patient’s name is Bart Davidson"));
+        assertTrue(testUtils.getStringInEsDoc("2")
+                .contains("The patient’s name is David Harleyson"));
+
     }
 
 

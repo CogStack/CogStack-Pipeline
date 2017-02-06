@@ -116,7 +116,7 @@ public class PDFPreprocessorParserTest {
         parser.parse(stream, body, metadata);
         String parsedString = body.toString();
         // From first page
-        assertTrue(parsedString.contains("Father er mother"));
+        assertTrue(parsedString.contains("Father or mother"));
         // From second (last) page
         assertTrue(parsedString.contains("how you have determined who is the Nearest"));
     }
