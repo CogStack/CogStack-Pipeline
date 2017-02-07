@@ -57,7 +57,7 @@ import static org.junit.Assert.assertEquals;
 @TestExecutionListeners(
         listeners = TikaTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-@ActiveProfiles({"tika_","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","postgres"})
+@ActiveProfiles({"tika","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","postgres"})
 //@ActiveProfiles({"tika","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","sqlserver"})
 public class TikaPKPartitionWithoutScheduling {
 

@@ -31,6 +31,7 @@ import uk.ac.kcl.scheduling.SingleJobLauncher;
 import uk.ac.kcl.testexecutionlisteners.BasicTestExecutionListener;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  *
@@ -80,6 +81,9 @@ public class BiolarkPKPartitionWithoutScheduling {
         }
         assertEquals(75,testUtils.countOutputDocsInES());
         assertEquals(75,dbmsTestUtils.countRowsInOutputTable());
+
+        assertTrue(testUtils.getStringInEsDoc("1")
+                .contains("HP:0003510"));
     }
 
 

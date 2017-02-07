@@ -9,6 +9,73 @@ Turbo-laser is a distributed, fault tolerant database processing architecture fo
 
 This project was developed as the central 'glue' to combine a variety of processes from a wider architecture known as the 'CogStack'. The CogStack is a range of technologies designed to to support modern, open source healthcare analytics within the NHS, and is chiefly comprised of the Elastic stack (elasticsearch, kibana etc), GATE and Biolark (clinical natural language processing for entity extraction), OCR, clinical text de-identification (Manchester De-ID and the ElasticGazetteer), and Apache Tika for MS Office to text conversion. When processing very large datasets (10s - 100s of millions rows of data), it is likely that some problems will present certain difficulties for different processes. These problems are typically hard to predict - for example, some documents may have very long sentences, an unusual sequence of characters, or machine only content. Such circumstances can create a range of problems for NLP algorithms, and thus a fault tolerant batch frameworks are required to ensure robust, consistent processing.
 
+## Installation
+
+We're not quite at a regular release cycle yet, so if you want a stable version, I suggest downloading v 1.0.0 from the release page. However, if you want more features and (potentially) fewer bugs, it's best to build from source on the master branch.
+
+To build from source:
+
+ 1. Install [Tesseract](https://github.com/tesseract-ocr/tesseract) and [Imagemagick](https://github.com/ImageMagick/ImageMagick) (can be installed but apt-get on Ubuntu)
+ 2. Run the following:
+
+```
+gradle clean build
+```
+
+## Integration Tests
+
+Although turbo-laser has unit tests where appropriate, the nature of the project is such that the real value fo testing comes from the integration tests. Consequently, turbo-laser has an extensive suite.
+
+To run the integration tests, ensure the required external services are available (which also give a good idea of how turbo-laser is configured). These services are Postgresql, Biolark and Elasticsearch.  The easiest way to get these going is with [Docker](https://www.docker.com/). Once you have docker installed, turbo-laser handily will build the containers you need for you (apart from elasticsearch, where the official image will suffice). To build the containers
+  ```
+  gradle buildBiolarkContainer
+  gradle buildPostgresContainer
+  ```
+Then to run the containers
+```
+docker run -p 5555:5555 --name some-biolark -d richjackson/biolark
+docker run -p 5432:5432 --name some-postgres -d richjackson/postgres
+docker run -p 9200:9200 -p 9300:9300 --name some-elastic -d elasticsearch:2.4.4
+```
+You should now be able to run the integration tests. Each of these demonstrate a different facet of turbo-laser's functionality. Each integration test follows the same pattern:
+
+* Generate some dummy data for processing, by using an integration test execution listener
+* Activate a configuration appropriate for the data and run turbo-laser
+* Verify results
+
+All integration tests can be run by using:
+
+```
+gradle integTest
+```
+
+Although if you're new to turbo-laser, you might find it more informative to run them individually, and inspect the results after each one. For example, to runa single test:
+```
+gradle  -DintegTest.single=<integration test name> -i integTest
+```
+Available integration tests are in the package
+```
+src/integration-test/java/uk/ac/kcl/it
+```
+
+For example, to load the postgres database with some dummy word files into a database table called <tblInputDocs>, process them with Tika, and load them into ElasticSearch index called <test_index2> and a postgres table called <tblOutputDocs>
+
+```
+gradle  -DintegTest.single=TikaPKPartitionWithoutScheduling -i integTest
+```
+
+You can use a tool like [Kibana](https://www.elastic.co/products/kibana) to easily explore the contents of an elasticsearch index (although be careful to ensure you have a compatible version).
+
+```
+docker run --link some-elastic:elasticsearch --name some-kibana -p 5601:5601 -d kibana:4.6.4
+```
+
+then point your browser to localhost:5601
+
+### A note on GATE
+
+Applications that require GATE generally need to be configured to point to the GATE installation directory (or they would need to include a rather large amount of plugins on their classpath). To do this in turbo-laser, set the appropriate properties as detailed in the gate.properties file.
+
 ## Example usage
 
 The entire process is run through the command line, taking a path to a directory containing config files as a single argument. These config files selectively activate Spring profiles as required to perform required data selection, processing and output writing steps.
@@ -92,4 +159,4 @@ Some of the advancements in Turbo-laser:
  6. Remote partitioning via an ActiveMQ JMS server, for complete scalability
  7. Built in job scheduler to enable near real time synchronisation with a database
 
-Questions? Want to help? Drop me a message!
+Questions? Want to help? Drop me a [message](mailto:richgjackson@yahoo.co.uk)!

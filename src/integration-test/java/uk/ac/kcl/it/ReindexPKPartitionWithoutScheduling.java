@@ -34,7 +34,6 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
-//        "classpath:fullPipelinePKprofiles.properties",
         "classpath:postgres_test.properties",
         "classpath:postgres_db.properties",
 //        "classpath:sql_server_test.properties",
@@ -53,8 +52,8 @@ import static org.junit.Assert.assertEquals;
 @TestExecutionListeners(
         listeners = ReindexTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-@ActiveProfiles({"basic","localPartitioning","elasticsearch","primaryKeyPartition","postgres"})
-//@ActiveProfiles({"basic","localPartitioning","elasticsearch","primaryKeyPartition","sqlserver"})
+@ActiveProfiles({"basic","localPartitioning","elasticsearch","primaryKeyPartition","jdbc","postgres"})
+//@ActiveProfiles({"basic","localPartitioning","elasticsearch","primaryKeyPartition","jdbc","sqlserver"})
 public class ReindexPKPartitionWithoutScheduling {
 
     @Autowired
