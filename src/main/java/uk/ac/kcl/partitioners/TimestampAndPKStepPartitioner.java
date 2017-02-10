@@ -27,7 +27,7 @@ public class TimestampAndPKStepPartitioner implements StepPartitioner {
                     "' AS "+env.getProperty("dbmsToJavaSqlTimestampType")+") "
                     + " AND CAST('" + maxTimeStamp +
                     "' AS "+env.getProperty("dbmsToJavaSqlTimestampType")+") "
-                    + " AND " + env.getProperty("columnToProcess")
+                    + " AND " + env.getProperty("pkColumnNameToPartition")
                     + " BETWEEN '" + minValue + "' AND '" + maxValue +"'";
         }
         LOG.info("This step where clause: " + returnString);
