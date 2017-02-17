@@ -33,6 +33,12 @@ services:
     ports:
       - 5555
     restart: on-failure
+  bioyodie:
+    cpu_quota: 800000
+    image: richjackson/bioyodie:1.2.1
+    ports:
+      - 8080
+    restart: on-failure
   lb:
     image: dockercloud/haproxy
     links:

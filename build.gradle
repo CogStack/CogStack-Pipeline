@@ -221,6 +221,11 @@ task buildBiolarkContainer(type: Exec) {
     commandLine 'docker', 'build', '-t', 'richjackson/biolark', '.'
 }
 
+task buildBioyodieContainer(type: Exec) {
+    workingDir 'docker-cogstack/docker-compose/bioyodie'
+    commandLine 'docker', 'build', '-t', 'richjackson/bioyodie', '.'
+}
+
 
 task writeExampleConfigs {
     //ItemProcessors
