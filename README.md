@@ -19,7 +19,7 @@ To build from source:
  2. Run the following:
 
 ```
-gradle clean build
+gradlew clean build
 ```
 
 ## Integration Tests
@@ -28,16 +28,22 @@ Although turbo-laser has unit tests where appropriate, the nature of the project
 
 To run the integration tests, ensure the required external services are available (which also give a good idea of how turbo-laser is configured). These services are Postgresql, Biolark and Elasticsearch.  The easiest way to get these going is with [Docker](https://www.docker.com/). Once you have docker installed, turbo-laser handily will build the containers you need for you (apart from elasticsearch, where the official image will suffice). To build the containers
   ```
-  gradle buildBiolarkContainer
-  gradle buildPostgresContainer
+  gradlew buildBiolarkContainer
+  gradlew buildPostgresContainer
+  gradlew buildBioyodieContainer
   ```
 Then to run the containers
 ```
 docker run -p 5555:5555 --name some-biolark -d richjackson/biolark
+docker run -p 8080:8080 --name some-bioyodie -d richjackson/bioyodie:1.2.1
 docker run -p 5432:5432 --name some-postgres -d richjackson/postgres
 docker run -p 9200:9200 -p 9300:9300 --name some-elastic -d elasticsearch:2.4.4
 ```
-You should now be able to run the integration tests. Each of these demonstrate a different facet of turbo-laser's functionality. Each integration test follows the same pattern:
+
+Note, Biolark and Bioyodie are external applications. Building their containers (and subsequently running their integration tests) may require you to meet their licencing conditions. Please check with []Tudor Groza}(t.groza@garvan.org.au) (Biolark) and [Angus Roberts](angus.roberts@sheffield.ac.uk)/[Genevieve Gorrell](g.gorrell@sheffield.ac.uk) if in doubt.
+
+
+All being well, you should now be able to run the integration tests. Each of these demonstrate a different facet of turbo-laser's functionality. Each integration test follows the same pattern:
 
 * Generate some dummy data for processing, by using an integration test execution listener
 * Activate a configuration appropriate for the data and run turbo-laser
@@ -46,12 +52,12 @@ You should now be able to run the integration tests. Each of these demonstrate a
 All integration tests can be run by using:
 
 ```
-gradle integTest
+gradlew integTest
 ```
 
 Although if you're new to turbo-laser, you might find it more informative to run them individually, and inspect the results after each one. For example, to runa single test:
 ```
-gradle  -DintegTest.single=<integration test name> -i integTest
+gradlew  -DintegTest.single=<integration test name> -i integTest
 ```
 Available integration tests are in the package
 ```
@@ -61,7 +67,7 @@ src/integration-test/java/uk/ac/kcl/it
 For example, to load the postgres database with some dummy word files into a database table called <tblInputDocs>, process them with Tika, and load them into ElasticSearch index called <test_index2> and a postgres table called <tblOutputDocs>
 
 ```
-gradle  -DintegTest.single=TikaPKPartitionWithoutScheduling -i integTest
+gradlew  -DintegTest.single=TikaPKPartitionWithoutScheduling -i integTest
 ```
 
 You can use a tool like [Kibana](https://www.elastic.co/products/kibana) to easily explore the contents of an elasticsearch index (although be careful to ensure you have a compatible version).
@@ -76,20 +82,23 @@ then point your browser to localhost:5601
 
 Applications that require GATE generally need to be configured to point to the GATE installation directory (or they would need to include a rather large amount of plugins on their classpath). To do this in turbo-laser, set the appropriate properties as detailed in the gate.properties file.
 
-## Example usage
+## Example usage in real world deployments
 
-The entire process is run through the command line, taking a path to a directory containing config files as a single argument. These config files selectively activate Spring profiles as required to perform required data selection, processing and output writing steps.
+The entire process is run through the command line, taking a path to a directory as a single argument. This directory should contain configuration files, (one complete one per spring batch job that you want to run simultaneously). These config files selectively activate Spring profiles as required to perform required data selection, processing and output writing steps.
 
-Examples of config file are in the exampleConfigs dir. Most are relatively self explanatory, or should be annotated to explain their meaning.
-
+Examples of config file are in the exampleConfigs dir. Most are (hopefully) relatively self explanatory, or should be annotated to explain their meaning.
 
 example configs can be generated from the gradle task:
 
 ```
-gradle writeExampleConfig
+gradlew writeExampleConfig
 ```
 
 The behaviour of turbo-laser is configured by activating a variety of spring profiles (again, in the config files - see examples) as required. Currently. the available profiles are
+
+inputs
+ 1. jdbc_in - Spring Batch's JdbcPagingItemReader for reading from a database table or view. Also requires a partitioning profile to be activated, to set a partitioning strategy. If you don't know what you're doing, just use the primaryKeyPartition profile.
+ 2. docmanReader - a custom reader for system that stores files in a file system, but holds their path in a database. Weird...
 
 processes
 
@@ -97,8 +106,8 @@ processes
  2. gate - process JDBC input with a generic GATE app.
  3. dBLineFixer - process JDBC input with dBLineFixer (concatenates multi-row documents)
  4. basic - a job without a processing step, for simply writing JDBC input to elasticsearch
- 5. deid - deidentify text with a GATE application (such as Azad Dehghan's DEID) or using the ElasticGazetteer - query a database for identifiers and mask them in free text using Levenstein distance
- 6. biolark - enable Biolark, Tudor Groza's awesome HPO term extraction project. Note - requires a nested mapping to be set up in elasticsearch, so that the inner JSONs can be queried correctly. See https://www.elastic.co/guide/en/elasticsearch/guide/current/nested-objects.html for details.
+ 5. deid - deidentify text with a GATE application (such as the [Healtex texscrubber](https://github.com/healtex/texscrubber)) or using the Cognition algorithm, which queries a database for identifiers and mask them in free text using Levenstein distance.
+ 6. webservice - send a document to a webservice (such as an NLP REST service, like bioyodie/biolark) for annotation. The response should be a JSON, so it can be mapped to Elasticsearch's 'nested' type.
 
 scaling
  1. localPartitioning - run all processes within the launching JVM
@@ -106,7 +115,7 @@ scaling
 
 outputs
  1. elasticsearch - write to an elasticsearch cluster
- 2. jdbc - write the generated JSON to a JDBC endpoint. Useful if the selected processes are particularly heavy (e.g. biolark), so that data can be reindexed without the need for reprocessing
+ 2. jdbc_out - write the generated JSON to a JDBC endpoint. Useful if the selected processes are particularly heavy (e.g. biolark), so that data can be reindexed without the need for reprocessing
 
 partitioning
  1. primaryKeyPartition - process all records based upon partitioning of the primary key
@@ -133,7 +142,7 @@ e.g.
 java -DLOG_FILE_NAME=aTestLog -DLOG_LEVEL=debug -jar turbo-laser-0.3.0.jar /my/path/to/configs
 ```
 
-Turbo-laser assumes the job repository schema is already in place in the DB implementation of your choice (see spring batch docs for more details)
+Turbo-laser assumes the 'job repository' schema is already in place in the DB implementation of your choice (see spring batch docs for more details). The scripts to set this up for various vendors can be found [here](https://github.com/spring-projects/spring-batch/tree/master/spring-batch-core/src/main/resources/org/springframework/batch/core)
 
 ## Scaling
 
@@ -143,8 +152,13 @@ That's it! If a job fails, any uncompleted partitions will be picked up by the n
 
 ## JDBC output/reindexing
 
-Using the JDBC output, it is possible to generate a column of JSON strings back into a database. This is useful for reindexing large quantities of data without the need to re-process with the more computationally expensive item processors (e.g. OCR, biolark). To reindex, simply use the reindexColumn in the configuration file. Note, if you include other profiles, these will still run, but will not contribute to the final JSON, and are thus pointless. Therefore, only the 'basic' profile should be used when reindexing data.
+Using the JDBC output profile, it is possible to generate a column of JSON strings back into a database. This is useful for reindexing large quantities of data without the need to re-process with the more computationally expensive item processors (e.g. OCR, biolark). To reindex, simply use the reindexColumn in the configuration file. Note, if you include other profiles, these will still run, but will not contribute to the final JSON, and are thus pointless. Therefore, only the 'basic' profile should be used when reindexing data.
+```
+reindex = true
 
+#select the column name of jsons in the db table
+reindexField = sometext
+```
 ## History
 
 This project is an ‘evolution’ of an earlier KHP-Informatics project I was involved with called [Cognition](https://github.com/KHP-Informatics/Cognition-DNC). Although Cognition had an excellent implementation of Levenstein distance for string substitution (thanks [iemre](https://github.com/iemre)!), the architecture of the code suffered some design flaws, such as an overly complex domain model and configuration, and lack of fault tolerance/job stop/start/retry logic. As such, it was somewhat difficult to work with in production, and hard to extend with new features. It was clear that there was the need for a proper batch processing framework. Enter Spring Batch and a completely rebuilt codebase, save a couple of classes from the original Cognition project. Turbo-laser is used at King's College Hospital and the South London and Maudsley Hospital to feed Elasticsearch clusters for business intelligence and research use cases
@@ -154,7 +168,7 @@ Some of the advancements in Turbo-laser:
  1. A simple <String,Object> map, with a few pieces of database metadata for its [domain model](https://github.com/RichJackson/turbo-laser/blob/master/src/main/groovy/uk/ac/kcl/model/Document.groovy) (essentially mapping a database row to a elasticsearch document, with the ability to embed [nested types](https://www.elastic.co/guide/en/elasticsearch/reference/2.3/nested.html)
  2. A composite [item processor configuration](https://github.com/RichJackson/turbo-laser/blob/master/src/main/java/uk/ac/kcl/itemHandlers/ItemHandlers.java), that can be easily extended and combined with other processing use case
  3. Complete, sensible coverage of stop, start, retry, abandon logic
- 4. A custom socket timeout factory, to manage network failures when the pesky JDBC driver implementations aren’t fully implemented. Check out [this blog post](https://social.msdn.microsoft.com/Forums/office/en-US/3373d40a-2a0b-4fe4-b6e8-46f2988debf8/any-plans-to-add-socket-timeout-option-in-jdbc-driver?forum=sqldataaccess) for info.
+ 4. A custom socket timeout factory, to manage network failures, which can cause JDBC driver implementations to lock up, when the standard isn't fully implemented. Check out [this blog post](https://social.msdn.microsoft.com/Forums/office/en-US/3373d40a-2a0b-4fe4-b6e8-46f2988debf8/any-plans-to-add-socket-timeout-option-in-jdbc-driver?forum=sqldataaccess) for info.
  5. The ability to run multiple batch jobs (i.e. process multiple database tables within a single JVM, each having its own Spring container
  6. Remote partitioning via an ActiveMQ JMS server, for complete scalability
  7. Built in job scheduler to enable near real time synchronisation with a database

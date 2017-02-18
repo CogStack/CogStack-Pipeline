@@ -47,7 +47,7 @@ import static org.junit.Assert.assertTrue;
         "classpath:jms.properties",
         "classpath:noScheduling.properties",
         "classpath:elasticsearch.properties",
-        "classpath:biolark.properties",
+        "classpath:biolark_webservice.properties",
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
         PostGresTestUtils.class,
@@ -58,11 +58,11 @@ import static org.junit.Assert.assertTrue;
 @TestExecutionListeners(
         listeners = BasicTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-@ActiveProfiles({"biolark","basic","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","postgres"})
-//@ActiveProfiles({"biolark","basic","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","sqlserver"})
-public class BiolarkPKPartitionWithoutScheduling {
+@ActiveProfiles({"webservice","basic","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","postgres"})
+//@ActiveProfiles({"webservice","basic","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","sqlserver"})
+public class BiolarkWebservicePKPartitionWithoutScheduling {
 
-    final static Logger logger = Logger.getLogger(BiolarkPKPartitionWithoutScheduling.class);
+    final static Logger logger = Logger.getLogger(BiolarkWebservicePKPartitionWithoutScheduling.class);
 
     @Autowired
     SingleJobLauncher jobLauncher;

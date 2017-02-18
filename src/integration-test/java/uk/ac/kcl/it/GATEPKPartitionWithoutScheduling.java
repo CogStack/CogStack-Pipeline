@@ -57,8 +57,8 @@ import static org.junit.Assert.assertEquals;
 @TestExecutionListeners(
         listeners = GateTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-@ActiveProfiles({"gate","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","postgres"})
-//@ActiveProfiles({"gate","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","sqlserver"})
+@ActiveProfiles({"gate","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","postgres"})
+//@ActiveProfiles({"gate","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","sqlserver"})
 public class GATEPKPartitionWithoutScheduling {
 
     final static Logger logger = Logger.getLogger(GATEPKPartitionWithoutScheduling.class);

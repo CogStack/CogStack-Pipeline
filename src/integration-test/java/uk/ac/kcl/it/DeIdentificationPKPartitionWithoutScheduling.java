@@ -75,8 +75,8 @@ import static org.junit.Assert.assertEquals;
 @TestExecutionListeners(
         listeners = DeidTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-@ActiveProfiles({"deid","basic","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","postgres"})
-//@ActiveProfiles({"deid","basic","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","sqlserver"})
+@ActiveProfiles({"deid","basic","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","postgres"})
+//@ActiveProfiles({"deid","basic","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","sqlserver"})
 public class DeIdentificationPKPartitionWithoutScheduling {
 
     final static Logger logger = Logger.getLogger(DeIdentificationPKPartitionWithoutScheduling.class);

@@ -47,7 +47,7 @@ import static org.junit.Assert.assertEquals;
         "classpath:tika_db.properties",
         "classpath:gate.properties",
         "classpath:deidentification.properties",
-        "classpath:biolark.properties",
+        "classpath:biolark_webservice.properties",
         "classpath:noScheduling.properties",
         "classpath:elasticsearch.properties",
         "classpath:jsonFileItemWriter.properties",
@@ -61,8 +61,8 @@ import static org.junit.Assert.assertEquals;
 @TestExecutionListeners(
         listeners = FullPipelineTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-@ActiveProfiles({"biolark","deid","tika","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","postgres"})
-//@ActiveProfiles({"biolark","deid","tika","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","sqlserver"})
+@ActiveProfiles({"biolark","deid","tika","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","postgres"})
+//@ActiveProfiles({"biolark","deid","tika","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","sqlserver"})
 public class FullPipelinePKPartitionWithoutScheduling {
 
     final static Logger logger = Logger.getLogger(FullPipelinePKPartitionWithoutScheduling.class);

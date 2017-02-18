@@ -238,7 +238,7 @@ task writeExampleConfigs {
 
     //moved to db specific config
     //String dBLineFixer = new File("src/integration-test/resources/dBLineFixer.properties").text
-    String biolark = new File("src/integration-test/resources/biolark.properties").text
+    String biolark = new File("src/integration-test/resources/biolark_webservice.properties").text
 
     //Database connectivity
     String postgres_db = new File("src/integration-test/resources/postgres_db.properties").text

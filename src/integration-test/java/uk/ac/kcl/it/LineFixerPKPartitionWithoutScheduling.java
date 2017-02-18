@@ -56,8 +56,8 @@ import static org.junit.Assert.assertEquals;
 @TestExecutionListeners(
         listeners = DbLineFixerTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-@ActiveProfiles({"dBLineFixer","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","postgres"})
-//@ActiveProfiles({"dBLineFixer","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","sqlserver"})
+@ActiveProfiles({"dBLineFixer","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","postgres"})
+//@ActiveProfiles({"dBLineFixer","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","sqlserver"})
 public class LineFixerPKPartitionWithoutScheduling {
 
     final static Logger logger = Logger.getLogger(LineFixerPKPartitionWithoutScheduling.class);

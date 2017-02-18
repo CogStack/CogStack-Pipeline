@@ -1,6 +1,5 @@
-package uk.ac.kcl.itemHandlers;
+package uk.ac.kcl.itemWriters;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.tika.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

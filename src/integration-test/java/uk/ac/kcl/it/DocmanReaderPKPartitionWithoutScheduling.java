@@ -60,8 +60,8 @@ import static org.junit.Assert.assertTrue;
 @TestExecutionListeners(
         listeners = DocmanReaderTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-@ActiveProfiles({"docman","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","postgres","tika"})
-//@ActiveProfiles({"biolark","basic","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","sqlserver"})
+@ActiveProfiles({"docman","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","postgres","tika"})
+//@ActiveProfiles({"biolark","basic","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","sqlserver"})
 public class DocmanReaderPKPartitionWithoutScheduling {
 
     final static Logger logger = Logger.getLogger(DocmanReaderPKPartitionWithoutScheduling.class);

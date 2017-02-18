@@ -15,7 +15,6 @@
  */
 package uk.ac.kcl.itemProcessors;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,49 +30,49 @@ import org.springframework.retry.policy.TimeoutRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import uk.ac.kcl.exception.BiolarkProcessingFailedException;
+import uk.ac.kcl.exception.WebserviceProcessingFailedException;
 import uk.ac.kcl.model.Document;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
 
-@Profile("biolark")
-@Service("biolarkDocumentItemProcessor")
+@Profile("webservice")
+@Service("webserviceDocumentItemProcessor")
 @ComponentScan("uk.ac.kcl.service")
-public class BioLarkDocumentItemProcessor implements ItemProcessor<Document, Document> {
+public class WebserviceDocumentItemProcessor implements ItemProcessor<Document, Document> {
 
-    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(BioLarkDocumentItemProcessor.class);
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(WebserviceDocumentItemProcessor.class);
 
     @Autowired
     private Environment env;
     private String endPoint;
     private String fieldName;
-    private ObjectMapper mapper;
     private int connectTimeout;
     private int readTimeout;
+    private String webserviceName;
 
     private RetryTemplate retryTemplate;
     private RestTemplate restTemplate;
+    private List<String> fieldsToSendToWebservice;
 
     @PostConstruct
     private void init(){
 
-        fieldsToBioLark = Arrays.asList(env.getProperty("fieldsToBioLark").toLowerCase().split(","));
-        endPoint = env.getProperty("biolarkEndPoint");
-        setFieldName(env.getProperty("biolarkFieldName"));
-        this.mapper = new ObjectMapper();
-        this.connectTimeout = Integer.valueOf(env.getProperty("biolarkConnectTimeout"));
-        this.readTimeout = Integer.valueOf(env.getProperty("biolarkReadTimeout"));
+        fieldsToSendToWebservice = Arrays.asList(env.getProperty("webservice.fieldsToSendToWebservice")
+                .toLowerCase().split(","));
+        endPoint = env.getProperty("webservice.endPoint");
+        setFieldName(env.getProperty("webservice.fieldName"));
+        this.connectTimeout = Integer.valueOf(env.getProperty("webservice.connectTimeout"));
+        this.readTimeout = Integer.valueOf(env.getProperty("webservice.readTimeout"));
+        this.webserviceName = env.getProperty("webservice.name");
         this.retryTemplate = getRetryTemplate();
         this.restTemplate = new RestTemplate();
         ((SimpleClientHttpRequestFactory)restTemplate.getRequestFactory()).setReadTimeout(readTimeout);
         ((SimpleClientHttpRequestFactory)restTemplate.getRequestFactory()).setConnectTimeout(connectTimeout);
     }
 
-    private List<String> fieldsToBioLark;
-
-    public void setFieldsToBioLark(List<String> fields){
-        this.fieldsToBioLark = fields;
+    public void setFieldsToSendToWebservice(List<String> fields){
+        this.fieldsToSendToWebservice = fields;
     }
 
 
@@ -92,9 +91,9 @@ public class BioLarkDocumentItemProcessor implements ItemProcessor<Document, Doc
 
     private RetryTemplate getRetryTemplate(){
         TimeoutRetryPolicy retryPolicy = new TimeoutRetryPolicy();
-        retryPolicy.setTimeout(Long.valueOf(env.getProperty("biolarkRetryTimeout")));
+        retryPolicy.setTimeout(Long.valueOf(env.getProperty("webservice.retryTimeout")));
         FixedBackOffPolicy backOffPolicy = new FixedBackOffPolicy();
-        backOffPolicy.setBackOffPeriod(Long.valueOf(env.getProperty("biolarkRetryBackoff")));
+        backOffPolicy.setBackOffPeriod(Long.valueOf(env.getProperty("webservice.retryBackoff")));
 
         RetryTemplate template = new RetryTemplate();
         template.setRetryPolicy(retryPolicy);
@@ -108,17 +107,18 @@ public class BioLarkDocumentItemProcessor implements ItemProcessor<Document, Doc
         HashMap<String,Object> newMap = new HashMap<>();
         newMap.putAll(doc.getAssociativeArray());
         doc.getAssociativeArray().forEach((k, v)-> {
-            if (fieldsToBioLark.contains(k.toLowerCase())) {
-                Object json = retryTemplate.execute(new RetryCallback<Object,BiolarkProcessingFailedException>() {
+            if (fieldsToSendToWebservice.contains(k.toLowerCase())) {
+                Object json = retryTemplate.execute(new RetryCallback<Object,WebserviceProcessingFailedException>() {
                     public Object doWithRetry(RetryContext context) {
                         // business logic here
                         return restTemplate.postForObject(endPoint, v, Object.class);
                     }
                 }, new RecoveryCallback() {
                     @Override
-                    public Object recover(RetryContext context) throws BiolarkProcessingFailedException {
-                        LOG.warn("Biolark failed on document "+ doc.getDocName());
-                        throw new  BiolarkProcessingFailedException("Biolark failed on document "+ doc.getDocName(),context.getLastThrowable());
+                    public Object recover(RetryContext context) throws WebserviceProcessingFailedException {
+                        LOG.warn(webserviceName +" failed on document "+ doc.getDocName());
+                        throw new WebserviceProcessingFailedException(webserviceName +" Biolark failed on document "
+                                + doc.getDocName(),context.getLastThrowable());
                     }
                 });
                 newMap.put(fieldName,json);
@@ -133,21 +133,24 @@ public class BioLarkDocumentItemProcessor implements ItemProcessor<Document, Doc
         HashMap<String,Object> newMap = new HashMap<>();
         newMap.putAll(doc.getAssociativeArray());
         doc.getAssociativeArray().forEach((k, v)-> {
-            if (fieldsToBioLark.contains(k.toLowerCase())) {
-                Object json = retryTemplate.execute(new RetryCallback<Object,BiolarkProcessingFailedException>() {
+            if (fieldsToSendToWebservice.contains(k.toLowerCase())) {
+                Object json = retryTemplate.execute(new RetryCallback<Object,WebserviceProcessingFailedException>() {
                     public Object doWithRetry(RetryContext context) {
                         // business logic here
-                        return restTemplate.postForObject(endPoint, v, Object.class);
+                        Object ob = restTemplate.postForObject(endPoint, v, Object.class);
+
+                        return ob;
                     }
                 }, new RecoveryCallback() {
                     @Override
-                    public Object recover(RetryContext context) throws BiolarkProcessingFailedException {
-                        LOG.warn("Biolark failed on document "+ doc.getDocName());
+                    public Object recover(RetryContext context) throws WebserviceProcessingFailedException {
+                        LOG.warn(webserviceName +" failed on document "+ doc.getDocName());
                         ArrayList<LinkedHashMap<Object,Object>> al = new ArrayList<LinkedHashMap<Object, Object>>();
                         LinkedHashMap<Object,Object> hm = new LinkedHashMap<Object, Object>();
-                        hm.put(fieldName,"biolark failed");
+                        hm.put(fieldName,webserviceName +" failed");
                         al.add(hm);
-                        doc.getExceptions().add(new BiolarkProcessingFailedException("Biolark failed on document "+ doc.getDocName()));
+                        doc.getExceptions().add(new WebserviceProcessingFailedException(webserviceName
+                                +" failed on document " + doc.getDocName()));
                         return al;
                     }
                 });

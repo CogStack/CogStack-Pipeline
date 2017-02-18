@@ -1,4 +1,4 @@
-package uk.ac.kcl.itemHandlers;
+package uk.ac.kcl.itemWriters;
 
 
 import org.apache.poi.ss.formula.functions.T;
@@ -23,12 +23,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
-import uk.ac.kcl.exception.TurboLaserException;
 import uk.ac.kcl.model.Document;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;

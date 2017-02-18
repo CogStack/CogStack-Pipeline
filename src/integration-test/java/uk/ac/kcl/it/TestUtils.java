@@ -453,7 +453,7 @@ public class TestUtils  {
                 "  \"mappings\": {" +
                 "    \""+env.getProperty("elasticsearch.type")+"\": {" +
                 "      \"properties\": {" +
-                "        \""+env.getProperty("biolarkFieldName")+"\": {" +
+                "        \""+env.getProperty("webservice.name")+"\": {" +
                 "          \"type\": \"nested\" " +
                 "        }," +
                 "        \""+env.getProperty("gateFieldName")+"\": {" +
