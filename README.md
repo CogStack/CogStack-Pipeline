@@ -40,7 +40,7 @@ docker run -p 5432:5432 --name some-postgres -d richjackson/postgres
 docker run -p 9200:9200 -p 9300:9300 --name some-elastic -d elasticsearch:2.4.4
 ```
 
-Note, Biolark and Bioyodie are external applications. Building their containers (and subsequently running their integration tests) may require you to meet their licencing conditions. Please check with []Tudor Groza}(t.groza@garvan.org.au) (Biolark) and [Angus Roberts](angus.roberts@sheffield.ac.uk)/[Genevieve Gorrell](g.gorrell@sheffield.ac.uk) if in doubt.
+Note, Biolark and Bioyodie are external applications. Building their containers (and subsequently running their integration tests) may require you to meet their licencing conditions. Please check with [Tudor Groza](t.groza@garvan.org.au) (Biolark) and [Angus Roberts](angus.roberts@sheffield.ac.uk)/[Genevieve Gorrell](g.gorrell@sheffield.ac.uk) if in doubt.
 
 
 All being well, you should now be able to run the integration tests. Each of these demonstrate a different facet of turbo-laser's functionality. Each integration test follows the same pattern:

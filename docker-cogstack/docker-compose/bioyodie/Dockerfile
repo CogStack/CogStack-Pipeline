@@ -1,14 +1,24 @@
 FROM java:8
 MAINTAINER richgjackson@gmail.com
 RUN mkdir -p /usr/src
+
 WORKDIR /usr/src/
-#NOTE - containter currently out of action. New Link needed from UOS
+
 #uncomment appropriately if you dont want to DL the tar each time
-#ADD 'http://www.dcs.shef.ac.uk/~genevieve/D4.5/bio-yodie-D4.5.zip' /usr/src
+ADD 'http://www.dcs.shef.ac.uk/~genevieve/D4.5/bio-yodie-D4.5.zip' /usr/src
 #use local zip if available
-COPY 'bio-yodie-D1.2.1.zip /usr/src/
-RUN unzip /usr/src/bio-yodie-D1.2.1.zip 
-RUN rm /usr/src/bio-yodie-D1.2.1.zip
-COPY gatewebservices-0.1.0.jar /usr/src/
+#COPY bio-yodie-D4.5.zip /usr/src/
+RUN unzip /usr/src/bio-yodie-D4.5.zip && rm /usr/src/bio-yodie-D4.5.zip
+
+ADD https://downloads.sourceforge.net/project/gate/gate/8.3/gate-8.3-build5704-BIN.zip /usr/src/
+#use local zip if available
+#COPY gate-8.3-build5704-BIN.zip /usr/src/
+RUN unzip gate-8.3-build5704-BIN.zip && rm gate-8.3-build5704-BIN.zip
+
+ADD https://drive.google.com/open?id=0B6VLedMj9Y2gcDhrRUxwR3FwZlU /usr/src/
+#use local jar if available
+#COPY gatewebservices-0.1.0.jar /usr/src/
+
+
 COPY ./start.sh /usr/src/start.sh
 CMD ["sh","/usr/src/start.sh"]

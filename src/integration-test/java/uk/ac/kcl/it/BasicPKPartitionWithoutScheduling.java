@@ -77,7 +77,6 @@ public class BasicPKPartitionWithoutScheduling {
         assertEquals(75,testUtils.countOutputDocsInES());
         assertEquals(75,dbmsTestUtils.countRowsInOutputTable());
 
-
     }
 
 }
