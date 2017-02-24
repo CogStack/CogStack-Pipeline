@@ -9,10 +9,10 @@
 
 
     <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/turbolaser-integration-test-log.html</file>
+        <file>logs/cogstack-integration-test-log.html</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- daily rollover -->
-            <fileNamePattern>turbolaser-integration-test-log%d{yyyy-MM-dd}.%i.html</fileNamePattern>
+            <fileNamePattern>cogstack-integration-test-log%d{yyyy-MM-dd}.%i.html</fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy
                     class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
             <!-- or whenever the file size reaches 50MB -->

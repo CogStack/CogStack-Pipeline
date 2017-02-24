@@ -1,9 +1,9 @@
-# **WELCOME TO TURBO-LASER**
+# **WELCOME TO cogstack**
 
 
 ## Introduction
 
-Turbo-laser is a distributed, fault tolerant database processing architecture for Tika, GATE, Biolark and text deidentification, with JDBC and Elasticsearch export options. It makes use of the Spring Batch framework in order to provide a fully configurable pipeline with the goal of generating a JSON that can be readily indexed into elasticsearch. In the parlance of the batch processing [domain language](http://docs.spring.io/spring-batch/reference/html/domain.html), it uses the partitioning concept to create 'partition step' metadata for a DB table. This metadata is persisted in the Spring database schema, whereafter each partition can then be executed locally or farmed out remotely via a JMS middleware server (only ActiveMQ is suported at this time). Remote worker JVMs then retrieve metadata descriptions of work units. The outcome of processing is then persisted in the database, allowing robust tracking and simple restart of failed partitions.
+cogstack is a distributed, fault tolerant database processing architecture for Tika, GATE, Biolark and text deidentification, with JDBC and Elasticsearch export options. It makes use of the Spring Batch framework in order to provide a fully configurable pipeline with the goal of generating a JSON that can be readily indexed into elasticsearch. In the parlance of the batch processing [domain language](http://docs.spring.io/spring-batch/reference/html/domain.html), it uses the partitioning concept to create 'partition step' metadata for a DB table. This metadata is persisted in the Spring database schema, whereafter each partition can then be executed locally or farmed out remotely via a JMS middleware server (only ActiveMQ is suported at this time). Remote worker JVMs then retrieve metadata descriptions of work units. The outcome of processing is then persisted in the database, allowing robust tracking and simple restart of failed partitions.
 
 ## Why does this project exist/ why is batch processing difficult?
 
@@ -24,9 +24,9 @@ gradlew clean build
 
 ## Integration Tests
 
-Although turbo-laser has unit tests where appropriate, the nature of the project is such that the real value fo testing comes from the integration tests. Consequently, turbo-laser has an extensive suite.
+Although cogstack has unit tests where appropriate, the nature of the project is such that the real value fo testing comes from the integration tests. Consequently, cogstack has an extensive suite.
 
-To run the integration tests, ensure the required external services are available (which also give a good idea of how turbo-laser is configured). These services are Postgresql, Biolark and Elasticsearch.  The easiest way to get these going is with [Docker](https://www.docker.com/). Once you have docker installed, turbo-laser handily will build the containers you need for you (apart from elasticsearch, where the official image will suffice). To build the containers
+To run the integration tests, ensure the required external services are available (which also give a good idea of how cogstack is configured). These services are Postgresql, Biolark and Elasticsearch.  The easiest way to get these going is with [Docker](https://www.docker.com/). Once you have docker installed, cogstack handily will build the containers you need for you (apart from elasticsearch, where the official image will suffice). To build the containers
   ```
   gradlew buildBiolarkContainer
   gradlew buildPostgresContainer
@@ -43,10 +43,10 @@ docker run -p 9200:9200 -p 9300:9300 --name some-elastic -d elasticsearch:2.4.4
 Note, Biolark and Bioyodie are external applications. Building their containers (and subsequently running their integration tests) may require you to meet their licencing conditions. Please check with [Tudor Groza](t.groza@garvan.org.au) (Biolark) and [Angus Roberts](angus.roberts@sheffield.ac.uk)/[Genevieve Gorrell](g.gorrell@sheffield.ac.uk) if in doubt.
 
 
-All being well, you should now be able to run the integration tests. Each of these demonstrate a different facet of turbo-laser's functionality. Each integration test follows the same pattern:
+All being well, you should now be able to run the integration tests. Each of these demonstrate a different facet of cogstack's functionality. Each integration test follows the same pattern:
 
 * Generate some dummy data for processing, by using an integration test execution listener
-* Activate a configuration appropriate for the data and run turbo-laser
+* Activate a configuration appropriate for the data and run cogstack
 * Verify results
 
 All integration tests can be run by using:
@@ -55,7 +55,7 @@ All integration tests can be run by using:
 gradlew integTest
 ```
 
-Although if you're new to turbo-laser, you might find it more informative to run them individually, and inspect the results after each one. For example, to runa single test:
+Although if you're new to cogstack, you might find it more informative to run them individually, and inspect the results after each one. For example, to runa single test:
 ```
 gradlew  -DintegTest.single=<integration test name> -i integTest
 ```
@@ -80,7 +80,7 @@ then point your browser to localhost:5601
 
 ### A note on GATE
 
-Applications that require GATE generally need to be configured to point to the GATE installation directory (or they would need to include a rather large amount of plugins on their classpath). To do this in turbo-laser, set the appropriate properties as detailed in the gate.properties file.
+Applications that require GATE generally need to be configured to point to the GATE installation directory (or they would need to include a rather large amount of plugins on their classpath). To do this in cogstack, set the appropriate properties as detailed in the gate.properties file.
 
 ## Example usage in real world deployments
 
@@ -94,7 +94,7 @@ example configs can be generated from the gradle task:
 gradlew writeExampleConfig
 ```
 
-The behaviour of turbo-laser is configured by activating a variety of spring profiles (again, in the config files - see examples) as required. Currently. the available profiles are
+The behaviour of cogstack is configured by activating a variety of spring profiles (again, in the config files - see examples) as required. Currently. the available profiles are
 
 inputs
  1. jdbc_in - Spring Batch's JdbcPagingItemReader for reading from a database table or view. Also requires a partitioning profile to be activated, to set a partitioning strategy. If you don't know what you're doing, just use the primaryKeyPartition profile.
@@ -122,7 +122,7 @@ partitioning
  2. primaryKeyAndTimeStampPartition - process all records based upon partitioning of the primary key and the timestamp, for finer control/ smaller batch sizes per job. Use the processingPeriod property to specify the number of milliseconds to 'scan' ahead for each job run
 
 ## Scheduling
-Turbo-laser also offers a built in scheduler, to process changes in a database between job runs (requires a timestamp in the source database)
+cogstack also offers a built in scheduler, to process changes in a database between job runs (requires a timestamp in the source database)
 ```
 useScheduling = true
 ```
@@ -134,15 +134,15 @@ scheduler.rate = "*/5 * * * * *"
 
 ## Logging support
 
-Turbo-laser uses the SLF4J abstraction for logging, with logback as the concrete implementation. To name a logfile, simply add the -DLOG_FILE_NAME system flag when launching the JVM
+cogstack uses the SLF4J abstraction for logging, with logback as the concrete implementation. To name a logfile, simply add the -DLOG_FILE_NAME system flag when launching the JVM
 
 e.g.
 
 ```
-java -DLOG_FILE_NAME=aTestLog -DLOG_LEVEL=debug -jar turbo-laser-0.3.0.jar /my/path/to/configs
+java -DLOG_FILE_NAME=aTestLog -DLOG_LEVEL=debug -jar cogstack-0.3.0.jar /my/path/to/configs
 ```
 
-Turbo-laser assumes the 'job repository' schema is already in place in the DB implementation of your choice (see spring batch docs for more details). The scripts to set this up for various vendors can be found [here](https://github.com/spring-projects/spring-batch/tree/master/spring-batch-core/src/main/resources/org/springframework/batch/core)
+cogstack assumes the 'job repository' schema is already in place in the DB implementation of your choice (see spring batch docs for more details). The scripts to set this up for various vendors can be found [here](https://github.com/spring-projects/spring-batch/tree/master/spring-batch-core/src/main/resources/org/springframework/batch/core)
 
 ## Scaling
 
@@ -161,12 +161,12 @@ reindexField = sometext
 ```
 ## History
 
-This project is an ‘evolution’ of an earlier KHP-Informatics project I was involved with called [Cognition](https://github.com/KHP-Informatics/Cognition-DNC). Although Cognition had an excellent implementation of Levenstein distance for string substitution (thanks [iemre](https://github.com/iemre)!), the architecture of the code suffered some design flaws, such as an overly complex domain model and configuration, and lack of fault tolerance/job stop/start/retry logic. As such, it was somewhat difficult to work with in production, and hard to extend with new features. It was clear that there was the need for a proper batch processing framework. Enter Spring Batch and a completely rebuilt codebase, save a couple of classes from the original Cognition project. Turbo-laser is used at King's College Hospital and the South London and Maudsley Hospital to feed Elasticsearch clusters for business intelligence and research use cases
+This project is an ‘evolution’ of an earlier KHP-Informatics project I was involved with called [Cognition](https://github.com/KHP-Informatics/Cognition-DNC). Although Cognition had an excellent implementation of Levenstein distance for string substitution (thanks [iemre](https://github.com/iemre)!), the architecture of the code suffered some design flaws, such as an overly complex domain model and configuration, and lack of fault tolerance/job stop/start/retry logic. As such, it was somewhat difficult to work with in production, and hard to extend with new features. It was clear that there was the need for a proper batch processing framework. Enter Spring Batch and a completely rebuilt codebase, save a couple of classes from the original Cognition project. cogstack is used at King's College Hospital and the South London and Maudsley Hospital to feed Elasticsearch clusters for business intelligence and research use cases
 
-Some of the advancements in Turbo-laser:
+Some of the advancements in cogstack:
 
- 1. A simple <String,Object> map, with a few pieces of database metadata for its [domain model](https://github.com/RichJackson/turbo-laser/blob/master/src/main/groovy/uk/ac/kcl/model/Document.groovy) (essentially mapping a database row to a elasticsearch document, with the ability to embed [nested types](https://www.elastic.co/guide/en/elasticsearch/reference/2.3/nested.html)
- 2. A composite [item processor configuration](https://github.com/RichJackson/turbo-laser/blob/master/src/main/java/uk/ac/kcl/itemHandlers/ItemHandlers.java), that can be easily extended and combined with other processing use case
+ 1. A simple <String,Object> map, with a few pieces of database metadata for its [domain model](https://github.com/RichJackson/cogstack/blob/master/src/main/groovy/uk/ac/kcl/model/Document.groovy) (essentially mapping a database row to a elasticsearch document, with the ability to embed [nested types](https://www.elastic.co/guide/en/elasticsearch/reference/2.3/nested.html)
+ 2. A composite [item processor configuration](https://github.com/RichJackson/cogstack/blob/master/src/main/java/uk/ac/kcl/itemHandlers/ItemHandlers.java), that can be easily extended and combined with other processing use case
  3. Complete, sensible coverage of stop, start, retry, abandon logic
  4. A custom socket timeout factory, to manage network failures, which can cause JDBC driver implementations to lock up, when the standard isn't fully implemented. Check out [this blog post](https://social.msdn.microsoft.com/Forums/office/en-US/3373d40a-2a0b-4fe4-b6e8-46f2988debf8/any-plans-to-add-socket-timeout-option-in-jdbc-driver?forum=sqldataaccess) for info.
  5. The ability to run multiple batch jobs (i.e. process multiple database tables within a single JVM, each having its own Spring container

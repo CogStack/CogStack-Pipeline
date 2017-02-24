@@ -35,7 +35,7 @@ services:
     restart: on-failure
   bioyodie:
     cpu_quota: 800000
-    image: richjackson/bioyodie:1.2.1
+    image: richjackson/bioyodie:D4.5
     ports:
       - 8080
     restart: on-failure
@@ -50,19 +50,19 @@ services:
     ports:
       - 5555:80
     restart: on-failure
-  turbo_laser_master:
-    image: richjackson/turbolaser
+  cogstack_master:
+    image: richjackson/cogstack
     volumes:
-      - /home/rich/java-projects/turbo-laser/docker-cogstack/master:/usr/src/turbolaser_conf
+      - /home/rich/java-projects/cogstack/docker-cogstack/master:/usr/src/cogstack_conf
     environment:
       - LOG_LEVEL=info
       - FILE_LOG_LEVEL=off
-  turbo_laser_slave:
+  cogstack_slave:
     cpu_quota: 100000
-    image: richjackson/turbolaser
+    image: richjackson/cogstack
     environment:
       - LOG_LEVEL=info
       - FILE_LOG_LEVEL=off
     volumes:
-      - /home/rich/java-projects/turbo-laser/docker-cogstack/slave:/usr/src/turbolaser_conf
+      - /home/rich/java-projects/cogstack/docker-cogstack/slave:/usr/src/cogstack_conf
     restart: on-failure

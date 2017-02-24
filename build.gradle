@@ -110,7 +110,7 @@ task acceptTest(type: Test) {
 
 
 jar {
-    baseName = 'turbo-laser'
+    baseName = 'cogstack'
     version = '1.1.0'
 }
 
@@ -202,13 +202,13 @@ allprojects {
 }
 
 task copyToDocker(type: Copy) {
-    from 'build/libs/turbo-laser-1.1.0.jar'
-    into 'docker-cogstack/docker-compose/turbo-laser/turbolaser/'
+    from 'build/libs/cogstack-1.1.0.jar'
+    into 'docker-cogstack/docker-compose/cogstack/cogstack/'
 }
 
 task buildTLContainer(type: Exec) {
-    workingDir 'docker-cogstack/docker-compose/turbo-laser'
-    commandLine 'docker', 'build', '-t', 'richjackson/turbolaser', '.'
+    workingDir 'docker-cogstack/docker-compose/cogstack'
+    commandLine 'docker', 'build', '-t', 'richjackson/cogstack', '.'
 }
 
 task buildPostgresContainer(type: Exec) {

@@ -6,5 +6,5 @@ private/*
 nbproject/*
 .nb-gradle-properties
 .idea/*
-turbo-laser*log
+cogstack*log
 *.jar

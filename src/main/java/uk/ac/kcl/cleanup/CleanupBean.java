@@ -22,7 +22,7 @@ import org.springframework.retry.backoff.FixedBackOffPolicy;
 import org.springframework.retry.policy.AlwaysRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Service;
-import uk.ac.kcl.exception.TurboLaserException;
+import uk.ac.kcl.exception.CogstackException;
 import uk.ac.kcl.scheduling.ScheduledJobLauncher;
 
 import java.util.HashSet;
@@ -102,7 +102,7 @@ public class CleanupBean implements SmartLifecycle, ApplicationContextAware {
         boolean confirmedStopped = false;
 
         try {
-            confirmedStopped =retryTemplate.execute(new RetryCallback<Boolean,TurboLaserException>() {
+            confirmedStopped =retryTemplate.execute(new RetryCallback<Boolean,CogstackException>() {
                 public Boolean doWithRetry(RetryContext context) {
                     // business logic here
                     for(Long l : jobExecs){
@@ -116,17 +116,17 @@ public class CleanupBean implements SmartLifecycle, ApplicationContextAware {
                             return true;
                         }
                     }
-                    throw new TurboLaserException("Job did not stop");
+                    throw new CogstackException("Job did not stop");
                 }
             }, new RecoveryCallback() {
                 @Override
-                public Object recover(RetryContext context) throws TurboLaserException {
+                public Object recover(RetryContext context) throws CogstackException {
                     //maybe add logic to abandon job?
                     LOG.info("Unable to gracefully stop jobs. Job Repository may be in unknown state",context.getLastThrowable());
                     return context;
                 }
             });
-        } catch (TurboLaserException e) {
+        } catch (CogstackException e) {
             LOG.warn("Unable to gracefully stop jobs. Job Repository may be in unknown state");
         }
 
