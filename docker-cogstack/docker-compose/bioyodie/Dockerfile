@@ -15,9 +15,9 @@ ADD https://downloads.sourceforge.net/project/gate/gate/8.3/gate-8.3-build5704-B
 #COPY gate-8.3-build5704-BIN.zip /usr/src/
 RUN unzip gate-8.3-build5704-BIN.zip && rm gate-8.3-build5704-BIN.zip
 
-ADD https://drive.google.com/open?id=0B6VLedMj9Y2gcDhrRUxwR3FwZlU /usr/src/
+ADD https://github.com/RichJackson/gatewebservices/releases/download/0.1.1/gatewebservices-0.1.1.jar /usr/src/
 #use local jar if available
-#COPY gatewebservices-0.1.0.jar /usr/src/
+#COPY gatewebservices-0.1.1.jar /usr/src/
 
 
 COPY ./start.sh /usr/src/start.sh

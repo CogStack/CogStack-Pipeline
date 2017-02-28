@@ -16,6 +16,7 @@
 package uk.ac.kcl.it;
 
 import org.apache.log4j.Logger;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +71,9 @@ public class BiolarkWebservicePKPartitionWithoutScheduling {
     private TestUtils testUtils;
     @Autowired
     DbmsTestUtils dbmsTestUtils;
+
+//    Currently Biolark is unavailable for download
+    @Ignore
     @Test
     @DirtiesContext
     public void biolarkTest() {
