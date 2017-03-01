@@ -88,13 +88,13 @@ public class RemoteConfiguration {
                    @Qualifier("tLJobParametersIncrementer") TLJobParametersIncrementer runIdIncrementer
 
                    ) {
-        return jobs.get(env.getProperty("jobName"))
+        return jobs.get(env.getProperty("job.jobName"))
                 .incrementer(runIdIncrementer)
                 .listener(jobCompleteNotificationListener)
                 .flow(
                         steps
-                                .get(env.getProperty("jobName") + "MasterStep")
-                                .partitioner((env.getProperty("jobName")+"SlaveStep"), partitioner)
+                                .get(env.getProperty("job.jobName") + "MasterStep")
+                                .partitioner((env.getProperty("job.jobName")+"SlaveStep"), partitioner)
                                 .partitionHandler(partitionHandler)
                                 .build()
                 )

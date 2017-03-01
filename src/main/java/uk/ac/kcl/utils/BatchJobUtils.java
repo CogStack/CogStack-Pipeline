@@ -7,7 +7,6 @@ import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
-import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -44,9 +43,9 @@ public class BatchJobUtils {
         String sql = "SELECT MIN(" + timestampColumnName + ") AS min_time_stamp " +
                 " FROM " + tableName + " " +
                 " WHERE CAST(" + timestampColumnName + " AS "+
-                env.getProperty("dbmsToJavaSqlTimestampType")+
+                env.getProperty("source.dbmsToJavaSqlTimestampType")+
                 ") >  CAST('" + lastGoodJob.toString() +
-                "' AS "+env.getProperty("dbmsToJavaSqlTimestampType")+")";
+                "' AS "+env.getProperty("source.dbmsToJavaSqlTimestampType")+")";
         Timestamp timestampLong = template.queryForObject(sql, Timestamp.class);
 
         if(timestampLong == null){
@@ -72,7 +71,7 @@ public class BatchJobUtils {
         String sql = "SELECT MAX(bje.job_execution_id) FROM batch_job_execution bje \n" +
                 " JOIN batch_job_instance bji ON bje.job_instance_id = bji.job_instance_id \n" +
                 " JOIN batch_job_execution_params bjep ON bje.job_execution_id = bjep.job_execution_id" +
-                " WHERE bji.job_name = '" + env.getProperty("jobName") + "'";
+                " WHERE bji.job_name = '" + env.getProperty("job.jobName") + "'";
         LOG.info("Looking for status of last job");
         Long id = template.queryForObject(sql, Long.class);
         return jobExplorer.getJobExecution(id);
@@ -84,7 +83,7 @@ public class BatchJobUtils {
                 " JOIN batch_job_instance bji ON bje.job_instance_id = bji.job_instance_id \n" +
                 " JOIN batch_job_execution_params bjep ON bje.job_execution_id = bjep.job_execution_id" +
                 " WHERE bje.status = 'COMPLETED' \n" +
-                " AND bji.job_name = '" + env.getProperty("jobName") + "'";
+                " AND bji.job_name = '" + env.getProperty("job.jobName") + "'";
         LOG.info("Looking for last successful job");
         Long id = template.queryForObject(sql, Long.class);
         return jobExplorer.getJobExecution(id);
@@ -96,67 +95,12 @@ public class BatchJobUtils {
                 " JOIN batch_job_instance bji ON bje.job_instance_id = bji.job_instance_id \n" +
                 " JOIN batch_job_execution_params bjep ON bje.job_execution_id = bjep.job_execution_id" +
                 " WHERE (bje.exit_code = 'COMPLETED' OR bje.exit_code = 'FAILED' OR bje.exit_code = 'STOPPED') \n" +
-                " AND bji.job_name = '" + env.getProperty("jobName") + "'";
+                " AND bji.job_name = '" + env.getProperty("job.jobName") + "'";
         LOG.info("Looking for last restartable job");
         Long id =  template.queryForObject(sql, Long.class);
         return jobExplorer.getJobExecution(id);
 
     }
-//// OLD JobClass style DAO
-//    public JobExecution getLastSuccessfulJobExecution(){
-//        JdbcTemplate template = new JdbcTemplate(jobRepositoryDataSource);
-//        String sql = "SELECT MAX(bje.job_execution_id) FROM batch_job_execution bje \n" +
-//                " JOIN batch_job_instance bji ON bje.job_instance_id = bji.job_instance_id \n" +
-//                " JOIN batch_job_execution_params bjep ON bje.job_execution_id = bjep.job_execution_id" +
-//                " WHERE bje.exit_code = 'COMPLETED' AND bji.job_name = '" + env.getProperty("jobName") + "'" +
-//                " AND bjep.key_name = 'jobClass' AND bjep.string_val= '" + env.getProperty("jobClass") + "'";
-//        LOG.info("Looking for last previous job with query " + sql);
-//        Long id = (Long)template.queryForObject(sql, Long.class);
-//        return jobExplorer.getJobExecution(id);
-//    }
-//
-//    public JobExecution getLastCompletedFailedOrStoppedJobExecution(){
-//        JdbcTemplate template = new JdbcTemplate(jobRepositoryDataSource);
-//        String sql = "SELECT MAX(bje.job_execution_id) FROM batch_job_execution bje \n" +
-//                " JOIN batch_job_instance bji ON bje.job_instance_id = bji.job_instance_id \n" +
-//                " JOIN batch_job_execution_params bjep ON bje.job_execution_id = bjep.job_execution_id" +
-//                " WHERE (bje.exit_code = 'COMPLETED' OR bje.exit_code = 'FAILED' OR bje.exit_code = 'STOPPED') AND bji.job_name = '" + env.getProperty("jobName") + "'" +
-//                " AND bjep.key_name = 'jobClass' AND bjep.string_val= '" + env.getProperty("jobClass") + "'";
-//        LOG.info("Looking for last previous job with query " + sql);
-//        Long id = (Long)template.queryForObject(sql, Long.class);
-//        return jobExplorer.getJobExecution(id);
-//
-// /////////////////
-
-//    public String convertTimeStampToESDateFormat(Timestamp ts) {
-//        SimpleDateFormat format = new SimpleDateFormat(env.getProperty("datePatternForES"));
-//        //java.util.Date date = new java.util.Date(ts.getTime());
-//        String parseResult = format.format(ts);
-//        return parseResult;
-//    }
-
-//    public Timestamp getOldestTimeStampInLastSuccessfulJob(){
-//
-//        ExecutionContext ec = getLastSuccessfulJobExecutionContext();
-////            SimpleDateFormat format = new SimpleDateFormat(env.getProperty("datePatternForScheduling"));
-////            java.util.Date date = convertStringToTimeStamp();
-//        Timestamp lastGoodDate = null;
-//        if(ec == null){
-//            LOG.info("No previous job found in job repository");
-//            return lastGoodDate;
-//        }else{
-//            lastGoodDate = new Timestamp(Long.parseLong(ec.get("last_successful_timestamp_from_this_job").toString()));
-//            return lastGoodDate;
-//        }
-//    }
-
-//    public ExecutionContext getLastSuccessfulJobExecutionContext(){
-//        try {
-//            return jobExplorer.getJobExecution(getLastSuccessfulJobExecutionID()).getExecutionContext();
-//        }catch(NullPointerException ex){
-//            return null;
-//        }
-//    }
 
     public String cleanSqlString(String string){
         if (string == null ){
@@ -177,7 +121,7 @@ public class BatchJobUtils {
                 "OR bje.status = 'STARTED'" +
                 "OR bje.status = 'STOPPING') " +
                 "AND bji.job_name = '" +
-                env.getProperty("jobName") + "'";
+                env.getProperty("job.jobName") + "'";
         LOG.info("retrieving list of job executions to mark as abandoned " + sql);
         return template.queryForList(sql, Long.class);
     }

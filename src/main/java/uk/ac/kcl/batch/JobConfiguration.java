@@ -87,7 +87,7 @@ public class JobConfiguration {
     @Bean
     public LoggerHelper loggerHelper(){
         LoggerHelper lh = new LoggerHelper();
-        lh.setContextID(env.getProperty("jobName"));
+        lh.setContextID(env.getProperty("job.jobName"));
         return lh;
     }
 
@@ -109,13 +109,22 @@ public class JobConfiguration {
     @Autowired
     public Environment env;
 
+    @Value("${step.concurrencyLimit:1}")
+    int concurrencyLimit;
+
+    @Value("${step.chunkSize:50}")
+    int chunkSize;
+
+    @Value("${step.skipLimit:5}")
+    int skipLimit;
+
     @Bean
     @Qualifier("slaveTaskExecutor")
     public TaskExecutor taskExecutor() {
 //        ThreadPoolTaskExecutor exec = new ThreadPoolTaskExecutor();
 //        exec.setMaxPoolSize(Integer.parseInt(env.getProperty("concurrencyLimit")));
         SimpleAsyncTaskExecutor exec = new SimpleAsyncTaskExecutor();
-        exec.setConcurrencyLimit(Integer.parseInt(env.getProperty("concurrencyLimit")));
+        exec.setConcurrencyLimit(concurrencyLimit);
         return exec;
     }
 
@@ -255,13 +264,12 @@ public class JobConfiguration {
             StepBuilderFactory stepBuilderFactory
     ) {
         return stepBuilderFactory.get("compositeSlaveStep")
-                .<Document, Document> chunk(
-                        Integer.parseInt(env.getProperty("chunkSize")))
+                .<Document, Document> chunk(chunkSize)
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)
                 .faultTolerant()
-                .skipLimit(Integer.parseInt(env.getProperty("skipLimit")))
+                .skipLimit(skipLimit)
                 .skip(WebserviceProcessingFailedException.class)
                 .noSkip(Exception.class)
          //       .listener(nonFatalExceptionItemProcessorListener)

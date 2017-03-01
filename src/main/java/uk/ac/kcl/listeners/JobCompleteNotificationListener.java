@@ -23,7 +23,7 @@ import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.ac.kcl.partitioners.AbstractRealTimeRangePartitioner;
+import uk.ac.kcl.partitioners.CogstackJobPartitioner;
 
 @Component
 //@Scope("prototype")
@@ -32,14 +32,12 @@ public class JobCompleteNotificationListener implements JobExecutionListener {
 	private static final Logger log = LoggerFactory.getLogger(JobCompleteNotificationListener.class);
 	private long timeOfNextJob;
 
-	boolean useLastSuccessful;
-
 	public void setLastDateInthisJob(long l){
 		this.timeOfNextJob = l;
 	}
 
 	@Autowired
-	AbstractRealTimeRangePartitioner columnRangePartitioner;
+	CogstackJobPartitioner columnRangePartitioner;
 
 	@Override
 	public void beforeJob(JobExecution jobExecution) {

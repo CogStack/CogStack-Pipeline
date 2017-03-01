@@ -64,7 +64,7 @@ public class CleanupBean implements SmartLifecycle, ApplicationContextAware {
         Set<Long> jobExecs = new HashSet<>();
         try {
 
-            jobExecs.addAll(jobOperator.getRunningExecutions(env.getProperty("jobName")));
+            jobExecs.addAll(jobOperator.getRunningExecutions(env.getProperty("job.jobName")));
         } catch (NoSuchJobException e) {
             LOG.error("Couldn't get job list to stop executions ",e);
         } catch (NullPointerException ex){
@@ -77,7 +77,7 @@ public class CleanupBean implements SmartLifecycle, ApplicationContextAware {
             LOG.info("No running jobs detected. Exiting now");
             return;
         }else if(jobExecs.size() > 1){
-            LOG.warn("Detected more than one "+env.getProperty("jobName")+ " with status of running.");
+            LOG.warn("Detected more than one "+env.getProperty("job.jobName")+ " with status of running.");
         };
 
 
