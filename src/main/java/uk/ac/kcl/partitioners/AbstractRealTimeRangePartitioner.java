@@ -9,6 +9,7 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -20,6 +21,7 @@ import uk.ac.kcl.utils.BatchJobUtils;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.sql.Timestamp;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,51 +43,52 @@ public abstract class AbstractRealTimeRangePartitioner {
     @Autowired
     protected Environment env;
 
+    @Value("${timeStampColumnNameToPersistInJobRepository}")
     String timeStamp;
 
-    private JdbcTemplate jdbcTemplate;
+    @Value("${dbmsToJavaSqlTimestampType}")
+    String dbmsToJavaSqlTimestampType ;
+
+    @Value("${firstJobStartDate:#{null}}")
+    String firstJobStartDate;
+
+    @Value("${checkForEmptyPartitions:#{false}}")
+    Boolean checkForEmptyPartitions;
+
+    @Value("${datePatternForSQL:#{null}}")
+    String datePatternForSQL;
+
+    @Value("${tableToPartition}")
+    String table;
+
+    @Value("${pkColumnNameToPartition}")
+    String column;
+
+    @Value("${processingPeriod}")
+    Long processingPeriod;
+
+    @Value("${maxPartitionSize:#{null}}")
+    Long maxPartitionSize;
+
+    JdbcTemplate jdbcTemplate;
     Timestamp configuredFirstRunTimestamp;
-    private Boolean checkForEmptyPartitions;
+    boolean firstRun;
 
     @PostConstruct
     public void init(){
-        setColumn(env.getProperty("pkColumnNameToPartition"));
-        setTable(env.getProperty("tableToPartition"));
-        setTimeStampColumnName(env.getProperty("timeStampColumnNameToPersistInJobRepository"));
         if(env.getProperty("firstJobStartDate") !=null){
             configuredFirstRunTimestamp = getConfiguredRunAsTimestamp();
             firstRun = true;
         }else{
             firstRun = false;
         }
-        if(env.getProperty("checkForEmptyPartitions") !=null){
-            checkForEmptyPartitions = Boolean.valueOf(env.getProperty("checkForEmptyPartitions"));
-        }else{
-            checkForEmptyPartitions = false;
-        }
-
         this.jdbcTemplate = new JdbcTemplate(sourceDataSource);
-        this.table = env.getProperty("tableToPartition");
     }
 
     @Autowired
     protected BatchJobUtils batchJobUtils;
 
     private JobExecution jobExecution;
-
-    String table;
-
-    String column;
-
-    private void setTable(String table) {
-        this.table = table;
-    }
-
-    private void setColumn(String column) {
-        this.column = column;
-    }
-
-    private void setTimeStampColumnName(String timeStamp) {this.timeStamp = timeStamp;}
 
     public boolean isFirstRun() {
         return firstRun;
@@ -95,9 +98,6 @@ public abstract class AbstractRealTimeRangePartitioner {
         this.firstRun = firstRun;
     }
 
-    boolean firstRun;
-
-
     boolean noRecordsFoundInProcessingPeriod(ScheduledPartitionParams scheduledPartitionParams){
         return scheduledPartitionParams.getMinTimeStamp() == null;
     }
@@ -106,7 +106,7 @@ public abstract class AbstractRealTimeRangePartitioner {
         Timestamp startTimeStamp = null;
         try{
             if (jobExecution.getJobParameters().getString("first_run_of_job").equalsIgnoreCase("true")) {
-                String tsSql = "SELECT MIN(" + timeStamp + ")  FROM " + table;
+                String tsSql = MessageFormat.format("SELECT MIN({0})  FROM {1}",timeStamp,table);
                 startTimeStamp = jdbcTemplate.queryForObject(tsSql, Timestamp.class);
                 firstRun = true;
             }
@@ -118,8 +118,8 @@ public abstract class AbstractRealTimeRangePartitioner {
     private Timestamp getConfiguredRunAsTimestamp() {
         Timestamp timestamp = null;
         try {
-            DateTimeFormatter formatter = DateTimeFormat.forPattern(env.getProperty("datePatternForSQL"));
-            DateTime dt = formatter.parseDateTime(env.getProperty("firstJobStartDate"));
+            DateTimeFormatter formatter = DateTimeFormat.forPattern(datePatternForSQL);
+            DateTime dt = formatter.parseDateTime(firstJobStartDate);
             timestamp = new Timestamp(dt.getMillis());
         }catch(NullPointerException ignored){}
         return timestamp;
@@ -128,7 +128,7 @@ public abstract class AbstractRealTimeRangePartitioner {
 
 
     Timestamp getEndTimeStamp(Timestamp startTimeStamp){
-        return new Timestamp(startTimeStamp.getTime() + Long.valueOf(env.getProperty("processingPeriod")));
+        return new Timestamp(startTimeStamp.getTime() + processingPeriod);
     }
 
     Timestamp getLastTimestampFromLastSuccessfulJob(){
@@ -149,7 +149,8 @@ public abstract class AbstractRealTimeRangePartitioner {
         }
         startTimestamp = getFirstTimestampInTable();
         if(startTimestamp != null){
-            logger.info ("No previous successful batches detected. Commencing from first timestamp: " + startTimestamp.toString());
+            logger.info ("No previous successful batches detected. Commencing from first timestamp: "
+                    + startTimestamp.toString());
             return startTimestamp;
         }
         return null;
@@ -158,7 +159,8 @@ public abstract class AbstractRealTimeRangePartitioner {
         Map<String, ExecutionContext> result = new HashMap<>();
         if ((params.getMaxId() -params.getMinId()) < (long) gridSize) {
             long partitionCount = (params.getMaxId() -params.getMinId()+1L);
-            logger.info("There are fewer new records than the grid size. Expect only " + partitionCount+ " partitions this execution") ;
+            logger.info("There are fewer new records than the grid size. Expect only " + partitionCount+
+                    " partitions this execution") ;
             for(long i = 0;i<(partitionCount);i++) {
                 ExecutionContext value = new ExecutionContext();
                 result.put("partition" + (i + 1L), value);
@@ -169,9 +171,9 @@ public abstract class AbstractRealTimeRangePartitioner {
             }
         } else {
             logger.info("Multiple steps to generate this job");
-            if(env.getProperty("maxPartitionSize")!=null){
+            if(maxPartitionSize!=null){
                 logger.info("maxPartitionSize detected in properties. Ignoring gridSize if configured");
-                long targetSize = Long.valueOf(env.getProperty("maxPartitionSize"));
+                long targetSize = maxPartitionSize;
                 long start = params.getMinId();
                 long end = params.getMinId() + targetSize;
                 int partitionCounter = 0;
@@ -203,7 +205,8 @@ public abstract class AbstractRealTimeRangePartitioner {
         return result;
     }
 
-    private boolean populateMap(ScheduledPartitionParams params, Map<String, ExecutionContext> result, long start, long end, int counter) {
+    private boolean populateMap(ScheduledPartitionParams params, Map<String, ExecutionContext> result,
+                                long start, long end, int counter) {
 
         if(checkForEmptyPartitions) {
             long recordCountThisPartition = getRecordCountThisPartition(Long.toString(start), Long.toString(end),
@@ -243,15 +246,12 @@ public abstract class AbstractRealTimeRangePartitioner {
 
     private long getRecordCountThisPartition(String minValue, String maxValue, String minTimeStamp, String maxTimeStamp){
         String tsSql = "SELECT COUNT(*)  FROM " + table;
-
         if( minTimeStamp!= null && maxTimeStamp != null) {
-            tsSql = tsSql + " WHERE " +env.getProperty("timeStamp")
-                    + " BETWEEN CAST('" + minTimeStamp +
-                    "' AS "+env.getProperty("dbmsToJavaSqlTimestampType")+") "
-                    + " AND CAST('" + maxTimeStamp +
-                    "' AS "+env.getProperty("dbmsToJavaSqlTimestampType")+") "
-                    + " AND " + env.getProperty("pkColumnNameToPartition")
-                    + " BETWEEN '" + minValue + "' AND '" + maxValue +"'";
+            tsSql = tsSql + MessageFormat.format(" WHERE {0} " +
+                    " BETWEEN CAST(''{1}'' AS {2}) " +
+                    " AND CAST(''{3}'' AS {2}) " +
+                    " AND {4} BETWEEN ''{5}'' AND ''{6}''", timeStamp,minTimeStamp, dbmsToJavaSqlTimestampType,
+                    maxTimeStamp,column,minValue,maxValue);
         }
         long partitionCount = jdbcTemplate.queryForObject(tsSql, Long.class);
         if(partitionCount==0L){

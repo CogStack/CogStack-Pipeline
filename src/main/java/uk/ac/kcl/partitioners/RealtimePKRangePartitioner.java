@@ -25,7 +25,9 @@ import org.springframework.stereotype.Service;
 import uk.ac.kcl.model.ScheduledPartitionParams;
 import uk.ac.kcl.rowmappers.PartitionParamsRowMapper;
 
+import javax.annotation.PostConstruct;
 import java.sql.Timestamp;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,6 +38,13 @@ import java.util.Map;
 public class RealtimePKRangePartitioner extends AbstractRealTimeRangePartitioner implements Partitioner {
 
     private final static Logger logger = LoggerFactory.getLogger(RealtimePKRangePartitioner.class);
+
+    private String dbmsToJavaSqlTimestampType;
+
+    @PostConstruct
+    public void init(){
+        super.init();
+    }
 
     @Override
     public Map<String, ExecutionContext> partition(int gridSize) {
@@ -75,24 +84,21 @@ public class RealtimePKRangePartitioner extends AbstractRealTimeRangePartitioner
 
     private ScheduledPartitionParams getParams(Timestamp startTimeStamp) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
-        String sql = "\n SELECT "   +
-                " MAX(" + column + ") AS max_id , \n" +
-                " MIN(" + column + ") AS min_id , \n" +
-                " MAX(" + timeStamp + ") AS max_time_stamp , \n" +
-                " MIN(" + timeStamp + ") AS min_time_stamp  \n" +
-                " FROM " + table ;
+        String sql = MessageFormat.format("\n SELECT "   +
+                " MAX({0}) AS max_id , \n" +
+                " MIN({0}) AS min_id , \n" +
+                " MAX({1}) AS max_time_stamp , \n" +
+                " MIN({1}) AS min_time_stamp  \n" +
+                " FROM {2}",column,timeStamp,table);
         if(configuredFirstRunTimestamp !=null && firstRun){
-            sql = sql + " WHERE " + timeStamp + " >= CAST ('" + startTimeStamp.toString() +
-                    "' as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) " ;
+            sql = sql + MessageFormat.format(" WHERE {0} >= CAST (''{1}'' AS {2}", timeStamp
+            ,startTimeStamp.toString(), super.dbmsToJavaSqlTimestampType);
         }else if(startTimeStamp == null) {
             Timestamp newStartTimeStamp = getLastTimestampFromLastSuccessfulJob();
-            logger.info ("Commencing from after " +
-                    newStartTimeStamp.toString());
-            sql =	sql +
-                    "\n WHERE CAST (" + timeStamp + " as "+
-                    env.getProperty("dbmsToJavaSqlTimestampType")+
-                    " ) > CAST ('" + newStartTimeStamp.toString()  +
-                    "' as "+env.getProperty("dbmsToJavaSqlTimestampType")+" ) ";
+            logger.info ("Commencing from after " + newStartTimeStamp.toString());
+            sql =	sql + MessageFormat.format(" WHERE CAST ({0} AS {1}) " +
+                    " > CAST (''{2}'' AS {1}) ",timeStamp,super.dbmsToJavaSqlTimestampType
+                    ,newStartTimeStamp.toString());
         }else if(firstRun) {
         //no new SQL required - process all data for first run
             logger.debug("first run");

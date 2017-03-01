@@ -1,0 +1,71 @@
+version: '2'
+services:
+  postgres:
+    image: richjackson/postgres
+    ports:
+      - 5432:5432
+    networks:
+      - esnet
+  bioyodie:
+    cpu_quota: 800000
+    image: richjackson/bioyodie:D4.5
+    ports:
+      - 8080
+    restart: on-failure
+    networks:
+      - esnet
+  lb:
+    image: dockercloud/haproxy
+    links:
+      - bioyodie
+    environment:
+      - BALANCE=leastconn
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 8080:80
+    restart: on-failure
+    networks:
+      - esnet
+  cogstack:
+    image: richjackson/cogstack
+    volumes:
+      - /home/rich/java-projects/cogstack/docker-cogstack/master:/usr/src/cogstack_conf
+    environment:
+      - LOG_LEVEL=info
+      - FILE_LOG_LEVEL=off
+    networks:
+      - esnet
+  kibana:
+    image: kibana:4.6.4
+    ports:
+      - 5601:5601
+    networks:
+      - esnet
+  elasticsearch:
+    image: elasticsearch:2.4.4
+    container_name: elasticsearch
+    environment:
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    mem_limit: 1g
+    cap_add:
+      - IPC_LOCK
+    ports:
+      - 9200:9200
+      - 9300:9300
+    networks:
+      - esnet
+
+
+networks:
+  esnet:
+    driver: bridge

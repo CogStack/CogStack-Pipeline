@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import uk.ac.kcl.batch.BatchConfigurer;
 import uk.ac.kcl.batch.JobConfiguration;
 
 import javax.annotation.PostConstruct;
@@ -45,7 +46,7 @@ import java.util.Random;
         "classpath:postgres_db.properties",
         "classpath:postgres_test.properties",})
 @Configuration
-@Import({JobConfiguration.class,TestUtils.class})
+@Import({JobConfiguration.class,TestUtils.class, BatchConfigurer.class})
 @Profile("postgres")
 @Ignore
 public class PostGresTestUtils implements DbmsTestUtils{

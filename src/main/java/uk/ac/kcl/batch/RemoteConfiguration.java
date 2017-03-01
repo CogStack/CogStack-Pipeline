@@ -40,7 +40,9 @@ import uk.ac.kcl.listeners.JobCompleteNotificationListener;
  */
 @Profile("remotePartitioning")
 @ImportResource({"classpath:spring-master.xml","classpath:spring-slave.xml"})
-@ComponentScan({"uk.ac.kcl.partitioners","uk.ac.kcl.listeners","uk.ac.kcl.jobParametersIncrementers"})
+@ComponentScan({"uk.ac.kcl.partitioners",
+        "uk.ac.kcl.listeners",
+        "uk.ac.kcl.jobParametersIncrementers"})
 @EnableIntegration
 @Configuration
 public class RemoteConfiguration {

@@ -38,7 +38,9 @@ import uk.ac.kcl.listeners.JobCompleteNotificationListener;
  * @author King's College London, Richard Jackson <richgjackson@gmail.com>
  */
 @Profile("localPartitioning")
-@ComponentScan({"uk.ac.kcl.partitioners","uk.ac.kcl.listeners","uk.ac.kcl.jobParametersIncrementers"})
+@ComponentScan({"uk.ac.kcl.partitioners",
+        "uk.ac.kcl.listeners",
+        "uk.ac.kcl.jobParametersIncrementers"})
 @Configuration
 public class LocalConfiguration {
 

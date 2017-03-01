@@ -1,41 +1,121 @@
-# **WELCOME TO cogstack**
+# **WELCOME TO Cogstack**
 
 
 ## Introduction
 
-cogstack is a distributed, fault tolerant database processing architecture for Tika, GATE, Biolark and text deidentification, with JDBC and Elasticsearch export options. It makes use of the Spring Batch framework in order to provide a fully configurable pipeline with the goal of generating a JSON that can be readily indexed into elasticsearch. In the parlance of the batch processing [domain language](http://docs.spring.io/spring-batch/reference/html/domain.html), it uses the partitioning concept to create 'partition step' metadata for a DB table. This metadata is persisted in the Spring database schema, whereafter each partition can then be executed locally or farmed out remotely via a JMS middleware server (only ActiveMQ is suported at this time). Remote worker JVMs then retrieve metadata descriptions of work units. The outcome of processing is then persisted in the database, allowing robust tracking and simple restart of failed partitions.
+Cogstack is a distributed, fault tolerant database processing architecture for Tika, GATE, Biolark and text deidentification,
+ with JDBC and Elasticsearch export options. It makes use of the Spring Batch framework in order to provide a fully configurable
+ pipeline with the goal of generating a JSON that can be readily indexed into elasticsearch.
+ In the parlance of the batch processing [domain language](http://docs.spring.io/spring-batch/reference/html/domain.html),
+ it uses the partitioning concept to create 'partition step' metadata for a DB table. This metadata is persisted in the
+ Spring database schema, whereafter each partition can then be executed locally or farmed out remotely via a JMS middleware
+ server (only ActiveMQ is suported at this time). Remote worker JVMs then retrieve metadata descriptions of work units.
+ The outcome of processing is then persisted in the database, allowing robust tracking and simple restart of failed partitions.
 
 ## Why does this project exist/ why is batch processing difficult?
 
-This project was developed as the central 'glue' to combine a variety of processes from a wider architecture known as the 'CogStack'. The CogStack is a range of technologies designed to to support modern, open source healthcare analytics within the NHS, and is chiefly comprised of the Elastic stack (elasticsearch, kibana etc), GATE and Biolark (clinical natural language processing for entity extraction), OCR, clinical text de-identification (Manchester De-ID and the ElasticGazetteer), and Apache Tika for MS Office to text conversion. When processing very large datasets (10s - 100s of millions rows of data), it is likely that some problems will present certain difficulties for different processes. These problems are typically hard to predict - for example, some documents may have very long sentences, an unusual sequence of characters, or machine only content. Such circumstances can create a range of problems for NLP algorithms, and thus a fault tolerant batch frameworks are required to ensure robust, consistent processing.
+This project was developed as the central 'glue' to combine a variety of processes from a wider architecture known as the 'CogStack'.
+The CogStack is a range of technologies designed to to support modern, open source healthcare analytics within the NHS, and is
+chiefly comprised of the Elastic stack (elasticsearch, kibana etc), GATE and Biolark (clinical natural language processing for
+entity extraction), OCR, clinical text de-identification (Manchester De-ID and the ElasticGazetteer), and Apache Tika for MS
+Office to text conversion. When processing very large datasets (10s - 100s of millions rows of data), it is likely that some
+problems will present certain difficulties for different processes. These problems are typically hard to predict - for example,
+some documents may have very long sentences, an unusual sequence of characters, or machine only content. Such circumstances can
+create a range of problems for NLP algorithms, and thus a fault tolerant batch frameworks are required to ensure robust, consistent
+processing.
 
 ## Installation
 
-We're not quite at a regular release cycle yet, so if you want a stable version, I suggest downloading v 1.0.0 from the release page. However, if you want more features and (potentially) fewer bugs, it's best to build from source on the master branch.
+We're not quite at a regular release cycle yet, so if you want a stable version, I suggest downloading v 1.0.0 from the release
+ page. However, if you want more features and (potentially) fewer bugs, it's best to build from source on the master branch.
 
 To build from source:
 
- 1. Install [Tesseract](https://github.com/tesseract-ocr/tesseract) and [Imagemagick](https://github.com/ImageMagick/ImageMagick) (can be installed but apt-get on Ubuntu)
+ 1. Install [Tesseract](https://github.com/tesseract-ocr/tesseract) and [Imagemagick](https://github.com/ImageMagick/ImageMagick)
+ (can be installed but apt-get on Ubuntu)
  2. Run the following:
 
 ```
 gradlew clean build
 ```
 
+## Quick Start Guide
+
+The absolute easiest way to get up and running with CogStack is to use [Docker](https://www.docker.com/). Docker can provide
+lightweight virtualisation of a variety of microservices that CogStack makes use of. When coupled with the microservice orchestration
+[docker compose](https://docs.docker.com/compose/) technology, all of the components required to use CogStack can be set up with a few
+simple commands.
+
+First, ensure you have docker v1.13 or above installed. Now you need to build the required docker containers. Fortunately, the
+gradle build file can do this for you.
+
+From the CogStack top level directory:
+
+  ```
+  gradlew buildAllContainers
+  ```
+Note, this relies on some external resources (some quite large). If these are unavailable for download, for any reason, the task will
+ fail.
+
+Assuming the containers have been built successfully, simply navigate to
+```
+cd docker-cogstack/docker-compose
+```
+
+And type
+```
+docker compose up
+```
+
+All of the docker containers should be up and communicating with each other. You can view their status with
+```
+docker ps -a
+```
+
+
+That's it!
+
+"But that's what?", I hear you ask?
+
+The high level workflow of CogStack is as follows:
+
+* Read a row of the table into the CogStack software
+* Process the columns of the row with inbuild Processors, or call an NLP webservice to annotate the table columns
+* Construct a JSON that represents the table row and new data arising from the webservice
+* Index the JSON into an elasticsearch cluster
+* Visualise the results with Kibana
+
+To understand what's going on, we need to delve into what each of the components is doing. Let's start with the container called
+'some-postgres'. Let's assume this is a database that contains a table that we want to process somehow. In fact this example database already
+contains some example data. If you have some database browsing software, you should be able to connect to it with the following JDBC confguration
+
+```
+source.JdbcPath      = jdbc:postgresql://localhost:5432/cogstack
+source.Driver        = org.postgresql.Driver
+source.username      = cogstack
+source.password      = mysecretpassword
+```
+
+You should see a table called 'tblinputdocs' in the 'cogstack' database with four lines of dummy data.
+
+
+
+
+
+
+
 ## Integration Tests
 
-Although cogstack has unit tests where appropriate, the nature of the project is such that the real value fo testing comes from the integration tests. Consequently, cogstack has an extensive suite.
+Although cogstack has unit tests where appropriate, the nature of the project is such that the real value fo testing comes
+ from the integration tests. Consequently, cogstack has an extensive suite.
 
-To run the integration tests, ensure the required external services are available (which also give a good idea of how cogstack is configured). These services are Postgresql, Biolark and Elasticsearch.  The easiest way to get these going is with [Docker](https://www.docker.com/). Once you have docker installed, cogstack handily will build the containers you need for you (apart from elasticsearch, where the official image will suffice). To build the containers
-  ```
-  gradlew buildBiolarkContainer
-  gradlew buildPostgresContainer
-  gradlew buildBioyodieContainer
-  ```
+To run the integration tests, ensure the required external services are available
+ (which also give a good idea of how cogstack is configured). These services are Postgresql, Biolark and Elasticsearch.  The easiest way to get these going is with [Docker](https://www.docker.com/). Once you have docker installed, cogstack handily will build the containers you need for you (apart from elasticsearch, where the official image will suffice). To build the containers
+
 Then to run the containers
 ```
 docker run -p 5555:5555 --name some-biolark -d richjackson/biolark
-docker run -p 8080:8080 --name some-bioyodie -d richjackson/bioyodie:1.2.1
+docker run -p 8080:8080 --name some-bioyodie -d richjackson/bioyodie:D4.5
 docker run -p 5432:5432 --name some-postgres -d richjackson/postgres
 docker run -p 9200:9200 -p 9300:9300 --name some-elastic -d elasticsearch:2.4.4
 ```
@@ -148,7 +228,7 @@ cogstack assumes the 'job repository' schema is already in place in the DB imple
 
 To add additional JVM processes, whether locally or remotely (via the magic of Spring Integration), just launch an instance with the same config files but with useScheduling = slave. You'll need an ActiveMQ server to co-ordinate the nodes (see config example for details)
 
-That's it! If a job fails, any uncompleted partitions will be picked up by the next run. If a Job ends up in an unknown state (e.g. due to hardware failure), the next run will mark it as abandonded and recommence from the last successful job it can find in the repository.
+If a job fails, any uncompleted partitions will be picked up by the next run. If a Job ends up in an unknown state (e.g. due to hardware failure), the next run will mark it as abandonded and recommence from the last successful job it can find in the repository.
 
 ## JDBC output/reindexing
 
