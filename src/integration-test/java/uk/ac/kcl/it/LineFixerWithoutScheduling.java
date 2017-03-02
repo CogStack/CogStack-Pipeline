@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2016 King's College London, Richard Jackson <richgjackson@gmail.com>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,11 +15,11 @@
  */
 package uk.ac.kcl.it;
 
+import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.core.env.Environment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -27,61 +27,61 @@ import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import uk.ac.kcl.scheduling.ScheduledJobLauncher;
-import uk.ac.kcl.testexecutionlisteners.BasicTestExecutionListener;
+import uk.ac.kcl.scheduling.SingleJobLauncher;
+import uk.ac.kcl.testexecutionlisteners.DbLineFixerTestExecutionListener;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ *
+ * @author rich
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
-        "classpath:jms.properties",
         "classpath:postgres_test.properties",
         "classpath:postgres_db.properties",
 //        "classpath:sql_server_test.properties",
 //        "classpath:sql_server_db.properties",
-        "classpath:scheduling.properties",
-        "classpath:configured_start.properties",
+        "classpath:jms.properties",
+        "classpath:noScheduling.properties",
         "classpath:elasticsearch.properties",
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
-        PostGresTestUtils.class,
+        SingleJobLauncher.class,
         SqlServerTestUtils.class,
-        ScheduledJobLauncher.class,
+        PostGresTestUtils.class,
         TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 @TestExecutionListeners(
-        listeners = BasicTestExecutionListener.class,
+        listeners = DbLineFixerTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-@ActiveProfiles({"basic","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","postgres"})
-//@ActiveProfiles({"basic","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","sqlserver"})
-public class BasicConfigurerdStartPkPartitionWithScheduling {
+@ActiveProfiles({"dBLineFixer","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","postgres"})
+//@ActiveProfiles({"dBLineFixer","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","sqlserver"})
+public class LineFixerWithoutScheduling {
+
+    final static Logger logger = Logger.getLogger(LineFixerWithoutScheduling.class);
 
     @Autowired
-    private TestUtils testUtils;
+    SingleJobLauncher jobLauncher;
+    @Autowired
+    TestUtils testUtils;
 
     @Autowired
     DbmsTestUtils dbmsTestUtils;
 
-    @Autowired
-    Environment env;
-
-
-
     @Test
     @DirtiesContext
-    public void basicConfigurerdStartPkPartitionWithSchedulingTest() {
-        testUtils.insertFreshDataIntoBasicTableAfterDelay(env.getProperty("tblInputDocs"),15000);
+    public void lineFixerTest() {
+        jobLauncher.launchJob();
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        //note, in this test, we upsert documents, overriding existng ones. hence why ther ate 75 in the index and 150
-        //in the db
+
         assertEquals(75,testUtils.countOutputDocsInES());
-        assertEquals(150,dbmsTestUtils.countRowsInOutputTable());
+        assertEquals(75,dbmsTestUtils.countRowsInOutputTable());
 
     }
-
 }

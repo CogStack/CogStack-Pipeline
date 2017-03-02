@@ -15,11 +15,12 @@
  */
 package uk.ac.kcl.it;
 
+import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.core.env.Environment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -27,12 +28,15 @@ import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import uk.ac.kcl.scheduling.ScheduledJobLauncher;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
-import uk.ac.kcl.testexecutionlisteners.BasicTestExecutionListener;
+import uk.ac.kcl.testexecutionlisteners.DeidTestExecutionListener;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ *
+ * @author rich
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
@@ -40,43 +44,51 @@ import static org.junit.Assert.assertEquals;
         "classpath:postgres_db.properties",
 //        "classpath:sql_server_test.properties",
 //        "classpath:sql_server_db.properties",
-        "classpath:jms.properties",
-        "classpath:scheduling.properties",
+//        "classpath:jms.properties",
+        "classpath:noScheduling.properties",
+        "classpath:gate.properties",
+        "classpath:deidentification.properties",
         "classpath:elasticsearch.properties",
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
+        SingleJobLauncher.class,
         PostGresTestUtils.class,
         SqlServerTestUtils.class,
-        ScheduledJobLauncher.class,
         TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 @TestExecutionListeners(
-        listeners = BasicTestExecutionListener.class,
+        listeners = DeidTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-@ActiveProfiles({"basic","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyAndTimeStampPartition","postgres"})
-//@ActiveProfiles({"basic","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyAndTimeStampPartition","sqlserver"})
-public class BasicTimestampPartitionWithScheduling {
+@ActiveProfiles({"deid","localPartitioning","jdbc_in","jdbc_out","elasticsearch","postgres"})
+//@ActiveProfiles({"deid","basic","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","sqlserver"})
+public class DeIdentificationWithoutScheduling {
+
+    final static Logger logger = Logger.getLogger(DeIdentificationWithoutScheduling.class);
 
     @Autowired
-    private TestUtils testUtils;
+    SingleJobLauncher jobLauncher;
+
+    @Autowired
+    TestUtils testUtils;
+
     @Autowired
     DbmsTestUtils dbmsTestUtils;
-    @Autowired
-    Environment env;
 
     @Test
     @DirtiesContext
-    public void basicTimestampPartitionWithSchedulingTest() {
-        testUtils.insertFreshDataIntoBasicTableAfterDelay(env.getProperty("tblInputDocs"),15000);
+    public void deIdentificationTest() {
+
+        jobLauncher.launchJob();
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        //note, in this test, we upsert documents, overriding existng ones. hence why there are 75 in the index and 150
-        //in the db
-        assertEquals(75,testUtils.countOutputDocsInES());
-        assertEquals(150,dbmsTestUtils.countRowsInOutputTable());
+        assertEquals(106,testUtils.countOutputDocsInES());
+        assertEquals(106,dbmsTestUtils.countRowsInOutputTable());
     }
+
+
+
 
 }

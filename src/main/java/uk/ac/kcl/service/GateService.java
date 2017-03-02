@@ -65,8 +65,8 @@ public class GateService {
     @PostConstruct
     public void init() throws GateException, IOException {
 
-        File gateHome = new File(env.getProperty("gateHome"));
-        poolSize = Integer.parseInt(env.getProperty("poolSize"));
+        File gateHome = new File(env.getProperty("gate.gateHome"));
+        poolSize = Integer.parseInt(env.getProperty("gate.poolSize"));
         //in case called by other contexts
         if(!Gate.isInitialised()) {
             Gate.setGateHome(gateHome);
@@ -83,16 +83,16 @@ public class GateService {
         Gate.getCreoleRegister().getAllInstances("gate.Resource").forEach(Factory::deleteResource);
 
         if(activeProfiles.contains("gate")){
-            File gateApp = new File(env.getProperty("gateApp"));
+            File gateApp = new File(env.getProperty("gate.gateApp"));
             annotationSets = new ArrayList<>();
             try{
-                annotationSets.addAll(Arrays.asList(env.getProperty("gateAnnotationSets").split(",")));
+                annotationSets.addAll(Arrays.asList(env.getProperty("gate.gateAnnotationSets").split(",")));
             }catch(NullPointerException ex){
                 LOG.info("No annotation sets listed for extraction. Using default set");
             }
             annotationTypes = new ArrayList<>();
             try{
-                annotationTypes.addAll(Arrays.asList(env.getProperty("gateAnnotationTypes").split(",")));
+                annotationTypes.addAll(Arrays.asList(env.getProperty("gate.gateAnnotationTypes").split(",")));
             }catch(NullPointerException ex){
                 LOG.info("No annotation types listed for extraction. Extracting all types");
             }
@@ -109,7 +109,7 @@ public class GateService {
 
 
         if(activeProfiles.contains("deid")){
-            File deidApp = new File(env.getProperty("deIdApp"));
+            File deidApp = new File(env.getProperty("gate.deIdApp"));
             deIdQueue = new LinkedBlockingQueue<>();
             Corpus corpus = Factory.newCorpus("Corpus");
             CorpusController pipeline = (CorpusController) PersistenceManager

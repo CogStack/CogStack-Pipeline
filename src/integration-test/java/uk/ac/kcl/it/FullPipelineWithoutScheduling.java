@@ -15,6 +15,7 @@
  */
 package uk.ac.kcl.it;
 
+import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,33 +28,44 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
-import uk.ac.kcl.testexecutionlisteners.BasicTestExecutionListener;
+import uk.ac.kcl.testexecutionlisteners.FullPipelineTestExecutionListener;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ *
+ * @author rich
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
-        "classpath:jms.properties",
         "classpath:postgres_test.properties",
         "classpath:postgres_db.properties",
 //        "classpath:sql_server_test.properties",
 //        "classpath:sql_server_db.properties",
+        "classpath:jms.properties",
+        "classpath:tika_db.properties",
+        "classpath:gate.properties",
+        "classpath:deidentification.properties",
+        "classpath:bioyodie_webservice.properties",
         "classpath:noScheduling.properties",
         "classpath:elasticsearch.properties",
+        "classpath:jsonFileItemWriter.properties",
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
-        PostGresTestUtils.class,
-        SqlServerTestUtils.class,
         SingleJobLauncher.class,
+        SqlServerTestUtils.class,
+        PostGresTestUtils.class,
         TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 @TestExecutionListeners(
-        listeners = BasicTestExecutionListener.class,
+        listeners = FullPipelineTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-@ActiveProfiles({"basic","localPartitioning","jdbc_in","jdbc_out","elasticsearch","postgres"})
-//@ActiveProfiles({"basic","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","sqlserver"})
-public class BasicPKPartitionWithoutScheduling {
+@ActiveProfiles({"webservice","deid","tika","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","postgres"})
+//@ActiveProfiles({"webservice","deid","tika","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","sqlserver"})
+public class FullPipelineWithoutScheduling {
+
+    final static Logger logger = Logger.getLogger(FullPipelineWithoutScheduling.class);
 
     @Autowired
     SingleJobLauncher jobLauncher;
@@ -66,17 +78,17 @@ public class BasicPKPartitionWithoutScheduling {
 
     @Test
     @DirtiesContext
-    public void basicPkPartitionWithoutSchedulingTest() {
+    public void fullPipelineTest() {
         jobLauncher.launchJob();
-
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        assertEquals(75,testUtils.countOutputDocsInES());
-        assertEquals(75,dbmsTestUtils.countRowsInOutputTable());
-
+        assertEquals(31,testUtils.countOutputDocsInES());
+        assertEquals(31,dbmsTestUtils.countRowsInOutputTable());
     }
+
+
 
 }

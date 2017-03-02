@@ -51,7 +51,7 @@ import java.util.Random;
 @Ignore
 public class PostGresTestUtils implements DbmsTestUtils{
 
-    final static Logger logger = Logger.getLogger(GATEPKPartitionWithoutScheduling.class);
+    final static Logger logger = Logger.getLogger(GATEWithoutScheduling.class);
     long today = System.currentTimeMillis();
     Random random = new Random();
 

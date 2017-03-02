@@ -1,4 +1,4 @@
-/*
+/* 
  * Copyright 2016 King's College London, Richard Jackson <richgjackson@gmail.com>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,7 +28,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
-import uk.ac.kcl.testexecutionlisteners.DbLineFixerTestExecutionListener;
+import uk.ac.kcl.testexecutionlisteners.TikaTestExecutionListener;
 
 import static org.junit.Assert.assertEquals;
 
@@ -44,6 +44,7 @@ import static org.junit.Assert.assertEquals;
 //        "classpath:sql_server_test.properties",
 //        "classpath:sql_server_db.properties",
         "classpath:jms.properties",
+        "classpath:tika_db.properties",
         "classpath:noScheduling.properties",
         "classpath:elasticsearch.properties",
         "classpath:jobAndStep.properties"})
@@ -54,34 +55,30 @@ import static org.junit.Assert.assertEquals;
         TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 @TestExecutionListeners(
-        listeners = DbLineFixerTestExecutionListener.class,
+        listeners = TikaTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-@ActiveProfiles({"dBLineFixer","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","postgres"})
-//@ActiveProfiles({"dBLineFixer","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","sqlserver"})
-public class LineFixerPKPartitionWithoutScheduling {
+@ActiveProfiles({"tika","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","postgres"})
+//@ActiveProfiles({"tika","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","sqlserver"})
+public class TikaWithoutScheduling {
 
-    final static Logger logger = Logger.getLogger(LineFixerPKPartitionWithoutScheduling.class);
+    final static Logger logger = Logger.getLogger(TikaWithoutScheduling.class);
 
     @Autowired
     SingleJobLauncher jobLauncher;
     @Autowired
     TestUtils testUtils;
 
-    @Autowired
-    DbmsTestUtils dbmsTestUtils;
 
     @Test
     @DirtiesContext
-    public void lineFixerTest() {
+    public void tikaPipelineTest() {
         jobLauncher.launchJob();
+
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-        assertEquals(75,testUtils.countOutputDocsInES());
-        assertEquals(75,dbmsTestUtils.countRowsInOutputTable());
-
+        assertEquals(1000,testUtils.countOutputDocsInES());
     }
 }

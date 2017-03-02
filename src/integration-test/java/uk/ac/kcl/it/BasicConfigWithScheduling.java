@@ -28,6 +28,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.scheduling.ScheduledJobLauncher;
+import uk.ac.kcl.scheduling.SingleJobLauncher;
 import uk.ac.kcl.testexecutionlisteners.BasicTestExecutionListener;
 
 import static org.junit.Assert.assertEquals;
@@ -35,11 +36,11 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
-        "classpath:jms.properties",
         "classpath:postgres_test.properties",
         "classpath:postgres_db.properties",
 //        "classpath:sql_server_test.properties",
 //        "classpath:sql_server_db.properties",
+        "classpath:jms.properties",
         "classpath:scheduling.properties",
         "classpath:elasticsearch.properties",
         "classpath:jobAndStep.properties"})
@@ -52,30 +53,27 @@ import static org.junit.Assert.assertEquals;
 @TestExecutionListeners(
         listeners = BasicTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-@ActiveProfiles({"basic","localPartitioning","jdbc_in","jdbc_out","elasticsearch","postgres"})
-//@ActiveProfiles({"basic","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","sqlserver"})
-public class BasicPkPartitionWithScheduling {
+@ActiveProfiles({"basic","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyAndTimeStampPartition","postgres"})
+//@ActiveProfiles({"basic","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyAndTimeStampPartition","sqlserver"})
+public class BasicConfigWithScheduling {
 
     @Autowired
     private TestUtils testUtils;
-
+    @Autowired
+    DbmsTestUtils dbmsTestUtils;
     @Autowired
     Environment env;
 
-    @Autowired
-    DbmsTestUtils dbmsTestUtils;
-
     @Test
     @DirtiesContext
-    public void basicPkPartitionWithSchedulingTest() {
+    public void basicTimestampPartitionWithSchedulingTest() {
         testUtils.insertFreshDataIntoBasicTableAfterDelay(env.getProperty("tblInputDocs"),15000);
-
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        //note, in this test, we upsert documents, overriding existng ones. hence why ther ate 75 in the index and 150
+        //note, in this test, we upsert documents, overriding existng ones. hence why there are 75 in the index and 150
         //in the db
         assertEquals(75,testUtils.countOutputDocsInES());
         assertEquals(150,dbmsTestUtils.countRowsInOutputTable());

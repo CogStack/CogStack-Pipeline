@@ -14,8 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -107,7 +105,7 @@ public class TestUtils  {
                 xhtmlString = new String(bytes, StandardCharsets.UTF_8);
                 jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName", "fictionalPrimaryKeyFieldName", docCount, null, xhtmlString);
             } catch (IOException ex) {
-                java.util.logging.Logger.getLogger(GATEPKPartitionWithoutScheduling.class.getName()).log(Level.SEVERE, null, ex);
+                java.util.logging.Logger.getLogger(GATEWithoutScheduling.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }

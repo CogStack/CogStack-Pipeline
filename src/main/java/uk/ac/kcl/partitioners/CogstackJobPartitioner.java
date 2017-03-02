@@ -55,13 +55,13 @@ public  class CogstackJobPartitioner implements Partitioner {
     @Value("${source.dbmsToJavaSqlTimestampType}")
     String dbmsToJavaSqlTimestampType ;
 
-    @Value("${firstJobStartDate:#{null}}")
+    @Value("${configuredStart.firstJobStartDate:#{null}}")
     String firstJobStartDate;
 
     @Value("${checkForEmptyPartitions:#{false}}")
     Boolean checkForEmptyPartitions;
 
-    @Value("${datePatternForSQL:#{null}}")
+    @Value("${configuredStart.datePatternForSQL:#{null}}")
     String datePatternForSQL;
 
     @Value("${partitioner.tableToPartition}")
@@ -70,7 +70,7 @@ public  class CogstackJobPartitioner implements Partitioner {
     @Value("${partitioner.pkColumnNameToPartition}")
     String column;
 
-    @Value("${scheduler.processingPeriod}")
+    @Value("${scheduler.processingPeriod:777600000000}")
     Long processingPeriod;
 
     @Value("${partitioner.maxPartitionSize:#{null}}")
@@ -118,7 +118,7 @@ public  class CogstackJobPartitioner implements Partitioner {
             //if there's a configured start timestamp, use this
             startTimestamp = getConfiguredRunAsTimestamp();
             params = getParams(startTimestamp, true);
-            logger.info ("firstJobStartDate detected in config. Commencing from " + startTimestamp.toString());
+            logger.info ("configuredStart.firstJobStartDate detected in config. Commencing from " + startTimestamp.toString());
         }else if(jobExecution.getJobParameters().getString("last_timestamp_from_last_successful_job") ==null){
 //            or this is the first ever JobExecution, get the timestamp for this
             startTimestamp = getFirstTimestampInTable();
@@ -154,7 +154,7 @@ public  class CogstackJobPartitioner implements Partitioner {
     private ScheduledPartitionParams getParams(Timestamp jobStartTimeStamp, boolean inclusiveOfStart) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
         String sql = MessageFormat.format("SELECT MAX({0}) AS max_id, MIN({0}) AS min_id, MAX({1}) AS max_time_stamp " +
-                ",MIN({1}) AS min_time_stamp FROM ( SELECT {2} {0},{1} FROM {3} ",
+                        ",MIN({1}) AS min_time_stamp FROM ( SELECT {2} {0},{1} FROM {3} ",
                 column,timeStamp,batchJobUtils.cleanSqlString(preFieldsSQL),table);
 
         Timestamp jobEndTimeStamp = getEndTimeStamp(jobStartTimeStamp);
@@ -283,13 +283,6 @@ public  class CogstackJobPartitioner implements Partitioner {
         return startTimeStamp;
     }
 
-//    private void setFirstRunBasedOnJobExecution() {
-//        try{
-//            firstRun = Boolean.valueOf(jobExecution.getJobParameters().getString("first_run_of_job"));
-//        }catch (NullPointerException ex){
-//            logger.info("No previous runs in this job detected");
-//        }
-//    }
 
     private Timestamp getConfiguredRunAsTimestamp() {
         Timestamp timestamp = null;
@@ -309,7 +302,7 @@ public  class CogstackJobPartitioner implements Partitioner {
 
     private Timestamp getLastTimestampFromLastSuccessfulJob(){
         Timestamp jobStartTimeStamp  = new Timestamp(jobExecution.getJobParameters()
-                    .getDate("last_timestamp_from_last_successful_job").getTime());
+                .getDate("last_timestamp_from_last_successful_job").getTime());
         return jobStartTimeStamp;
     }
 

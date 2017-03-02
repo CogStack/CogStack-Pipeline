@@ -15,11 +15,11 @@
  */
 package uk.ac.kcl.it;
 
-import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.env.Environment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -27,64 +27,61 @@ import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import uk.ac.kcl.scheduling.SingleJobLauncher;
+import uk.ac.kcl.scheduling.ScheduledJobLauncher;
 import uk.ac.kcl.testexecutionlisteners.BasicTestExecutionListener;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
-/**
- *
- * @author rich
- */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
+        "classpath:jms.properties",
         "classpath:postgres_test.properties",
         "classpath:postgres_db.properties",
 //        "classpath:sql_server_test.properties",
 //        "classpath:sql_server_db.properties",
-        "classpath:jms.properties",
-        "classpath:noScheduling.properties",
+        "classpath:scheduling.properties",
+        "classpath:configured_start.properties",
         "classpath:elasticsearch.properties",
-        "classpath:bioyodie_webservice.properties",
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
         PostGresTestUtils.class,
         SqlServerTestUtils.class,
-        SingleJobLauncher.class,
+        ScheduledJobLauncher.class,
         TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 @TestExecutionListeners(
         listeners = BasicTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-@ActiveProfiles({"webservice","basic","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","postgres"})
-//@ActiveProfiles({"webservice","basic","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","sqlserver"})
-public class BioyodieWebservicePKPartitionWithoutScheduling {
+@ActiveProfiles({"basic","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","postgres"})
+//@ActiveProfiles({"basic","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","sqlserver"})
+public class BasicConfigWithSchedulingAndConfiguredStart {
 
-    final static Logger logger = Logger.getLogger(BioyodieWebservicePKPartitionWithoutScheduling.class);
-
-    @Autowired
-    SingleJobLauncher jobLauncher;
     @Autowired
     private TestUtils testUtils;
+
     @Autowired
     DbmsTestUtils dbmsTestUtils;
+
+    @Autowired
+    Environment env;
+
+
+
     @Test
     @DirtiesContext
-    public void bioyodieTest() {
-        jobLauncher.launchJob();
+    public void basicConfigurerdStartPkPartitionWithSchedulingTest() {
+        testUtils.insertFreshDataIntoBasicTableAfterDelay(env.getProperty("tblInputDocs"),15000);
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        //note, in this test, we upsert documents, overriding existng ones. hence why ther ate 75 in the index and 150
+        //in the db
         assertEquals(75,testUtils.countOutputDocsInES());
-        assertEquals(75,dbmsTestUtils.countRowsInOutputTable());
-        assertTrue(testUtils.getStringInEsDoc("1")
-                .contains("T061"));
+        assertEquals(150,dbmsTestUtils.countRowsInOutputTable());
+
     }
-
-
 
 }

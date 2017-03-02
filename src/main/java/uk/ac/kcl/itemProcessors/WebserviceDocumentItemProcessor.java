@@ -18,6 +18,7 @@ package uk.ac.kcl.itemProcessors;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
@@ -45,10 +46,15 @@ public class WebserviceDocumentItemProcessor implements ItemProcessor<Document, 
 
     @Autowired
     private Environment env;
+    @Value("${webservice.endPoint}")
     private String endPoint;
+    @Value("${webservice.fieldName}")
     private String fieldName;
+    @Value("${webservice.connectTimeout}")
     private int connectTimeout;
+    @Value("${webservice.readTimeout}")
     private int readTimeout;
+    @Value("${webservice.name}")
     private String webserviceName;
 
     private RetryTemplate retryTemplate;
@@ -60,11 +66,7 @@ public class WebserviceDocumentItemProcessor implements ItemProcessor<Document, 
 
         fieldsToSendToWebservice = Arrays.asList(env.getProperty("webservice.fieldsToSendToWebservice")
                 .toLowerCase().split(","));
-        endPoint = env.getProperty("webservice.endPoint");
-        setFieldName(env.getProperty("webservice.fieldName"));
-        this.connectTimeout = Integer.valueOf(env.getProperty("webservice.connectTimeout"));
-        this.readTimeout = Integer.valueOf(env.getProperty("webservice.readTimeout"));
-        this.webserviceName = env.getProperty("webservice.name");
+        setFieldName(fieldName);
         this.retryTemplate = getRetryTemplate();
         this.restTemplate = new RestTemplate();
         ((SimpleClientHttpRequestFactory)restTemplate.getRequestFactory()).setReadTimeout(readTimeout);
@@ -117,7 +119,7 @@ public class WebserviceDocumentItemProcessor implements ItemProcessor<Document, 
                     @Override
                     public Object recover(RetryContext context) throws WebserviceProcessingFailedException {
                         LOG.warn(webserviceName +" failed on document "+ doc.getDocName());
-                        throw new WebserviceProcessingFailedException(webserviceName +" Biolark failed on document "
+                        throw new WebserviceProcessingFailedException(webserviceName +"  failed on document "
                                 + doc.getDocName(),context.getLastThrowable());
                     }
                 });

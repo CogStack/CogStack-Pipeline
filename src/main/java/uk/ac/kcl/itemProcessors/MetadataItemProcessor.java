@@ -32,7 +32,6 @@ public class MetadataItemProcessor extends TLItemProcessor implements ItemProces
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(MetadataItemProcessor.class);
 
     private boolean eagerGetPageCount;
-    private String binaryFieldName;
 
     @Autowired
     Environment env;

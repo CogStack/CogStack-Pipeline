@@ -36,24 +36,10 @@ public class JSONMakerItemProcessor implements ItemProcessor<Document, Document>
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(JSONMakerItemProcessor.class);
 
-    @Autowired
-    Environment env;
-
-    @PostConstruct
-    public void init(){
-
-    }
     @Override
     public Document process(final Document doc) throws Exception {
         LOG.debug("starting " + this.getClass().getSimpleName() +" on doc " +doc.getDocName());
         doc.setOutputData(doc.getGson().toJson(doc.getAssociativeArray()));
-//
-//        if(!reindex) {
-//
-//        }else{
-//            doc.setOutputData(doc.getAssociativeArray().get(reindexField).toString());
-//        }
-
         LOG.debug("finished " + this.getClass().getSimpleName() +" on doc " +doc.getDocName());
         return doc;
     }

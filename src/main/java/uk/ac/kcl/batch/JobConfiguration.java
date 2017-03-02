@@ -40,6 +40,8 @@ import org.springframework.batch.support.DatabaseType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
@@ -78,12 +80,41 @@ import java.util.ArrayList;
 public class JobConfiguration {
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(JobConfiguration.class);
 
+    ///Configure order of processoer and writer composites here
+
+    @Bean
+    @Qualifier("compositeItemProcessorr")
+    public ItemProcessor<Document,Document> compositeItemProcessor() {
+        CompositeItemProcessor processor = new CompositeItemProcessor<>();
+        ArrayList<ItemProcessor<Document,Document>> delegates = new ArrayList<>();
+
+        if(tikaItemProcessor !=null) delegates.add(tikaItemProcessor);
+        if(metadataItemProcessor !=null) delegates.add(metadataItemProcessor);
+        if(dBLineFixerItemProcessor !=null) delegates.add(dBLineFixerItemProcessor);
+        if(gateItemProcessor !=null) delegates.add(gateItemProcessor);
+        if(deIdDocumentItemProcessor !=null) delegates.add(deIdDocumentItemProcessor);
+        if(webserviceDocumentItemProcessor !=null) delegates.add(webserviceDocumentItemProcessor);
+
+        delegates.add(jsonMakerItemProcessor);
+        processor.setDelegates(delegates);
+        return processor;
+    }
+
+    @Bean
+    @Qualifier("compositeItemWriter")
+    public ItemWriter<Document> compositeESandJdbcItemWriter() {
+        CompositeItemWriter writer = new CompositeItemWriter<>();
+        ArrayList<ItemWriter<Document>> delegates = new ArrayList<>();
+        if(esItemWriter !=null) delegates.add(esItemWriter);
+        if(jdbcItemWriter !=null) delegates.add(jdbcItemWriter);
+        if(jsonFileItemWriter !=null) delegates.add(jsonFileItemWriter);
+        if(pdfFileItemWriter != null) delegates.add(pdfFileItemWriter);
+        if(thumbnailFileItemWriter !=null) delegates.add(thumbnailFileItemWriter);
+        writer.setDelegates(delegates);
+        return writer;
+    }
+
     @StepScope
-
-
-
-
-
     @Bean
     public LoggerHelper loggerHelper(){
         LoggerHelper lh = new LoggerHelper();
@@ -129,57 +160,67 @@ public class JobConfiguration {
     }
 
 
+    @Value("${source.Driver}")
+    private String sourceDriver;
+    @Value("${source.JdbcPath}")
+    private String sourceJdbcPath;
+    @Value("${source.username}")
+    private String sourceUserName;
+    @Value("${source.password}")
+    private String sourcePassword;
+    @Value("${source.idleTimeout}")
+    private Long sourceIdleTimeout;
+    @Value("${source.maxLifetime}")
+    private Long sourceMaxLifeTime;
+
 
     @Bean(destroyMethod = "close")
     @Primary
     @Qualifier("sourceDataSource")
-    //@Scope("prototype")
     public DataSource sourceDataSource() {
         HikariDataSource mainDatasource = new HikariDataSource();
-        executeSessionScripts(mainDatasource,env.getProperty("source.Driver"));
-        mainDatasource.setDriverClassName(env.getProperty("source.Driver"));
-        mainDatasource.setJdbcUrl(env.getProperty("source.JdbcPath"));
-        mainDatasource.setUsername(env.getProperty("source.username"));
-        mainDatasource.setPassword(env.getProperty("source.password"));
-        mainDatasource.setIdleTimeout(Long.valueOf(env.getProperty("source.idleTimeout")));
-        mainDatasource.setMaxLifetime(Long.valueOf(env.getProperty("source.maxLifetime")));
-        //mainDatasource.setConnectionTestQuery("select 1");
-
+        executeSessionScripts(mainDatasource,sourceDriver);
+        mainDatasource.setDriverClassName(sourceDriver);
+        mainDatasource.setJdbcUrl(sourceJdbcPath);
+        mainDatasource.setUsername(sourceUserName);
+        mainDatasource.setPassword(sourcePassword);
+        mainDatasource.setIdleTimeout(sourceIdleTimeout);
+        mainDatasource.setMaxLifetime(sourceMaxLifeTime);
         return mainDatasource;
     }
 
 
+
+
+
+
+    @Value("${target.Driver}")
+    private String targetDriver;
+    @Value("${target.JdbcPath}")
+    private String targetJdbcPath;
+    @Value("${target.username}")
+    private String targetUserName;
+    @Value("${target.password}")
+    private String targetPassword;
+    @Value("${target.idleTimeout}")
+    private Long targetIdleTimeout;
+    @Value("${target.maxLifetime}")
+    private Long targetMaxLifeTime;
+
     @Bean(destroyMethod = "close")
-    //@Scope("prototype")
+//    @Primary
     @Qualifier("targetDataSource")
     public DataSource targetDataSource() {
         HikariDataSource mainDatasource = new HikariDataSource();
-        executeSessionScripts(mainDatasource,env.getProperty("target.Driver"));
-        mainDatasource.setDriverClassName(env.getProperty("target.Driver"));
-        mainDatasource.setJdbcUrl(env.getProperty("target.JdbcPath"));
-        mainDatasource.setUsername(env.getProperty("target.username"));
-        mainDatasource.setPassword(env.getProperty("target.password"));
-        mainDatasource.setIdleTimeout(Long.valueOf(env.getProperty("target.idleTimeout")));
-        mainDatasource.setMaxLifetime(Long.valueOf(env.getProperty("target.maxLifetime")));
-        //mainDatasource.setConnectionTestQuery("select 1");
-        //?? should be managed by transaction manager
-        //mainDatasource.setAutoCommit(false);
+        executeSessionScripts(mainDatasource,targetDriver);
+        mainDatasource.setDriverClassName(targetDriver);
+        mainDatasource.setJdbcUrl(targetJdbcPath);
+        mainDatasource.setUsername(targetUserName);
+        mainDatasource.setPassword(targetPassword);
+        mainDatasource.setIdleTimeout(targetIdleTimeout);
+        mainDatasource.setMaxLifetime(targetMaxLifeTime);
         return mainDatasource;
-
     }
-
-//    @Bean
-//    @Profile("jdbc")
-//    @Qualifier("targetDatasourceTransactionManager")
-//    public PlatformTransactionManager targetDatasourceTransactionManager(
-//            @Qualifier("targetDataSource")
-//                    DataSource jdbcDocumentTarget) {
-//        DataSourceTransactionManager tx = new DataSourceTransactionManager();
-//        tx.setDataSource(jdbcDocumentTarget);
-//        return tx;
-//    }
-
-
 
 
 
@@ -214,11 +255,6 @@ public class JobConfiguration {
             }
 
     }
-
-    @Value("${target.username}")
-    String targetUserName;
-    @Value("${target.password}")
-    String targetPassword;
 
     @Bean
     public BeanFactoryStepLocator stepLocator(){
@@ -339,19 +375,6 @@ public class JobConfiguration {
     @Qualifier("thumbnailFileItemWriter")
     ItemWriter<Document> thumbnailFileItemWriter;
 
-    @Bean
-    @Qualifier("compositeItemWriter")
-    public ItemWriter<Document> compositeESandJdbcItemWriter() {
-        CompositeItemWriter writer = new CompositeItemWriter<>();
-        ArrayList<ItemWriter<Document>> delegates = new ArrayList<>();
-        if(esItemWriter !=null) delegates.add(esItemWriter);
-        if(jdbcItemWriter !=null) delegates.add(jdbcItemWriter);
-        if(jsonFileItemWriter !=null) delegates.add(jsonFileItemWriter);
-        if(pdfFileItemWriter != null) delegates.add(pdfFileItemWriter);
-        if(thumbnailFileItemWriter !=null) delegates.add(thumbnailFileItemWriter);
-        writer.setDelegates(delegates);
-        return writer;
-    }
 
 
 
@@ -385,22 +408,6 @@ public class JobConfiguration {
 
 
 
-    @Bean
-    @Qualifier("compositeItemProcessorr")
-    public ItemProcessor<Document,Document> compositeItemProcessor() {
-        CompositeItemProcessor processor = new CompositeItemProcessor<>();
-        ArrayList<ItemProcessor<Document,Document>> delegates = new ArrayList<>();
 
-        if(tikaItemProcessor !=null) delegates.add(tikaItemProcessor);
-        if(metadataItemProcessor !=null) delegates.add(metadataItemProcessor);
-        if(dBLineFixerItemProcessor !=null) delegates.add(dBLineFixerItemProcessor);
-        if(gateItemProcessor !=null) delegates.add(gateItemProcessor);
-        if(deIdDocumentItemProcessor !=null) delegates.add(deIdDocumentItemProcessor);
-        if(webserviceDocumentItemProcessor !=null) delegates.add(webserviceDocumentItemProcessor);
-
-        delegates.add(jsonMakerItemProcessor);
-        processor.setDelegates(delegates);
-        return processor;
-    }
 
 }

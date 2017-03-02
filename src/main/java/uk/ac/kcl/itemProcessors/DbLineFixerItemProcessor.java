@@ -19,6 +19,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -30,6 +32,7 @@ import uk.ac.kcl.rowmappers.SimpleDocumentRowMapper;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -45,8 +48,10 @@ public class DbLineFixerItemProcessor extends TLItemProcessor implements ItemPro
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(DbLineFixerItemProcessor.class);
 
     @Autowired
+    @Lazy
     @Qualifier("sourceDataSource")
     private DataSource ds;
+
     @Autowired
     public SimpleDocumentRowMapper simpleMapper;
 
@@ -54,41 +59,31 @@ public class DbLineFixerItemProcessor extends TLItemProcessor implements ItemPro
 
     @Resource
     Environment env;
+
+    @Value("${lf.documentKeyName}")
     private String documentKeyName;
+    @Value("${lf.lineKeyName}")
     private String lineKeyName;
+    @Value("${lf.srcTableName}")
     private String srcTableName;
+    @Value("${lf.lineContents}")
     private String lineContents;
+    @Value("${lf.fieldName}")
+    private String fieldName;
 
 
     @PostConstruct
     public void init(){
         this.template = new JdbcTemplate(ds);
-        setFieldName(env.getProperty("dbLineFixerFieldName"));
-        documentKeyName = env.getProperty("lf.documentKeyName");
-        lineKeyName = env.getProperty("lf.lineKeyName");
-        srcTableName = env.getProperty("lf.srcTableName");
-        lineContents = env.getProperty("lf.lineContents");
-
+        setFieldName(fieldName);
     }
 
     @Override
     public Document process(final Document doc) throws Exception {
         LOG.debug("starting " + this.getClass().getSimpleName() +" on doc " +doc.getDocName());
-        String sql = "SELECT " +
-                documentKeyName +
-                ", " +
-                lineKeyName +
-                ", " +
-                lineContents +
-                " FROM " +
-                srcTableName +
-                " WHERE " +
-                documentKeyName +
-                " = '" +
-                doc.getPrimaryKeyFieldValue() +
-                "' ORDER BY " +
-                lineKeyName +
-                " DESC";
+        String sql = MessageFormat.format("SELECT {0}, {1}, {2} FROM {3} WHERE {0} = ''{4}'' " +
+                " ORDER BY {5} DESC ",documentKeyName,lineKeyName,
+                lineContents,srcTableName,doc.getPrimaryKeyFieldValue(),lineKeyName);
 
         List<MultilineDocument> docs = template.query(sql, simpleMapper);
 

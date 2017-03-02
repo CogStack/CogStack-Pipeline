@@ -52,8 +52,8 @@ public class DeIdDocumentItemProcessor implements ItemProcessor<Document, Docume
     @PostConstruct
     private void init(){
 
-        fieldsToDeId = Arrays.asList(env.getProperty("fieldsToDeId").toLowerCase().split(","));
-        replaceFields = Boolean.parseBoolean(env.getProperty("replaceFields"));
+        fieldsToDeId = Arrays.asList(env.getProperty("deid.fieldsToDeId").toLowerCase().split(","));
+        replaceFields = Boolean.parseBoolean(env.getProperty("deid.replaceFields"));
     }
 
     private List<String> fieldsToDeId;
@@ -72,7 +72,7 @@ public class DeIdDocumentItemProcessor implements ItemProcessor<Document, Docume
             String newString = "";
             if(fieldsToDeId.contains(k.toLowerCase())) {
                 try {
-                    if (env.getProperty("useGateApp").equalsIgnoreCase("true")) {
+                    if (env.getProperty("deid.useGateApp").equalsIgnoreCase("true")) {
                         newString = gateService.deIdentifyString(v.toString(), doc.getPrimaryKeyFieldValue());
                     } else {
                         newString = elasticGazetteer.deIdentifyDates(v.toString(), doc.getPrimaryKeyFieldValue());

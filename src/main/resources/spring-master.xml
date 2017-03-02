@@ -21,15 +21,15 @@
         
         <int-jms:outbound-channel-adapter connection-factory="connectionFactory"
             channel="requestChannel"
-            destination-name="${requestQueueName}"/>
+            destination-name="${jms.requestQueueName}"/>
         
     	<int-jms:message-driven-channel-adapter connection-factory="connectionFactory"
             channel="replyChannel"
-            destination-name="${replyQueueName}"/>
+            destination-name="${jms.replyQueueName}"/>
       	<int:aggregator ref="partitionHandler"
 					input-channel="replyChannel"
 					output-channel="aggregatedReplyChannel"
-					send-timeout="${jobTimeout}"/>
+					send-timeout="${job.jobTimeout}"/>
 
 
 </beans>

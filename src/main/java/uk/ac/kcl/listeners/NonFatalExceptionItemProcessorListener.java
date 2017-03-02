@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import uk.ac.kcl.model.Document;
-import uk.ac.kcl.partitioners.AbstractRealTimeRangePartitioner;
 
 import java.util.Iterator;
 import java.util.Set;

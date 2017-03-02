@@ -59,9 +59,9 @@ import static org.junit.Assert.assertEquals;
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 @ActiveProfiles({"gate","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","postgres"})
 //@ActiveProfiles({"gate","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","sqlserver"})
-public class GATEPKPartitionWithoutScheduling {
+public class GATEWithoutScheduling {
 
-    final static Logger logger = Logger.getLogger(GATEPKPartitionWithoutScheduling.class);
+    final static Logger logger = Logger.getLogger(GATEWithoutScheduling.class);
 
     @Autowired
     SingleJobLauncher jobLauncher;

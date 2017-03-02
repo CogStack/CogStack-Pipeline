@@ -11,6 +11,7 @@ import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.batch.core.launch.NoSuchJobExecutionException;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.SmartLifecycle;
@@ -41,7 +42,11 @@ public class CleanupBean implements SmartLifecycle, ApplicationContextAware {
 
     @Autowired(required = false)
     ScheduledJobLauncher scheduledJobLauncher;
+
     private ApplicationContext applicationContext;
+
+    @Value("${job.jobName:defaultJob}")
+    String jobName;
 
     public void setJobExecutionId(long jobExecutionId) {
         this.jobExecutionId = jobExecutionId;
@@ -64,7 +69,7 @@ public class CleanupBean implements SmartLifecycle, ApplicationContextAware {
         Set<Long> jobExecs = new HashSet<>();
         try {
 
-            jobExecs.addAll(jobOperator.getRunningExecutions(env.getProperty("job.jobName")));
+            jobExecs.addAll(jobOperator.getRunningExecutions(jobName));
         } catch (NoSuchJobException e) {
             LOG.error("Couldn't get job list to stop executions ",e);
         } catch (NullPointerException ex){
@@ -77,7 +82,7 @@ public class CleanupBean implements SmartLifecycle, ApplicationContextAware {
             LOG.info("No running jobs detected. Exiting now");
             return;
         }else if(jobExecs.size() > 1){
-            LOG.warn("Detected more than one "+env.getProperty("job.jobName")+ " with status of running.");
+            LOG.warn("Detected more than one "+jobName+ " with status of running.");
         };
 
 

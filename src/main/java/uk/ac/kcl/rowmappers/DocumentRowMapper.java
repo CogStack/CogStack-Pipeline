@@ -24,6 +24,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ByteArrayResource;
@@ -53,65 +54,39 @@ public class DocumentRowMapper implements RowMapper<Document>{
     BatchJobUtils batchJobUtils;
     @Autowired
     ApplicationContext context;
+    @Value("${reindexColumn:#{null}}")
     private String reindexColumn;
+    @Value("${datePatternForES}")
     private String esDatePattern;
-    private DateTimeFormatter fmt;
+    @Value("${reindex:false}")
     private boolean reindex;
+    @Value("${reindexField:#{null}}")
     private String reindexField;
+    @Value("${tika.binaryPathPrefix:#{null}}")
     private String pathPrefix;
+    @Value("${tika.binaryContentSource:#{null}}")
     private String binaryContentSource;
+    @Value("${tika.binaryFieldName:#{null}}")
+    private String binaryContentFieldName;
+    @Value("${srcTableName}")
+    private String srcTableName;
+    @Value("${srcColumnFieldName}")
+    private String srcColumnFieldName;
+    @Value("${primaryKeyFieldName}")
+    private String primaryKeyFieldName;
+    @Value("${primaryKeyFieldValue}")
+    private String primaryKeyFieldValue;
+    @Value("${timeStamp}")
+    private String timeStamp;
+    private DateTimeFormatter fmt;
+    private List<String> fieldsToIgnore;
 
     @PostConstruct
     public void init () {
-        srcTableName = env.getProperty("srcTableName");
-        srcColumnFieldName = env.getProperty("srcColumnFieldName");
-        primaryKeyFieldName =env.getProperty("primaryKeyFieldName");
-        primaryKeyFieldValue = env.getProperty("primaryKeyFieldValue");
-        timeStamp = env.getProperty("timeStamp");
-
         fieldsToIgnore = Arrays.asList(env.getProperty("elasticsearch.excludeFromIndexing")
                 .toLowerCase().split(","));
-
-        //for tika
-        if(env.getProperty("binaryContentSource")!=null){
-            binaryContentSource = env.getProperty("binaryContentSource");
-            if(binaryContentSource.equals("database")){
-                    binaryContentFieldName = env.getProperty("binaryFieldName");
-            }else if (binaryContentSource.equals("fileSystemWithDBPath")){
-                pathPrefix = env.getProperty("binaryPathPrefix");
-                binaryContentFieldName = env.getProperty("binaryFieldName");
-            }
-        }else{
-            binaryContentSource = null;
-        }
-
-
-
-
-        if(env.getProperty("reindexColumn")!=null){
-            reindexColumn = env.getProperty("reindexColumn");
-        }else{
-            reindexColumn = null;
-        }
-        esDatePattern = env.getProperty("datePatternForES");
         fmt = DateTimeFormat.forPattern(esDatePattern);
-
-        reindex = Boolean.valueOf(env.getProperty("reindex"));
-        if(reindex) {
-            this.reindexField = env.getProperty("reindexField").toLowerCase();
-        }
-
     }
-    private String binaryContentFieldName;
-    private String srcTableName;
-    private String srcColumnFieldName;
-    private String primaryKeyFieldName;
-    private String primaryKeyFieldValue;
-    private String timeStamp;
-    private List<String> fieldsToIgnore;
-
-
-
     void mapFields(Document doc, ResultSet rs) throws SQLException, IOException {
         mapMetadata(doc, rs);
         //add additional query fields for ES export
@@ -166,7 +141,7 @@ public class DocumentRowMapper implements RowMapper<Document>{
     public Document mapRow(ResultSet rs, int rowNum) throws SQLException {
         Document doc = new Document();
         if(reindex){
-            mapAssociativeArray(doc, rs);            
+            mapAssociativeArray(doc, rs);
         }else {
             try {
                 mapFields(doc, rs);

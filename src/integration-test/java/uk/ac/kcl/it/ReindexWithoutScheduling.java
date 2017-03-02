@@ -19,7 +19,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.core.env.Environment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -28,7 +27,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
-import uk.ac.kcl.testexecutionlisteners.BasicTestExecutionListener;
+import uk.ac.kcl.testexecutionlisteners.ReindexTestExecutionListener;
 
 import static org.junit.Assert.assertEquals;
 
@@ -39,35 +38,32 @@ import static org.junit.Assert.assertEquals;
         "classpath:postgres_db.properties",
 //        "classpath:sql_server_test.properties",
 //        "classpath:sql_server_db.properties",
+        "classpath:reindex.properties",
         "classpath:jms.properties",
         "classpath:noScheduling.properties",
         "classpath:elasticsearch.properties",
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
-        PostGresTestUtils.class,
-        SqlServerTestUtils.class,
         SingleJobLauncher.class,
+        SqlServerTestUtils.class,
+        PostGresTestUtils.class,
         TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 @TestExecutionListeners(
-        listeners = BasicTestExecutionListener.class,
+        listeners = ReindexTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-@ActiveProfiles({"basic","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyAndTimeStampPartition","postgres"})
-//@ActiveProfiles({"basic","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyAndTimeStampPartition","sqlserver"})
-public class BasicTimestampPartitionWithoutScheduling {
+@ActiveProfiles({"basic","localPartitioning","elasticsearch","primaryKeyPartition","jdbc_in","jdbc_out","postgres"})
+//@ActiveProfiles({"basic","localPartitioning","elasticsearch","primaryKeyPartition","jdbc_in","jdbc_out","sqlserver"})
+public class ReindexWithoutScheduling {
 
     @Autowired
     SingleJobLauncher jobLauncher;
-
     @Autowired
-    private TestUtils testUtils;
-
-    @Autowired
-    DbmsTestUtils dbmsTestUtils;
+    TestUtils testUtils;
 
     @Test
     @DirtiesContext
-    public void basicTimestampPartitionWithoutSchedulingTest() {
+    public void reindexTest() {
         jobLauncher.launchJob();
         try {
             Thread.sleep(5000);
@@ -75,7 +71,7 @@ public class BasicTimestampPartitionWithoutScheduling {
             e.printStackTrace();
         }
         assertEquals(75,testUtils.countOutputDocsInES());
-        assertEquals(75,dbmsTestUtils.countRowsInOutputTable());
+
     }
 
 }
