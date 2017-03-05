@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.support.transaction.TransactionAwareProxyFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -41,12 +42,42 @@ import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 @Profile("elasticsearch")
 public class ElasticsearchDocumentWriter implements ItemWriter<Document> {
     private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchDocumentWriter.class);
-    private long timeout;
-    List<T> output = TransactionAwareProxyFactory.createTransactionalList();
     private ElasticsearchDocumentWriter() {}
 
+
+
+    @Value("${elasticsearch.index.name:#{null}}")
     private String indexName;
+
+    @Value("${elasticsearch.type:#{null}}")
     private String typeName;
+
+    @Value("${elasticsearch.shield.enabled:false}")
+    private boolean securityEnabled;
+
+    @Value("${elasticsearch.cluster.name:#{null}}")
+    private String clusterName;
+
+    @Value("${elasticsearch.cluster.host:#{null}}")
+    private String clusterHost;
+
+    @Value("${elasticsearch.response.timeout:10000}")
+    private long timeout;
+
+    @Value("${elasticsearch.cluster.port:#{null}}")
+    private int port;
+
+    @Value("${elasticsearch.shield.user:#{null}}")
+    private String user;
+
+    @Value("${elasticsearch.shield.ssl.keystore.path:#{null}}")
+    private String sslKeyStorePath;
+
+    @Value("${elasticsearch.shield.ssl.keystore.password:#{null}}")
+    private String password;
+
+    @Value("${elasticsearch.shield.ssl.keystore.password:#{null}}")
+    private String transportSSl;
 
     @Autowired
     Environment env;
@@ -56,37 +87,33 @@ public class ElasticsearchDocumentWriter implements ItemWriter<Document> {
     public void init() throws UnknownHostException {
         Settings settings;
 
-        if(env.getProperty("elasticsearch.shield.enabled").equalsIgnoreCase("true")){
+        if(securityEnabled){
             settings =Settings.settingsBuilder()
-                    .put("cluster.name", env.getProperty("elasticsearch.cluster.name"))
-                    .put("shield.user", env.getProperty("elasticsearch.shield.user"))
-                    .put("shield.ssl.keystore.path", env.getProperty("elasticsearch.shield.ssl.keystore.path"))
-                    .put("shield.ssl.keystore.password", env.getProperty("elasticsearch.shield.ssl.keystore.password"))
+                    .put("cluster.name", clusterName)
+                    .put("shield.user", user)
+                    .put("shield.ssl.keystore.path", sslKeyStorePath)
+                    .put("shield.ssl.keystore.password", password)
                     //.put("shield.ssl.truststore.path", env.getProperty("elasticsearch.shield.ssl.truststore.path"))
                     //.put("shield.ssl.truststore.password", env.getProperty("elasticsearch.shield.ssl.truststore.password"))
-                    .put("shield.transport.ssl", env.getProperty("elasticsearch.shield.transport.ssl"))
+                    .put("shield.transport.ssl", transportSSl)
                     .build();
             client = TransportClient.builder()
                     .addPlugin(ShieldPlugin.class)
                     .settings(settings)
                     .build()
                     .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(
-                            env.getProperty("elasticsearch.cluster.host")),
-                            Integer.valueOf(env.getProperty("elasticsearch.cluster.port"))));
+                            clusterHost),
+                            port));
         }else {
             settings =Settings.settingsBuilder()
-                    .put("cluster.name", env.getProperty("elasticsearch.cluster.name")).build();
+                    .put("cluster.name", clusterName).build();
             client = TransportClient.builder()
                     .settings(settings)
                     .build()
                     .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(
-                            env.getProperty("elasticsearch.cluster.host")),
-                            Integer.valueOf(env.getProperty("elasticsearch.cluster.port"))));
+                            clusterHost),
+                            port));
         }
-
-        timeout = Long.valueOf(env.getProperty("elasticsearch.response.timeout"));
-        indexName = env.getProperty("elasticsearch.index.name");
-        typeName = env.getProperty("elasticsearch.type");
     }
     @PreDestroy
     public void destroy(){

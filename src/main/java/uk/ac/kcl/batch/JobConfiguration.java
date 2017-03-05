@@ -67,7 +67,6 @@ import java.util.ArrayList;
         "uk.ac.kcl.utils",
         "uk.ac.kcl.listeners",
         "uk.ac.kcl.partitioners",
-        "uk.ac.kcl.itemReaders",
         "uk.ac.kcl.itemProcessors",
         "uk.ac.kcl.itemWriters",
         "uk.ac.kcl.cleanup"})

@@ -15,23 +15,19 @@
  */
 package uk.ac.kcl.itemProcessors;
 
-import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import uk.ac.kcl.model.Document;
-
-import javax.annotation.PostConstruct;
-
-import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 
 /**
  *
  * @author rich
  *
- * a null item processor to meet composite requirements if no processing is required
+ * a simple JSON maker item processor to meet composite requirements if no processing is required
  */
+@Service
 public class JSONMakerItemProcessor implements ItemProcessor<Document, Document> {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(JSONMakerItemProcessor.class);

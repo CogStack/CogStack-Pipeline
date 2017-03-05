@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
@@ -40,9 +39,6 @@ import java.sql.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 
 @Component
 public class DocumentRowMapper implements RowMapper<Document>{
@@ -81,6 +77,7 @@ public class DocumentRowMapper implements RowMapper<Document>{
     private DateTimeFormatter fmt;
     private List<String> fieldsToIgnore;
 
+
     @PostConstruct
     public void init () {
         fieldsToIgnore = Arrays.asList(env.getProperty("elasticsearch.excludeFromIndexing")
@@ -88,8 +85,7 @@ public class DocumentRowMapper implements RowMapper<Document>{
         fmt = DateTimeFormat.forPattern(esDatePattern);
     }
 
-    private void mapFields(Document doc, ResultSet rs) throws SQLException, IOException {
-        mapMetadata(doc, rs);
+    private void mapDBFields(Document doc, ResultSet rs) throws SQLException, IOException {
         //add additional query fields for ES export
         ResultSetMetaData meta = rs.getMetaData();
 
@@ -137,13 +133,14 @@ public class DocumentRowMapper implements RowMapper<Document>{
         }
     }
 
-    private void mapMetadata(Document doc, ResultSet rs) throws SQLException {
+    private void mapDBMetadata(Document doc, ResultSet rs) throws SQLException {
         doc.setSrcTableName(rs.getString(srcTableName));
         doc.setSrcColumnFieldName(rs.getString(srcColumnFieldName));
         doc.setPrimaryKeyFieldName(rs.getString(primaryKeyFieldName));
         doc.setPrimaryKeyFieldValue(rs.getString(primaryKeyFieldValue));
         doc.setTimeStamp(rs.getTimestamp(timeStamp));
     }
+
 
     @Override
     public Document mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -152,7 +149,8 @@ public class DocumentRowMapper implements RowMapper<Document>{
             mapAssociativeArray(doc, rs);
         }else {
             try {
-                mapFields(doc, rs);
+                mapDBMetadata(doc, rs);
+                mapDBFields(doc, rs);
             } catch (IOException e) {
                 LOG.error("DocumentRowMapper could not map file based binary");
                 throw new SQLException("DocumentRowMapper could not map file based binary");
@@ -162,7 +160,7 @@ public class DocumentRowMapper implements RowMapper<Document>{
     }
 
     private void mapAssociativeArray(Document doc, ResultSet rs) throws SQLException {
-        mapMetadata(doc, rs);
+        mapDBMetadata(doc, rs);
         doc.setAssociativeArray(new Gson().fromJson(rs.getString(reindexField),
                 new TypeToken<HashMap<String, Object>>() {}.getType()));
     }

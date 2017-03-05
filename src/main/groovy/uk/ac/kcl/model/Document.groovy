@@ -2,7 +2,6 @@ package uk.ac.kcl.model
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import org.elasticsearch.common.xcontent.XContentBuilder
 
 import java.sql.Timestamp
 
