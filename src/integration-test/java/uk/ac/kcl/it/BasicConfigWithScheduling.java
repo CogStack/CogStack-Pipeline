@@ -53,7 +53,7 @@ import static org.junit.Assert.assertEquals;
 @TestExecutionListeners(
         listeners = BasicTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-@ActiveProfiles({"basic","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyAndTimeStampPartition","postgres"})
+@ActiveProfiles({"basic","localPartitioning","jdbc_in","jdbc_out","elasticsearchRest","primaryKeyAndTimeStampPartition","postgres"})
 //@ActiveProfiles({"basic","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyAndTimeStampPartition","sqlserver"})
 public class BasicConfigWithScheduling {
 

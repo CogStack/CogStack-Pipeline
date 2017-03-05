@@ -6,9 +6,15 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.nio.entity.NStringEntity;
+import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 import org.apache.poi.xwpf.usermodel.*;
+import org.elasticsearch.client.Response;
+import org.json.JSONObject;
 import org.junit.Ignore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,6 +27,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import uk.ac.kcl.mutators.Mutant;
 import uk.ac.kcl.mutators.StringMutatorService;
+import uk.ac.kcl.service.ESRestService;
 
 import javax.sql.DataSource;
 import java.io.*;
@@ -35,7 +42,8 @@ import java.util.logging.Level;
  */
 @Ignore
 @Service
-@ComponentScan({"uk.ac.kcl.it","uk.ac.kcl.mutators"})
+@ComponentScan({"uk.ac.kcl.it","uk.ac.kcl.mutators"
+        ,"uk.ac.kcl.service"})
 public class TestUtils  {
     static Random random = new Random();
     static long today = System.currentTimeMillis();
@@ -47,7 +55,8 @@ public class TestUtils  {
             "Small midface with a flattened nasal bridge.",
             "Spinal kyphosis (convex curvature) or lordosis (concave curvature).",
             "Varus (bowleg) or valgus (knock knee) deformities.",
-            "Frequently have ear infections (due to Eustachian tube blockages), sleep apnea (which can be central or obstructive), and hydrocephalus."};
+            "Frequently have ear infections (due to Eustachian tube blockages), sleep apnea " +
+                    "(which can be central or obstructive), and hydrocephalus."};
     @Autowired
     @Qualifier("sourceDataSource")
     public DataSource sourceDataSource;
@@ -58,6 +67,10 @@ public class TestUtils  {
 
     @Autowired
     StringMutatorService stringMutatorService;
+
+    @Autowired(required = false)
+    @Qualifier("esRestService")
+    private ESRestService esRestService;
 
     @Autowired
     Environment env;
@@ -431,7 +444,7 @@ public class TestUtils  {
     }
 
 
-    public void deleteESTestIndexAndSetUpMapping(){
+    public void deleteESTestIndexAndSetUpMapping2(){
 
         String uri = "http://"+env.getProperty("elasticsearch.cluster.host")+":9200"+"/"+env.getProperty("elasticsearch.index.name");
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(HttpClients.createDefault());
@@ -444,10 +457,21 @@ public class TestUtils  {
         setUpESMapping();
     }
 
+    public void deleteESTestIndexAndSetUpMapping(){
+
+        try {
+            esRestService.getRestClient().performRequest(
+                    "DELETE",
+                    "/"+env.getProperty("elasticsearch.index.name") ,
+                    Collections.<String, String>emptyMap()
+                    );
+        } catch (IOException e) {
+            throw new RuntimeException("Delete failed:", e);
+        }
+        setUpESMapping();
+    }
     private void setUpESMapping(){
-        String uri = "http://"+env.getProperty("elasticsearch.cluster.host")+":9200"+"/"+
-                env.getProperty("elasticsearch.index.name");
-        String mapping =     "{" +
+        HttpEntity entity = new NStringEntity("{" +
                 "  \"mappings\": {" +
                 "    \""+env.getProperty("elasticsearch.type")+"\": {" +
                 "      \"properties\": {" +
@@ -460,53 +484,56 @@ public class TestUtils  {
                 "      }" +
                 "    }" +
                 "  }" +
-                "}";
+                "}", ContentType.APPLICATION_JSON);
 
-        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(HttpClients.createDefault());
-        RestTemplate restTemplate = new RestTemplate(requestFactory);
         try {
-            restTemplate.put(uri,mapping,String.class);
-        }catch(HttpClientErrorException ex){
-            System.out.println("mapping not set up: " +ex.getLocalizedMessage());
+            esRestService.getRestClient().performRequest(
+                    "PUT",
+                    "/"+env.getProperty("elasticsearch.index.name") ,
+                    Collections.<String, String>emptyMap(),
+                    entity
+            );
+        } catch (IOException e) {
+            throw new RuntimeException("Delete failed:", e);
         }
-
-
-
-
     }
-
-
 
 
     public int countOutputDocsInES(){
-        String uri = "http://"+env.getProperty("elasticsearch.cluster.host")+":9200"+
-                "/"+env.getProperty("elasticsearch.index.name")+"/"
-                +env.getProperty("elasticsearch.type")+"/_count";
-        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(HttpClients.createDefault());
-        RestTemplate restTemplate = new RestTemplate(requestFactory);
-        JsonObject jsonObject = null;
         try {
-            jsonObject = new JsonParser().parse(restTemplate.getForObject(uri,String.class)).getAsJsonObject();
-        }catch(HttpClientErrorException ex){
-            System.out.println("Cannot execute REST request: " +ex.getLocalizedMessage());
+           Response response = esRestService.getRestClient().performRequest(
+                    "GET",
+                    "/"+env.getProperty("elasticsearch.index.name")+"/"
+                            +env.getProperty("elasticsearch.type")+"/_count",
+                    Collections.<String, String>emptyMap()
+            );
+            HttpEntity ent = response.getEntity();
+            JSONObject json = new JSONObject(EntityUtils.toString(ent));
+            return  json.getInt("count");
+        } catch (IOException e) {
+            throw new RuntimeException("GET request failed:", e);
         }
-        return jsonObject.get("count").getAsInt();
     }
 
+
+
+
     public String getStringInEsDoc(String id){
-        String uri = "http://"+env.getProperty("elasticsearch.cluster.host")+":9200"+
-                "/"+env.getProperty("elasticsearch.index.name")+"/"
-                +env.getProperty("elasticsearch.type")+"/"+id;
-        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(HttpClients.createDefault());
-        RestTemplate restTemplate = new RestTemplate(requestFactory);
-        JsonObject jsonObject = null;
-//        try {
-            jsonObject = new JsonParser().parse(restTemplate.getForObject(uri,String.class)).getAsJsonObject();
-//        }catch(HttpClientErrorException ex){
-//            System.out.println("Cannot execute REST request: " +ex.getLocalizedMessage());
-//        }
-        return jsonObject.toString();
+        try {
+            Response response = esRestService.getRestClient().performRequest(
+                    "GET",
+                    "/"+env.getProperty("elasticsearch.index.name")+"/"
+                            +env.getProperty("elasticsearch.type")+"/"+id,
+                    Collections.<String, String>emptyMap()
+            );
+            HttpEntity ent = response.getEntity();
+            JsonObject json = new JsonParser().parse(EntityUtils.toString(ent)).getAsJsonObject();
+            return  json.toString();
+        } catch (IOException e) {
+            throw new RuntimeException("GET request failed:", e);
+        }
     }
+
 
 
     private String multiplyDocSize(String doc, int factor){

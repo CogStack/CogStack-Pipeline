@@ -59,7 +59,7 @@ import static org.junit.Assert.assertTrue;
 @TestExecutionListeners(
         listeners = DocmanReaderTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-@ActiveProfiles({"docman","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","postgres","tika"})
+@ActiveProfiles({"docman","localPartitioning","jdbc_in","jdbc_out","elasticsearchRest","primaryKeyPartition","postgres","tika"})
 //@ActiveProfiles({"biolark","basic","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","sqlserver"})
 public class DocmanReaderWithoutScheduling {
 
@@ -86,7 +86,9 @@ public class DocmanReaderWithoutScheduling {
         assertEquals(2,testUtils.countOutputDocsInES());
         assertEquals(2,dbmsTestUtils.countRowsInOutputTable());
 
-        assertTrue(testUtils.getStringInEsDoc("1")
+        String testString = testUtils.getStringInEsDoc("1");
+
+        assertTrue(testString
                 .contains("The patient’s name is Bart Davidson"));
         assertTrue(testUtils.getStringInEsDoc("2")
                 .contains("The patient’s name is David Harleyson"));

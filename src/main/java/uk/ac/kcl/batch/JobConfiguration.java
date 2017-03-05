@@ -105,6 +105,7 @@ public class JobConfiguration {
         CompositeItemWriter writer = new CompositeItemWriter<>();
         ArrayList<ItemWriter<Document>> delegates = new ArrayList<>();
         if(esItemWriter !=null) delegates.add(esItemWriter);
+        if(esRestItemWriter !=null) delegates.add(esRestItemWriter);
         if(jdbcItemWriter !=null) delegates.add(jdbcItemWriter);
         if(jsonFileItemWriter !=null) delegates.add(jsonFileItemWriter);
         if(pdfFileItemWriter != null) delegates.add(pdfFileItemWriter);
@@ -357,6 +358,10 @@ public class JobConfiguration {
     @Autowired(required = false)
     @Qualifier("esDocumentWriter")
     ItemWriter<Document> esItemWriter;
+
+    @Autowired(required = false)
+    @Qualifier("esRestDocumentWriter")
+    ItemWriter<Document> esRestItemWriter;
 
     @Autowired(required = false)
     @Qualifier("simpleJdbcItemWriter")

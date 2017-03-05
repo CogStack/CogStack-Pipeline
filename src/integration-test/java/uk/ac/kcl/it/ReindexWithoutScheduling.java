@@ -52,7 +52,7 @@ import static org.junit.Assert.assertEquals;
 @TestExecutionListeners(
         listeners = ReindexTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-@ActiveProfiles({"basic","localPartitioning","elasticsearch","primaryKeyPartition","jdbc_in","jdbc_out","postgres"})
+@ActiveProfiles({"basic","localPartitioning","elasticsearchRest","primaryKeyPartition","jdbc_in","jdbc_out","postgres"})
 //@ActiveProfiles({"basic","localPartitioning","elasticsearch","primaryKeyPartition","jdbc_in","jdbc_out","sqlserver"})
 public class ReindexWithoutScheduling {
 

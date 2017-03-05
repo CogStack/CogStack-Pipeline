@@ -232,17 +232,20 @@ task runPostgresContainer(type: Exec){
 }
 
 task buildElasticsearchContainer(type: Exec){
-        commandLine 'docker', 'pull', 'elasticsearch:2.4.4'
+        commandLine 'docker', 'pull', 'docker.elastic.co/elasticsearch/elasticsearch:5.2.1'
 }
 
 task runElasticsearchContainer(type: Exec){
-    commandLine 'docker', 'run', '-p', '9200:9200', '-p', '9300:9300', '--name', 'some-elastic', '-d', 'elasticsearch:2.4.4'
+    commandLine 'docker', 'run', '-p', '9200:9200', '-p', '9300:9300', '--name', 'some-elastic', '-d',
+            '-e', 'http.host=0.0.0.0' ,'-e', 'transport.host=127.0.0.1' ,
+    'docker.elastic.co/elasticsearch/elasticsearch:5.2.1'
 }
 task buildKibanaContainer(type: Exec){
-    commandLine 'docker', 'pull' ,'kibana:4.6.4'
+    commandLine 'docker', 'pull' ,'docker.elastic.co/kibana/kibana:5.2.1'
 }
 task runKibanaContainer(type: Exec){
-    commandLine 'docker', 'run', '--link', 'some-elastic:elasticsearch ', '-p', '5601:5601', '--name', 'some-kibana', '-d', 'kibana:4.6.4'
+    commandLine 'docker', 'run', '--link', 'some-elastic:elasticsearch ', '-p', '5601:5601', '--name', 'some-kibana', '-d',
+            'docker.elastic.co/kibana/kibana:5.2.1'
 }
 
 task buildBiolarkContainer (type: Exec){

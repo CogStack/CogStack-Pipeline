@@ -61,7 +61,7 @@ import static org.junit.Assert.assertEquals;
 @TestExecutionListeners(
         listeners = FullPipelineTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-@ActiveProfiles({"webservice","deid","tika","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","postgres"})
+@ActiveProfiles({"webservice","deid","tika","localPartitioning","jdbc_in","jdbc_out","elasticsearchRest","primaryKeyPartition","postgres"})
 //@ActiveProfiles({"webservice","deid","tika","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","sqlserver"})
 public class FullPipelineWithoutScheduling {
 

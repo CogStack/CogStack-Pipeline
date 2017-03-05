@@ -59,7 +59,7 @@ import static org.junit.Assert.assertEquals;
 @TestExecutionListeners(
         listeners = DeidTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-@ActiveProfiles({"deid","localPartitioning","jdbc_in","jdbc_out","elasticsearch","postgres"})
+@ActiveProfiles({"deid","localPartitioning","jdbc_in","jdbc_out","elasticsearchRest","postgres"})
 //@ActiveProfiles({"deid","basic","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","sqlserver"})
 public class DeIdentificationWithoutScheduling {
 

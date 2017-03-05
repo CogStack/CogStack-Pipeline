@@ -10,6 +10,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.nio.entity.NStringEntity;
+import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.ResponseListener;
 import org.elasticsearch.client.RestClient;
@@ -18,11 +19,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import uk.ac.kcl.model.Document;
+import uk.ac.kcl.service.ESRestService;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -47,14 +51,17 @@ import java.util.List;
  */
 @Service("esRestDocumentWriter")
 @Profile("elasticsearchRest")
+@ComponentScan("uk.ac.kcl.service")
 public class ElasticsearchRestDocumentWriter implements ItemWriter<Document> {
     private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchRestDocumentWriter.class);
-
-
 
     private ElasticsearchRestDocumentWriter() {}
 
 
+
+    @Autowired
+    @Qualifier("esRestService")
+    private ESRestService esRestService;
 
     @Value("${elasticsearch.index.name:#{null}}")
     private String indexName;
@@ -62,116 +69,20 @@ public class ElasticsearchRestDocumentWriter implements ItemWriter<Document> {
     @Value("${elasticsearch.type:#{null}}")
     private String typeName;
 
-    @Value("${elasticsearch.shield.enabled:false}")
-    private boolean securityEnabled;
-
-    @Value("${elasticsearch.cluster.name:#{null}}")
-    private String clusterName;
-
-    @Value("${elasticsearch.cluster.host:#{null}}")
-    private String clusterHost;
-
-    @Value("${elasticsearch.connect.timeout:5000}")
-    private long connTimeout;
-
-    @Value("${elasticsearch.response.timeout:60000}")
-    private int respTimeout;
-
-    @Value("${elasticsearch.retry.timeout:60000}")
-    private int retryTimeout;
-
-    @Value("${elasticsearch.cluster.port:#{null}}")
-    private int port;
-
-    @Value("${elasticsearch.shield.user:#{null}}")
-    private String user;
-
-    @Value("${elasticsearch.shield.password:#{null}}")
-    private String userPassword;
-
-    @Value("${elasticsearch.shield.ssl.keystore.path:#{null}}")
-    private String sslKeyStorePath;
-
-    @Value("${elasticsearch.shield.ssl.keystore.password:#{null}}")
-    private String keyStorePassword;
-
-    @Value("${elasticsearch.shield.ssl.truststore.path:#{null}}")
-    private String sslTrustStorePath;
-
-    @Value("${elasticsearch.shield.ssl.truststore.password:#{null}}")
-    private String trustStorePassword;
-
-    @Autowired
-    Environment env;
-
-    private RestClient restClient;
-    private CredentialsProvider credentialsProvider;
-
-    @PostConstruct
-    public void init() throws IOException, KeyStoreException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException, KeyManagementException {
-
-        if (securityEnabled) {
-            credentialsProvider = new BasicCredentialsProvider();
-            credentialsProvider.setCredentials(AuthScope.ANY,
-                    new UsernamePasswordCredentials(user, userPassword));
-
-            restClient = RestClient.builder(new HttpHost(clusterHost,port))
-                    .setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
-                        @Override
-                        public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
-                            return httpClientBuilder
-                                    .setDefaultCredentialsProvider(credentialsProvider)
-                                    .setSSLContext(getSslContext());
-
-                        }
-                    })
-                    .setRequestConfigCallback(new RestClientBuilder.RequestConfigCallback() {
-                        @Override
-                        public RequestConfig.Builder customizeRequestConfig(RequestConfig.Builder requestConfigBuilder) {
-                            return requestConfigBuilder.setConnectTimeout(respTimeout)
-                                    .setSocketTimeout(retryTimeout);
-                        }
-                    })
-                    .build();
-        } else {
-            restClient = RestClient.builder(new HttpHost(clusterHost, port, "http"))
-                    .setRequestConfigCallback(new RestClientBuilder.RequestConfigCallback() {
-                        @Override
-                        public RequestConfig.Builder customizeRequestConfig(RequestConfig.Builder requestConfigBuilder) {
-                            return requestConfigBuilder.setConnectTimeout(respTimeout)
-                                    .setSocketTimeout(retryTimeout);
-                        }
-                    })
-                    .setMaxRetryTimeoutMillis(retryTimeout)
-                    .build();
+    @Override
+    public final void write(List<? extends Document> documents) {
+        HttpEntity entity = makeEntity(documents);
+        try {
+            esRestService.getRestClient().performRequest(
+                    "POST",
+                    "_bulk" ,
+                    Collections.<String, String>emptyMap(),
+                    //assume that the documents are stored in an entities array
+                    entity);
+        } catch (IOException e) {
+            throw new RuntimeException("Indexing failed:", e);
         }
     }
-
-    @PreDestroy
-    public void destroy() throws IOException {
-        restClient.close();
-    }
-
-    @Override
-    public final void write(List<? extends Document> documents) throws Exception {
-        HttpEntity entity = makeEntity(documents);
-
-
-        Response response = restClient.performRequest(
-                "POST",
-                "_bulk" ,
-                Collections.<String, String>emptyMap(),
-                //assume that the documents are stored in an entities array
-                entity);
-
-
-        handleResponse(response);
-    }
-
-    private void handleResponse(Response response) {
-        System.out.println(response);
-    }
-
 
     private HttpEntity makeEntity(List<? extends Document> documents) {
         StringBuilder sb = new StringBuilder("");
@@ -181,33 +92,8 @@ public class ElasticsearchRestDocumentWriter implements ItemWriter<Document> {
                     .append("\" }\n");
             sb.append(doc.getOutputData()).append("\n");
         }
-        System.out.println(sb);
+        LOG.debug(sb.toString());
         return new NStringEntity(sb.toString(), ContentType.APPLICATION_JSON);
     }
 
-    private SSLContext getSslContext() {
-        try {
-            KeyStore keyStore = KeyStore.getInstance("jks");
-            try (InputStream is = Files.newInputStream(new File(sslKeyStorePath).toPath())) {
-                keyStore.load(is, keyStorePassword.toCharArray());
-            }
-
-            KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance("X509");
-            keyManagerFactory.init(keyStore, keyStorePassword.toCharArray());
-
-            KeyStore truststore = KeyStore.getInstance("jks");
-            try (InputStream is = Files.newInputStream(new File(sslTrustStorePath).toPath())) {
-                truststore.load(is, trustStorePassword.toCharArray());
-            }
-
-            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance("X509");
-            trustManagerFactory.init(truststore);
-
-            SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
-            sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
-            return sslContext;
-        }catch (CertificateException | NoSuchAlgorithmException | IOException | UnrecoverableKeyException | KeyStoreException | KeyManagementException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }
