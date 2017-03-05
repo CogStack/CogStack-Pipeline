@@ -87,7 +87,8 @@ public class DocumentRowMapper implements RowMapper<Document>{
                 .toLowerCase().split(","));
         fmt = DateTimeFormat.forPattern(esDatePattern);
     }
-    void mapFields(Document doc, ResultSet rs) throws SQLException, IOException {
+
+    private void mapFields(Document doc, ResultSet rs) throws SQLException, IOException {
         mapMetadata(doc, rs);
         //add additional query fields for ES export
         ResultSetMetaData meta = rs.getMetaData();
@@ -99,31 +100,38 @@ public class DocumentRowMapper implements RowMapper<Document>{
             if (value != null){
                 String colLabel =meta.getColumnLabel(col).toLowerCase();
                 if(!fieldsToIgnore.contains(colLabel)){
-                    if(meta.getColumnType(col)==91) {
-                        Date dt = (Date)value;
-                        DateTime dateTime = new DateTime(dt.getTime());
-                        doc.getAssociativeArray().put(meta.getColumnLabel(col).toLowerCase(), fmt.print(dateTime));
-                    }else if (meta.getColumnType(col)==93){
-                        Timestamp ts = (Timestamp) value;
-                        DateTime dateTime = new DateTime(ts.getTime());
-                        doc.getAssociativeArray().put(meta.getColumnLabel(col).toLowerCase(), fmt.print(dateTime));
-                    }else {
-                        doc.getAssociativeArray().put(meta.getColumnLabel(col).toLowerCase(), rs.getString(col));
+                    DateTime dateTime;
+                    //map correct SQL time types
+                    switch (meta.getColumnType(col)){
+                        case 91:
+                            Date dt = (Date)value;
+                            dateTime = new DateTime(dt.getTime());
+                            doc.getAssociativeArray().put(meta.getColumnLabel(col).toLowerCase(), fmt.print(dateTime));
+                            break;
+                        case 93:
+                            Timestamp ts = (Timestamp) value;
+                            dateTime = new DateTime(ts.getTime());
+                            doc.getAssociativeArray().put(meta.getColumnLabel(col).toLowerCase(), fmt.print(dateTime));
+                            break;
+                        default:
+                            doc.getAssociativeArray().put(meta.getColumnLabel(col).toLowerCase(), rs.getString(col));
+                            break;
                     }
                 }
             }
-            if (binaryContentSource!= null) {
-                if (binaryContentSource.equals("database")) {
-                    if (binaryContentFieldName != null &&
-                            value != null
-                            && meta.getColumnLabel(col).equalsIgnoreCase(binaryContentFieldName)) {
+
+            //map binary content from FS or database if required (as per docman reader)
+            if(value != null && meta.getColumnLabel(col).equalsIgnoreCase(binaryContentFieldName)) {
+                switch (binaryContentSource) {
+                    case "database":
                         doc.setBinaryContent(rs.getBytes(col));
-                    }
-                } else if (binaryContentSource.equals("fileSystemWithDBPath") &&
-                        value != null
-                        && meta.getColumnLabel(col).equalsIgnoreCase(binaryContentFieldName)) {
-                    Resource resource = context.getResource(pathPrefix + rs.getString(col));
-                    doc.setBinaryContent(IOUtils.toByteArray(resource.getInputStream()));
+                        break;
+                    case "fileSystemWithDBPath":
+                        Resource resource = context.getResource(pathPrefix + rs.getString(col));
+                        doc.setBinaryContent(IOUtils.toByteArray(resource.getInputStream()));
+                        break;
+                    default:
+                        break;
                 }
             }
         }
