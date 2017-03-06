@@ -25,7 +25,7 @@ public class BasicTestExecutionListener extends AbstractTestExecutionListener {
                 testContext.getApplicationContext().getBean(TestUtils.class);
         Environment env = testContext.getApplicationContext().getBean(Environment.class);
         testUtils.deleteESTestIndexAndSetUpMapping();
-        testUtils.insertDataIntoBasicTable(env.getProperty("tblInputDocs"),true);
+        testUtils.insertDataIntoBasicTable(env.getProperty("tblInputDocs"),true,1,75);
     }
 
 }

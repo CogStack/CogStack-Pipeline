@@ -46,16 +46,22 @@ lightweight virtualisation of a variety of microservices that CogStack makes use
 [docker compose](https://docs.docker.com/compose/) technology, all of the components required to use CogStack can be set up with a few
 simple commands.
 
-First, ensure you have docker v1.13 or above installed. Now you need to build the required docker containers. Fortunately, the
-gradle build file can do this for you.
+First, ensure you have docker v1.13 or above installed.
+
+Elasticsearch in docker requires the following to be set on the host:
+
+```
+sudo sysctl -w vm.max_map_count=262144
+```
+
+
+Now you need to build the required docker containers. Fortunately, the gradle build file can do this for you.
 
 From the CogStack top level directory:
 
-  ```
+```
   gradlew buildAllContainers
-  ```
-Note, this relies on some external resources (some quite large). If these are unavailable for download, for any reason, the task will
- fail.
+```
 
 Assuming the containers have been built successfully, simply navigate to
 ```
@@ -96,10 +102,8 @@ source.username      = cogstack
 source.password      = mysecretpassword
 ```
 
-You should see a table called 'tblinputdocs' in the 'cogstack' database with four lines of dummy data.
-
-
-
+You should see a table called 'tblinputdocs' in the 'cogstack' database with four lines of dummy data. This table is now constantly
+ being scanned and indexed into elasticsearch.
 
 
 
@@ -253,4 +257,4 @@ Some of the advancements in cogstack:
  6. Remote partitioning via an ActiveMQ JMS server, for complete scalability
  7. Built in job scheduler to enable near real time synchronisation with a database
 
-Questions? Want to help? Drop me a [message](mailto:richgjackson@yahoo.co.uk)!
+Questions? Want to help? Drop me a [message](mailto:richgjackson@gmail.com)!

@@ -146,10 +146,8 @@ public class TestUtils  {
         }
     }
 
-    public void insertDataIntoBasicTable( String tableName,boolean includeText){
+    public void insertDataIntoBasicTable( String tableName,boolean includeText, int startId,int endId){
         JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
-        int docCount = 75;
-        int lineCountIncrementer = 1;
         String sql = "INSERT INTO  " + tableName
                 + "( srcColumnFieldName"
                 + ", srcTableName"
@@ -165,7 +163,7 @@ public class TestUtils  {
         for(int i=0;i<biolarkText.length;i++){
             biolarkTs = biolarkTs +" " +biolarkText[i];
         }
-        for (long i = 1; i <= docCount; i++) {
+        for (long i = startId; i <= endId; i++) {
 
             if(includeText) {
                 jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName",
@@ -174,14 +172,6 @@ public class TestUtils  {
                 jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName",
                         "fictionalPrimaryKeyFieldName", i, new Timestamp(today), null, new Timestamp(today));
             }
-//            if (i==0) {
-//                //test for massive string in ES
-//                jdbcTemplate.update(sql, RandomString.nextString(50), "fictionalTableName",
-//                        "fictionalPrimaryKeyFieldName", i, new Timestamp(today),string1,new Timestamp(today));
-//            }else{
-//                jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName",
-//                        "fictionalPrimaryKeyFieldName", i, new Timestamp(today),string1, new Timestamp(today));
-//            }
             today = TestUtils.nextDay();
         }
     }
@@ -347,7 +337,7 @@ public class TestUtils  {
         try {
             Thread.sleep(delay);
             System.out.println("********************* INSERTING FRESH DATA*******************");
-            insertDataIntoBasicTable(tablename,true);
+            insertDataIntoBasicTable(tablename,true,76,150);
             Thread.sleep(delay);
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -444,19 +434,6 @@ public class TestUtils  {
     }
 
 
-    public void deleteESTestIndexAndSetUpMapping2(){
-
-        String uri = "http://"+env.getProperty("elasticsearch.cluster.host")+":9200"+"/"+env.getProperty("elasticsearch.index.name");
-        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(HttpClients.createDefault());
-        RestTemplate restTemplate = new RestTemplate(requestFactory);
-        try {
-            restTemplate.delete(uri);
-        }catch(HttpClientErrorException ex){
-            System.out.println("Index not deleted: " +ex.getLocalizedMessage());
-        }
-        setUpESMapping();
-    }
-
     public void deleteESTestIndexAndSetUpMapping(){
 
         try {
@@ -466,7 +443,8 @@ public class TestUtils  {
                     Collections.<String, String>emptyMap()
                     );
         } catch (IOException e) {
-            throw new RuntimeException("Delete failed:", e);
+            //may not exist.
+//            throw new RuntimeException("Delete failed:", e);
         }
         setUpESMapping();
     }

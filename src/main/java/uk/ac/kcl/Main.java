@@ -66,22 +66,23 @@ public class Main {
                         ctx.setEnvironment(environment);
                         String scheduling;
                         try {
-                            scheduling = properties.getProperty("useScheduling");
+                            scheduling = properties.getProperty("scheduler.useScheduling");
+                            if (scheduling.equalsIgnoreCase("true")) {
+                                ctx.register(ScheduledJobLauncher.class);
+                                ctx.refresh();
+                            } else if (scheduling.equalsIgnoreCase("false")) {
+                                ctx.register(SingleJobLauncher.class);
+                                ctx.refresh();
+                                SingleJobLauncher launcher = ctx.getBean(SingleJobLauncher.class);
+                                launcher.launchJob();
+                            } else if (scheduling.equalsIgnoreCase("slave")) {
+                                ctx.register(JobConfiguration.class);
+                                ctx.refresh();
+                            }                        else{
+                                throw new RuntimeException("useScheduling not configured. Must be true, false or slave");
+                            }
                         } catch (NullPointerException ex) {
                             throw new RuntimeException("useScheduling not configured. Must be true, false or slave");
-                        }
-
-                        if (scheduling.equalsIgnoreCase("true")) {
-                            ctx.register(ScheduledJobLauncher.class);
-                            ctx.refresh();
-                        } else if (scheduling.equalsIgnoreCase("false")) {
-                            ctx.register(SingleJobLauncher.class);
-                            ctx.refresh();
-                            SingleJobLauncher launcher = ctx.getBean(SingleJobLauncher.class);
-                            launcher.launchJob();
-                        } else if (scheduling.equalsIgnoreCase("slave")) {
-                            ctx.register(JobConfiguration.class);
-                            ctx.refresh();
                         }
                     } catch (IOException e) {
                         e.printStackTrace();

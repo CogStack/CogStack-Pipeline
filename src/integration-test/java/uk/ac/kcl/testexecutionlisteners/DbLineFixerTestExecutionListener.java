@@ -27,7 +27,7 @@ public class DbLineFixerTestExecutionListener extends AbstractTestExecutionListe
                 testContext.getApplicationContext().getBean(TestUtils.class);
         Environment env = testContext.getApplicationContext().getBean(Environment.class);
         testUtils.deleteESTestIndexAndSetUpMapping();
-        testUtils.insertDataIntoBasicTable(env.getProperty("tblInputDocs"),false);
+        testUtils.insertDataIntoBasicTable(env.getProperty("tblInputDocs"),false,1,75);
         testUtils.insertTestLinesForDBLineFixer(env.getProperty("tblDocLines"));
     }
 

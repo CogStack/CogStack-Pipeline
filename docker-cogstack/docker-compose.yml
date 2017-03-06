@@ -1,4 +1,4 @@
-version: '2'
+version: '2.1'
 services:
   postgres:
     image: richjackson/postgres
@@ -6,31 +6,8 @@ services:
       - 5432:5432
     networks:
       - esnet
-  bioyodie:
-    cpu_quota: 800000
-    image: richjackson/bioyodie:D4.5
-    ports:
-      - 8080
-    restart: on-failure
-    networks:
-      - esnet
-  lb:
-    image: dockercloud/haproxy
-    links:
-      - bioyodie
-    environment:
-      - BALANCE=leastconn
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    ports:
-      - 8080:80
-    restart: on-failure
-    networks:
-      - esnet
   cogstack:
-    image: richjackson/cogstack
-    volumes:
-      - /home/rich/java-projects/cogstack/docker-cogstack/master:/usr/src/cogstack_conf
+    image: richjackson/cogstack:1.2.0
     environment:
       - LOG_LEVEL=info
       - FILE_LOG_LEVEL=off
@@ -44,7 +21,6 @@ services:
       - esnet
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:5.2.1
-    container_name: elasticsearch
     environment:
       - cluster.name=docker-cluster
       - bootstrap.memory_lock=true
@@ -64,7 +40,28 @@ services:
       - 9300:9300
     networks:
       - esnet
-
+# bioyodie still under development
+#  bioyodie:
+#    cpu_quota: 800000
+#    image: richjackson/bioyodie:D4.5
+#    ports:
+#      - 8080
+#    restart: on-failure
+#    networks:
+#      - esnet
+#  lb:
+#    image: dockercloud/haproxy
+#    links:
+#      - bioyodie
+#    environment:
+#      - BALANCE=leastconn
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock
+#    ports:
+#      - 8080:80
+#    restart: on-failure
+#    networks:
+#      - esnet
 
 networks:
   esnet:

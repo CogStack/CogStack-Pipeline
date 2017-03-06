@@ -40,7 +40,7 @@ import static org.junit.Assert.assertEquals;
         "classpath:postgres_db.properties",
 //        "classpath:sql_server_test.properties",
 //        "classpath:sql_server_db.properties",
-        "classpath:jms.properties",
+//        "classpath:jms.properties",
         "classpath:scheduling.properties",
         "classpath:elasticsearch.properties",
         "classpath:jobAndStep.properties"})
@@ -53,7 +53,7 @@ import static org.junit.Assert.assertEquals;
 @TestExecutionListeners(
         listeners = BasicTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-@ActiveProfiles({"basic","localPartitioning","jdbc_in","jdbc_out","elasticsearchRest","primaryKeyAndTimeStampPartition","postgres"})
+@ActiveProfiles({"basic","localPartitioning","jdbc_in","jdbc_out","elasticsearchRest","postgres"})
 //@ActiveProfiles({"basic","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyAndTimeStampPartition","sqlserver"})
 public class BasicConfigWithScheduling {
 
@@ -75,7 +75,7 @@ public class BasicConfigWithScheduling {
         }
         //note, in this test, we upsert documents, overriding existng ones. hence why there are 75 in the index and 150
         //in the db
-        assertEquals(75,testUtils.countOutputDocsInES());
+        assertEquals(150,testUtils.countOutputDocsInES());
         assertEquals(150,dbmsTestUtils.countRowsInOutputTable());
     }
 

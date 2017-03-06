@@ -209,7 +209,7 @@ public  class CogstackJobPartitioner implements Partitioner {
 
     private Map<String, ExecutionContext> getMap(int gridSize, ScheduledPartitionParams params) {
         Map<String, ExecutionContext> result = new HashMap<>();
-        if ((params.getMaxId() -params.getMinId()) < (long) gridSize) {
+        if ((params.getMaxId() -params.getMinId() +1) <=  (gridSize+1)) {
             populateContextMapWithPartitionCountLimit(params, result);
         } else {
             populateContextMapWithAllPartitions(gridSize, params, result);
@@ -222,7 +222,6 @@ public  class CogstackJobPartitioner implements Partitioner {
     }
 
     private void populateContextMapWithAllPartitions(int gridSize, ScheduledPartitionParams params, Map<String, ExecutionContext> result) {
-        logger.info("Multiple steps to generate this job");
         if(maxPartitionSize!=null){
             populateMapWithMaximumConfiguredPartitionLimit(params, result);
         }else {
@@ -260,8 +259,8 @@ public  class CogstackJobPartitioner implements Partitioner {
     }
 
     private void populateContextMapWithPartitionCountLimit(ScheduledPartitionParams params, Map<String, ExecutionContext> result) {
-        long partitionCount = (params.getMaxId() -params.getMinId()+1L);
-        logger.info("There are fewer new records than the grid size. Expect only " + partitionCount+
+        long partitionCount = (params.getMaxId() -params.getMinId()+1);
+        logger.info("There are fewer or equal new records than the grid size. Expect " + partitionCount+
                 " partitions this execution") ;
         for(long i = 0;i<(partitionCount);i++) {
             ExecutionContext value = new ExecutionContext();
