@@ -15,12 +15,11 @@
  */
 package uk.ac.kcl.it;
 
-import org.apache.log4j.Logger;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.env.Environment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -28,16 +27,12 @@ import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import uk.ac.kcl.scheduling.SingleJobLauncher;
+import uk.ac.kcl.scheduling.ScheduledJobLauncher;
 import uk.ac.kcl.testexecutionlisteners.BasicTestExecutionListenerLargeInsert;
+import uk.ac.kcl.testexecutionlisteners.BasicTestExecutionListenerSmallInsert;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
-/**
- *
- * @author rich
- */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
@@ -45,51 +40,43 @@ import static org.junit.Assert.assertTrue;
         "classpath:postgres_db.properties",
 //        "classpath:sql_server_test.properties",
 //        "classpath:sql_server_db.properties",
-        "classpath:jms.properties",
-        "classpath:noScheduling.properties",
+//        "classpath:jms.properties",
+        "classpath:scheduling.properties",
         "classpath:elasticsearch.properties",
-        "classpath:biolark_webservice.properties",
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
         PostGresTestUtils.class,
         SqlServerTestUtils.class,
-        SingleJobLauncher.class,
+        ScheduledJobLauncher.class,
         TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 @TestExecutionListeners(
-        listeners = BasicTestExecutionListenerLargeInsert.class,
+        listeners = BasicTestExecutionListenerSmallInsert.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-@ActiveProfiles({"webservice","basic","localPartitioning","jdbc_in","jdbc_out","elasticsearchRest","primaryKeyPartition","postgres"})
-//@ActiveProfiles({"webservice","basic","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","sqlserver"})
-public class BiolarkWebserviceWithoutScheduling {
+@ActiveProfiles({"basic","localPartitioning","jdbc_in","jdbc_out","elasticsearchRest","postgres"})
+//@ActiveProfiles({"basic","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyAndTimeStampPartition","sqlserver"})
+public class BasicConfigWithSchedulingSmallInsert {
 
-    final static Logger logger = Logger.getLogger(BiolarkWebserviceWithoutScheduling.class);
-
-    @Autowired
-    SingleJobLauncher jobLauncher;
     @Autowired
     private TestUtils testUtils;
     @Autowired
     DbmsTestUtils dbmsTestUtils;
+    @Autowired
+    Environment env;
 
-//    Currently Biolark is unavailable for download
-    @Ignore
     @Test
     @DirtiesContext
-    public void biolarkTest() {
-        jobLauncher.launchJob();
+    public void basicTimestampPartitionWithSchedulingTest() {
+        testUtils.insertFreshDataIntoBasicTableAfterDelay(env.getProperty("tblInputDocs"),15000,5,8,false);
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        assertEquals(75,testUtils.countOutputDocsInES());
-        assertEquals(75,dbmsTestUtils.countRowsInOutputTable());
-
-        assertTrue(testUtils.getStringInEsDoc("1")
-                .contains("HP:0003510"));
+        //note, in this test, we upsert documents, overriding existng ones. hence why there are 75 in the index and 150
+        //in the db
+        assertEquals(8,testUtils.countOutputDocsInES());
+        assertEquals(8,dbmsTestUtils.countRowsInOutputTable());
     }
-
-
 
 }

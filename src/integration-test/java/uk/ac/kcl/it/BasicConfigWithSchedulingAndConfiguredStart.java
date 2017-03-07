@@ -28,7 +28,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.scheduling.ScheduledJobLauncher;
-import uk.ac.kcl.testexecutionlisteners.BasicTestExecutionListener;
+import uk.ac.kcl.testexecutionlisteners.BasicTestExecutionListenerLargeInsert;
 
 import static org.junit.Assert.assertEquals;
 
@@ -51,7 +51,7 @@ import static org.junit.Assert.assertEquals;
         TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 @TestExecutionListeners(
-        listeners = BasicTestExecutionListener.class,
+        listeners = BasicTestExecutionListenerLargeInsert.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 @ActiveProfiles({"basic","localPartitioning","jdbc_in","jdbc_out","elasticsearchRest","primaryKeyPartition","postgres"})
 //@ActiveProfiles({"basic","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","sqlserver"})
@@ -71,7 +71,7 @@ public class BasicConfigWithSchedulingAndConfiguredStart {
     @Test
     @DirtiesContext
     public void basicConfigurerdStartPkPartitionWithSchedulingTest() {
-        testUtils.insertFreshDataIntoBasicTableAfterDelay(env.getProperty("tblInputDocs"),15000);
+        testUtils.insertFreshDataIntoBasicTableAfterDelay(env.getProperty("tblInputDocs"),15000,76,150,false);
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
@@ -79,7 +79,7 @@ public class BasicConfigWithSchedulingAndConfiguredStart {
         }
         //note, in this test, we upsert documents, overriding existng ones. hence why ther ate 75 in the index and 150
         //in the db
-        assertEquals(75,testUtils.countOutputDocsInES());
+        assertEquals(150,testUtils.countOutputDocsInES());
         assertEquals(150,dbmsTestUtils.countRowsInOutputTable());
 
     }

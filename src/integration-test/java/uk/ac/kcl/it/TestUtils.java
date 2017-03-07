@@ -146,7 +146,8 @@ public class TestUtils  {
         }
     }
 
-    public void insertDataIntoBasicTable( String tableName,boolean includeText, int startId,int endId){
+    public void insertDataIntoBasicTable( String tableName,boolean includeText, int startId,int endId,boolean sameDay){
+        if(!sameDay)today = TestUtils.nextDay();
         JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
         String sql = "INSERT INTO  " + tableName
                 + "( srcColumnFieldName"
@@ -172,9 +173,10 @@ public class TestUtils  {
                 jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName",
                         "fictionalPrimaryKeyFieldName", i, new Timestamp(today), null, new Timestamp(today));
             }
-            today = TestUtils.nextDay();
         }
     }
+
+
 
     public void insertDataIntoDocmanTable( String tableName){
         JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
@@ -333,11 +335,11 @@ public class TestUtils  {
 
 
 
-    public void insertFreshDataIntoBasicTableAfterDelay(String tablename,long delay) {
+    public void insertFreshDataIntoBasicTableAfterDelay(String tablename,long delay,int start,int end, boolean sameDay) {
         try {
             Thread.sleep(delay);
             System.out.println("********************* INSERTING FRESH DATA*******************");
-            insertDataIntoBasicTable(tablename,true,76,150);
+            insertDataIntoBasicTable(tablename,true,start,end,sameDay);
             Thread.sleep(delay);
         } catch (InterruptedException e) {
             e.printStackTrace();

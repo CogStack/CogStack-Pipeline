@@ -1,10 +1,10 @@
 .nb-gradle/*
 build/*
-.gradle/*
+docker-cogstack/**/*.jar
 libs/*
 private/*
 nbproject/*
 .nb-gradle-properties
 .idea/*
 cogstack*log
-*.jar
+logs/*

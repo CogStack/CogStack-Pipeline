@@ -28,8 +28,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.scheduling.ScheduledJobLauncher;
-import uk.ac.kcl.scheduling.SingleJobLauncher;
-import uk.ac.kcl.testexecutionlisteners.BasicTestExecutionListener;
+import uk.ac.kcl.testexecutionlisteners.BasicTestExecutionListenerLargeInsert;
 
 import static org.junit.Assert.assertEquals;
 
@@ -51,11 +50,11 @@ import static org.junit.Assert.assertEquals;
         TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 @TestExecutionListeners(
-        listeners = BasicTestExecutionListener.class,
+        listeners = BasicTestExecutionListenerLargeInsert.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 @ActiveProfiles({"basic","localPartitioning","jdbc_in","jdbc_out","elasticsearchRest","postgres"})
 //@ActiveProfiles({"basic","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyAndTimeStampPartition","sqlserver"})
-public class BasicConfigWithScheduling {
+public class BasicConfigWithSchedulingLargeInsert {
 
     @Autowired
     private TestUtils testUtils;
@@ -67,7 +66,7 @@ public class BasicConfigWithScheduling {
     @Test
     @DirtiesContext
     public void basicTimestampPartitionWithSchedulingTest() {
-        testUtils.insertFreshDataIntoBasicTableAfterDelay(env.getProperty("tblInputDocs"),15000);
+        testUtils.insertFreshDataIntoBasicTableAfterDelay(env.getProperty("tblInputDocs"),15000,76,150,false);
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {

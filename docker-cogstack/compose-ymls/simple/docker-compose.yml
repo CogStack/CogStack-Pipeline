@@ -40,28 +40,6 @@ services:
       - 9300:9300
     networks:
       - esnet
-# bioyodie still under development
-#  bioyodie:
-#    cpu_quota: 800000
-#    image: richjackson/bioyodie:D4.5
-#    ports:
-#      - 8080
-#    restart: on-failure
-#    networks:
-#      - esnet
-#  lb:
-#    image: dockercloud/haproxy
-#    links:
-#      - bioyodie
-#    environment:
-#      - BALANCE=leastconn
-#    volumes:
-#      - /var/run/docker.sock:/var/run/docker.sock
-#    ports:
-#      - 8080:80
-#    restart: on-failure
-#    networks:
-#      - esnet
 
 networks:
   esnet:

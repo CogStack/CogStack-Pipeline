@@ -265,12 +265,22 @@ task runBioyodieContainer (type: Exec){
         commandLine 'docker', 'run', '-p', '8080:8080', '--name', 'some-bioyodie', '-d', 'richjackson/bioyodie:D4.5'
 }
 
+task buildSimpleContainers {
+    doLast{
+        tasks.buildPostgresContainer.execute()
+        tasks.buildElasticsearchContainer.execute()
+        tasks.buildKibanaContainer.execute()
+        tasks.copyFilesToDockerDir.execute()
+        tasks.buildCogstackContainer.execute()
+    }
+}
+
 task buildAllContainers {
     doLast{
         tasks.buildPostgresContainer.execute()
-//        tasks.buildElasticsearchContainer.execute()
+        tasks.buildElasticsearchContainer.execute()
         tasks.buildKibanaContainer.execute()
-//        tasks.buildBioyodieContainer.execute()
+        tasks.buildBioyodieContainer.execute()
         tasks.copyFilesToDockerDir.execute()
         tasks.buildCogstackContainer.execute()
     }
@@ -463,7 +473,7 @@ task writeExampleConfigs {
         )
     }
     def ant = getAnt()
-//    ant.replace(file: exampleComposeConfig.canonicalPath, token: "localhost:8080", value: "bioyodie:8080")
+    ant.replace(file: exampleComposeConfig.canonicalPath, token: "localhost:8080", value: "bioyodie:8080")
     ant.replace(file: exampleComposeConfig.canonicalPath, token: "localhost:5432", value: "postgres:5432")
     ant.replace(file: exampleComposeConfig.canonicalPath, token: "elasticsearch.cluster.host =  localhost",
             value: "elasticsearch.cluster.host =  elasticsearch")

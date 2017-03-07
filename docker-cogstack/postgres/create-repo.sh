@@ -116,10 +116,10 @@ INSERT INTO tblInputDocs (
             , someText
             , anotherTime
             ) VALUES
-    ('testfield', 'tblInputDocs', 'ID', 1, now(), 'The patient has arthritis.', now()),
-    ('testfield', 'tblInputDocs', 'ID', 2, now(), 'The patient has anxiety.', now()),
-    ('testfield', 'tblInputDocs', 'ID', 3, now(), 'The patient has ear pain.', now()),
-    ('testfield', 'tblInputDocs', 'ID', 4, now(), 'The patient has a broken leg.', now());
+    ('testfield', 'tblInputDocs', 'ID', 1, '2017-03-07 11:40:16.135000', 'The patient has arthritis.', '2017-03-07 11:40:16.135000'),
+    ('testfield', 'tblInputDocs', 'ID', 2, '2017-04-07 11:40:16.135000', 'The patient has anxiety.', '2017-04-07 11:40:16.135000'),
+    ('testfield', 'tblInputDocs', 'ID', 3, '2017-05-07 11:40:16.135000', 'The patient has ear pain.', '2017-05-07 11:40:16.135000'),
+    ('testfield', 'tblInputDocs', 'ID', 4, '2017-06-07 11:40:16.135000', 'The patient has a broken leg.', '2017-06-07 11:40:16.135000');
 
 
 

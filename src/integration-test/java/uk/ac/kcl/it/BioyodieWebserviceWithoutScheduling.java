@@ -28,7 +28,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
-import uk.ac.kcl.testexecutionlisteners.BasicTestExecutionListener;
+import uk.ac.kcl.testexecutionlisteners.BasicTestExecutionListenerLargeInsert;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -56,7 +56,7 @@ import static org.junit.Assert.assertTrue;
         TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 @TestExecutionListeners(
-        listeners = BasicTestExecutionListener.class,
+        listeners = BasicTestExecutionListenerLargeInsert.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 @ActiveProfiles({"webservice","basic","localPartitioning","jdbc_in","jdbc_out","elasticsearchRest","primaryKeyPartition","postgres"})
 //@ActiveProfiles({"webservice","basic","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","sqlserver"})

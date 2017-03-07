@@ -60,17 +60,18 @@ Now you need to build the required docker containers. Fortunately, the gradle bu
 From the CogStack top level directory:
 
 ```
-  gradlew buildAllContainers
+  gradlew buildSimpleContainers
 ```
 
 Assuming the containers have been built successfully, simply navigate to
 ```
-cd docker-cogstack/docker-compose
+cd docker-cogstack/compose-ymls/simple/
 ```
+
 
 And type
 ```
-docker compose up
+docker-compose up
 ```
 
 All of the docker containers should be up and communicating with each other. You can view their status with
@@ -86,7 +87,7 @@ That's it!
 The high level workflow of CogStack is as follows:
 
 * Read a row of the table into the CogStack software
-* Process the columns of the row with inbuild Processors, or call an NLP webservice to annotate the table columns
+* Process the columns of the row with inbuilt Processors
 * Construct a JSON that represents the table row and new data arising from the webservice
 * Index the JSON into an elasticsearch cluster
 * Visualise the results with Kibana
@@ -103,8 +104,18 @@ source.password      = mysecretpassword
 ```
 
 You should see a table called 'tblinputdocs' in the 'cogstack' database with four lines of dummy data. This table is now constantly
- being scanned and indexed into elasticsearch.
+ being scanned and indexed into elasticsearch. If you know how to use the [Kibana](https://www.elastic.co/products/kibana) tool,
+ you can visualise the data in the cluster.
 
+Now bring the compose configuration down with from the same compose directory as before:
+
+```
+docker-compose down
+```
+
+
+This is the most basic configuration, and really doesn't do too much other than convert a database table/view into an elasticsearch index.
+For more advanced use cases/configurations, check out the integration test below.
 
 
 
@@ -114,20 +125,35 @@ Although cogstack has unit tests where appropriate, the nature of the project is
  from the integration tests. Consequently, cogstack has an extensive suite.
 
 To run the integration tests, ensure the required external services are available
- (which also give a good idea of how cogstack is configured). These services are Postgresql, Biolark and Elasticsearch.  The easiest way to get these going is with [Docker](https://www.docker.com/). Once you have docker installed, cogstack handily will build the containers you need for you (apart from elasticsearch, where the official image will suffice). To build the containers
+ (which also give a good idea of how cogstack is configured). These services are Postgresql, Biolark, Bioyodie and Elasticsearch.  The easiest
+ way to get these going is with [Docker](https://www.docker.com/). Once you have docker installed, cogstack handily will
+ build the containers you need for you (apart from elasticsearch, where the official image will suffice). To build the containers:
 
-Then to run the containers
+From the CogStack top level directory:
+
 ```
-docker run -p 5555:5555 --name some-biolark -d richjackson/biolark
-docker run -p 8080:8080 --name some-bioyodie -d richjackson/bioyodie:D4.5
-docker run -p 5432:5432 --name some-postgres -d richjackson/postgres
-docker run -p 9200:9200 -p 9300:9300 --name some-elastic -d elasticsearch:2.4.4
+  gradlew buildAllContainers
 ```
 
-Note, Biolark and Bioyodie are external applications. Building their containers (and subsequently running their integration tests) may require you to meet their licencing conditions. Please check with [Tudor Groza](t.groza@garvan.org.au) (Biolark) and [Angus Roberts](angus.roberts@sheffield.ac.uk)/[Genevieve Gorrell](g.gorrell@sheffield.ac.uk) if in doubt.
 
 
-All being well, you should now be able to run the integration tests. Each of these demonstrate a different facet of cogstack's functionality. Each integration test follows the same pattern:
+Note, Biolark and Bioyodie are external applications. Building their containers (and subsequently running their integration tests) may require you to
+  meet their licencing conditions. Please check with [Tudor Groza](t.groza@garvan.org.au) (Biolark) and [Angus Roberts](angus.roberts@sheffield.ac.uk)/[Genevieve Gorrell](g.gorrell@sheffield.ac.uk) if in doubt.
+
+Assuming the containers have been built successfully, navigate to
+```
+cd docker-cogstack/compose-ymls/nlp/
+```
+And type
+```
+docker-compose up
+```
+
+to launch all of the external services.
+
+
+All being well, you should now be able to run the integration tests. Each of these demonstrate a different facet of cogstack's functionality.
+Each integration test follows the same pattern:
 
 * Generate some dummy data for processing, by using an integration test execution listener
 * Activate a configuration appropriate for the data and run cogstack
@@ -139,11 +165,12 @@ All integration tests can be run by using:
 gradlew integTest
 ```
 
-Although if you're new to cogstack, you might find it more informative to run them individually, and inspect the results after each one. For example, to runa single test:
+Although if you're new to cogstack, you might find it more informative to run them individually, and inspect the results after each one. For example,
+  to run a single test:
 ```
-gradlew  -DintegTest.single=<integration test name> -i integTest
+gradlew  -DintegTest.single=<integration test class name> -i integTest
 ```
-Available integration tests are in the package
+Available classes for integration tests are in the package
 ```
 src/integration-test/java/uk/ac/kcl/it
 ```
@@ -154,17 +181,11 @@ For example, to load the postgres database with some dummy word files into a dat
 gradlew  -DintegTest.single=TikaPKPartitionWithoutScheduling -i integTest
 ```
 
-You can use a tool like [Kibana](https://www.elastic.co/products/kibana) to easily explore the contents of an elasticsearch index (although be careful to ensure you have a compatible version).
-
-```
-docker run --link some-elastic:elasticsearch --name some-kibana -p 5601:5601 -d kibana:4.6.4
-```
-
 then point your browser to localhost:5601
 
 ### A note on GATE
 
-Applications that require GATE generally need to be configured to point to the GATE installation directory (or they would need to include a rather large amount of plugins on their classpath). To do this in cogstack, set the appropriate properties as detailed in the gate.properties file.
+Applications that require GATE generally need to be configured to point to the GATE installation directory (or they would need to include a rather large amount of plugins on their classpath). To do this in cogstack, set the appropriate properties as detailed in gate.* .
 
 ## Example usage in real world deployments
 
