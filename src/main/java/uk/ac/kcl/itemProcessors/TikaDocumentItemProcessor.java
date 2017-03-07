@@ -104,7 +104,7 @@ public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemPr
             addField(doc, ex.getMessage());
         }
         long endTime = System.currentTimeMillis();
-        LOG.info("{};Content-Type:{};Time:{} ms",
+        LOG.debug("{};Content-Type:{};Time:{} ms",
                  this.getClass().getSimpleName(),
                  contentType,
                  endTime - startTime);

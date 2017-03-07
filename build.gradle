@@ -155,9 +155,7 @@ dependencies {
     //dbms drivers
     compile("org.hsqldb:hsqldb")
     compile 'org.hsqldb:hsqldb:2.3.3'
-    //switch for ms driver - needs to be installed locally if used
-    //compile files('libs/sqljdbc42.jar')
-    //compile ('com.microsoft.sqlserver:sqljdbc42:4.2')
+    compile group: 'com.microsoft.sqlserver', name: 'mssql-jdbc', version: '6.1.0.jre8'
     compile 'net.sourceforge.jtds:jtds:1.3.1'
     compile group: 'mysql', name: 'mysql-connector-java', version: '6.0.5'
     compile 'org.postgresql:postgresql:9.4-1205-jdbc42'

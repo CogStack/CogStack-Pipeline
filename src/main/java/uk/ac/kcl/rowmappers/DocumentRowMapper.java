@@ -64,17 +64,17 @@ public class DocumentRowMapper implements RowMapper<Document>{
     private String binaryContentSource;
     @Value("${tika.binaryFieldName:#{null}}")
     private String binaryContentFieldName;
-    @Value("${srcTableName}")
+    @Value("${source.srcTableName}")
     private String srcTableName;
-    @Value("${srcColumnFieldName}")
+    @Value("${source.srcColumnFieldName}")
     private String srcColumnFieldName;
-    @Value("${primaryKeyFieldName}")
+    @Value("${source.primaryKeyFieldName}")
     private String primaryKeyFieldName;
-    @Value("${primaryKeyFieldValue}")
+    @Value("${source.primaryKeyFieldValue}")
     private String primaryKeyFieldValue;
-    @Value("${timeStamp}")
+    @Value("${source.timeStamp}")
     private String timeStamp;
-    private DateTimeFormatter fmt;
+    private DateTimeFormatter eSCompatibleDateTimeFormatter;
     private List<String> fieldsToIgnore;
 
 
@@ -82,7 +82,7 @@ public class DocumentRowMapper implements RowMapper<Document>{
     public void init () {
         fieldsToIgnore = Arrays.asList(env.getProperty("elasticsearch.excludeFromIndexing")
                 .toLowerCase().split(","));
-        fmt = DateTimeFormat.forPattern(esDatePattern);
+        eSCompatibleDateTimeFormatter = DateTimeFormat.forPattern(esDatePattern);
     }
 
     private void mapDBFields(Document doc, ResultSet rs) throws SQLException, IOException {
@@ -102,12 +102,12 @@ public class DocumentRowMapper implements RowMapper<Document>{
                         case 91:
                             Date dt = (Date)value;
                             dateTime = new DateTime(dt.getTime());
-                            doc.getAssociativeArray().put(meta.getColumnLabel(col).toLowerCase(), fmt.print(dateTime));
+                            doc.getAssociativeArray().put(meta.getColumnLabel(col).toLowerCase(), eSCompatibleDateTimeFormatter.print(dateTime));
                             break;
                         case 93:
                             Timestamp ts = (Timestamp) value;
                             dateTime = new DateTime(ts.getTime());
-                            doc.getAssociativeArray().put(meta.getColumnLabel(col).toLowerCase(), fmt.print(dateTime));
+                            doc.getAssociativeArray().put(meta.getColumnLabel(col).toLowerCase(), eSCompatibleDateTimeFormatter.print(dateTime));
                             break;
                         default:
                             doc.getAssociativeArray().put(meta.getColumnLabel(col).toLowerCase(), rs.getString(col));
