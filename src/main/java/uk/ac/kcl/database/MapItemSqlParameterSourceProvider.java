@@ -25,6 +25,10 @@ public class MapItemSqlParameterSourceProvider<T> implements ItemSqlParameterSou
   /**
    * Provide parameter values in an {@link MapSqlParameterSource} based on values from
    * the provided item.
+   * Supports accessing nested maps or arrays.
+   *  e.g. :map1.level1.level2
+   *    or :map1.array1[10].level2
+   * However it assume keys for the maps are all String.
    * @param item the item to use for parameter values
    */
   @Override
