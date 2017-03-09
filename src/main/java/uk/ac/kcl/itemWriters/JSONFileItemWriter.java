@@ -22,7 +22,7 @@ import java.util.List;
  * Created by rich on 20/04/16.
  */
 @Service("jsonFileItemWriter")
-@Profile("jsonFileWriter")
+@Profile("jsonFileItemWriter")
 public class JSONFileItemWriter implements ItemWriter<Document> {
     private static final Logger LOG = LoggerFactory.getLogger(JSONFileItemWriter.class);
 
