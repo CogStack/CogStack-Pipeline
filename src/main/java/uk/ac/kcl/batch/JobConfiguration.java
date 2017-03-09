@@ -50,6 +50,7 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.jdbc.core.RowMapper;
 import uk.ac.kcl.exception.WebserviceProcessingFailedException;
 import uk.ac.kcl.itemProcessors.JSONMakerItemProcessor;
+import uk.ac.kcl.database.MapItemSqlParameterSourceProvider;
 import uk.ac.kcl.model.Document;
 import uk.ac.kcl.partitioners.StepPartitioner;
 import uk.ac.kcl.utils.LoggerHelper;
@@ -107,6 +108,7 @@ public class JobConfiguration {
         if(esItemWriter !=null) delegates.add(esItemWriter);
         if(esRestItemWriter !=null) delegates.add(esRestItemWriter);
         if(jdbcItemWriter !=null) delegates.add(jdbcItemWriter);
+        if(jdbcMapItemWriter !=null) delegates.add(jdbcMapItemWriter);
         if(jsonFileItemWriter !=null) delegates.add(jsonFileItemWriter);
         if(pdfFileItemWriter != null) delegates.add(pdfFileItemWriter);
         if(thumbnailFileItemWriter !=null) delegates.add(thumbnailFileItemWriter);
@@ -355,6 +357,19 @@ public class JobConfiguration {
         return writer;
     }
 
+    @Bean
+    @StepScope
+    @Qualifier("mapJdbcItemWriter")
+    @Profile("jdbc_out_map")
+    public ItemWriter<Document> mapJdbcItemWriter(
+            @Qualifier("targetDataSource") DataSource jdbcDocumentTarget) {
+        JdbcBatchItemWriter<Document> writer = new JdbcBatchItemWriter<>();
+        writer.setItemSqlParameterSourceProvider(new MapItemSqlParameterSourceProvider<Document>());
+        writer.setSql(env.getProperty("target.Sql"));
+        writer.setDataSource(jdbcDocumentTarget);
+        return writer;
+    }
+
     @Autowired(required = false)
     @Qualifier("esDocumentWriter")
     ItemWriter<Document> esItemWriter;
@@ -366,6 +381,10 @@ public class JobConfiguration {
     @Autowired(required = false)
     @Qualifier("simpleJdbcItemWriter")
     ItemWriter<Document> jdbcItemWriter;
+
+    @Autowired(required = false)
+    @Qualifier("mapJdbcItemWriter")
+    ItemWriter<Document> jdbcMapItemWriter;
 
     @Autowired(required = false)
     @Qualifier("jsonFileItemWriter")
