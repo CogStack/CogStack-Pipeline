@@ -52,7 +52,7 @@ public class DocumentRowMapper implements RowMapper<Document>{
     ApplicationContext context;
     @Value("${reindexColumn:#{null}}")
     private String reindexColumn;
-    @Value("${elasticsearch.datePattern}")
+    @Value("${elasticsearch.datePattern:yyyy-MM-dd'T'HH:mm:ss.SSS}")
     private String esDatePattern;
     @Value("${reindex:false}")
     private boolean reindex;
