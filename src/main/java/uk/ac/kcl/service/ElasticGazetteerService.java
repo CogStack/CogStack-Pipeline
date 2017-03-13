@@ -3,6 +3,7 @@ package uk.ac.kcl.service;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
@@ -40,6 +41,7 @@ public class ElasticGazetteerService {
     ResourceLoader resourceLoader;
 
     @Autowired
+    @Lazy
     @Qualifier("sourceDataSource")
     DataSource sourceDataSource;
 
@@ -58,7 +60,7 @@ public class ElasticGazetteerService {
         Resource datePatternsResource = resourceLoader.getResource("classpath:datePatterns.txt");
         this.datePatterns = new ArrayList<>();
         InputStream inputStream = datePatternsResource.getInputStream();
-        levDistance = Integer.valueOf(env.getProperty("levDistance"));
+        levDistance = Integer.valueOf(env.getProperty("deid.levDistance"));
 
         try(BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))){
             String line;
@@ -126,11 +128,13 @@ public class ElasticGazetteerService {
         for(String string : strings) {
             stringSet.add(string);
             stringSet.addAll(StringTools.getApproximatelyMatchingStringList(document, string,levDistance));
-            stringSet.addAll((StringTools.splitIntoWordsWithLengthHigherThan(string, Integer.valueOf(env.getProperty("minWordLength")))));
+            stringSet.addAll((StringTools.splitIntoWordsWithLengthHigherThan(
+                    string, Integer.valueOf(env.getProperty("deid.minWordLength")))));
         }
 
         Set<Pattern> patterns = new HashSet<>();
-        patterns.addAll(stringSet.stream().map(string -> Pattern.compile(Pattern.quote(string), Pattern.CASE_INSENSITIVE)).collect(Collectors.toSet()));
+        patterns.addAll(stringSet.stream().map(string -> Pattern.compile(Pattern.quote(string),
+                Pattern.CASE_INSENSITIVE)).collect(Collectors.toSet()));
 
         return patterns;
     }
@@ -152,15 +156,15 @@ public class ElasticGazetteerService {
 
     }
     private List<String> getStrings(String docPrimaryKey){
-        String sql = env.getProperty("stringTermsSQLFront");
+        String sql = env.getProperty("deid.stringTermsSQLFront");
         sql = sql + " '" + docPrimaryKey + "' ";
-        sql = sql + env.getProperty("stringTermsSQLBack");
+        sql = sql + env.getProperty("deid.stringTermsSQLBack");
         return jdbcTemplate.queryForList(sql, String.class);
     }
     private List<Timestamp> getTimestamps(String docPrimaryKey){
-        String sql = env.getProperty("timestampTermsSQLFront");
+        String sql = env.getProperty("deid.timestampTermsSQLFront");
         sql = sql + " '" + docPrimaryKey + "' ";
-        sql = sql + env.getProperty("timestampTermsSQLBack");
+        sql = sql + env.getProperty("deid.timestampTermsSQLBack");
         return jdbcTemplate.queryForList(sql, Timestamp.class);
     }
 }

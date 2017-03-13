@@ -93,7 +93,7 @@ public class TLJobParametersIncrementer implements JobParametersIncrementer {
             LOG.info("Cannot find any previously successful jobs. Commencing from beginning");
             params = new JobParametersBuilder()
                     .addString("first_run_of_job", "true")
-                    .addString("jobName", env.getProperty("jobName"))
+                    .addString("jobName", env.getProperty("job.jobName"))
                     .addLong(key, id)
                     .toJobParameters();
         }else if(lastJobExecution.getExecutionContext().get("last_successful_timestamp_from_this_job")!=null){
@@ -105,7 +105,7 @@ public class TLJobParametersIncrementer implements JobParametersIncrementer {
             LOG.info("Last good run was " + newJobTimeStamp.toString() + ". Recommencing from then");
             params = new JobParametersBuilder()
                     .addDate("last_timestamp_from_last_successful_job", newJobTimeStamp)
-                    .addString("jobName",env.getProperty("jobName"))
+                    .addString("jobName",env.getProperty("job.jobName"))
                     .addLong(key, id)
                     .toJobParameters();
         }else{

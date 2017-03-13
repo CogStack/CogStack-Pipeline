@@ -11,27 +11,22 @@ import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.batch.core.launch.NoSuchJobExecutionException;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.SmartLifecycle;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.retry.RecoveryCallback;
 import org.springframework.retry.RetryCallback;
 import org.springframework.retry.RetryContext;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
 import org.springframework.retry.policy.AlwaysRetryPolicy;
-import org.springframework.retry.policy.TimeoutRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Service;
-import uk.ac.kcl.exception.BiolarkProcessingFailedException;
-import uk.ac.kcl.exception.TurboLaserException;
+import uk.ac.kcl.exception.CogstackException;
 import uk.ac.kcl.scheduling.ScheduledJobLauncher;
 
-import javax.annotation.PreDestroy;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.Set;
 
 /**
@@ -47,7 +42,11 @@ public class CleanupBean implements SmartLifecycle, ApplicationContextAware {
 
     @Autowired(required = false)
     ScheduledJobLauncher scheduledJobLauncher;
+
     private ApplicationContext applicationContext;
+
+    @Value("${job.jobName:defaultJob}")
+    String jobName;
 
     public void setJobExecutionId(long jobExecutionId) {
         this.jobExecutionId = jobExecutionId;
@@ -70,7 +69,7 @@ public class CleanupBean implements SmartLifecycle, ApplicationContextAware {
         Set<Long> jobExecs = new HashSet<>();
         try {
 
-            jobExecs.addAll(jobOperator.getRunningExecutions(env.getProperty("jobName")));
+            jobExecs.addAll(jobOperator.getRunningExecutions(jobName));
         } catch (NoSuchJobException e) {
             LOG.error("Couldn't get job list to stop executions ",e);
         } catch (NullPointerException ex){
@@ -83,7 +82,7 @@ public class CleanupBean implements SmartLifecycle, ApplicationContextAware {
             LOG.info("No running jobs detected. Exiting now");
             return;
         }else if(jobExecs.size() > 1){
-            LOG.warn("Detected more than one "+env.getProperty("jobName")+ " with status of running.");
+            LOG.warn("Detected more than one "+jobName+ " with status of running.");
         };
 
 
@@ -108,7 +107,7 @@ public class CleanupBean implements SmartLifecycle, ApplicationContextAware {
         boolean confirmedStopped = false;
 
         try {
-            confirmedStopped =retryTemplate.execute(new RetryCallback<Boolean,TurboLaserException>() {
+            confirmedStopped =retryTemplate.execute(new RetryCallback<Boolean,CogstackException>() {
                 public Boolean doWithRetry(RetryContext context) {
                     // business logic here
                     for(Long l : jobExecs){
@@ -122,17 +121,17 @@ public class CleanupBean implements SmartLifecycle, ApplicationContextAware {
                             return true;
                         }
                     }
-                    throw new TurboLaserException("Job did not stop");
+                    throw new CogstackException("Job did not stop");
                 }
             }, new RecoveryCallback() {
                 @Override
-                public Object recover(RetryContext context) throws TurboLaserException {
+                public Object recover(RetryContext context) throws CogstackException {
                     //maybe add logic to abandon job?
                     LOG.info("Unable to gracefully stop jobs. Job Repository may be in unknown state",context.getLastThrowable());
                     return context;
                 }
             });
-        } catch (TurboLaserException e) {
+        } catch (CogstackException e) {
             LOG.warn("Unable to gracefully stop jobs. Job Repository may be in unknown state");
         }
 

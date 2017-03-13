@@ -23,4 +23,7 @@ public interface DbmsTestUtils {
     void createDeIdInputTable();
 
     int countRowsInOutputTable();
+
+    void createDocManInputTable();
+
 }

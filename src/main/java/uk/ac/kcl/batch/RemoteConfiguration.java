@@ -24,6 +24,7 @@ import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.integration.partition.MessageChannelPartitionHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.integration.config.EnableIntegration;
@@ -40,13 +41,34 @@ import uk.ac.kcl.listeners.JobCompleteNotificationListener;
  */
 @Profile("remotePartitioning")
 @ImportResource({"classpath:spring-master.xml","classpath:spring-slave.xml"})
-@ComponentScan({"uk.ac.kcl.partitioners","uk.ac.kcl.listeners","uk.ac.kcl.jobParametersIncrementers"})
+@ComponentScan({"uk.ac.kcl.partitioners",
+        "uk.ac.kcl.listeners",
+        "uk.ac.kcl.jobParametersIncrementers"})
 @EnableIntegration
 @Configuration
 public class RemoteConfiguration {
 
     @Autowired
     Environment env;
+    @Value("${partitioner.gridSize:3}")
+    private int gridSize;
+
+    @Value("${job.jobName:defaultJob}")
+    private String jobName;
+
+
+    @Value("${jms.ip}")
+    private String jmsip;
+    @Value("${jms.username")
+    private String jmsUsername;
+    @Value("${jms.password")
+    private String jmsPassword;
+    @Value("${jms.closeTimeout")
+    private int jmsCloseTimeout;
+    @Value("${partitioner.partitionHandlerTimeout}")
+    private int partitionHandlerTimeout;
+
+
 
     @Bean
     @Qualifier("partitionHandler")
@@ -54,12 +76,12 @@ public class RemoteConfiguration {
             @Qualifier("requestChannel") MessageChannel reqChannel,
             @Qualifier("aggregatedReplyChannel") PollableChannel repChannel) {
         MessageChannelPartitionHandler handler = new MessageChannelPartitionHandler();
-        handler.setGridSize(Integer.parseInt(env.getProperty("gridSize")));
+        handler.setGridSize(gridSize);
         handler.setStepName("compositeSlaveStep");
         handler.setReplyChannel(repChannel);
         MessagingTemplate template = new MessagingTemplate();
         template.setDefaultChannel(reqChannel);
-        template.setReceiveTimeout(Integer.parseInt(env.getProperty("partitionHandlerTimeout")));
+        template.setReceiveTimeout(partitionHandlerTimeout);
         handler.setMessagingOperations(template);
         return handler;
     }
@@ -71,10 +93,10 @@ public class RemoteConfiguration {
     @Bean
     public ActiveMQConnectionFactory amqConnectionFactory(){
         ActiveMQConnectionFactory factory =
-                new ActiveMQConnectionFactory(env.getProperty("jmsIP"));
-        factory.setUserName(env.getProperty("jmsUsername"));
-        factory.setPassword(env.getProperty("jmsPassword"));
-        factory.setCloseTimeout(Integer.valueOf(env.getProperty("closeTimeout")));
+                new ActiveMQConnectionFactory(jmsip);
+        factory.setUserName(jmsUsername);
+        factory.setPassword(jmsPassword);
+        factory.setCloseTimeout(jmsCloseTimeout);
         return factory;
     }
     @Bean
@@ -86,13 +108,13 @@ public class RemoteConfiguration {
                    @Qualifier("tLJobParametersIncrementer") TLJobParametersIncrementer runIdIncrementer
 
                    ) {
-        return jobs.get(env.getProperty("jobName"))
+        return jobs.get(jobName)
                 .incrementer(runIdIncrementer)
                 .listener(jobCompleteNotificationListener)
                 .flow(
                         steps
-                                .get(env.getProperty("jobName") + "MasterStep")
-                                .partitioner((env.getProperty("jobName")+"SlaveStep"), partitioner)
+                                .get(jobName + "MasterStep")
+                                .partitioner((jobName+"SlaveStep"), partitioner)
                                 .partitionHandler(partitionHandler)
                                 .build()
                 )

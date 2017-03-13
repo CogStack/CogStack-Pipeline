@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.Map;
+import java.util.Random;
 import java.util.StringTokenizer;
 
 /**
@@ -15,7 +16,7 @@ import java.util.StringTokenizer;
 @Service
 public class AddressAliasMutator implements Mutator {
 
-
+    private Random random = new Random();
     private ImmutableMap<String, String> addressAbbrevMap;
     @Value("#{'${replaceAliasesRate:100}'}")
     private int replaceAliasesRate;

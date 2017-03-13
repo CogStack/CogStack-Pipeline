@@ -24,6 +24,7 @@ import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.core.partition.support.TaskExecutorPartitionHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -38,19 +39,28 @@ import uk.ac.kcl.listeners.JobCompleteNotificationListener;
  * @author King's College London, Richard Jackson <richgjackson@gmail.com>
  */
 @Profile("localPartitioning")
-@ComponentScan({"uk.ac.kcl.partitioners","uk.ac.kcl.listeners","uk.ac.kcl.jobParametersIncrementers"})
+@ComponentScan({"uk.ac.kcl.partitioners",
+        "uk.ac.kcl.listeners",
+        "uk.ac.kcl.jobParametersIncrementers"})
 @Configuration
 public class LocalConfiguration {
 
     @Autowired
     Environment env;
 
+    @Value("${partitioner.gridSize:3}")
+    int gridSize;
+
+    @Value("${job.jobName:defaultJob}")
+    String jobName;
+
+
     @Bean
     public TaskExecutorPartitionHandler partitionHandler(
             @Qualifier("compositeSlaveStep")Step compositeSlaveStep,
             @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor) {
         TaskExecutorPartitionHandler handler = new TaskExecutorPartitionHandler();
-        handler.setGridSize(Integer.parseInt(env.getProperty("gridSize")));
+        handler.setGridSize(gridSize);
         handler.setStep(compositeSlaveStep);
         handler.setTaskExecutor(taskExecutor);
         return handler;
@@ -65,13 +75,13 @@ public class LocalConfiguration {
                    @Qualifier("tLJobParametersIncrementer") TLJobParametersIncrementer runIdIncrementer
 
     ) {
-        return jobs.get(env.getProperty("jobName"))
+        return jobs.get(env.getProperty("job.jobName"))
                 .incrementer(runIdIncrementer)
                 .listener(jobCompleteNotificationListener)
                 .flow(
                         steps
-                                .get(env.getProperty("jobName") + "MasterStep")
-                                .partitioner((env.getProperty("jobName")+"SlaveStep"), partitioner)
+                                .get(jobName + "MasterStep")
+                                .partitioner((jobName+"SlaveStep"), partitioner)
                                 .partitionHandler(partitionHandler)
                                 .build()
                 )

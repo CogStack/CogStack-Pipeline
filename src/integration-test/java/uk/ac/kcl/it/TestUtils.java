@@ -6,9 +6,15 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.nio.entity.NStringEntity;
+import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 import org.apache.poi.xwpf.usermodel.*;
+import org.elasticsearch.client.Response;
+import org.json.JSONObject;
 import org.junit.Ignore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,6 +27,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import uk.ac.kcl.mutators.Mutant;
 import uk.ac.kcl.mutators.StringMutatorService;
+import uk.ac.kcl.service.ESRestService;
 
 import javax.sql.DataSource;
 import java.io.*;
@@ -35,7 +42,8 @@ import java.util.logging.Level;
  */
 @Ignore
 @Service
-@ComponentScan({"uk.ac.kcl.it","uk.ac.kcl.mutators"})
+@ComponentScan({"uk.ac.kcl.it","uk.ac.kcl.mutators"
+        ,"uk.ac.kcl.service"})
 public class TestUtils  {
     static Random random = new Random();
     static long today = System.currentTimeMillis();
@@ -47,7 +55,8 @@ public class TestUtils  {
             "Small midface with a flattened nasal bridge.",
             "Spinal kyphosis (convex curvature) or lordosis (concave curvature).",
             "Varus (bowleg) or valgus (knock knee) deformities.",
-            "Frequently have ear infections (due to Eustachian tube blockages), sleep apnea (which can be central or obstructive), and hydrocephalus."};
+            "Frequently have ear infections (due to Eustachian tube blockages), sleep apnea " +
+                    "(which can be central or obstructive), and hydrocephalus."};
     @Autowired
     @Qualifier("sourceDataSource")
     public DataSource sourceDataSource;
@@ -58,6 +67,10 @@ public class TestUtils  {
 
     @Autowired
     StringMutatorService stringMutatorService;
+
+    @Autowired(required = false)
+    @Qualifier("esRestService")
+    private ESRestService esRestService;
 
     @Autowired
     Environment env;
@@ -105,7 +118,7 @@ public class TestUtils  {
                 xhtmlString = new String(bytes, StandardCharsets.UTF_8);
                 jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName", "fictionalPrimaryKeyFieldName", docCount, null, xhtmlString);
             } catch (IOException ex) {
-                java.util.logging.Logger.getLogger(GATEPKPartitionWithoutScheduling.class.getName()).log(Level.SEVERE, null, ex);
+                java.util.logging.Logger.getLogger(GATEWithoutScheduling.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -133,10 +146,9 @@ public class TestUtils  {
         }
     }
 
-    public void insertDataIntoBasicTable( String tableName,boolean includeText){
+    public void insertDataIntoBasicTable( String tableName,boolean includeText, int startId,int endId,boolean sameDay){
+        if(!sameDay)today = TestUtils.nextDay();
         JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
-        int docCount = 75;
-        int lineCountIncrementer = 1;
         String sql = "INSERT INTO  " + tableName
                 + "( srcColumnFieldName"
                 + ", srcTableName"
@@ -152,7 +164,7 @@ public class TestUtils  {
         for(int i=0;i<biolarkText.length;i++){
             biolarkTs = biolarkTs +" " +biolarkText[i];
         }
-        for (long i = 1; i <= docCount; i++) {
+        for (long i = startId; i <= endId; i++) {
 
             if(includeText) {
                 jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName",
@@ -161,24 +173,44 @@ public class TestUtils  {
                 jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName",
                         "fictionalPrimaryKeyFieldName", i, new Timestamp(today), null, new Timestamp(today));
             }
-//            if (i==0) {
-//                //test for massive string in ES
-//                jdbcTemplate.update(sql, RandomString.nextString(50), "fictionalTableName",
-//                        "fictionalPrimaryKeyFieldName", i, new Timestamp(today),string1,new Timestamp(today));
-//            }else{
-//                jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName",
-//                        "fictionalPrimaryKeyFieldName", i, new Timestamp(today),string1, new Timestamp(today));
-//            }
-            today = TestUtils.nextDay();
         }
     }
 
 
 
-    public List<Mutant> insertTestDataForDeidentification(String tableName1, String tableName2, int mutationLevel){
+    public void insertDataIntoDocmanTable( String tableName){
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
+        String sql = "INSERT INTO  " + tableName
+                + "( srcColumnFieldName"
+                + ", srcTableName"
+                + ", primaryKeyFieldName"
+                + ", primaryKeyFieldValue"
+                + ", updateTime"
+                + ", someText"
+                + ", path"
+                + ") VALUES (?,?,?,?,?,?,?)";
+
+            jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName",
+                        "fictionalPrimaryKeyFieldName", 1, new Timestamp(today), "patient 1 document",
+                        "tika/testdocs/pat_id_1.doc");
+            today = TestUtils.nextDay();
+            jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName",
+                    "fictionalPrimaryKeyFieldName", 2, new Timestamp(today), "patient 2 document",
+                    "tika/testdocs/pat_id_2.doc");
+    }
+
+
+
+    public List<Mutant> insertTestDataForDeidentification(String tableName1, String tableName2,
+                                                          int mutationLevel,boolean useBigList){
         JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
 
-        File idFile = new File(getClass().getClassLoader().getResource("identifiers_small.csv").getFile());
+        File idFile;
+        if(useBigList) {
+            idFile = new File(getClass().getClassLoader().getResource("identifiers.csv").getFile());
+        }else{
+            idFile = new File(getClass().getClassLoader().getResource("identifiers_small.csv").getFile());
+        }
 
         List<CSVRecord> records = null;
         try {
@@ -186,7 +218,6 @@ public class TestUtils  {
         } catch (IOException e) {
             logger.error(e);
         }
-
 
         String sql1 = "INSERT INTO  " + tableName1
                 + "( primaryKeyFieldValue "
@@ -214,15 +245,14 @@ public class TestUtils  {
             CSVRecord r = it.next();
 
 
-            String[] stringToMutate = convertCsvRecordToStringArray(r);
+            String[] stringToMutate = convertCsvRecordToStringArrayAddressOnly(r);
             Mutant mutant = stringMutatorService.generateMutantDocument(stringToMutate, mutationLevel);
             mutant.setDocumentid(Long.valueOf(r.get(0)));
             mutants.add(mutant);
             jdbcTemplate.update(sql1, Long.valueOf(r.get(0)),r.get(1),r.get(2),r.get(3), new Timestamp(today));
             jdbcTemplate.update(sql2, "fictionalColumnFieldName", "fictionalTableName",
                     "fictionalPrimaryKeyFieldName", Long.valueOf(r.get(0)),
-                    new Timestamp(today),mutant.getFinalText()
-                    ,
+                    new Timestamp(today),mutant.getFinalText(),
                     new Timestamp(today));
             today = TestUtils.nextDay();
         }
@@ -303,11 +333,13 @@ public class TestUtils  {
         }
     }
 
-    public void insertFreshDataIntoBasicTableAfterDelay(String tablename,long delay) {
+
+
+    public void insertFreshDataIntoBasicTableAfterDelay(String tablename,long delay,int start,int end, boolean sameDay) {
         try {
             Thread.sleep(delay);
             System.out.println("********************* INSERTING FRESH DATA*******************");
-            insertDataIntoBasicTable(tablename,true);
+            insertDataIntoBasicTable(tablename,true,start,end,sameDay);
             Thread.sleep(delay);
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -395,27 +427,35 @@ public class TestUtils  {
         return arr;
     }
 
+    public static String[] convertCsvRecordToStringArrayAddressOnly(CSVRecord r){
+        ArrayList<String> list = new ArrayList<>();
+        list.add(r.get(2) + r.get(3));
+        String[] arr = new String[list.size()];
+        arr = list.toArray(arr);
+        return arr;
+    }
+
+
     public void deleteESTestIndexAndSetUpMapping(){
 
-        String uri = "http://"+env.getProperty("elasticsearch.cluster.host")+":9200"+"/"+env.getProperty("elasticsearch.index.name");
-        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(HttpClients.createDefault());
-        RestTemplate restTemplate = new RestTemplate(requestFactory);
         try {
-            restTemplate.delete(uri);
-        }catch(HttpClientErrorException ex){
-            System.out.println("Index not deleted: " +ex.getLocalizedMessage());
+            esRestService.getRestClient().performRequest(
+                    "DELETE",
+                    "/"+env.getProperty("elasticsearch.index.name") ,
+                    Collections.<String, String>emptyMap()
+                    );
+        } catch (IOException e) {
+            //may not exist.
+//            throw new RuntimeException("Delete failed:", e);
         }
         setUpESMapping();
     }
-
     private void setUpESMapping(){
-        String uri = "http://"+env.getProperty("elasticsearch.cluster.host")+":9200"+"/"+
-                env.getProperty("elasticsearch.index.name");
-        String mapping =     "{" +
+        HttpEntity entity = new NStringEntity("{" +
                 "  \"mappings\": {" +
                 "    \""+env.getProperty("elasticsearch.type")+"\": {" +
                 "      \"properties\": {" +
-                "        \""+env.getProperty("biolarkFieldName")+"\": {" +
+                "        \""+env.getProperty("webservice.name")+"\": {" +
                 "          \"type\": \"nested\" " +
                 "        }," +
                 "        \""+env.getProperty("gateFieldName")+"\": {" +
@@ -424,38 +464,56 @@ public class TestUtils  {
                 "      }" +
                 "    }" +
                 "  }" +
-                "}";
+                "}", ContentType.APPLICATION_JSON);
 
-        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(HttpClients.createDefault());
-        RestTemplate restTemplate = new RestTemplate(requestFactory);
         try {
-            restTemplate.put(uri,mapping,String.class);
-        }catch(HttpClientErrorException ex){
-            System.out.println("mapping not set up: " +ex.getLocalizedMessage());
+            esRestService.getRestClient().performRequest(
+                    "PUT",
+                    "/"+env.getProperty("elasticsearch.index.name") ,
+                    Collections.<String, String>emptyMap(),
+                    entity
+            );
+        } catch (IOException e) {
+            throw new RuntimeException("Delete failed:", e);
         }
-
-
-
-
     }
-
-
 
 
     public int countOutputDocsInES(){
-        String uri = "http://"+env.getProperty("elasticsearch.cluster.host")+":9200"+
-                "/"+env.getProperty("elasticsearch.index.name")+"/"
-                +env.getProperty("elasticsearch.type")+"/_count";
-        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(HttpClients.createDefault());
-        RestTemplate restTemplate = new RestTemplate(requestFactory);
-        JsonObject jsonObject = null;
         try {
-            jsonObject = new JsonParser().parse(restTemplate.getForObject(uri,String.class)).getAsJsonObject();
-        }catch(HttpClientErrorException ex){
-            System.out.println("Cannot execute REST request: " +ex.getLocalizedMessage());
+           Response response = esRestService.getRestClient().performRequest(
+                    "GET",
+                    "/"+env.getProperty("elasticsearch.index.name")+"/"
+                            +env.getProperty("elasticsearch.type")+"/_count",
+                    Collections.<String, String>emptyMap()
+            );
+            HttpEntity ent = response.getEntity();
+            JSONObject json = new JSONObject(EntityUtils.toString(ent));
+            return  json.getInt("count");
+        } catch (IOException e) {
+            throw new RuntimeException("GET request failed:", e);
         }
-        return jsonObject.get("count").getAsInt();
     }
+
+
+
+
+    public String getStringInEsDoc(String id){
+        try {
+            Response response = esRestService.getRestClient().performRequest(
+                    "GET",
+                    "/"+env.getProperty("elasticsearch.index.name")+"/"
+                            +env.getProperty("elasticsearch.type")+"/"+id,
+                    Collections.<String, String>emptyMap()
+            );
+            HttpEntity ent = response.getEntity();
+            JsonObject json = new JsonParser().parse(EntityUtils.toString(ent)).getAsJsonObject();
+            return  json.toString();
+        } catch (IOException e) {
+            throw new RuntimeException("GET request failed:", e);
+        }
+    }
+
 
 
     private String multiplyDocSize(String doc, int factor){

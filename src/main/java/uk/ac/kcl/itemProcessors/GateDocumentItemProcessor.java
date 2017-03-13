@@ -23,6 +23,7 @@ import gate.creole.ResourceInstantiationException;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
@@ -47,6 +48,7 @@ public class GateDocumentItemProcessor extends TLItemProcessor implements ItemPr
     @Autowired
     private Environment env;
     private List<String> fieldsToGate;
+    @Value("${gate.gateFieldName}")
     private String fieldName;
     private JsonParser jsonParser;
 
@@ -56,11 +58,8 @@ public class GateDocumentItemProcessor extends TLItemProcessor implements ItemPr
 
     @PostConstruct
     public void init(){
-
-        fieldsToGate = Arrays.asList(env.getProperty("fieldsToGate").toLowerCase().split(","));
-        fieldName = env.getProperty("gateFieldName");
+        fieldsToGate = Arrays.asList(env.getProperty("gate.fieldsToGate").toLowerCase().split(","));
         this.jsonParser = new JsonParser();
-
     }
 
     public GateService getGateService() {

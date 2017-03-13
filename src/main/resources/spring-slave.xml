@@ -19,11 +19,11 @@
 	<int:channel id="replyChannel"/>    
 
 	<int-jms:message-driven-channel-adapter connection-factory="connectionFactory"
-            destination-name="${requestQueueName}"
+            destination-name="${jms.requestQueueName}"
             channel="requestChannel"/>
              
 	<int-jms:outbound-channel-adapter connection-factory="connectionFactory"
-            destination-name="${replyQueueName}"
+            destination-name="${jms.replyQueueName}"
             channel="replyChannel"/>
         
         

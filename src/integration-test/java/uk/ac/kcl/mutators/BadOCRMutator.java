@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.util.Random;
 import java.util.StringTokenizer;
 
 /**
@@ -12,7 +13,7 @@ import java.util.StringTokenizer;
  */
 @Service
 public class BadOCRMutator implements Mutator {
-
+    private Random random = new Random();
     @Autowired
     SubstituteCharactersMutator substituteCharactersMutator;
     @Value("#{'${badOCRWhitespaceRate:3}'}")

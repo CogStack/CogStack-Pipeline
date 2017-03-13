@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import uk.ac.kcl.batch.BatchConfigurer;
 import uk.ac.kcl.batch.JobConfiguration;
 
 import javax.annotation.PostConstruct;
@@ -45,12 +46,12 @@ import java.util.Random;
         "classpath:postgres_db.properties",
         "classpath:postgres_test.properties",})
 @Configuration
-@Import({JobConfiguration.class,TestUtils.class})
+@Import({JobConfiguration.class,TestUtils.class, BatchConfigurer.class})
 @Profile("postgres")
 @Ignore
 public class PostGresTestUtils implements DbmsTestUtils{
 
-    final static Logger logger = Logger.getLogger(GATEPKPartitionWithoutScheduling.class);
+    final static Logger logger = Logger.getLogger(GATEWithoutScheduling.class);
     long today = System.currentTimeMillis();
     Random random = new Random();
 
@@ -185,6 +186,20 @@ public class PostGresTestUtils implements DbmsTestUtils{
     public int countRowsInOutputTable() {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(targetDataSource);
         return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM tblOutputDocs", Integer.class);
+    }
+
+    @Override
+    public void createDocManInputTable() {
+        sourceTemplate.execute("DROP TABLE IF EXISTS tblInputDocs");
+        sourceTemplate.execute("CREATE TABLE tblInputDocs"
+                + "( ID  SERIAL PRIMARY KEY"
+                + ", srcColumnFieldName text "
+                + ", srcTableName text "
+                + ", primaryKeyFieldName text "
+                + ", primaryKeyFieldValue integer "
+                + ", updateTime TIMESTAMP "
+                + ", someText TEXT"
+                + ", path TEXT )");
     }
 
 

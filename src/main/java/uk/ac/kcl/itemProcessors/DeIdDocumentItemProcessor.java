@@ -18,6 +18,7 @@ package uk.ac.kcl.itemProcessors;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
@@ -47,16 +48,22 @@ public class DeIdDocumentItemProcessor implements ItemProcessor<Document, Docume
 
     @Autowired
     private Environment env;
+
+    @Value("${deid.replaceFields}")
     private boolean replaceFields;
+
+    @Value("${deid.useGateApp:#{false}}")
+    private boolean useGateApp;
+    private List<String> fieldsToDeId;
 
     @PostConstruct
     private void init(){
-
-        fieldsToDeId = Arrays.asList(env.getProperty("fieldsToDeId").toLowerCase().split(","));
-        replaceFields = Boolean.parseBoolean(env.getProperty("replaceFields"));
+        fieldsToDeId = Arrays.asList(env.getProperty("deid.fieldsToDeId").toLowerCase().split(","));
     }
 
-    private List<String> fieldsToDeId;
+
+
+
 
     public void setFieldsToDeId(List<String> fields){
         this.fieldsToDeId = fields;
@@ -72,7 +79,7 @@ public class DeIdDocumentItemProcessor implements ItemProcessor<Document, Docume
             String newString = "";
             if(fieldsToDeId.contains(k.toLowerCase())) {
                 try {
-                    if (env.getProperty("useGateApp").equalsIgnoreCase("true")) {
+                    if (useGateApp) {
                         newString = gateService.deIdentifyString(v.toString(), doc.getPrimaryKeyFieldValue());
                     } else {
                         newString = elasticGazetteer.deIdentifyDates(v.toString(), doc.getPrimaryKeyFieldValue());
