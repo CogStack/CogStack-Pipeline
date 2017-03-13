@@ -1,4 +1,4 @@
-package uk.ac.kcl.it;
+package uk.ac.kcl.utils;
 
 import org.apache.log4j.Logger;
 import org.junit.Ignore;
@@ -206,6 +206,16 @@ public class SqlServerTestUtils implements DbmsTestUtils {
 
     @Override
     public void createDocManInputTable() {
-        throw new UnsupportedOperationException("Not added yet for Sql Server. Try with Postgres");
+        sourceTemplate.execute("IF OBJECT_ID('dbo.tblInputDocs', 'U') IS NOT NULL DROP TABLE  dbo.tblInputDocs");
+        sourceTemplate.execute("CREATE TABLE dbo.tblInputDocs"
+                + "( ID  BIGINT IDENTITY(1,1) PRIMARY KEY"
+                + ", srcColumnFieldName VARCHAR(MAX) "
+                + ", srcTableName VARCHAR(MAX) "
+                + ", primaryKeyFieldName VARCHAR(MAX) "
+                + ", primaryKeyFieldValue INT "
+                + ", updateTime DATETIME "
+                + ", someText VARCHAR(MAX)"
+                + ", path VARCHAR(MAX) )");
     }
+
 }

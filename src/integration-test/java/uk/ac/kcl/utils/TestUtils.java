@@ -1,4 +1,4 @@
-package uk.ac.kcl.it;
+package uk.ac.kcl.utils;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -8,7 +8,6 @@ import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.nio.entity.NStringEntity;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
@@ -20,11 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
 import uk.ac.kcl.mutators.Mutant;
 import uk.ac.kcl.mutators.StringMutatorService;
 import uk.ac.kcl.service.ESRestService;
@@ -35,15 +31,13 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.util.*;
-import java.util.logging.Level;
 
 /**
  * Created by rich on 13/05/16.
  */
 @Ignore
 @Service
-@ComponentScan({"uk.ac.kcl.it","uk.ac.kcl.mutators"
-        ,"uk.ac.kcl.service"})
+@ComponentScan({"uk.ac.kcl"})
 public class TestUtils  {
     static Random random = new Random();
     static long today = System.currentTimeMillis();
@@ -118,7 +112,7 @@ public class TestUtils  {
                 xhtmlString = new String(bytes, StandardCharsets.UTF_8);
                 jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName", "fictionalPrimaryKeyFieldName", docCount, null, xhtmlString);
             } catch (IOException ex) {
-                java.util.logging.Logger.getLogger(GATEWithoutScheduling.class.getName()).log(Level.SEVERE, null, ex);
+                logger.error(ex);
             }
         }
     }

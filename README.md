@@ -159,29 +159,49 @@ Each integration test follows the same pattern:
 * Activate a configuration appropriate for the data and run cogstack
 * Verify results
 
-All integration tests can be run by using:
+All integration tests for Postgres can be run by using:
 
 ```
-gradlew integTest
+gradlew postgresIntegTest
 ```
 
 Although if you're new to cogstack, you might find it more informative to run them individually, and inspect the results after each one. For example,
   to run a single test:
 ```
-gradlew  -DintegTest.single=<integration test class name> -i integTest
+gradlew  -DpostgresIntegTest.single=<integration test class name> -i postgresIntegTest
 ```
 Available classes for integration tests are in the package
 ```
-src/integration-test/java/uk/ac/kcl/it
+src/integration-test/java/uk/ac/kcl/it/postgres
 ```
 
 For example, to load the postgres database with some dummy word files into a database table called <tblInputDocs>, process them with Tika, and load them into ElasticSearch index called <test_index2> and a postgres table called <tblOutputDocs>
 
 ```
-gradlew  -DintegTest.single=TikaPKPartitionWithoutScheduling -i integTest
+gradlew  -DpostgresIntegTest.single=TikaWithoutScheduling -i postgresIntegTest
 ```
 
 then point your browser to localhost:5601
+
+### A note on SQL Server
+
+Microsoft have recently made SQL Server available on linux, with a [docker](https://hub.docker.com/r/microsoft/mssql-server-linux/) container available. This is good news, as
+most NHS Trusts use SQL Server for most of their systems. To run this container
+```
+docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=yourStrong(!)Password' -p 1433:1433 -d microsoft/mssql-server-linux
+```
+
+...noting their licence conditions. This container will then allow you to run the integration tests for SQL Server:
+
+```
+gradlew sqlServergresIntegTest
+```
+
+Single tests can be run in the same fashion as Postgres, substituting the syntax as appropriate (e.g.)
+```
+gradlew  -DsqlServerIntegTest.single=TikaWithoutScheduling -i sqlServerIntegTest
+```
+
 
 ### A note on GATE
 

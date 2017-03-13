@@ -1,10 +1,11 @@
 package uk.ac.kcl.mutators;
 
 import com.google.common.collect.ImmutableMap;
+import org.junit.Ignore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import uk.ac.kcl.it.MagicSquare;
+import uk.ac.kcl.utils.MagicSquare;
 
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
@@ -16,6 +17,7 @@ import java.util.StringTokenizer;
  * Created by rich on 05/07/16.
  */
 @Service
+@Ignore
 public class SubstituteCharactersMutator implements Mutator {
     private Random random = new Random();
     private Map<Character, Integer> charTotals;

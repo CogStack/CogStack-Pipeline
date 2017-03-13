@@ -1,5 +1,7 @@
 package uk.ac.kcl.mutators;
 
+import org.junit.Ignore;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -8,6 +10,7 @@ import java.util.Set;
 /**
  * Created by rich on 05/07/16.
  */
+@Ignore
 public class Mutant {
     private Set<String> inputTokens;
     private Set<String> outputTokens;
