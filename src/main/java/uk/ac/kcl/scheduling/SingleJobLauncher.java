@@ -60,14 +60,6 @@ public class SingleJobLauncher {
     BatchJobUtils batchJobUtils;
 
     @Autowired
-    @Qualifier("targetDataSource")
-    DataSource targetDataSource;
-
-    @Autowired
-    @Qualifier("sourceDataSource")
-    DataSource sourceDataSource;
-
-    @Autowired
     JobRepository jobRepository;
 
     @Autowired
