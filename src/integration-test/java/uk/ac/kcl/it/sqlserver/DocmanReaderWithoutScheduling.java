@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.kcl.it;
+package uk.ac.kcl.it.sqlserver;
 
-import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +27,10 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
-import uk.ac.kcl.testexecutionlisteners.GateTestExecutionListener;
-
-import static org.junit.Assert.assertEquals;
+import uk.ac.kcl.testexecutionlisteners.DocmanReaderTestExecutionListener;
+import uk.ac.kcl.testservices.DocmanReaderWithoutSchedulingTests;
+import uk.ac.kcl.utils.SqlServerTestUtils;
+import uk.ac.kcl.utils.TestUtils;
 
 /**
  *
@@ -39,49 +39,32 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
-        "classpath:postgres_test.properties",
-        "classpath:postgres_db.properties",
-//        "classpath:sql_server_test.properties",
-//        "classpath:sql_server_db.properties",
+        "classpath:sql_server_test.properties",
+        "classpath:sql_server_db.properties",
         "classpath:jms.properties",
-        "classpath:gate.properties",
         "classpath:noScheduling.properties",
         "classpath:elasticsearch.properties",
+        "classpath:tika_filesystem.properties",
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
-        SingleJobLauncher.class,
         SqlServerTestUtils.class,
-        PostGresTestUtils.class,
+        SingleJobLauncher.class,
         TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 @TestExecutionListeners(
-        listeners = GateTestExecutionListener.class,
+        listeners = DocmanReaderTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-@ActiveProfiles({"gate","localPartitioning","jdbc_in","jdbc_out","elasticsearchRest","primaryKeyPartition","postgres"})
-//@ActiveProfiles({"gate","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","sqlserver"})
-public class GATEWithoutScheduling {
-
-    final static Logger logger = Logger.getLogger(GATEWithoutScheduling.class);
+@ActiveProfiles({"docman","localPartitioning","jdbc_in","jdbc_out","elasticsearchRest","primaryKeyPartition","sqlserver","tika"})
+public class DocmanReaderWithoutScheduling {
 
     @Autowired
-    SingleJobLauncher jobLauncher;
-    @Autowired
-    TestUtils testUtils;
+    DocmanReaderWithoutSchedulingTests docmanReaderWithoutSchedulingTests;
 
-    @Autowired
-    DbmsTestUtils dbmsTestUtils;
 
     @Test
     @DirtiesContext
-    public void gatePipelineTest() {
-        jobLauncher.launchJob();
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        assertEquals(100,testUtils.countOutputDocsInES());
-        assertEquals(100,dbmsTestUtils.countRowsInOutputTable());
+    public void docmanReaderWithoutScheduling(){
+        docmanReaderWithoutSchedulingTests.docmanReaderTest();
     }
 
 

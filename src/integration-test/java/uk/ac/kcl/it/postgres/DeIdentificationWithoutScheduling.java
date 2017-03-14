@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.kcl.it;
+package uk.ac.kcl.it.postgres;
 
-import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.annotation.DirtiesContext;
@@ -28,6 +26,9 @@ import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import uk.ac.kcl.testservices.DeIdentificationWithoutSchedulingTests;
+import uk.ac.kcl.utils.PostGresTestUtils;
+import uk.ac.kcl.utils.TestUtils;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
 import uk.ac.kcl.testexecutionlisteners.DeidTestExecutionListener;
 
@@ -53,7 +54,6 @@ import static org.junit.Assert.assertEquals;
 @ContextConfiguration(classes = {
         SingleJobLauncher.class,
         PostGresTestUtils.class,
-        SqlServerTestUtils.class,
         TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 @TestExecutionListeners(
@@ -63,29 +63,13 @@ import static org.junit.Assert.assertEquals;
 //@ActiveProfiles({"deid","basic","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","sqlserver"})
 public class DeIdentificationWithoutScheduling {
 
-    final static Logger logger = Logger.getLogger(DeIdentificationWithoutScheduling.class);
-
     @Autowired
-    SingleJobLauncher jobLauncher;
-
-    @Autowired
-    TestUtils testUtils;
-
-    @Autowired
-    DbmsTestUtils dbmsTestUtils;
+    DeIdentificationWithoutSchedulingTests deIdentificationWithoutSchedulingTests;
 
     @Test
     @DirtiesContext
-    public void deIdentificationTest() {
-
-        jobLauncher.launchJob();
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        assertEquals(106,testUtils.countOutputDocsInES());
-        assertEquals(106,dbmsTestUtils.countRowsInOutputTable());
+    public void deIdentificationWithoutScheduling(){
+        deIdentificationWithoutSchedulingTests.deIdentificationTest();
     }
 
 

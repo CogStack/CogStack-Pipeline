@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.kcl.it;
+package uk.ac.kcl.it.sqlserver;
 
-import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +27,10 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
-import uk.ac.kcl.testexecutionlisteners.FullPipelineTestExecutionListener;
-
-import static org.junit.Assert.assertEquals;
+import uk.ac.kcl.testexecutionlisteners.TikaTestExecutionListener;
+import uk.ac.kcl.utils.SqlServerTestUtils;
+import uk.ac.kcl.testservices.TikaWithoutSchedulingTests;
+import uk.ac.kcl.utils.TestUtils;
 
 /**
  *
@@ -39,56 +39,31 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
-        "classpath:postgres_test.properties",
-        "classpath:postgres_db.properties",
-//        "classpath:sql_server_test.properties",
-//        "classpath:sql_server_db.properties",
+        "classpath:sql_server_test.properties",
+        "classpath:sql_server_db.properties",
         "classpath:jms.properties",
         "classpath:tika_db.properties",
-        "classpath:gate.properties",
-        "classpath:deidentification.properties",
-        "classpath:bioyodie_webservice.properties",
         "classpath:noScheduling.properties",
         "classpath:elasticsearch.properties",
-        "classpath:jsonFileItemWriter.properties",
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
         SingleJobLauncher.class,
         SqlServerTestUtils.class,
-        PostGresTestUtils.class,
         TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 @TestExecutionListeners(
-        listeners = FullPipelineTestExecutionListener.class,
+        listeners = TikaTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-@ActiveProfiles({"webservice","deid","tika","localPartitioning","jdbc_in","jdbc_out","elasticsearchRest","primaryKeyPartition","postgres"})
-//@ActiveProfiles({"webservice","deid","tika","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","sqlserver"})
-public class FullPipelineWithoutScheduling {
-
-    final static Logger logger = Logger.getLogger(FullPipelineWithoutScheduling.class);
+@ActiveProfiles({"tika","localPartitioning","jdbc_in","jdbc_out","elasticsearchRest","primaryKeyPartition","sqlserver"})
+public class TikaWithoutScheduling {
 
     @Autowired
-    SingleJobLauncher jobLauncher;
+    TikaWithoutSchedulingTests tikaWithoutSchedulingTests;
 
-    @Autowired
-    TestUtils testUtils;
-
-    @Autowired
-    DbmsTestUtils dbmsTestUtils;
 
     @Test
     @DirtiesContext
-    public void fullPipelineTest() {
-        jobLauncher.launchJob();
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        assertEquals(31,testUtils.countOutputDocsInES());
-        assertEquals(31,dbmsTestUtils.countRowsInOutputTable());
+    public void tikaWithoutScheduling(){
+        tikaWithoutSchedulingTests.tikaPipelineTest();
     }
-
-
-
 }
