@@ -90,9 +90,13 @@ test {
 //    }
 }
 
-task integTest(type: Test) {
-    testClassesDir = sourceSets.integTest.output.classesDir
+task postgresIntegTest(type: Test) {
+    testClassesDir = new File(sourceSets.integTest.output.classesDir.absolutePath
+            +'/uk/ac/kcl/it/postgres')
+    print testClassesDir.absolutePath
     classpath = sourceSets.integTest.runtimeClasspath
+    print classpath
+
     beforeTest { descriptor ->
         logger.lifecycle("Running test: " + descriptor)
     }
@@ -101,6 +105,25 @@ task integTest(type: Test) {
     onOutput { descriptor, event ->
         logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message)
     }
+
+}
+
+task sqlServerIntegTest(type: Test) {
+    testClassesDir = new File(sourceSets.integTest.output.classesDir.absolutePath
+            +'/uk/ac/kcl/it/sqlserver')
+    print testClassesDir.absolutePath
+    classpath = sourceSets.integTest.runtimeClasspath
+    print classpath
+
+    beforeTest { descriptor ->
+        logger.lifecycle("Running test: " + descriptor)
+    }
+
+    // listen to standard out and standard error of the test JVM(s)
+    onOutput { descriptor, event ->
+        logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message)
+    }
+
 }
 
 task acceptTest(type: Test) {

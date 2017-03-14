@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.kcl.it;
+package uk.ac.kcl.it.sqlserver;
 
-import org.apache.log4j.Logger;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,68 +26,39 @@ import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import uk.ac.kcl.scheduling.SingleJobLauncher;
+import uk.ac.kcl.scheduling.ScheduledJobLauncher;
 import uk.ac.kcl.testexecutionlisteners.BasicTestExecutionListenerLargeInsert;
+import uk.ac.kcl.testservices.BasicConfigWithSchedulingLargeInsertTests;
+import uk.ac.kcl.utils.SqlServerTestUtils;
+import uk.ac.kcl.utils.TestUtils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-/**
- *
- * @author rich
- */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
-        "classpath:postgres_test.properties",
-        "classpath:postgres_db.properties",
-//        "classpath:sql_server_test.properties",
-//        "classpath:sql_server_db.properties",
-        "classpath:jms.properties",
-        "classpath:noScheduling.properties",
+        "classpath:sql_server_test.properties",
+        "classpath:sql_server_db.properties",
+//        "classpath:jms.properties",
+        "classpath:scheduling.properties",
         "classpath:elasticsearch.properties",
-        "classpath:biolark_webservice.properties",
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
-        PostGresTestUtils.class,
         SqlServerTestUtils.class,
-        SingleJobLauncher.class,
+        ScheduledJobLauncher.class,
         TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 @TestExecutionListeners(
         listeners = BasicTestExecutionListenerLargeInsert.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-@ActiveProfiles({"webservice","basic","localPartitioning","jdbc_in","jdbc_out","elasticsearchRest","primaryKeyPartition","postgres"})
-//@ActiveProfiles({"webservice","basic","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","sqlserver"})
-public class BiolarkWebserviceWithoutScheduling {
-
-    final static Logger logger = Logger.getLogger(BiolarkWebserviceWithoutScheduling.class);
+@ActiveProfiles({"basic","localPartitioning","jdbc_in","jdbc_out","elasticsearchRest","sqlserver"})
+public class BasicConfigWithSchedulingLargeInsert {
 
     @Autowired
-    SingleJobLauncher jobLauncher;
-    @Autowired
-    private TestUtils testUtils;
-    @Autowired
-    DbmsTestUtils dbmsTestUtils;
+    BasicConfigWithSchedulingLargeInsertTests basicConfigWithSchedulingLargeInsertTests;
 
-//    Currently Biolark is unavailable for download
-    @Ignore
     @Test
     @DirtiesContext
-    public void biolarkTest() {
-        jobLauncher.launchJob();
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        assertEquals(75,testUtils.countOutputDocsInES());
-        assertEquals(75,dbmsTestUtils.countRowsInOutputTable());
-
-        assertTrue(testUtils.getStringInEsDoc("1")
-                .contains("HP:0003510"));
+    public void basicConfigWithSchedulingLargeInsert(){
+        basicConfigWithSchedulingLargeInsertTests.basicTimestampPartitionWithSchedulingTest();
     }
-
-
 
 }

@@ -1,4 +1,4 @@
-package uk.ac.kcl.it;
+package uk.ac.kcl.utils;
 
 import java.util.Random;
 

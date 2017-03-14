@@ -67,7 +67,7 @@ public  class CogstackJobPartitioner implements Partitioner {
     @Value("${partitioner.tableToPartition}")
     String table;
 
-    @Value("${partitioner.pkColumnNameToPartition}")
+    @Value("${partitioner.pkColumnName}")
     String column;
 
     @Value("${scheduler.processingPeriod:777600000000}")

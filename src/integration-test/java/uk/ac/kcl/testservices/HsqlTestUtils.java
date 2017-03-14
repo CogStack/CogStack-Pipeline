@@ -1,8 +1,9 @@
-package uk.ac.kcl.it;
+package uk.ac.kcl.testservices;
 
 import org.hsqldb.Server;
 import org.hsqldb.persist.HsqlProperties;
 import org.hsqldb.server.ServerAcl;
+import org.junit.Ignore;
 
 import java.io.IOException;
 
@@ -10,6 +11,7 @@ import java.io.IOException;
  *
  * @author King's College London, Richard Jackson <richgjackson@gmail.com>
  */
+@Ignore
 public class HsqlTestUtils {
     private static Server server1;
     private static Server server2;    

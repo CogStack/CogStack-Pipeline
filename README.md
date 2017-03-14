@@ -3,9 +3,9 @@
 
 ## Introduction
 
-Cogstack is a distributed, fault tolerant database processing architecture for Tika, GATE, Biolark and text deidentification,
- with JDBC and Elasticsearch export options. It makes use of the Spring Batch framework in order to provide a fully configurable
- pipeline with the goal of generating a JSON that can be readily indexed into elasticsearch.
+CogStack is a lightweight distributed, fault tolerant database processing architecture, intended to make NLP processing and
+ preprocessing easier in resource constained environments. It makes use of the Spring Batch framework in order to provide a fully configurable
+ pipeline with the goal of generating an annotated JSON that can be readily indexed into elasticsearch, or pushed back to a database.
  In the parlance of the batch processing [domain language](http://docs.spring.io/spring-batch/reference/html/domain.html),
  it uses the partitioning concept to create 'partition step' metadata for a DB table. This metadata is persisted in the
  Spring database schema, whereafter each partition can then be executed locally or farmed out remotely via a JMS middleware
@@ -14,12 +14,12 @@ Cogstack is a distributed, fault tolerant database processing architecture for T
 
 ## Why does this project exist/ why is batch processing difficult?
 
-This project was developed as the central 'glue' to combine a variety of processes from a wider architecture known as the 'CogStack'.
 The CogStack is a range of technologies designed to to support modern, open source healthcare analytics within the NHS, and is
-chiefly comprised of the Elastic stack (elasticsearch, kibana etc), GATE and Biolark (clinical natural language processing for
-entity extraction), OCR, clinical text de-identification (Manchester De-ID and the ElasticGazetteer), and Apache Tika for MS
-Office to text conversion. When processing very large datasets (10s - 100s of millions rows of data), it is likely that some
-problems will present certain difficulties for different processes. These problems are typically hard to predict - for example,
+chiefly comprised of the Elastic stack (elasticsearch, kibana etc), GATE, Bioyodie and Biolark (clinical natural language processing for
+entity extraction), OCR, clinical text de-identification, and Apache Tika for MS Office to text conversion.
+
+When processing very large datasets (10s - 100s of millions rows of data), it is likely that some rows will present certain
+difficulties for different processes. These problems are typically hard to predict - for example,
 some documents may have very long sentences, an unusual sequence of characters, or machine only content. Such circumstances can
 create a range of problems for NLP algorithms, and thus a fault tolerant batch frameworks are required to ensure robust, consistent
 processing.
@@ -60,7 +60,7 @@ Now you need to build the required docker containers. Fortunately, the gradle bu
 From the CogStack top level directory:
 
 ```
-  gradlew buildSimpleContainers
+gradlew buildSimpleContainers
 ```
 
 Assuming the containers have been built successfully, simply navigate to
@@ -159,29 +159,49 @@ Each integration test follows the same pattern:
 * Activate a configuration appropriate for the data and run cogstack
 * Verify results
 
-All integration tests can be run by using:
+All integration tests for Postgres can be run by using:
 
 ```
-gradlew integTest
+gradlew postgresIntegTest
 ```
 
 Although if you're new to cogstack, you might find it more informative to run them individually, and inspect the results after each one. For example,
   to run a single test:
 ```
-gradlew  -DintegTest.single=<integration test class name> -i integTest
+gradlew  -DpostgresIntegTest.single=<integration test class name> -i postgresIntegTest
 ```
 Available classes for integration tests are in the package
 ```
-src/integration-test/java/uk/ac/kcl/it
+src/integration-test/java/uk/ac/kcl/it/postgres
 ```
 
 For example, to load the postgres database with some dummy word files into a database table called <tblInputDocs>, process them with Tika, and load them into ElasticSearch index called <test_index2> and a postgres table called <tblOutputDocs>
 
 ```
-gradlew  -DintegTest.single=TikaPKPartitionWithoutScheduling -i integTest
+gradlew  -DpostgresIntegTest.single=TikaWithoutScheduling -i postgresIntegTest
 ```
 
 then point your browser to localhost:5601
+
+### A note on SQL Server
+
+Microsoft have recently made SQL Server available on linux, with a [docker](https://hub.docker.com/r/microsoft/mssql-server-linux/) container available. This is good news, as
+most NHS Trusts use SQL Server for most of their systems. To run this container
+```
+docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=yourStrong(!)Password' -p 1433:1433 -d microsoft/mssql-server-linux
+```
+
+...noting their licence conditions. This container will then allow you to run the integration tests for SQL Server:
+
+```
+gradlew sqlServergresIntegTest
+```
+
+Single tests can be run in the same fashion as Postgres, substituting the syntax as appropriate (e.g.)
+```
+gradlew  -DsqlServerIntegTest.single=TikaWithoutScheduling -i sqlServerIntegTest
+```
+
 
 ### A note on GATE
 
@@ -227,7 +247,8 @@ partitioning
  2. primaryKeyAndTimeStampPartition - process all records based upon partitioning of the primary key and the timestamp, for finer control/ smaller batch sizes per job. Use the processingPeriod property to specify the number of milliseconds to 'scan' ahead for each job run
 
 ## Scheduling
-cogstack also offers a built in scheduler, to process changes in a database between job runs (requires a timestamp in the source database)
+CogStack also offers a built in scheduler, to process changes in a database between job runs (requires a timestamp in the source database)
+
 ```
 useScheduling = true
 ```
@@ -239,7 +260,7 @@ scheduler.rate = "*/5 * * * * *"
 
 ## Logging support
 
-cogstack uses the SLF4J abstraction for logging, with logback as the concrete implementation. To name a logfile, simply add the -DLOG_FILE_NAME system flag when launching the JVM
+CogStack uses the SLF4J abstraction for logging, with logback as the concrete implementation. To name a logfile, simply add the -DLOG_FILE_NAME system flag when launching the JVM
 
 e.g.
 
@@ -247,7 +268,7 @@ e.g.
 java -DLOG_FILE_NAME=aTestLog -DLOG_LEVEL=debug -jar cogstack-0.3.0.jar /my/path/to/configs
 ```
 
-cogstack assumes the 'job repository' schema is already in place in the DB implementation of your choice (see spring batch docs for more details). The scripts to set this up for various vendors can be found [here](https://github.com/spring-projects/spring-batch/tree/master/spring-batch-core/src/main/resources/org/springframework/batch/core)
+CogStack assumes the 'job repository' schema is already in place in the DB implementation of your choice (see spring batch docs for more details). The scripts to set this up for various vendors can be found [here](https://github.com/spring-projects/spring-batch/tree/master/spring-batch-core/src/main/resources/org/springframework/batch/core)
 
 ## Scaling
 
@@ -266,16 +287,15 @@ reindexField = sometext
 ```
 ## History
 
-This project is an ‘evolution’ of an earlier KHP-Informatics project I was involved with called [Cognition](https://github.com/KHP-Informatics/Cognition-DNC). Although Cognition had an excellent implementation of Levenstein distance for string substitution (thanks [iemre](https://github.com/iemre)!), the architecture of the code suffered some design flaws, such as an overly complex domain model and configuration, and lack of fault tolerance/job stop/start/retry logic. As such, it was somewhat difficult to work with in production, and hard to extend with new features. It was clear that there was the need for a proper batch processing framework. Enter Spring Batch and a completely rebuilt codebase, save a couple of classes from the original Cognition project. cogstack is used at King's College Hospital and the South London and Maudsley Hospital to feed Elasticsearch clusters for business intelligence and research use cases
+This project is an update of an earlier KHP-Informatics project I was involved with called [Cognition](https://github.com/KHP-Informatics/Cognition-DNC). Although Cognition had an excellent implementation of Levenstein distance for string substitution (thanks [iemre](https://github.com/iemre)!), the architecture of the code suffered some design flaws, such as an overly complex domain model and configuration, and lack of fault tolerance/job stop/start/retry logic. As such, it was somewhat difficult to work with in production, and hard to extend with new features. It was clear that there was the need for a proper batch processing framework. Enter Spring Batch and a completely rebuilt codebase, save a couple of classes from the original Cognition project. cogstack is used at King's College Hospital and the South London and Maudsley Hospital to feed Elasticsearch clusters for business intelligence and research use cases
 
 Some of the advancements in cogstack:
 
  1. A simple <String,Object> map, with a few pieces of database metadata for its [domain model](https://github.com/RichJackson/cogstack/blob/master/src/main/groovy/uk/ac/kcl/model/Document.groovy) (essentially mapping a database row to a elasticsearch document, with the ability to embed [nested types](https://www.elastic.co/guide/en/elasticsearch/reference/2.3/nested.html)
- 2. A composite [item processor configuration](https://github.com/RichJackson/cogstack/blob/master/src/main/java/uk/ac/kcl/itemHandlers/ItemHandlers.java), that can be easily extended and combined with other processing use case
- 3. Complete, sensible coverage of stop, start, retry, abandon logic
- 4. A custom socket timeout factory, to manage network failures, which can cause JDBC driver implementations to lock up, when the standard isn't fully implemented. Check out [this blog post](https://social.msdn.microsoft.com/Forums/office/en-US/3373d40a-2a0b-4fe4-b6e8-46f2988debf8/any-plans-to-add-socket-timeout-option-in-jdbc-driver?forum=sqldataaccess) for info.
- 5. The ability to run multiple batch jobs (i.e. process multiple database tables within a single JVM, each having its own Spring container
- 6. Remote partitioning via an ActiveMQ JMS server, for complete scalability
- 7. Built in job scheduler to enable near real time synchronisation with a database
+ 2. Complete, sensible coverage of stop, start, retry, abandon logic
+ 3. A custom socket timeout factory, to manage network failures, which can cause JDBC driver implementations to lock up, when the standard isn't fully implemented. Check out [this blog post](https://social.msdn.microsoft.com/Forums/office/en-US/3373d40a-2a0b-4fe4-b6e8-46f2988debf8/any-plans-to-add-socket-timeout-option-in-jdbc-driver?forum=sqldataaccess) for info.
+ 4. The ability to run multiple batch jobs (i.e. process multiple database tables within a single JVM, each having its own Spring container
+ 5. Remote partitioning via an ActiveMQ JMS server, for complete scalability
+ 6. Built in job scheduler to enable near real time synchronisation with a database
 
-Questions? Want to help? Drop me a [message](mailto:richgjackson@gmail.com)!
+Questions? Want to help? Drop me a message: richgjackson@gmail.com

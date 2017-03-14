@@ -1,4 +1,4 @@
-/*
+/* 
  * Copyright 2016 King's College London, Richard Jackson <richgjackson@gmail.com>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.kcl.it;
+package uk.ac.kcl.it.sqlserver;
 
-import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +27,10 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
-import uk.ac.kcl.testexecutionlisteners.DbLineFixerTestExecutionListener;
-
-import static org.junit.Assert.assertEquals;
+import uk.ac.kcl.testexecutionlisteners.DeidTestExecutionListener;
+import uk.ac.kcl.testservices.DeIdentificationWithoutSchedulingTests;
+import uk.ac.kcl.utils.SqlServerTestUtils;
+import uk.ac.kcl.utils.TestUtils;
 
 /**
  *
@@ -39,49 +39,35 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
-        "classpath:postgres_test.properties",
-        "classpath:postgres_db.properties",
-//        "classpath:sql_server_test.properties",
-//        "classpath:sql_server_db.properties",
-        "classpath:jms.properties",
+        "classpath:sql_server_test.properties",
+        "classpath:sql_server_db.properties",
+//        "classpath:jms.properties",
         "classpath:noScheduling.properties",
+        "classpath:gate.properties",
+        "classpath:deidentification.properties",
         "classpath:elasticsearch.properties",
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
         SingleJobLauncher.class,
         SqlServerTestUtils.class,
-        PostGresTestUtils.class,
         TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 @TestExecutionListeners(
-        listeners = DbLineFixerTestExecutionListener.class,
+        listeners = DeidTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-@ActiveProfiles({"dBLineFixer","localPartitioning","jdbc_in","jdbc_out","elasticsearchRest","primaryKeyPartition","postgres"})
-//@ActiveProfiles({"dBLineFixer","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","sqlserver"})
-public class LineFixerWithoutScheduling {
-
-    final static Logger logger = Logger.getLogger(LineFixerWithoutScheduling.class);
+@ActiveProfiles({"deid","localPartitioning","jdbc_in","jdbc_out","elasticsearchRest","sqlserver"})
+public class DeIdentificationWithoutScheduling {
 
     @Autowired
-    SingleJobLauncher jobLauncher;
-    @Autowired
-    TestUtils testUtils;
-
-    @Autowired
-    DbmsTestUtils dbmsTestUtils;
+    DeIdentificationWithoutSchedulingTests deIdentificationWithoutSchedulingTests;
 
     @Test
     @DirtiesContext
-    public void lineFixerTest() {
-        jobLauncher.launchJob();
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        assertEquals(75,testUtils.countOutputDocsInES());
-        assertEquals(75,dbmsTestUtils.countRowsInOutputTable());
-
+    public void deIdentificationWithoutScheduling(){
+        deIdentificationWithoutSchedulingTests.deIdentificationTest();
     }
+
+
+
+
 }

@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.kcl.it;
+package uk.ac.kcl.it.postgres;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.core.env.Environment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -27,55 +26,43 @@ import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import uk.ac.kcl.scheduling.ScheduledJobLauncher;
+import uk.ac.kcl.testservices.BasicConfigWithoutSchedulingTests;
+import uk.ac.kcl.utils.PostGresTestUtils;
+import uk.ac.kcl.utils.TestUtils;
+import uk.ac.kcl.scheduling.SingleJobLauncher;
 import uk.ac.kcl.testexecutionlisteners.BasicTestExecutionListenerLargeInsert;
 
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ComponentScan("uk.ac.kcl.it")
+@ComponentScan("uk.ac.kcl")
 @TestPropertySource({
+        "classpath:jms.properties",
         "classpath:postgres_test.properties",
         "classpath:postgres_db.properties",
 //        "classpath:sql_server_test.properties",
 //        "classpath:sql_server_db.properties",
-//        "classpath:jms.properties",
-        "classpath:scheduling.properties",
+        "classpath:noScheduling.properties",
         "classpath:elasticsearch.properties",
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
         PostGresTestUtils.class,
-        SqlServerTestUtils.class,
-        ScheduledJobLauncher.class,
+        SingleJobLauncher.class,
         TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 @TestExecutionListeners(
         listeners = BasicTestExecutionListenerLargeInsert.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 @ActiveProfiles({"basic","localPartitioning","jdbc_in","jdbc_out","elasticsearchRest","postgres"})
-//@ActiveProfiles({"basic","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyAndTimeStampPartition","sqlserver"})
-public class BasicConfigWithSchedulingLargeInsert {
+public class BasicConfigWithoutScheduling {
 
-    @Autowired
-    private TestUtils testUtils;
-    @Autowired
-    DbmsTestUtils dbmsTestUtils;
-    @Autowired
-    Environment env;
+@Autowired
+    BasicConfigWithoutSchedulingTests basicConfigWithoutSchedulingTests;
 
     @Test
     @DirtiesContext
-    public void basicTimestampPartitionWithSchedulingTest() {
-        testUtils.insertFreshDataIntoBasicTableAfterDelay(env.getProperty("tblInputDocs"),15000,76,150,false);
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        //note, in this test, we upsert documents, overriding existng ones. hence why there are 75 in the index and 150
-        //in the db
-        assertEquals(150,testUtils.countOutputDocsInES());
-        assertEquals(150,dbmsTestUtils.countRowsInOutputTable());
+    public void basicConfigWithoutScheduling(){
+        basicConfigWithoutSchedulingTests.basicPkPartitionWithoutSchedulingTest();
     }
 
 }

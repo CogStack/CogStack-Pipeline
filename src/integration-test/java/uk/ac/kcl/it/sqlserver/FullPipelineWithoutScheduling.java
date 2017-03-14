@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.kcl.it;
+package uk.ac.kcl.it.sqlserver;
 
-import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +27,10 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
-import uk.ac.kcl.testexecutionlisteners.BasicTestExecutionListenerLargeInsert;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import uk.ac.kcl.testexecutionlisteners.FullPipelineTestExecutionListener;
+import uk.ac.kcl.testservices.FullPipelineWithoutSchedulingTests;
+import uk.ac.kcl.utils.SqlServerTestUtils;
+import uk.ac.kcl.utils.TestUtils;
 
 /**
  *
@@ -40,49 +39,36 @@ import static org.junit.Assert.assertTrue;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ComponentScan("uk.ac.kcl.it")
 @TestPropertySource({
-        "classpath:postgres_test.properties",
-        "classpath:postgres_db.properties",
-//        "classpath:sql_server_test.properties",
-//        "classpath:sql_server_db.properties",
+        "classpath:sql_server_test.properties",
+        "classpath:sql_server_db.properties",
         "classpath:jms.properties",
+        "classpath:tika_db.properties",
+        "classpath:gate.properties",
+        "classpath:deidentification.properties",
+        "classpath:bioyodie_webservice.properties",
         "classpath:noScheduling.properties",
         "classpath:elasticsearch.properties",
-        "classpath:bioyodie_webservice.properties",
+        "classpath:jsonFileItemWriter.properties",
         "classpath:jobAndStep.properties"})
 @ContextConfiguration(classes = {
-        PostGresTestUtils.class,
-        SqlServerTestUtils.class,
         SingleJobLauncher.class,
+        SqlServerTestUtils.class,
         TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
 @TestExecutionListeners(
-        listeners = BasicTestExecutionListenerLargeInsert.class,
+        listeners = FullPipelineTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-@ActiveProfiles({"webservice","basic","localPartitioning","jdbc_in","jdbc_out","elasticsearchRest","primaryKeyPartition","postgres"})
-//@ActiveProfiles({"webservice","basic","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","sqlserver"})
-public class BioyodieWebserviceWithoutScheduling {
-
-    final static Logger logger = Logger.getLogger(BioyodieWebserviceWithoutScheduling.class);
+@ActiveProfiles({"webservice","deid","tika","localPartitioning","jdbc_in","jdbc_out","elasticsearchRest","primaryKeyPartition","sqlserver"})
+public class FullPipelineWithoutScheduling {
 
     @Autowired
-    SingleJobLauncher jobLauncher;
-    @Autowired
-    private TestUtils testUtils;
-    @Autowired
-    DbmsTestUtils dbmsTestUtils;
+    FullPipelineWithoutSchedulingTests fullPipelineWithoutSchedulingTests;
+
+
     @Test
     @DirtiesContext
-    public void bioyodieTest() {
-        jobLauncher.launchJob();
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        assertEquals(75,testUtils.countOutputDocsInES());
-        assertEquals(75,dbmsTestUtils.countRowsInOutputTable());
-        assertTrue(testUtils.getStringInEsDoc("1")
-                .contains("T061"));
+    public void fullPipelineWithoutScheduling(){
+        fullPipelineWithoutSchedulingTests.fullPipelineTest();
     }
 
 

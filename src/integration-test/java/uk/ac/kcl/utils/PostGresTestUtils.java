@@ -1,4 +1,4 @@
-package uk.ac.kcl.it;
+package uk.ac.kcl.utils;
 
 import org.apache.log4j.Logger;
 import org.junit.Ignore;
@@ -16,6 +16,9 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.kcl.batch.BatchConfigurer;
 import uk.ac.kcl.batch.JobConfiguration;
+import uk.ac.kcl.it.postgres.GATEWithoutScheduling;
+import uk.ac.kcl.utils.DbmsTestUtils;
+import uk.ac.kcl.utils.TestUtils;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
@@ -49,7 +52,7 @@ import java.util.Random;
 @Import({JobConfiguration.class,TestUtils.class, BatchConfigurer.class})
 @Profile("postgres")
 @Ignore
-public class PostGresTestUtils implements DbmsTestUtils{
+public class PostGresTestUtils implements DbmsTestUtils {
 
     final static Logger logger = Logger.getLogger(GATEWithoutScheduling.class);
     long today = System.currentTimeMillis();
