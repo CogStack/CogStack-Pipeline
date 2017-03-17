@@ -58,7 +58,7 @@ public class GateDocumentItemProcessor extends TLItemProcessor implements ItemPr
 
     @PostConstruct
     public void init(){
-        fieldsToGate = Arrays.asList(env.getProperty("gate.fieldsToGate").toLowerCase().split(","));
+        fieldsToGate = Arrays.asList(env.getProperty("gate.fieldsToGate", "").toLowerCase().split(","));
         this.jsonParser = new JsonParser();
     }
 
@@ -80,6 +80,8 @@ public class GateDocumentItemProcessor extends TLItemProcessor implements ItemPr
         newMap.putAll(doc.getAssociativeArray());
         List<String> failedFieldsList = new ArrayList<String>(fieldsToGate);
 
+        newMap.put(fieldName, new HashMap<String,Object>());
+
         doc.getAssociativeArray().forEach((k, v)-> {
             if (fieldsToGate.contains(k.toLowerCase())) {
                 gate.Document gateDoc = null;
@@ -88,7 +90,7 @@ public class GateDocumentItemProcessor extends TLItemProcessor implements ItemPr
                             .newDocument((String) v);
                     LOG.info("Going to process key: {}, content length: {}", k, ((String) v).length());
                     gateService.processDoc(gateDoc);
-                    newMap.put(fieldName, gateService.convertDocToJSON(gateDoc));
+                    ((HashMap<String,Object>) newMap.get(fieldName)).put(k, gateService.convertDocToJSON(gateDoc));
 
                     // Remove the key from the list if GATE is successful
                     failedFieldsList.remove(k.toLowerCase());
@@ -98,7 +100,7 @@ public class GateDocumentItemProcessor extends TLItemProcessor implements ItemPr
                     LinkedHashMap<Object, Object> hm = new LinkedHashMap<Object, Object>();
                     hm.put("error", "see logs");
                     al.add(hm);
-                    newMap.put(fieldName,hm);
+                    ((HashMap<String,Object>) newMap.get(fieldName)).put(k, hm);
                 } finally {
                     Factory.deleteResource(gateDoc);
                 }
