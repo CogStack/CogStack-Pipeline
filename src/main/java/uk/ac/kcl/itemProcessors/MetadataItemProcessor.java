@@ -38,7 +38,7 @@ public class MetadataItemProcessor extends TLItemProcessor implements ItemProces
 
     @PostConstruct
     public void init() {
-        this.eagerGetPageCount = env.getProperty("eagerGetPageCount")
+        this.eagerGetPageCount = env.getProperty("metadata.eagerGetPageCount", "false")
                                  .equalsIgnoreCase("true");
     }
 

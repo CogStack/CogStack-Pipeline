@@ -34,7 +34,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import uk.ac.kcl.batch.JobConfiguration;
-import uk.ac.kcl.cleanup.CleanupBean;
 import uk.ac.kcl.utils.BatchJobUtils;
 
 import javax.sql.DataSource;
