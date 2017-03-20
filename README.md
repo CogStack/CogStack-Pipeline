@@ -207,6 +207,27 @@ gradlew  -DsqlServerIntegTest.single=TikaWithoutScheduling -i sqlServerIntegTest
 
 Applications that require GATE generally need to be configured to point to the GATE installation directory (or they would need to include a rather large amount of plugins on their classpath). To do this in cogstack, set the appropriate properties as detailed in gate.* .
 
+
+## Acceptance Tests
+
+The accompanying manuscript for this piece describes some artifically generated pseudo-documents containing misspellings and
+ other string mutations in order to validate the de-identification algorithm without requiring access to real world
+ data. These results can be replicated (subject to RNG) by using the acceptance test package.
+
+To reproduce the results described in the manuscript, simply run the following command:
+```
+gradlew  -DacceptTest.single=ElasticGazetteerAcceptanceTest -i acceptTest
+```
+
+to reconfigure this test class for the different conditions described in the manuscript, you will need to alter the parameters inside the
+
+ ```
+ elasticgazetteer_test.properties
+ ```
+
+file, which describes the potential options. For efficiency, it is recommended to do this from inside an IDE.
+
+
 ## Example usage in real world deployments
 
 The entire process is run through the command line, taking a path to a directory as a single argument. This directory should contain configuration files, (one complete one per spring batch job that you want to run simultaneously). These config files selectively activate Spring profiles as required to perform required data selection, processing and output writing steps.

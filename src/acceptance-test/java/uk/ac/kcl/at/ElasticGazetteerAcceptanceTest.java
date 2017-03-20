@@ -28,7 +28,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import uk.ac.kcl.utils.DbmsTestUtils;
-import uk.ac.kcl.it.PostGresTestUtils;
+import uk.ac.kcl.utils.PostGresTestUtils;
 import uk.ac.kcl.utils.SqlServerTestUtils;
 import uk.ac.kcl.utils.TestUtils;
 import uk.ac.kcl.mutators.Mutant;
@@ -59,8 +59,6 @@ import static org.junit.Assert.assertEquals;
 @TestPropertySource({
         "classpath:postgres_test.properties",
         "classpath:postgres_db.properties",
-//        "classpath:sql_server_test.properties",
-//        "classpath:sql_server_db.properties",
         "classpath:jms.properties",
         "classpath:noScheduling.properties",
         "classpath:gate.properties",
@@ -71,10 +69,9 @@ import static org.junit.Assert.assertEquals;
 @ContextConfiguration(classes = {
         SingleJobLauncher.class,
         PostGresTestUtils.class,
-        SqlServerTestUtils.class,
         TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
-@ActiveProfiles({"deid","basic","localPartitioning","jdbc","elasticsearch","primaryKeyPartition","postgres"})
+@ActiveProfiles({"deid","localPartitioning","jdbc_in","elasticsearchRest","primaryKeyPartition","postgres"})
 //@ActiveProfiles({"deid","basic","localPartitioning","jdbc","primaryKeyPartition","sqlserver"})
 public class ElasticGazetteerAcceptanceTest {
 

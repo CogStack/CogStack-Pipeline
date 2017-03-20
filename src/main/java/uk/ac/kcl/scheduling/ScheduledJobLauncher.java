@@ -17,6 +17,7 @@ package uk.ac.kcl.scheduling;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -28,7 +29,7 @@ import uk.ac.kcl.batch.JobConfiguration;
  *
  * @author King's College London, Richard Jackson <richgjackson@gmail.com>
  */
-@Import(JobConfiguration.class)
+@ComponentScan({"uk.ac.kcl.scheduling"})
 @EnableScheduling
 public class ScheduledJobLauncher  {
 
