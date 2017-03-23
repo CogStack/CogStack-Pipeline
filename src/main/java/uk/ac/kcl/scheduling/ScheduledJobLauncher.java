@@ -47,7 +47,7 @@ public class ScheduledJobLauncher  {
     @Autowired
     SingleJobLauncher singleJobLauncher;
 
-    @Scheduled(cron = "${scheduler.rate:30000}")
+    @Scheduled(cron = "${scheduler.rate:0 0 * * * *}")
     public void doTask()  {
 
         if(continueWork) singleJobLauncher.launchJob();
