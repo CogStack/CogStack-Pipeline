@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
  */
 @Ignore
 @Service
-@ComponentScan({"uk.ac.kcl.it","uk.ac.kcl.mutators"})
+@ComponentScan({"uk.ac.kcl"})
 public class StringMutatorService {
 
     private final Random random = new Random();

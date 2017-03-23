@@ -1,6 +1,7 @@
 package uk.ac.kcl.mutators;
 
 import com.google.common.collect.ImmutableMap;
+import org.junit.Ignore;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,7 @@ import java.util.StringTokenizer;
  * Created by rich on 05/07/16.
  */
 @Service
+@Ignore
 public class NullMutator implements Mutator {
 
 

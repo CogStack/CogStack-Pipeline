@@ -58,7 +58,7 @@ public class GateDocumentItemProcessor extends TLItemProcessor implements ItemPr
 
     @PostConstruct
     public void init(){
-        fieldsToGate = Arrays.asList(env.getProperty("gate.fieldsToGate").toLowerCase().split(","));
+        fieldsToGate = Arrays.asList(env.getProperty("gate.fieldsToGate", "").toLowerCase().split(","));
         this.jsonParser = new JsonParser();
     }
 
@@ -80,25 +80,28 @@ public class GateDocumentItemProcessor extends TLItemProcessor implements ItemPr
         newMap.putAll(doc.getAssociativeArray());
         List<String> failedFieldsList = new ArrayList<String>(fieldsToGate);
 
+        newMap.put(fieldName, new HashMap<String,Object>());
+
         doc.getAssociativeArray().forEach((k, v)-> {
             if (fieldsToGate.contains(k.toLowerCase())) {
                 gate.Document gateDoc = null;
                 try {
                     gateDoc = Factory
                             .newDocument((String) v);
-                    LOG.info("Going to process key: {}, content length: {}", k, ((String) v).length());
+                    LOG.info("Going to process key: {} in document PK: {}, content length: {}",
+                             k, doc.getPrimaryKeyFieldValue(), ((String) v).length());
                     gateService.processDoc(gateDoc);
-                    newMap.put(fieldName, gateService.convertDocToJSON(gateDoc));
+                    ((HashMap<String,Object>) newMap.get(fieldName)).put(k, gateService.convertDocToJSON(gateDoc));
 
                     // Remove the key from the list if GATE is successful
                     failedFieldsList.remove(k.toLowerCase());
                 } catch (ExecutionException | IOException | ResourceInstantiationException e) {
-                    LOG.warn("gate failed on doc " + doc.getDocName() + " ", e);
+                    LOG.warn("gate failed on doc {} (PK: {}): {}", doc.getDocName(), doc.getPrimaryKeyFieldValue(), e);
                     ArrayList<LinkedHashMap<Object, Object>> al = new ArrayList<LinkedHashMap<Object, Object>>();
                     LinkedHashMap<Object, Object> hm = new LinkedHashMap<Object, Object>();
                     hm.put("error", "see logs");
                     al.add(hm);
-                    newMap.put(fieldName,hm);
+                    ((HashMap<String,Object>) newMap.get(fieldName)).put(k, hm);
                 } finally {
                     Factory.deleteResource(gateDoc);
                 }
@@ -112,7 +115,7 @@ public class GateDocumentItemProcessor extends TLItemProcessor implements ItemPr
         doc.getAssociativeArray().clear();
         doc.getAssociativeArray().putAll(newMap);
         long endTime = System.currentTimeMillis();
-        LOG.info("{};Document-ID:{};Total-Content-Length:{};Time:{} ms",
+        LOG.info("{};Primary-Key:{};Total-Content-Length:{};Time:{} ms",
                  this.getClass().getSimpleName(),
                  doc.getPrimaryKeyFieldValue(),
                  contentLength,
