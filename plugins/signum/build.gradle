@@ -1,0 +1,29 @@
+apply plugin: 'groovy'
+// Apply the java plugin to add support for Java
+apply plugin: 'java'
+
+// In this section you declare where to find the dependencies of your project
+repositories {
+    mavenCentral()
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = []
+        }
+        groovy {
+            srcDirs = ['src/main/java', 'src/main/groovy']
+        }
+    }
+}
+
+dependencies {
+    // This dependency is found on compile classpath of this component and consumers.
+    compile 'org.springframework.batch:spring-batch-core:3.0.7.RELEASE'
+    compile 'org.slf4j:slf4j-api:1.7.21'
+    compile 'org.codehaus.groovy:groovy-all:2.4.4'
+    compile group: 'com.google.code.gson', name: 'gson', version: '2.6.2'
+    // Use JUnit test framework
+    // testCompile 'junit:junit:4.12'
+}
