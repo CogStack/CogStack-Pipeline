@@ -43,6 +43,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
@@ -60,6 +61,8 @@ import uk.ac.kcl.utils.LoggerHelper;
 
 import javax.sql.DataSource;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  *
@@ -73,6 +76,7 @@ import java.util.ArrayList;
         "uk.ac.kcl.partitioners",
         "uk.ac.kcl.itemProcessors",
         "uk.ac.kcl.itemWriters",
+        "uk.ac.ucl.signum",
         "uk.ac.kcl.cleanup"})
 @EnableBatchProcessing
 @Import({
@@ -82,6 +86,9 @@ import java.util.ArrayList;
 })
 public class JobConfiguration {
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(JobConfiguration.class);
+
+    @Autowired
+    ApplicationContext context;
 
     ///Configure order of processoer and writer composites here
 
@@ -101,6 +108,18 @@ public class JobConfiguration {
         if(pdfGenerationItemProcessor !=null) delegates.add(pdfGenerationItemProcessor);
         if(thumbnailGenerationItemProcessor !=null) delegates.add(thumbnailGenerationItemProcessor);
 
+
+        // New approach: plugins
+        List<String> plugins = Arrays.asList(env.getProperty("plugins.names", "").split(","));
+        for (String plugin: plugins) {
+          try {
+            ItemProcessor<Document,Document> proc = (ItemProcessor<Document,Document>) context.getBean(plugin);
+            delegates.add(proc);
+            LOG.info("Dynamically loaded plugin: {}", plugin);
+          } catch (Exception e) {
+            LOG.warn("Plugin {} failed to load", plugin);
+          }
+        }
 
         delegates.add(jsonMakerItemProcessor);
         processor.setDelegates(delegates);
