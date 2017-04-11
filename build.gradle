@@ -237,6 +237,8 @@ dependencies {
     compile('org.apache.tika:tika-parsers:1.11') {
         exclude group: 'commons-logging', module: 'commons-logging' //by both name and group
     }
+
+    compile group: 'org.apache.ws.commons.util', name: 'ws-commons-util', version: '1.0.2'
     //test
 //    testCompile("junit:junit")
     testCompile('org.mockito:mockito-all:1.10.19');
