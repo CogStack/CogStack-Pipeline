@@ -71,6 +71,7 @@ public class ElasticsearchRestDocumentWriter implements ItemWriter<Document> {
 
     @Override
     public final void write(List<? extends Document> documents) {
+        long startTime = System.currentTimeMillis();
         HttpEntity entity = makeEntity(documents);
         try {
             esRestService.getRestClient().performRequest(
@@ -79,6 +80,9 @@ public class ElasticsearchRestDocumentWriter implements ItemWriter<Document> {
                     Collections.<String, String>emptyMap(),
                     //assume that the documents are stored in an entities array
                     entity);
+            long endTime = System.currentTimeMillis();
+            LOG.info("{} documents written in bulk by elastic search REST client;Time:{} ms",
+                     documents.size(), endTime - startTime);
         } catch (IOException e) {
             throw new RuntimeException("Indexing failed:", e);
         }
