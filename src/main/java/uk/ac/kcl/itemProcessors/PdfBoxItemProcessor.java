@@ -101,9 +101,9 @@ public class PdfBoxItemProcessor extends TLItemProcessor implements ItemProcesso
 
               for (Map.Entry<String, String> entry: fieldsMapping.entrySet()) {
                 // TODO: This XPath is making the assumption that the field name is unique in this form because the expression matches node in any depth, without specifying the full path.
-                String expression = "//" + entry.getValue() + "/text()";
+                String expression = "//" + entry.getKey() + "/text()";
                 String nodeValue = (String) xpath.evaluate(expression, formDoc, XPathConstants.STRING);
-                doc.getAssociativeArray().put(entry.getKey(), nodeValue);
+                doc.getAssociativeArray().put(entry.getValue(), nodeValue);
                 // LOG.info("Adding {} with value {} to {}", entry.getKey(), nodeValue, entry.getValue());
               }
             }
