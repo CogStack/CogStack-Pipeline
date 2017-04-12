@@ -14,17 +14,16 @@ import java.text.MessageFormat;
  * Created by rich on 09/06/16.
  */
 @Service
-//@Profile("primaryKeyAndTimeStampPartition")
 public class TimestampAndPKStepPartitioner implements StepPartitioner {
     @Autowired
     Environment env;
-    @Value("${partitioner.timeStampColumnName:#{null}}")
+    @Value("${partitioner.timeStampColumnName}")
     String timeStamp;
 
     @Value("${source.dbmsToJavaSqlTimestampType}")
     String dbmsToJavaSqlTimestampType ;
 
-    @Value("${partitioner.pkColumnNameToPartition}")
+    @Value("${partitioner.pkColumnName}")
     String column;
 
 

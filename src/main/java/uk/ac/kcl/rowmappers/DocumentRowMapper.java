@@ -52,7 +52,7 @@ public class DocumentRowMapper implements RowMapper<Document>{
     ApplicationContext context;
     @Value("${reindexColumn:#{null}}")
     private String reindexColumn;
-    @Value("${elasticsearch.datePattern}")
+    @Value("${elasticsearch.datePattern:yyyy-MM-dd'T'HH:mm:ss.SSS}")
     private String esDatePattern;
     @Value("${reindex:false}")
     private boolean reindex;
@@ -80,7 +80,7 @@ public class DocumentRowMapper implements RowMapper<Document>{
 
     @PostConstruct
     public void init () {
-        fieldsToIgnore = Arrays.asList(env.getProperty("elasticsearch.excludeFromIndexing")
+        fieldsToIgnore = Arrays.asList(env.getProperty("elasticsearch.excludeFromIndexing", "")
                 .toLowerCase().split(","));
         eSCompatibleDateTimeFormatter = DateTimeFormat.forPattern(esDatePattern);
     }
@@ -152,7 +152,7 @@ public class DocumentRowMapper implements RowMapper<Document>{
                 mapDBMetadata(doc, rs);
                 mapDBFields(doc, rs);
             } catch (IOException e) {
-                LOG.error("DocumentRowMapper could not map file based binary");
+                LOG.error("DocumentRowMapper could not map file based binary, nested exception: {}", e);
                 throw new SQLException("DocumentRowMapper could not map file based binary");
             }
         }

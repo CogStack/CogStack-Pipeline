@@ -16,7 +16,10 @@
 package uk.ac.kcl.scheduling;
 
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -26,10 +29,9 @@ import uk.ac.kcl.batch.JobConfiguration;
  *
  * @author King's College London, Richard Jackson <richgjackson@gmail.com>
  */
-@Service
-@Import(JobConfiguration.class)
+@ComponentScan({"uk.ac.kcl.scheduling"})
 @EnableScheduling
-public class ScheduledJobLauncher extends SingleJobLauncher {
+public class ScheduledJobLauncher  {
 
 
 
@@ -41,9 +43,13 @@ public class ScheduledJobLauncher extends SingleJobLauncher {
     public void setContinueWork(boolean cont){
         this.continueWork = cont;
     }
-    @Scheduled(cron = "${scheduler.rate}")
+
+    @Autowired
+    SingleJobLauncher singleJobLauncher;
+
+    @Scheduled(cron = "${scheduler.rate:0 0 * * * *}")
     public void doTask()  {
 
-        if(continueWork) launchJob();
+        if(continueWork) singleJobLauncher.launchJob();
     }
 }
