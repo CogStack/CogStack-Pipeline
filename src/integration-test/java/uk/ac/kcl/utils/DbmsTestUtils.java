@@ -1,5 +1,6 @@
 package uk.ac.kcl.utils;
 
+import java.util.Map;
 import javax.annotation.PostConstruct;
 
 /**
@@ -23,6 +24,8 @@ public interface DbmsTestUtils {
     void createDeIdInputTable();
 
     int countRowsInOutputTable();
+
+    Map<String,Object> getRowInOutputTable(int primaryKey);
 
     void createDocManInputTable();
 

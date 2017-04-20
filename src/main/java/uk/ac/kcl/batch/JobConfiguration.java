@@ -25,6 +25,7 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.step.builder.FaultTolerantStepBuilder;
 import org.springframework.batch.integration.partition.BeanFactoryStepLocator;
 import org.springframework.batch.integration.partition.StepExecutionRequestHandler;
 import org.springframework.batch.item.ItemProcessor;
@@ -47,8 +48,10 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.jdbc.core.RowMapper;
 import uk.ac.kcl.exception.WebserviceProcessingFailedException;
+import uk.ac.kcl.listeners.SkipListener;
 import uk.ac.kcl.itemProcessors.JSONMakerItemProcessor;
 import uk.ac.kcl.database.MapItemSqlParameterSourceProvider;
 import uk.ac.kcl.model.Document;
@@ -302,16 +305,20 @@ public class JobConfiguration {
             //@Qualifier("targetDatasourceTransactionManager")PlatformTransactionManager manager,
             StepBuilderFactory stepBuilderFactory
     ) {
-        return stepBuilderFactory.get("compositeSlaveStep")
+        FaultTolerantStepBuilder stepBuilder = stepBuilderFactory.get("compositeSlaveStep")
                 .<Document, Document> chunk(chunkSize)
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)
                 .faultTolerant()
                 .skipLimit(skipLimit)
-                .skip(WebserviceProcessingFailedException.class)
-                .noSkip(Exception.class)
+                .skip(WebserviceProcessingFailedException.class);
+        if (env.acceptsProfiles("jdbc_out_map")) {
+          stepBuilder = stepBuilder.skip(InvalidDataAccessApiUsageException.class);
+        }
+        return stepBuilder.noSkip(Exception.class)
          //       .listener(nonFatalExceptionItemProcessorListener)
+                .listener(new SkipListener())
                 .taskExecutor(taskExecutor)
                 .build();
     }
