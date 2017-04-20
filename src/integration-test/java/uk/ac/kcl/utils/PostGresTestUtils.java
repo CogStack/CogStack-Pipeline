@@ -22,6 +22,7 @@ import uk.ac.kcl.utils.TestUtils;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
+import java.util.Map;
 import java.util.Random;
 
 /*
@@ -205,5 +206,9 @@ public class PostGresTestUtils implements DbmsTestUtils {
                 + ", path TEXT )");
     }
 
-
+    @Override
+    public Map<String,Object> getRowInOutputTable(int primaryKey) {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(targetDataSource);
+        return jdbcTemplate.queryForMap("SELECT * FROM tblOutputDocs WHERE primaryKeyFieldValue = " + Integer.toString(primaryKey));
+    }
 }
