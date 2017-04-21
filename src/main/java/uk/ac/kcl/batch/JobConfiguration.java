@@ -18,8 +18,8 @@ package uk.ac.kcl.batch;
 
 import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.LoggerFactory;
-import org.springframework.batch.core.ItemProcessListener;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.StepListener;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -301,8 +301,7 @@ public class JobConfiguration {
             @Qualifier("compositeItemProcessor") ItemProcessor<Document, Document> processor,
             @Qualifier("compositeESandJdbcItemWriter") ItemWriter<Document> writer,
             @Qualifier("slaveTaskExecutor")TaskExecutor taskExecutor,
-            @Qualifier("nonFatalExceptionItemProcessorListener")
-                                ItemProcessListener nonFatalExceptionItemProcessorListener,
+            @Qualifier("skipListener") SkipListener skipListener,
             //@Qualifier("targetDatasourceTransactionManager")PlatformTransactionManager manager,
             StepBuilderFactory stepBuilderFactory
     ) {
@@ -314,12 +313,19 @@ public class JobConfiguration {
                 .faultTolerant()
                 .skipLimit(skipLimit)
                 .skip(WebserviceProcessingFailedException.class);
+
         if (env.acceptsProfiles("jdbc_out_map")) {
           stepBuilder = stepBuilder.skip(InvalidDataAccessApiUsageException.class);
         }
-        return stepBuilder.noSkip(Exception.class)
-         //       .listener(nonFatalExceptionItemProcessorListener)
-                .listener(new SkipListener())
+
+        if (env.acceptsProfiles("placeholderForFailedDoc")) {
+          // May need to use a very big skipLimit to achieve the desired results
+          stepBuilder = stepBuilder.skip(Exception.class);
+        } else {
+          stepBuilder = stepBuilder.noSkip(Exception.class);
+        }
+
+        return stepBuilder.listener(skipListener)
                 .taskExecutor(taskExecutor)
                 .build();
     }
