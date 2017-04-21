@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.NoSuchFileException;
+import java.nio.file.StandardCopyOption;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
@@ -187,7 +188,7 @@ public class PDFGenerationItemProcessor extends TLItemProcessor implements ItemP
             // Move the file to the configured output path
             Path tempOutputFile = tempPath.resolve("file.pdf");
             Path outputFile = Paths.get(outputPath, docName + ".pdf");
-            Files.move(tempOutputFile, outputFile);
+            Files.move(tempOutputFile, outputFile, StandardCopyOption.REPLACE_EXISTING);
 
         } catch (NoSuchFileException e) {
             LOG.error("NoSuchFileException for processing {}, message: {}",
