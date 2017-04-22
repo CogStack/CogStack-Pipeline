@@ -140,6 +140,30 @@ public class TestUtils  {
         }
     }
 
+    public void insertTestBinariesForPdfbox (String tableName) {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
+        int docCount = 55;
+        byte[] bytes = null;
+        try {
+            bytes = IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream("pdfbox/testdocs/pdfWithForm.pdf"));
+        } catch (IOException ex) {
+            logger.fatal(ex);
+        }
+
+        String sql = "INSERT INTO  " + tableName
+                + "( srcColumnFieldName"
+                + ", srcTableName"
+                + ", primaryKeyFieldName"
+                + ", primaryKeyFieldValue"
+                + ", updateTime"
+                + ", sometext"
+                + ") VALUES (?,?,?,?,?,?)";
+        for (int ii = 0; ii < docCount; ii++) {
+            jdbcTemplate.update(sql, "fictionalColumnFieldName", "fictionalTableName", "fictionalPrimaryKeyFieldName", ii, new Timestamp(today), bytes);
+            today = TestUtils.nextDay();
+        }
+    }
+
     public void insertDataIntoBasicTable( String tableName,boolean includeText, int startId,int endId,boolean sameDay){
         if(!sameDay)today = TestUtils.nextDay();
         JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);

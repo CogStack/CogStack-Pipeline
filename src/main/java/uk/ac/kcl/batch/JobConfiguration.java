@@ -92,6 +92,7 @@ public class JobConfiguration {
         ArrayList<ItemProcessor<Document,Document>> delegates = new ArrayList<>();
 
         if(tikaItemProcessor !=null) delegates.add(tikaItemProcessor);
+        if(pdfBoxItemProcessor !=null) delegates.add(pdfBoxItemProcessor);
         if(metadataItemProcessor !=null) delegates.add(metadataItemProcessor);
         if(dBLineFixerItemProcessor !=null) delegates.add(dBLineFixerItemProcessor);
         if(gateItemProcessor !=null) delegates.add(gateItemProcessor);
@@ -419,6 +420,10 @@ public class JobConfiguration {
     @Autowired(required = false)
     @Qualifier("tikaDocumentItemProcessor")
     ItemProcessor<Document, Document> tikaItemProcessor;
+
+    @Autowired(required = false)
+    @Qualifier("PdfBoxItemProcessor")
+    ItemProcessor<Document, Document> pdfBoxItemProcessor;
 
     @Autowired(required = false)
     @Qualifier("metadataItemProcessor")
