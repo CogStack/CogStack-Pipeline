@@ -98,6 +98,9 @@ public class JobConfiguration {
         if(gateItemProcessor !=null) delegates.add(gateItemProcessor);
         if(deIdDocumentItemProcessor !=null) delegates.add(deIdDocumentItemProcessor);
         if(webserviceDocumentItemProcessor !=null) delegates.add(webserviceDocumentItemProcessor);
+        if(pdfGenerationItemProcessor !=null) delegates.add(pdfGenerationItemProcessor);
+        if(thumbnailGenerationItemProcessor !=null) delegates.add(thumbnailGenerationItemProcessor);
+
 
         delegates.add(jsonMakerItemProcessor);
         processor.setDelegates(delegates);
@@ -114,8 +117,6 @@ public class JobConfiguration {
         if(jdbcItemWriter !=null) delegates.add(jdbcItemWriter);
         if(jdbcMapItemWriter !=null) delegates.add(jdbcMapItemWriter);
         if(jsonFileItemWriter !=null) delegates.add(jsonFileItemWriter);
-        if(pdfFileItemWriter != null) delegates.add(pdfFileItemWriter);
-        if(thumbnailFileItemWriter !=null) delegates.add(thumbnailFileItemWriter);
         writer.setDelegates(delegates);
         return writer;
     }
@@ -398,14 +399,6 @@ public class JobConfiguration {
     @Qualifier("jsonFileItemWriter")
     ItemWriter<Document> jsonFileItemWriter;
 
-    @Autowired(required = false)
-    @Qualifier("pdfFileItemWriter")
-    ItemWriter<Document> pdfFileItemWriter;
-
-    @Autowired(required = false)
-    @Qualifier("thumbnailFileItemWriter")
-    ItemWriter<Document> thumbnailFileItemWriter;
-
 
 
 
@@ -436,6 +429,14 @@ public class JobConfiguration {
     @Autowired(required = false)
     @Qualifier("webserviceDocumentItemProcessor")
     ItemProcessor<Document, Document> webserviceDocumentItemProcessor;
+
+    @Autowired(required = false)
+    @Qualifier("pdfGenerationItemProcessor")
+    ItemProcessor<Document, Document> pdfGenerationItemProcessor;
+
+    @Autowired(required = false)
+    @Qualifier("thumbnailGenerationItemProcessor")
+    ItemProcessor<Document, Document> thumbnailGenerationItemProcessor;
 
     @Autowired
     @Qualifier("jsonMakerItemProcessor")

@@ -1,31 +1,35 @@
-package uk.ac.kcl.itemWriters;
+package uk.ac.kcl.itemProcessors;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.tika.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
-
 import uk.ac.kcl.model.Document;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import java.io.File;
 import java.io.IOException;
-import java.io.Reader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.NoSuchFileException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
-import java.util.List;
+import java.util.Map;
+import javax.annotation.PostConstruct;
 
-@Service("thumbnailFileItemWriter")
-@Profile("thumbnailFileWriter")
-public class ThumbnailFileItemWriter implements ItemWriter<Document> {
-    private static final Logger LOG = LoggerFactory.getLogger(JSONFileItemWriter.class);
+
+@Profile("thumbnailGeneration")
+@Service("thumbnailGenerationItemProcessor")
+public class ThumbnailGenerationItemProcessor extends TLItemProcessor implements ItemProcessor<Document, Document> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ThumbnailGenerationItemProcessor.class);
 
     @Autowired
     Environment env;
@@ -36,23 +40,19 @@ public class ThumbnailFileItemWriter implements ItemWriter<Document> {
     String thumbnailDensity;
 
     @PostConstruct
-    public void init()  {
-        this.outputPath = env.getProperty("fileOutputDirectory.thumbnail");
-        this.imageMagickProg = System.getProperty("os.name").startsWith("Windows") ? "convert.exe" : "convert";
-        this.thumbnailDensity = env.getProperty("thumbnailDensity");
+    public void init() {
+      this.outputPath = env.getProperty("thumbnailGenerationItemProcessor.fileOutputDirectory");
+      this.imageMagickProg = System.getProperty("os.name").startsWith("Windows") ? "convert.exe" : "convert";
+      this.thumbnailDensity = env.getProperty("thumbnailGenerationItemProcessor.thumbnailDensity", "150");
 
-        this.pdfOutputPath = env.getProperty("fileOutputDirectory.pdf");
-    }
-
-    @PreDestroy
-    public void destroy(){
-
+      this.pdfOutputPath = env.getProperty("pdfGenerationItemProcessor.fileOutputDirectory");
     }
 
     @Override
-    public final void write(List<? extends Document> documents) throws Exception {
-
-        for (Document doc : documents) {
+    public Document process(final Document doc) throws Exception {
+        LOG.debug("starting " + this.getClass().getSimpleName() + " on doc " +doc.getDocName());
+        Map<String, Object> associativeArray = doc.getAssociativeArray();
+        try {
             long startTime = System.currentTimeMillis();
             String[] cmd = {
               imageMagickProg,
@@ -92,6 +92,12 @@ public class ThumbnailFileItemWriter implements ItemWriter<Document> {
             } catch (IOException e) {
 
             }
+
+            if (Files.notExists(Paths.get(outputPath, doc.getDocName() + ".png"))) {
+                String expectedPath = outputPath + File.separator + doc.getDocName() + ".png";
+                LOG.error("Expected output file for document PK: {} does not exist in path: {}.", doc.getPrimaryKeyFieldValue(), expectedPath);
+                throw new NoSuchFileException(expectedPath);
+            }
             long endTime = System.currentTimeMillis();
             String contentType = ((String) doc.getAssociativeArray()
                                   .getOrDefault("X-TL-CONTENT-TYPE", "TL_CONTENT_TYPE_UNKNOWN")
@@ -100,7 +106,18 @@ public class ThumbnailFileItemWriter implements ItemWriter<Document> {
                      this.getClass().getSimpleName(),
                      contentType,
                      endTime - startTime);
+            associativeArray.put("X-TL-THUMBNAIL-GENERATION", "SUCCESS");
+        } catch (Exception e) {
+           // Consider this processor as optional - any exception will not
+           // cause the processing to fail
+           associativeArray.put("X-TL-THUMBNAIL-GENERATION", "FAIL");
+           LOG.error("Exception caught for optional processor {} for document: {}. Exception: {}",
+                     this.getClass().getSimpleName(),
+                     doc.getDocName(),
+                     e);
         }
+        LOG.debug("finished " + this.getClass().getSimpleName() + " on doc " +doc.getDocName());
+        return doc;
     }
 
     // Copied directly from timeliner

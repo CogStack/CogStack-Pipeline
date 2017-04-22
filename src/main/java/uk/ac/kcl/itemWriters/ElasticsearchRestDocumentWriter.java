@@ -84,6 +84,7 @@ public class ElasticsearchRestDocumentWriter implements ItemWriter<Document> {
             LOG.info("{} documents written in bulk by elastic search REST client;Time:{} ms",
                      documents.size(), endTime - startTime);
         } catch (IOException e) {
+            LOG.warn("IOException in ElasticsearchRestDocumentWriter.write()", e);
             throw new RuntimeException("Indexing failed:", e);
         }
     }
