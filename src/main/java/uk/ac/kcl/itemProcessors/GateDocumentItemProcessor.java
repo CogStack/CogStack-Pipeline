@@ -95,7 +95,7 @@ public class GateDocumentItemProcessor extends TLItemProcessor implements ItemPr
 
                     // Remove the key from the list if GATE is successful
                     failedFieldsList.remove(k.toLowerCase());
-                } catch (ExecutionException | IOException | ResourceInstantiationException e) {
+                } catch (Exception e) {
                     LOG.warn("gate failed on doc {} (PK: {}): {}", doc.getDocName(), doc.getPrimaryKeyFieldValue(), e);
                     ArrayList<LinkedHashMap<Object, Object>> al = new ArrayList<LinkedHashMap<Object, Object>>();
                     LinkedHashMap<Object, Object> hm = new LinkedHashMap<Object, Object>();
