@@ -122,7 +122,7 @@ public class GateService {
         }
     }
 
-    public void processDoc(Document doc) throws ExecutionException {
+    public void processDoc(Document doc) throws Exception {
         CorpusController controller = null;
         try {
             controller = genericQueue.take();
@@ -134,8 +134,8 @@ public class GateService {
             controller.getCorpus().add(doc);
             controller.execute();
             controller.getCorpus().clear();
-        } catch (ExecutionException e) {
-            LOG.error("Caught ExecutionException, attempt to release blocking queue.", e);
+        } catch (Exception e) {
+            LOG.error("Caught Exception in GATE, attempt to release blocking queue.", e);
             try {
                 genericQueue.put(controller);
             } catch (InterruptedException ex) {

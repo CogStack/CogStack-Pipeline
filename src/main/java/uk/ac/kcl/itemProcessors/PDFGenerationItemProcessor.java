@@ -1,16 +1,14 @@
-package uk.ac.kcl.itemWriters;
-
+package uk.ac.kcl.itemProcessors;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.tika.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
-
 import uk.ac.kcl.model.Document;
 
 import java.io.File;
@@ -22,18 +20,20 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.NoSuchFileException;
-import java.util.List;
+import java.nio.file.StandardCopyOption;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.Map;
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 
-@Service("pdfFileItemWriter")
-@Profile({"pdfFileWriter", "thumbnailFileWriter"})
-public class PDFFileItemWriter implements ItemWriter<Document> {
-    private static final Logger LOG = LoggerFactory.getLogger(PDFFileItemWriter.class);
+
+@Profile({"pdfGeneration", "thumbnailGeneration"})
+@Service("pdfGenerationItemProcessor")
+public class PDFGenerationItemProcessor extends TLItemProcessor implements ItemProcessor<Document, Document> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PDFGenerationItemProcessor.class);
 
     @Autowired
     Environment env;
@@ -41,31 +41,29 @@ public class PDFFileItemWriter implements ItemWriter<Document> {
     String outputPath;
 
     @PostConstruct
-    public void init()  {
-        this.outputPath = env.getProperty("fileOutputDirectory.pdf");
-    }
-
-    @PreDestroy
-    public void destroy(){
-
+    public void init() {
+        this.outputPath = env.getProperty("pdfGenerationItemProcessor.fileOutputDirectory");
     }
 
     @Override
-    public final void write(List<? extends Document> documents) throws Exception {
+    public Document process(final Document doc) throws Exception {
+        LOG.debug("starting " + this.getClass().getSimpleName() + " on doc " +doc.getDocName());
+        Map<String, Object> associativeArray = doc.getAssociativeArray();
 
-        for (Document doc : documents) {
+        try {
             long startTime = System.currentTimeMillis();
             String contentType = ((String) doc.getAssociativeArray()
                                   .getOrDefault("X-TL-CONTENT-TYPE", "TL_CONTENT_TYPE_UNKNOWN")
                                   ).toLowerCase();
             if (contentType.startsWith("text/plain;")) {
-                // Because plain text files are usually associated with the char set
+                // Because plain text file content types are usually followed by the char set
                 contentType = "text/plain";
             }
             if (contentType.startsWith("text/html;")) {
-                // Because plain text files are usually associated with the char set
+                // Because plain text file content types are usually followed by the char set
                 contentType = "text/html";
             }
+
             switch (contentType) {
             case "application/pdf":
                 handlePdf(doc);
@@ -103,7 +101,19 @@ public class PDFFileItemWriter implements ItemWriter<Document> {
                      this.getClass().getSimpleName(),
                      contentType,
                      endTime - startTime);
+            associativeArray.put("X-TL-PDF-GENERATION", "SUCCESS");
+        } catch (Exception e) {
+            // Consider this processor as optional - any exception will not
+            // cause the processing to fail
+            associativeArray.put("X-TL-PDF-GENERATION", "FAIL");
+            LOG.error("Exception caught for optional processor {} for document: {}. Exception: {}",
+                      this.getClass().getSimpleName(),
+                      doc.getDocName(),
+                      e);
         }
+
+        LOG.debug("finished " + this.getClass().getSimpleName() + " on doc " +doc.getDocName());
+        return doc;
     }
 
     private void handlePdf(Document doc) throws IOException {
@@ -178,7 +188,7 @@ public class PDFFileItemWriter implements ItemWriter<Document> {
             // Move the file to the configured output path
             Path tempOutputFile = tempPath.resolve("file.pdf");
             Path outputFile = Paths.get(outputPath, docName + ".pdf");
-            Files.move(tempOutputFile, outputFile);
+            Files.move(tempOutputFile, outputFile, StandardCopyOption.REPLACE_EXISTING);
 
         } catch (NoSuchFileException e) {
             LOG.error("NoSuchFileException for processing {}, message: {}",
@@ -227,4 +237,5 @@ public class PDFFileItemWriter implements ItemWriter<Document> {
             }
         }.start();
     }
+
 }

@@ -16,6 +16,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.kcl.batch.JobConfiguration;
 
+import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
@@ -218,4 +219,9 @@ public class SqlServerTestUtils implements DbmsTestUtils {
                 + ", path VARCHAR(MAX) )");
     }
 
+    @Override
+    public Map<String,Object> getRowInOutputTable(int primaryKey) {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(targetDataSource);
+        return jdbcTemplate.queryForMap("SELECT * FROM tblOutputDocs WHERE primaryKeyFieldValue = " + Integer.toString(primaryKey));
+    }
 }

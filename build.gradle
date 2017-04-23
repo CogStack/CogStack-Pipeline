@@ -233,10 +233,12 @@ dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.4.4'
     compile 'uk.ac.gate:gate-core:8.1'
     compile 'xml-apis:xml-apis:1.4.01'
-    compile 'org.apache.tika:tika-core:1.11'
-    compile('org.apache.tika:tika-parsers:1.11') {
+    compile 'org.apache.tika:tika-core:1.15-SNAPSHOT'
+    compile('org.apache.tika:tika-parsers:1.15-SNAPSHOT') {
         exclude group: 'commons-logging', module: 'commons-logging' //by both name and group
     }
+
+    compile group: 'org.apache.ws.commons.util', name: 'ws-commons-util', version: '1.0.2'
     //test
 //    testCompile("junit:junit")
     testCompile('org.mockito:mockito-all:1.10.19');

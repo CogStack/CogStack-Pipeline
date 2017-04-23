@@ -25,6 +25,7 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.step.builder.FaultTolerantStepBuilder;
 import org.springframework.batch.integration.partition.BeanFactoryStepLocator;
 import org.springframework.batch.integration.partition.StepExecutionRequestHandler;
 import org.springframework.batch.item.ItemProcessor;
@@ -47,9 +48,12 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.jdbc.core.RowMapper;
 import uk.ac.kcl.exception.WebserviceProcessingFailedException;
+import uk.ac.kcl.listeners.SkipListener;
 import uk.ac.kcl.itemProcessors.JSONMakerItemProcessor;
+import uk.ac.kcl.database.MapItemSqlParameterSourceProvider;
 import uk.ac.kcl.model.Document;
 import uk.ac.kcl.partitioners.StepPartitioner;
 import uk.ac.kcl.utils.LoggerHelper;
@@ -88,11 +92,15 @@ public class JobConfiguration {
         ArrayList<ItemProcessor<Document,Document>> delegates = new ArrayList<>();
 
         if(tikaItemProcessor !=null) delegates.add(tikaItemProcessor);
+        if(pdfBoxItemProcessor !=null) delegates.add(pdfBoxItemProcessor);
         if(metadataItemProcessor !=null) delegates.add(metadataItemProcessor);
         if(dBLineFixerItemProcessor !=null) delegates.add(dBLineFixerItemProcessor);
         if(gateItemProcessor !=null) delegates.add(gateItemProcessor);
         if(deIdDocumentItemProcessor !=null) delegates.add(deIdDocumentItemProcessor);
         if(webserviceDocumentItemProcessor !=null) delegates.add(webserviceDocumentItemProcessor);
+        if(pdfGenerationItemProcessor !=null) delegates.add(pdfGenerationItemProcessor);
+        if(thumbnailGenerationItemProcessor !=null) delegates.add(thumbnailGenerationItemProcessor);
+
 
         delegates.add(jsonMakerItemProcessor);
         processor.setDelegates(delegates);
@@ -107,9 +115,8 @@ public class JobConfiguration {
         if(esItemWriter !=null) delegates.add(esItemWriter);
         if(esRestItemWriter !=null) delegates.add(esRestItemWriter);
         if(jdbcItemWriter !=null) delegates.add(jdbcItemWriter);
+        if(jdbcMapItemWriter !=null) delegates.add(jdbcMapItemWriter);
         if(jsonFileItemWriter !=null) delegates.add(jsonFileItemWriter);
-        if(pdfFileItemWriter != null) delegates.add(pdfFileItemWriter);
-        if(thumbnailFileItemWriter !=null) delegates.add(thumbnailFileItemWriter);
         writer.setDelegates(delegates);
         return writer;
     }
@@ -299,16 +306,20 @@ public class JobConfiguration {
             //@Qualifier("targetDatasourceTransactionManager")PlatformTransactionManager manager,
             StepBuilderFactory stepBuilderFactory
     ) {
-        return stepBuilderFactory.get("compositeSlaveStep")
+        FaultTolerantStepBuilder stepBuilder = stepBuilderFactory.get("compositeSlaveStep")
                 .<Document, Document> chunk(chunkSize)
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)
                 .faultTolerant()
                 .skipLimit(skipLimit)
-                .skip(WebserviceProcessingFailedException.class)
-                .noSkip(Exception.class)
+                .skip(WebserviceProcessingFailedException.class);
+        if (env.acceptsProfiles("jdbc_out_map")) {
+          stepBuilder = stepBuilder.skip(InvalidDataAccessApiUsageException.class);
+        }
+        return stepBuilder.noSkip(Exception.class)
          //       .listener(nonFatalExceptionItemProcessorListener)
+                .listener(new SkipListener())
                 .taskExecutor(taskExecutor)
                 .build();
     }
@@ -355,6 +366,19 @@ public class JobConfiguration {
         return writer;
     }
 
+    @Bean
+    @StepScope
+    @Qualifier("mapJdbcItemWriter")
+    @Profile("jdbc_out_map")
+    public ItemWriter<Document> mapJdbcItemWriter(
+            @Qualifier("targetDataSource") DataSource jdbcDocumentTarget) {
+        JdbcBatchItemWriter<Document> writer = new JdbcBatchItemWriter<>();
+        writer.setItemSqlParameterSourceProvider(new MapItemSqlParameterSourceProvider<Document>());
+        writer.setSql(env.getProperty("target.Sql"));
+        writer.setDataSource(jdbcDocumentTarget);
+        return writer;
+    }
+
     @Autowired(required = false)
     @Qualifier("esDocumentWriter")
     ItemWriter<Document> esItemWriter;
@@ -368,16 +392,12 @@ public class JobConfiguration {
     ItemWriter<Document> jdbcItemWriter;
 
     @Autowired(required = false)
+    @Qualifier("mapJdbcItemWriter")
+    ItemWriter<Document> jdbcMapItemWriter;
+
+    @Autowired(required = false)
     @Qualifier("jsonFileItemWriter")
     ItemWriter<Document> jsonFileItemWriter;
-
-    @Autowired(required = false)
-    @Qualifier("pdfFileItemWriter")
-    ItemWriter<Document> pdfFileItemWriter;
-
-    @Autowired(required = false)
-    @Qualifier("thumbnailFileItemWriter")
-    ItemWriter<Document> thumbnailFileItemWriter;
 
 
 
@@ -395,6 +415,10 @@ public class JobConfiguration {
     ItemProcessor<Document, Document> tikaItemProcessor;
 
     @Autowired(required = false)
+    @Qualifier("PdfBoxItemProcessor")
+    ItemProcessor<Document, Document> pdfBoxItemProcessor;
+
+    @Autowired(required = false)
     @Qualifier("metadataItemProcessor")
     ItemProcessor<Document, Document> metadataItemProcessor;
 
@@ -405,6 +429,14 @@ public class JobConfiguration {
     @Autowired(required = false)
     @Qualifier("webserviceDocumentItemProcessor")
     ItemProcessor<Document, Document> webserviceDocumentItemProcessor;
+
+    @Autowired(required = false)
+    @Qualifier("pdfGenerationItemProcessor")
+    ItemProcessor<Document, Document> pdfGenerationItemProcessor;
+
+    @Autowired(required = false)
+    @Qualifier("thumbnailGenerationItemProcessor")
+    ItemProcessor<Document, Document> thumbnailGenerationItemProcessor;
 
     @Autowired
     @Qualifier("jsonMakerItemProcessor")
