@@ -94,7 +94,7 @@ public class PDFGenerationItemProcessor extends TLItemProcessor implements ItemP
                 handleByImageMagick(doc, "jpeg");
                 break;
             default:
-                break;
+                throw new Exception("Cannot generate PDF for unknown type");
             }
             long endTime = System.currentTimeMillis();
             LOG.info("{};Content-Type:{};Time:{} ms",
