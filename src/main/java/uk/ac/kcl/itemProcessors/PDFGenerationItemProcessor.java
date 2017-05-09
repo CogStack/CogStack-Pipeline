@@ -135,9 +135,11 @@ public class PDFGenerationItemProcessor extends TLItemProcessor implements ItemP
         File tempInputFile = new File(tempPath + File.separator + "file." + fileNameSuffix);
         FileUtils.writeByteArrayToFile(tempInputFile, doc.getBinaryContent());
 
-        String[] cmd = { getLibreOfficeProg(), "--convert-to", "pdf",
-                         tempInputFile.getAbsolutePath(), "--headless",
-                         "--outdir", tempPath.toString()};
+        // First you need to build a docker image called docker-soffice from the docker-cogstack/libre-office directory
+        String[] cmd = {"docker", "run", "--rm", "-v",
+                        tempPath.toString() + ":/tmp-soffice", "docker-soffice", "soffice",
+                        "--convert-to", "pdf", "/tmp-soffice" + File.separator + "file." + fileNameSuffix,
+                        "--headless", "--outdir", "/tmp-soffice"};
 
         try {
             externalProcessHandler(tempPath, cmd, doc.getDocName());
