@@ -54,6 +54,11 @@ public class ThumbnailGenerationItemProcessor extends TLItemProcessor implements
         Map<String, Object> associativeArray = doc.getAssociativeArray();
         try {
             long startTime = System.currentTimeMillis();
+
+            if (((String) associativeArray.getOrDefault("X-TL-PDF-GENERATION", "FAIL")).equals("FAIL")) {
+               throw new Exception("Thumbnail generation failed because previous failure in PDF generation");
+            }
+
             String[] cmd = {
               imageMagickProg,
               "-density",
