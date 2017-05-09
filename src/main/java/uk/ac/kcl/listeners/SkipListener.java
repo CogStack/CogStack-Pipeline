@@ -37,7 +37,7 @@ public class SkipListener extends SkipListenerSupport<Document, Document> {
     public void onSkipInProcess(Document item, java.lang.Throwable t) {
         log.warn("SkipListener: Document PK: {} has been skipped in process() due to {}",
                  item.getPrimaryKeyFieldValue(),
-                 t.getClass().getSimpleName());
+                 t.getClass().getSimpleName(), t);
 
         // Put a placeholder in ES for documents failed processing
         // (so it gives the front-end app a chance to tell user about the existence of that document even though it failed processing)
@@ -60,6 +60,6 @@ public class SkipListener extends SkipListenerSupport<Document, Document> {
     public void onSkipInWrite(Document item, java.lang.Throwable t) {
         log.warn("SkipListener: Document PK: {} has been skipped in write() due to {}",
                  item.getPrimaryKeyFieldValue(),
-                 t.getClass().getSimpleName());
+                 t.getClass().getSimpleName(), t);
     }
 }
