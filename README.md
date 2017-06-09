@@ -319,4 +319,4 @@ Some of the advancements in cogstack:
  5. Remote partitioning via an ActiveMQ JMS server, for complete scalability
  6. Built in job scheduler to enable near real time synchronisation with a database
 
-Questions? Want to help? Drop me a message: richgjackson@gmail.com
+Questions? Want to help? Drop me a message: lucy.o'neill@kcl.ac.uk (020 7848 0924)
