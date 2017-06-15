@@ -104,7 +104,8 @@ public class PDFPreprocessorParserTest {
         // DefaultParser will not select the PDFPreprocessorParser, unless configured in tika config
         //assertEquals(PDFPreprocessorParser.class, defaultParser.getParsers(parseContext).get(pdf).getClass());
     }
-
+    
+    @Ignore
     @Test
     public void testParseRequiringOCR() throws Exception {
         System.out.println("parse");
