@@ -1,5 +1,6 @@
 # **WELCOME TO Cogstack**
 
+![Cogstack Pipeline](fig/cogstack_pipeline_sm2.png)
 
 ## Introduction
 
@@ -320,3 +321,6 @@ Some of the advancements in cogstack:
  6. Built in job scheduler to enable near real time synchronisation with a database
 
 Questions? Want to help? Drop me a message: lucy.o'neill@kcl.ac.uk (020 7848 0924)
+
+## Papers
+CogStack - Experiences Of Deploying Integrated Information Retrieval And Extraction Services In A Large National Health Service Foundation Trust Hospital, *Richard Jackson, Asha Agrawal, Kenneth Lui, Amos Folarin, Honghan Wu, Tudor Groza, Angus Roberts, Genevieve Gorrell, Xingyi Song, Damian Lewsley, Doug Northwood, Clive Stringer, Robert Stewart, Richard Dobson* http://biorxiv.org/content/early/2017/04/02/123299
