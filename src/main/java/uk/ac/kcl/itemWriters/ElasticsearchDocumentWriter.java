@@ -14,7 +14,9 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.common.xcontent.XContentParser;
 import org.elasticsearch.common.xcontent.XContentType;
-import org.elasticsearch.shield.ShieldPlugin;
+//import org.elasticsearch.shield.ShieldPlugin;
+import org.elasticsearch.transport.client.PreBuiltTransportClient;
+import org.elasticsearch.common.xcontent.NamedXContentRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemWriter;
@@ -37,6 +39,10 @@ import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 
 /**
  * Created by rich on 20/04/16.
+ */
+
+/**
+ * This method is deprecated as using Java REST Client is recommended over Native Java API
  */
 @Service("esDocumentWriter")
 @Profile("elasticsearch")
@@ -87,8 +93,13 @@ public class ElasticsearchDocumentWriter implements ItemWriter<Document> {
     public void init() throws UnknownHostException {
         Settings settings;
 
+
+        /**
+         * If native Java client was to be used for Elasticsearch interaction,
+         * below settings need to be updated
+         */
         if(securityEnabled){
-            settings =Settings.settingsBuilder()
+            settings =Settings.builder()
                     .put("cluster.name", clusterName)
                     .put("shield.user", user)
                     .put("shield.ssl.keystore.path", sslKeyStorePath)
@@ -97,19 +108,16 @@ public class ElasticsearchDocumentWriter implements ItemWriter<Document> {
                     //.put("shield.ssl.truststore.password", env.getProperty("elasticsearch.shield.ssl.truststore.password"))
                     .put("shield.transport.ssl", transportSSl)
                     .build();
-            client = TransportClient.builder()
-                    .addPlugin(ShieldPlugin.class)
-                    .settings(settings)
-                    .build()
+            client = new PreBuiltTransportClient(settings)
+//                    .build()
                     .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(
                             clusterHost),
                             port));
         }else {
-            settings =Settings.settingsBuilder()
+            settings =Settings.builder()
                     .put("cluster.name", clusterName).build();
-            client = TransportClient.builder()
-                    .settings(settings)
-                    .build()
+            client = new PreBuiltTransportClient(settings)
+//                    .build()
                     .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(
                             clusterHost),
                             port));
@@ -127,7 +135,7 @@ public class ElasticsearchDocumentWriter implements ItemWriter<Document> {
         for (Document doc : documents) {
             XContentParser parser = null;
             parser = XContentFactory.xContent(XContentType.JSON)
-                    .createParser(doc.getOutputData().getBytes());
+                    .createParser(NamedXContentRegistry.EMPTY, doc.getOutputData().getBytes());
             parser.close();
             XContentBuilder builder = jsonBuilder().copyCurrentStructure(parser);
 

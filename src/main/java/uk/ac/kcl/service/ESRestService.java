@@ -39,17 +39,13 @@ import java.util.List;
 
 /**
  * Created by rich on 05/03/17.
+ * Updated to support x-pack by jstuczyn on 04/07/17.
  */
 @Service("esRestService")
 @Profile("elasticsearchRest")
 public class ESRestService {
 
-
     private static final Logger LOG = LoggerFactory.getLogger(uk.ac.kcl.service.ESRestService.class);
-
-
-
-
 
     @Value("${elasticsearch.index.name:#{null}}")
     private String indexName;
@@ -57,10 +53,10 @@ public class ESRestService {
     @Value("${elasticsearch.type:#{null}}")
     private String typeName;
 
-    @Value("${elasticsearch.security.enabled:false}")
+    @Value("${elasticsearch.xpack.enabled:false}")
     private boolean securityEnabled;
 
-    @Value("${elasticsearch.ssl.enabled:false}")
+    @Value("${elasticsearch.xpack.security.transport.ssl.enabled:false}")
     private boolean sslEnabled;
 
     @Value("${elasticsearch.cluster.name:#{null}}")
@@ -81,22 +77,22 @@ public class ESRestService {
     @Value("${elasticsearch.cluster.port:#{null}}")
     private int port;
 
-    @Value("${elasticsearch.security.user:#{null}}")
+    @Value("${elasticsearch.xpack.user:#{null}}")
     private String user;
 
-    @Value("${elasticsearch.security.password:#{null}}")
+    @Value("${elasticsearch.xpack.password:#{null}}")
     private String userPassword;
 
-    @Value("${elasticsearch.shield.ssl.keystore.path:#{null}}")
+    @Value("${elasticsearch.xpack.ssl.keystore.path:#{null}}")
     private String sslKeyStorePath;
 
-    @Value("${elasticsearch.shield.ssl.keystore.password:#{null}}")
+    @Value("${elasticsearch.xpack.ssl.keystore.password:#{null}}")
     private String keyStorePassword;
 
-    @Value("${elasticsearch.shield.ssl.truststore.path:#{null}}")
+    @Value("${elasticsearch.xpack.ssl.truststore.path:#{null}}")
     private String sslTrustStorePath;
 
-    @Value("${elasticsearch.shield.ssl.truststore.password:#{null}}")
+    @Value("${elasticsearch.xpack.ssl.truststore.password:#{null}}")
     private String trustStorePassword;
 
     @Autowired
@@ -117,7 +113,7 @@ public class ESRestService {
             credentialsProvider.setCredentials(AuthScope.ANY,
                     new UsernamePasswordCredentials(user, userPassword));
 
-            restClient = RestClient.builder(new HttpHost(clusterHost,port))
+            restClient = RestClient.builder(new HttpHost(clusterHost, port, "https"))
                     .setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
                         @Override
                         public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
@@ -135,12 +131,12 @@ public class ESRestService {
                         }
                     })
                     .build();
-        } else if(securityEnabled){
+        } else if (securityEnabled) {
             credentialsProvider = new BasicCredentialsProvider();
             credentialsProvider.setCredentials(AuthScope.ANY,
-                    new UsernamePasswordCredentials(user, userPassword));
+                    new UsernamePasswordCredentials(user));
 
-            restClient = RestClient.builder(new HttpHost(clusterHost,port))
+            restClient = RestClient.builder(new HttpHost(clusterHost, port))
                     .setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
                         @Override
                         public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
@@ -157,7 +153,7 @@ public class ESRestService {
                         }
                     })
                     .build();
-        }else {
+        } else {
             restClient = RestClient.builder(new HttpHost(clusterHost, port, "http"))
                     .setRequestConfigCallback(new RestClientBuilder.RequestConfigCallback() {
                         @Override
@@ -185,7 +181,7 @@ public class ESRestService {
                 keyStore.load(is, keyStorePassword.toCharArray());
             }
 
-            KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance("X509");
+            KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance("SunX509");
             keyManagerFactory.init(keyStore, keyStorePassword.toCharArray());
 
             KeyStore truststore = KeyStore.getInstance("jks");
@@ -193,13 +189,14 @@ public class ESRestService {
                 truststore.load(is, trustStorePassword.toCharArray());
             }
 
-            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance("X509");
+            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance("SunX509");
             trustManagerFactory.init(truststore);
 
             SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
             sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
             return sslContext;
-        }catch (CertificateException | NoSuchAlgorithmException | IOException | UnrecoverableKeyException | KeyStoreException | KeyManagementException e) {
+
+        } catch (CertificateException | NoSuchAlgorithmException | IOException | UnrecoverableKeyException | KeyStoreException | KeyManagementException e) {
             throw new RuntimeException(e);
         }
     }
