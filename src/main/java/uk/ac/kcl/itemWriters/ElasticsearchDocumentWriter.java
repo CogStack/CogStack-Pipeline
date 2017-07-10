@@ -16,6 +16,8 @@ import org.elasticsearch.common.xcontent.XContentParser;
 import org.elasticsearch.common.xcontent.XContentType;
 //import org.elasticsearch.shield.ShieldPlugin;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
+import org.elasticsearch.xpack.client.PreBuiltXPackTransportClient;
+
 import org.elasticsearch.common.xcontent.NamedXContentRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,8 +50,9 @@ import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 @Profile("elasticsearch")
 public class ElasticsearchDocumentWriter implements ItemWriter<Document> {
     private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchDocumentWriter.class);
-    private ElasticsearchDocumentWriter() {}
 
+    private ElasticsearchDocumentWriter() {
+    }
 
 
     @Value("${elasticsearch.index.name:#{null}}")
@@ -58,7 +61,7 @@ public class ElasticsearchDocumentWriter implements ItemWriter<Document> {
     @Value("${elasticsearch.type:#{null}}")
     private String typeName;
 
-    @Value("${elasticsearch.shield.enabled:false}")
+    @Value("${elasticsearch.xpack.enabled:false}")
     private boolean securityEnabled;
 
     @Value("${elasticsearch.cluster.name:#{null}}")
@@ -73,58 +76,61 @@ public class ElasticsearchDocumentWriter implements ItemWriter<Document> {
     @Value("${elasticsearch.cluster.port:#{null}}")
     private int port;
 
-    @Value("${elasticsearch.shield.user:#{null}}")
+    @Value("${elasticsearch.xpack.user:#{null}}")
     private String user;
 
-    @Value("${elasticsearch.shield.ssl.keystore.path:#{null}}")
+    @Value("${elasticsearch.xpack.ssl.keystore.path:#{null}}")
     private String sslKeyStorePath;
 
-    @Value("${elasticsearch.shield.ssl.keystore.password:#{null}}")
-    private String password;
+    @Value("${elasticsearch.xpack.ssl.keystore.password:#{null}}")
+    private String sslKeyStorePassword;
 
-    @Value("${elasticsearch.shield.ssl.keystore.password:#{null}}")
-    private String transportSSl;
+    @Value("${elasticsearch.xpack.ssl.truststore.path:#{null}}")
+    private String sslTrustStorePath;
+
+    @Value("${elasticsearch.xpack.ssl.truststore.password:#{null}}")
+    private String trustStorePassword;
+
+    @Value("${elasticsearch.xpack.security.transport.ssl.enabled:false}")
+    private boolean sslEnabled;
 
     @Autowired
     Environment env;
 
     private Client client;
+
     @PostConstruct
     public void init() throws UnknownHostException {
         Settings settings;
 
+        if (securityEnabled) {
+            settings = Settings.builder()
+                .put("cluster.name", clusterName)
+                .put("xpack.security.transport.ssl.enabled", sslEnabled)
+                .put("request.headers.X-Found-Cluster", clusterName)
+                .put("xpack.security.user", user)
+                .put("xpack.ssl.keystore.path", sslKeyStorePath)
+                .put("xpack.ssl.keystore.password", sslKeyStorePassword)
+                .put("xpack.ssl.truststore.path", sslTrustStorePath)
+                .put("xpack.ssl.truststore.password", trustStorePassword)
 
-        /**
-         * If native Java client was to be used for Elasticsearch interaction,
-         * below settings need to be updated
-         */
-        if(securityEnabled){
-            settings =Settings.builder()
-                    .put("cluster.name", clusterName)
-                    .put("shield.user", user)
-                    .put("shield.ssl.keystore.path", sslKeyStorePath)
-                    .put("shield.ssl.keystore.password", password)
-                    //.put("shield.ssl.truststore.path", env.getProperty("elasticsearch.shield.ssl.truststore.path"))
-                    //.put("shield.ssl.truststore.password", env.getProperty("elasticsearch.shield.ssl.truststore.password"))
-                    .put("shield.transport.ssl", transportSSl)
-                    .build();
-            client = new PreBuiltTransportClient(settings)
-//                    .build()
+                .build();
+            client = new PreBuiltXPackTransportClient(settings)
                     .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(
                             clusterHost),
                             port));
-        }else {
-            settings =Settings.builder()
+        } else {
+            settings = Settings.builder()
                     .put("cluster.name", clusterName).build();
             client = new PreBuiltTransportClient(settings)
-//                    .build()
                     .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(
                             clusterHost),
                             port));
         }
     }
+
     @PreDestroy
-    public void destroy(){
+    public void destroy() {
         client.close();
     }
 
@@ -148,7 +154,7 @@ public class ElasticsearchDocumentWriter implements ItemWriter<Document> {
             bulkRequest.add(request);
         }
         //check that no nonessential processes failed
-        if(documents.size()!=0) {
+        if (documents.size() != 0) {
             BulkResponse response;
             response = bulkRequest.execute().actionGet(timeout);
             getResponses(response);
@@ -158,13 +164,13 @@ public class ElasticsearchDocumentWriter implements ItemWriter<Document> {
     private void getResponses(BulkResponse response) {
         if (response.hasFailures()) {
 
-            for (int i=0;i<response.getItems().length;i++){
+            for (int i = 0; i < response.getItems().length; i++) {
                 //in bulk processing, retry all docs one by one. if one fails, log it. If the entire chunk fails,
                 // raise an exception towards skip limit
-                if(response.getItems().length == 1){
+                if (response.getItems().length == 1) {
                     LOG.warn("failed to index document: " + response.getItems()[i].getId() + " failure is: \n"
                             + response.getItems()[i].getFailureMessage());
-                }else {
+                } else {
                     LOG.error("failed to index document: " + response.getItems()[i].getFailureMessage());
                     throw new ElasticsearchException("Bulk indexing request failed");
                 }
