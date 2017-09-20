@@ -60,6 +60,7 @@ import uk.ac.kcl.utils.LoggerHelper;
 
 import javax.sql.DataSource;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  *
@@ -193,6 +194,9 @@ public class JobConfiguration {
         mainDatasource.setPassword(sourcePassword);
         mainDatasource.setIdleTimeout(sourceIdleTimeout);
         mainDatasource.setMaxLifetime(sourceMaxLifeTime);
+        if (Arrays.asList(this.env.getActiveProfiles()).contains("docman")){
+            mainDatasource.setConnectionTestQuery("show tables");
+        }
         return mainDatasource;
     }
 
