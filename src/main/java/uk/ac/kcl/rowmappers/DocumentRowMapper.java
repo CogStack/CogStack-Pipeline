@@ -88,8 +88,10 @@ public class DocumentRowMapper implements RowMapper<Document>{
         fieldsToIgnore = Arrays.asList(env.getProperty("elasticsearch.excludeFromIndexing", "")
                 .toLowerCase().split(","));
         eSCompatibleDateTimeFormatter = DateTimeFormat.forPattern(esDatePattern);
-        possibleFileExtensions = fileExts.split(",");
-        LOG.info("possible file extensions: " + fileExts);
+        if (null != fileExts){
+            possibleFileExtensions = fileExts.split(",");
+            LOG.info("possible file extensions: " + fileExts);
+        }        
     }
 
     private void mapDBFields(Document doc, ResultSet rs) throws SQLException, IOException {
@@ -130,7 +132,7 @@ public class DocumentRowMapper implements RowMapper<Document>{
                         doc.setBinaryContent(rs.getBytes(col));
                         break;
                     case "fileSystemWithDBPath":
-                        for (int i=0;i<possibleFileExtensions.length;i++){
+                        for (int i=0;possibleFileExtensions!=null && i<possibleFileExtensions.length;i++){
                             String fileFullPath = pathPrefix + rs.getString(col) + possibleFileExtensions[i];
                             File f = new File(fileFullPath);
                             if(f.exists() && !f.isDirectory()) {
