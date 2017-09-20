@@ -39,6 +39,7 @@ import java.sql.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.io.File;
 
 @Component
 public class DocumentRowMapper implements RowMapper<Document>{
@@ -60,6 +61,8 @@ public class DocumentRowMapper implements RowMapper<Document>{
     private String reindexField;
     @Value("${tika.binaryPathPrefix:#{null}}")
     private String pathPrefix;
+    @Value("${tika.binaryFileExts:#{null}}")
+    private String fileExts;
     @Value("${tika.binaryContentSource:#{null}}")
     private String binaryContentSource;
     @Value("${tika.binaryFieldName:#{null}}")
@@ -76,6 +79,8 @@ public class DocumentRowMapper implements RowMapper<Document>{
     private String timeStamp;
     private DateTimeFormatter eSCompatibleDateTimeFormatter;
     private List<String> fieldsToIgnore;
+    
+    private String[] possibleFileExtensions;
 
 
     @PostConstruct
@@ -83,6 +88,8 @@ public class DocumentRowMapper implements RowMapper<Document>{
         fieldsToIgnore = Arrays.asList(env.getProperty("elasticsearch.excludeFromIndexing", "")
                 .toLowerCase().split(","));
         eSCompatibleDateTimeFormatter = DateTimeFormat.forPattern(esDatePattern);
+        possibleFileExtensions = fileExts.split(",");
+        LOG.info("possible file extensions: " + fileExts);
     }
 
     private void mapDBFields(Document doc, ResultSet rs) throws SQLException, IOException {
@@ -123,8 +130,16 @@ public class DocumentRowMapper implements RowMapper<Document>{
                         doc.setBinaryContent(rs.getBytes(col));
                         break;
                     case "fileSystemWithDBPath":
-                        Resource resource = context.getResource(pathPrefix + rs.getString(col));
-                        doc.setBinaryContent(IOUtils.toByteArray(resource.getInputStream()));
+                        for (int i=0;i<possibleFileExtensions.length;i++){
+                            String fileFullPath = pathPrefix + rs.getString(col) + possibleFileExtensions[i];
+                            File f = new File(fileFullPath);
+                            if(f.exists() && !f.isDirectory()) {
+                                LOG.info("File found, working on " + fileFullPath);
+                                Resource resource = context.getResource("file:" + fileFullPath);
+                                doc.setBinaryContent(IOUtils.toByteArray(resource.getInputStream()));
+                                break;
+                            }                           
+                        }                        
                         break;
                     default:
                         break;
