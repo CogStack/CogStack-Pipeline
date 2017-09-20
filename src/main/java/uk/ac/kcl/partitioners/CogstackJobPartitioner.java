@@ -26,6 +26,7 @@ import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Arrays;
 
 /**
  * Created by rich on 03/06/16.
@@ -139,7 +140,11 @@ public  class CogstackJobPartitioner implements Partitioner {
         if (params != null) {
             //make execution context with parameters if new data found
             logger.info("commencing timestamp and PK based partitioning");
+            logger.info("gridSize " + gridSize + "; params: " + params.toString());
             result = getMap(gridSize,params);
+            for(String key : result.keySet()){
+              logger.info("partition result key " + key + ", ctx: " + result.get(key).toString());
+            }
             //also tell teh job about the oldest timestamp found this JobExecution
             informJobCompleteListenerOfLastDate(params.getMaxTimeStamp());
         } else {
@@ -150,24 +155,46 @@ public  class CogstackJobPartitioner implements Partitioner {
     }
 
 
-
-    private ScheduledPartitionParams getParams(Timestamp jobStartTimeStamp, boolean inclusiveOfStart) {
+    private ScheduledPartitionParams getDocmanParams(Timestamp jobStartTimeStamp, boolean inclusiveOfStart) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
         String sql = MessageFormat.format("SELECT MAX({0}) AS max_id, MIN({0}) AS min_id, MAX({1}) AS max_time_stamp " +
-                        ",MIN({1}) AS min_time_stamp FROM ( SELECT {2} {0},{1} FROM {3} ",
-                column,timeStamp,batchJobUtils.cleanSqlString(preFieldsSQL),table);
+                        ",MIN({1}) AS min_time_stamp FROM {2} ",
+                column,timeStamp,table);
 
         Timestamp jobEndTimeStamp = getEndTimeStamp(jobStartTimeStamp);
         if(inclusiveOfStart) {
-            sql = getStartTimeInclusiveSqlString(sql, jobStartTimeStamp, jobEndTimeStamp);
+            sql = getDocmanStartTimeInclusiveSqlString(sql, jobStartTimeStamp, jobEndTimeStamp);
         }else if(!inclusiveOfStart){
-            sql = getStartTimeExclusiveSqlString(sql, jobStartTimeStamp, jobEndTimeStamp);
+            sql = getDocmanStartTimeExclusiveSqlString(sql, jobStartTimeStamp, jobEndTimeStamp);
         }else{
             throw new RuntimeException("cannot determine parameters");
         }
-        logger.info ("This job SQL: " + sql);
+        logger.info ("This docman job SQL: " + sql);
         return (ScheduledPartitionParams) jdbcTemplate.queryForObject(
                 sql, new PartitionParamsRowMapper());
+    }
+    
+    private ScheduledPartitionParams getParams(Timestamp jobStartTimeStamp, boolean inclusiveOfStart) {
+        if (Arrays.asList(this.env.getActiveProfiles()).contains("docman")){
+            return getDocmanParams(jobStartTimeStamp, inclusiveOfStart);
+        }else{
+            JdbcTemplate jdbcTemplate = new JdbcTemplate(sourceDataSource);
+            String sql = MessageFormat.format("SELECT MAX({0}) AS max_id, MIN({0}) AS min_id, MAX({1}) AS max_time_stamp " +
+                            ",MIN({1}) AS min_time_stamp FROM ( SELECT {2} {0},{1} FROM {3} ",
+                    column,timeStamp,batchJobUtils.cleanSqlString(preFieldsSQL),table);
+    
+            Timestamp jobEndTimeStamp = getEndTimeStamp(jobStartTimeStamp);
+            if(inclusiveOfStart) {
+                sql = getStartTimeInclusiveSqlString(sql, jobStartTimeStamp, jobEndTimeStamp);
+            }else if(!inclusiveOfStart){
+                sql = getStartTimeExclusiveSqlString(sql, jobStartTimeStamp, jobEndTimeStamp);
+            }else{
+                throw new RuntimeException("cannot determine parameters");
+            }
+            logger.info ("This job SQL: " + sql);
+            return (ScheduledPartitionParams) jdbcTemplate.queryForObject(
+                    sql, new PartitionParamsRowMapper());
+        }        
     }
 
 
@@ -190,8 +217,19 @@ public  class CogstackJobPartitioner implements Partitioner {
         return result;
     }
 
-
-
+    
+    private String getDocmanStartTimeExclusiveSqlString(String sql, Timestamp jobStartTimeStamp, Timestamp jobEndTimeStamp) {
+        sql =	sql + MessageFormat.format(" WHERE {0} > ''{1}'' " +
+                        " AND {0} <= ''{2}'' ",
+                timeStamp,jobStartTimeStamp.toString(),jobEndTimeStamp.toString());
+        return sql;
+    }
+    private String getDocmanStartTimeInclusiveSqlString(String sql, Timestamp jobStartTimeStamp, Timestamp jobEndTimeStamp) {
+        sql =sql + MessageFormat.format(" WHERE {0} BETWEEN ''{1}'' " +
+                        " AND ''{2}'' ",
+                timeStamp,jobStartTimeStamp.toString(),jobEndTimeStamp.toString());
+        return sql;
+    }
 
 
     private String getStartTimeExclusiveSqlString(String sql, Timestamp jobStartTimeStamp, Timestamp jobEndTimeStamp) {
@@ -310,7 +348,7 @@ public  class CogstackJobPartitioner implements Partitioner {
 
     private boolean populateMap(ScheduledPartitionParams params, Map<String, ExecutionContext> result,
                                 long start, long end, int counter) {
-
+        checkForEmptyPartitions = true;
         if(checkForEmptyPartitions) {
             long recordCountThisPartition = getRecordCountThisPartition(Long.toString(start), Long.toString(end),
                     params.getMinTimeStamp().toString(),
@@ -348,12 +386,21 @@ public  class CogstackJobPartitioner implements Partitioner {
     private long getRecordCountThisPartition(String minValue, String maxValue, String minTimeStamp, String maxTimeStamp){
         String tsSql = "SELECT COUNT(*)  FROM " + table;
         if( minTimeStamp!= null && maxTimeStamp != null) {
-            tsSql = tsSql + MessageFormat.format(" WHERE {0} " +
-                            " BETWEEN CAST(''{1}'' AS {2}) " +
-                            " AND CAST(''{3}'' AS {2}) " +
-                            " AND {4} BETWEEN ''{5}'' AND ''{6}''",
-                    timeStamp,minTimeStamp, dbmsToJavaSqlTimestampType,
-                    maxTimeStamp,column,minValue,maxValue);
+            if (Arrays.asList(this.env.getActiveProfiles()).contains("docman")){
+                tsSql = tsSql + MessageFormat.format(" WHERE {0} " +
+                                " BETWEEN ''{1}''" +
+                                " AND ''{2}'' " +
+                                " AND {3} BETWEEN ''{4}'' AND ''{5}''",
+                        timeStamp,minTimeStamp,
+                        maxTimeStamp,column,minValue,maxValue);
+            }else{
+                tsSql = tsSql + MessageFormat.format(" WHERE {0} " +
+                                " BETWEEN CAST(''{1}'' AS {2}) " +
+                                " AND CAST(''{3}'' AS {2}) " +
+                                " AND {4} BETWEEN ''{5}'' AND ''{6}''",
+                        timeStamp,minTimeStamp, dbmsToJavaSqlTimestampType,
+                        maxTimeStamp,column,minValue,maxValue);
+            }
         }
         long partitionCount = jdbcTemplate.queryForObject(tsSql, Long.class);
         if(partitionCount==0L){
