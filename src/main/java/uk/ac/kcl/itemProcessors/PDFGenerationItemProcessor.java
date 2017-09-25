@@ -93,6 +93,13 @@ public class PDFGenerationItemProcessor extends TLItemProcessor implements ItemP
             case "image/jpeg":
                 handleByImageMagick(doc, "jpeg");
                 break;
+            case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+                handleByLibreOffice(doc, "docx");
+                break;
+            case "image/png":
+                handleByImageMagick(doc, "png");
+                break;
+
             default:
                 throw new Exception("Cannot generate PDF for unknown type");
             }

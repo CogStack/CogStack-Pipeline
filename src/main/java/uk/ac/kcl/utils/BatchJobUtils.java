@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import javax.sql.DataSource;
 import java.sql.Timestamp;
 import java.util.List;
-
+import java.util.Arrays;
 
 /**
  * Created by rich on 21/04/16.
@@ -40,12 +40,20 @@ public class BatchJobUtils {
             Timestamp lastGoodJob,
             String timestampColumnName){
         JdbcTemplate template = new JdbcTemplate(sourceDataSource);
-        String sql = "SELECT MIN(" + timestampColumnName + ") AS min_time_stamp " +
+        String sql = "";
+        if (Arrays.asList(this.env.getActiveProfiles()).contains("docman")){
+            sql = "SELECT MIN(" + timestampColumnName + ") AS min_time_stamp " +
+                " FROM " + tableName + " " +
+                " WHERE " + timestampColumnName + 
+                " >  '" + lastGoodJob.toString() + "'";
+        }else{
+            sql = "SELECT MIN(" + timestampColumnName + ") AS min_time_stamp " +
                 " FROM " + tableName + " " +
                 " WHERE CAST(" + timestampColumnName + " AS "+
                 env.getProperty("source.dbmsToJavaSqlTimestampType")+
                 ") >  CAST('" + lastGoodJob.toString() +
                 "' AS "+env.getProperty("source.dbmsToJavaSqlTimestampType")+")";
+        }
         Timestamp timestampLong = template.queryForObject(sql, Timestamp.class);
 
         if(timestampLong == null){
