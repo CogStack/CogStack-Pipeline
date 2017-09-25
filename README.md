@@ -324,3 +324,14 @@ Questions? Want to help? Drop me a message: lucy.o'neill@kcl.ac.uk (020 7848 092
 
 ## Papers
 CogStack - Experiences Of Deploying Integrated Information Retrieval And Extraction Services In A Large National Health Service Foundation Trust Hospital, *Richard Jackson, Asha Agrawal, Kenneth Lui, Amos Folarin, Honghan Wu, Tudor Groza, Angus Roberts, Genevieve Gorrell, Xingyi Song, Damian Lewsley, Doug Northwood, Clive Stringer, Robert Stewart, Richard Dobson* http://biorxiv.org/content/early/2017/04/02/123299
+
+
+![Cogstack Pipeline](fig/KCL_boxed_redcmyk_A4-002-3.gif)
+![Cogstack Pipeline](fig/logo-nhs.png)
+![Cogstack Pipeline](fig/dnmkjemkekmbnegf.png)
+![Cogstack Pipeline](fig/chdabdkadmelbenn.png)
+![Cogstack Pipeline](fig/cti-banner.jpg)
+![Cogstack Pipeline](fig/igimnobhggalgaln.png)
+![Cogstack Pipeline](fig/kmlbdnlfopmabpbk.png)
+![Cogstack Pipeline](fig/bojpdbeeffipbedm.png)
+
