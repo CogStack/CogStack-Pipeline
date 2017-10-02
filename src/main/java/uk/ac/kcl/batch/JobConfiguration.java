@@ -180,6 +180,10 @@ public class JobConfiguration {
     private Long sourceIdleTimeout;
     @Value("${source.maxLifetime}")
     private Long sourceMaxLifeTime;
+    @Value("${source.leakDetectionThreshold}")
+    private Long sourceLeakDetection;
+    @Value("${source.poolSize}")
+    private Integer sourcePoolSize;
 
 
     @Bean(destroyMethod = "close")
@@ -197,6 +201,11 @@ public class JobConfiguration {
         if (Arrays.asList(this.env.getActiveProfiles()).contains("docman")){
             mainDatasource.setConnectionTestQuery("show tables");
         }
+        if (sourcePoolSize > 0){
+            mainDatasource.setMaximumPoolSize(sourcePoolSize);
+        }
+        // set the db connection leak detection time
+        mainDatasource.setLeakDetectionThreshold(sourceLeakDetection);
         return mainDatasource;
     }
 
