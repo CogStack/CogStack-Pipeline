@@ -29,6 +29,8 @@ import uk.ac.kcl.model.Document;
 import uk.ac.kcl.model.MultilineDocument;
 import uk.ac.kcl.rowmappers.SimpleDocumentRowMapper;
 
+import org.apache.commons.io.FileUtils;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
@@ -36,6 +38,7 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.io.File;
 
 /**
  *
@@ -71,11 +74,16 @@ public class DbLineFixerItemProcessor extends TLItemProcessor implements ItemPro
     @Value("${lf.fieldName}")
     private String fieldName;
 
+    @Value("${dblog.filepath}")
+    private String logFilePath;
+    private File logFileInstance;
 
     @PostConstruct
     public void init(){
         this.template = new JdbcTemplate(ds);
         setFieldName(fieldName);
+        if (null != logFilePath)
+            this.logFileInstance = new File(logFilePath);
     }
 
     @Override
@@ -96,7 +104,14 @@ public class DbLineFixerItemProcessor extends TLItemProcessor implements ItemPro
             sb2.append(entry.getValue());
         }
 
-        addField(doc,sb2.toString());
+        String obValue = sb2.toString();
+        if (obValue.length() > 32766){
+            if (this.logFileInstance != null){
+                FileUtils.writeStringToFile(this.logFileInstance, doc.getDocName() + "\n", (String)null, true);
+            }
+            obValue = obValue.substring(0, 32766);
+        }
+        addField(doc,obValue);
         LOG.debug("finished " + this.getClass().getSimpleName() +" on doc " +doc.getDocName());
         return doc;
     }
