@@ -93,6 +93,15 @@ public class ElasticsearchDocumentWriter implements ItemWriter<Document> {
 
     @Value("${elasticsearch.xpack.security.transport.ssl.enabled:false}")
     private boolean sslEnabled;
+    
+    @Value("${elasticsearch.xpack.ssl.key:#{null}}")
+    private String sslKey;
+    
+    @Value("${elasticsearch.xpack.ssl.certificate:#{null}}")
+    private String sslCertificate;
+    
+    @Value("${elasticsearch.xpack.ssl.certificate_authorities:#{null}}")
+    private String sslCertificateAuthorities;
 
     @Autowired
     Environment env;
@@ -113,6 +122,10 @@ public class ElasticsearchDocumentWriter implements ItemWriter<Document> {
                 .put("xpack.ssl.keystore.password", sslKeyStorePassword)
                 .put("xpack.ssl.truststore.path", sslTrustStorePath)
                 .put("xpack.ssl.truststore.password", trustStorePassword)
+                // xpack setting updated for ES6.0
+                .put("xpack.ssl.key", sslKey)
+                .put("xpack.ssl.certificate", sslCertificate)
+                .put("xpack.ssl.certificate_authorities", sslCertificateAuthorities)
 
                 .build();
             client = new PreBuiltXPackTransportClient(settings)
