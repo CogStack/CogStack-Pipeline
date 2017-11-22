@@ -9,7 +9,7 @@ import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.common.xcontent.XContentParser;
@@ -93,15 +93,6 @@ public class ElasticsearchDocumentWriter implements ItemWriter<Document> {
 
     @Value("${elasticsearch.xpack.security.transport.ssl.enabled:false}")
     private boolean sslEnabled;
-    
-    @Value("${elasticsearch.xpack.ssl.key:#{null}}")
-    private String sslKey;
-    
-    @Value("${elasticsearch.xpack.ssl.certificate:#{null}}")
-    private String sslCertificate;
-    
-    @Value("${elasticsearch.xpack.ssl.certificate_authorities:#{null}}")
-    private String sslCertificateAuthorities;
 
     @Autowired
     Environment env;
@@ -122,21 +113,17 @@ public class ElasticsearchDocumentWriter implements ItemWriter<Document> {
                 .put("xpack.ssl.keystore.password", sslKeyStorePassword)
                 .put("xpack.ssl.truststore.path", sslTrustStorePath)
                 .put("xpack.ssl.truststore.password", trustStorePassword)
-                // xpack setting updated for ES6.0
-                .put("xpack.ssl.key", sslKey)
-                .put("xpack.ssl.certificate", sslCertificate)
-                .put("xpack.ssl.certificate_authorities", sslCertificateAuthorities)
 
                 .build();
             client = new PreBuiltXPackTransportClient(settings)
-                    .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(
+                    .addTransportAddress(new TransportAddress(InetAddress.getByName(
                             clusterHost),
                             port));
         } else {
             settings = Settings.builder()
                     .put("cluster.name", clusterName).build();
             client = new PreBuiltTransportClient(settings)
-                    .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(
+                    .addTransportAddress(new TransportAddress(InetAddress.getByName(
                             clusterHost),
                             port));
         }
@@ -190,7 +177,7 @@ public class ElasticsearchDocumentWriter implements ItemWriter<Document> {
             }
         }
         LOG.info("{} documents indexed into ElasticSearch in {} ms", response.getItems().length,
-                response.getTookInMillis());
+                response.getIngestTookInMillis());
     }
 
 }
