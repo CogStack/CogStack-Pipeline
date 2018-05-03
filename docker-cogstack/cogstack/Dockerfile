@@ -1,5 +1,5 @@
 FROM java:8
-MAINTAINER richgjackson@gmail.com
+MAINTAINER amos.folarin@kcl.ac.uk
 RUN apt-get update && apt-get install -y imagemagick --fix-missing  tesseract-ocr
 
 RUN mkdir -p /usr/src/

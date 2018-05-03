@@ -62,7 +62,16 @@ services:
       - esdata2:/usr/share/elasticsearch/data
     networks:
       - esnet
-    
+  kibana:
+    image: docker.elastic.co/kibana/kibana:6.2.4
+    ports:
+      - 5601:5601
+     volumes:
+      - ./kibana/config/kibana.yml:usr/share/kibana/config/kibana.yml:ro 
+    networks:
+      - esnet
+   
+  
 networks:
   esnet:
     driver: bridge
