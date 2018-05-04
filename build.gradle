@@ -1,316 +1,316 @@
 buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.1.RELEASE")
-    }
-}
-apply plugin: 'groovy'
-apply plugin: 'java'
-apply plugin: 'idea'
-apply plugin: 'org.springframework.boot'
+	    repositories {
+		mavenCentral()
+	    }
+	    dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.1.RELEASE")
+	    }
+	}
+	apply plugin: 'groovy'
+	apply plugin: 'java'
+	apply plugin: 'idea'
+	apply plugin: 'org.springframework.boot'
 
-sourceSets {
-    main {
-        java { srcDirs = [] }
-        groovy {
-            srcDirs = ['src/main/java', 'src/main/groovy']
-        }
-        resources {
-            srcDir 'src/main/resources'
-        }
+	sourceSets {
+	    main {
+		java { srcDirs = [] }
+		groovy {
+		    srcDirs = ['src/main/java', 'src/main/groovy']
+		}
+		resources {
+		    srcDir 'src/main/resources'
+		}
 
-    }
-    test {
-        java { srcDirs = [] }
-        groovy {
-            srcDirs = ["src/test/java"]
-        }
-        resources {
-            srcDirs = ['src/test/resources']
-        }
+	    }
+	    test {
+		java { srcDirs = [] }
+		groovy {
+		    srcDirs = ["src/test/java"]
+		}
+		resources {
+		    srcDirs = ['src/test/resources']
+		}
 
-    }
-    integTest {
-        java { srcDirs = [] }
-        groovy {
-            srcDirs = ["src/integration-test/java"]
-        }
-        resources {
-            srcDirs = ['src/integration-test/resources']
-        }
-        compileClasspath += sourceSets.main.output + sourceSets.test.output + configurations.testRuntime
-        runtimeClasspath += sourceSets.main.output + sourceSets.test.output + configurations.testRuntime
-    }
-    acceptTest {
-        java { srcDirs = [] }
-        groovy {
-            srcDirs = ["src/acceptance-test/java"]
-        }
-        resources {
-            srcDirs = ['src/acceptance-test/resources']
-        }
-        compileClasspath += sourceSets.main.output + sourceSets.test.output + sourceSets.integTest.output + configurations.testRuntime
-        runtimeClasspath += sourceSets.main.output + sourceSets.test.output + sourceSets.integTest.output + configurations.testRuntime
-    }
-}
-
-
-
-test {
-    // enable TestNG support (default is JUnit)
-    //useTestNG()
-
-    // set a system property for the test JVM(s)
-    //systemProperty 'some.prop', 'value'
-
-    // explicitly include or exclude tests
-    //include 'org/foo/**'
-    //exclude 'org/boo/**'
-
-    // show standard out and standard error of the test JVM(s) on the console
-    //testLogging.showStandardStreams = true
-
-    // set heap size for the test JVM(s)
-    minHeapSize = "1G"
-    maxHeapSize = "1G"
-
-    // set JVM arguments for the test JVM(s)
-    //jvmArgs '-XX:MaxPermSize=256m'
-
-    // listen to events in the test execution lifecycle
-    beforeTest { descriptor ->
-        logger.lifecycle("Running test: " + descriptor)
-    }
-
-    // listen to standard out and standard error of the test JVM(s)
-//    onOutput { descriptor, event ->
-//        logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message)
-//    }
-}
-
-task postgresIntegTest(type: Test) {
-    testClassesDir = new File(sourceSets.integTest.output.classesDir.absolutePath
-            +'/uk/ac/kcl/it/postgres')
-    print testClassesDir.absolutePath
-    classpath = sourceSets.integTest.runtimeClasspath
-    print classpath
-
-    beforeTest { descriptor ->
-        logger.lifecycle("Running test: " + descriptor)
-    }
-
-    // listen to standard out and standard error of the test JVM(s)
-    onOutput { descriptor, event ->
-        logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message)
-    }
-
-}
-
-task sqlServerIntegTest(type: Test) {
-    testClassesDir = new File(sourceSets.integTest.output.classesDir.absolutePath
-            +'/uk/ac/kcl/it/sqlserver')
-    print testClassesDir.absolutePath
-    classpath = sourceSets.integTest.runtimeClasspath
-    print classpath
-
-    beforeTest { descriptor ->
-        logger.lifecycle("Running test: " + descriptor)
-    }
-
-    // listen to standard out and standard error of the test JVM(s)
-    onOutput { descriptor, event ->
-        logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message)
-    }
-
-}
-
-task acceptTest(type: Test) {
-    testClassesDir = new File(sourceSets.acceptTest.output.classesDir.absolutePath
-            +'/uk/ac/kcl/at')
-    print testClassesDir.absolutePath
-    classpath = sourceSets.acceptTest.runtimeClasspath
-    print classpath
-
-    beforeTest { descriptor ->
-        logger.lifecycle("Running test: " + descriptor)
-    }
-
-    // listen to standard out and standard error of the test JVM(s)
-    onOutput { descriptor, event ->
-        logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message)
-    }
-
-    beforeTest { descriptor ->
-        logger.lifecycle("Running test: " + descriptor)
-    }
-
-    // listen to standard out and standard error of the test JVM(s)
-    onOutput { descriptor, event ->
-        logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message)
-    }
-}
+	    }
+	    integTest {
+		java { srcDirs = [] }
+		groovy {
+		    srcDirs = ["src/integration-test/java"]
+		}
+		resources {
+		    srcDirs = ['src/integration-test/resources']
+		}
+		compileClasspath += sourceSets.main.output + sourceSets.test.output + configurations.testRuntime
+		runtimeClasspath += sourceSets.main.output + sourceSets.test.output + configurations.testRuntime
+	    }
+	    acceptTest {
+		java { srcDirs = [] }
+		groovy {
+		    srcDirs = ["src/acceptance-test/java"]
+		}
+		resources {
+		    srcDirs = ['src/acceptance-test/resources']
+		}
+		compileClasspath += sourceSets.main.output + sourceSets.test.output + sourceSets.integTest.output + configurations.testRuntime
+		runtimeClasspath += sourceSets.main.output + sourceSets.test.output + sourceSets.integTest.output + configurations.testRuntime
+	    }
+	}
 
 
-jar {
-    baseName = 'cogstack'
-    version = '1.2.0'
-}
 
-if (!hasProperty('mainClass')) {
-    //ext.mainClass = 'org.springframework.batch.core.launch.support.CommandLineJobRunner'
-    ext.mainClass = 'uk.ac.kcl.Main'
-}
-repositories {
-    mavenCentral()
-    //needed for locally installed jdbc4 from microsoft
-    mavenLocal()
-    maven {
-        url "https://artifacts.elastic.co/maven"
-    }
-    maven {
-        url "https://maven.elasticsearch.org/releases"
-    }
-}
+	test {
+	    // enable TestNG support (default is JUnit)
+	    //useTestNG()
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+	    // set a system property for the test JVM(s)
+	    //systemProperty 'some.prop', 'value'
 
-dependencies {
-    //logging
-    compile 'org.slf4j:slf4j-api:1.7.21'
-    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.7'
+	    // explicitly include or exclude tests
+	    //include 'org/foo/**'
+	    //exclude 'org/boo/**'
 
-    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.8.2'
-    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.8.2'
+	    // show standard out and standard error of the test JVM(s) on the console
+	    //testLogging.showStandardStreams = true
 
-    //misc
-    compile 'joda-time:joda-time:2.9.3'
-    compile group: 'com.google.code.gson', name: 'gson', version: '2.6.2'
-    compile 'commons-io:commons-io:2.4'
+	    // set heap size for the test JVM(s)
+	    minHeapSize = "1G"
+	    maxHeapSize = "1G"
 
-    //elasticsearch java api and apache asynch client
-    compile group: 'org.elasticsearch.client', name: 'rest', version: '6.0.0-alpha1'
-    compile group: 'org.apache.httpcomponents', name: 'httpasyncclient', version: '4.1.3'
-//    compile "org.elasticsearch.client:x-pack-transport:5.4.2"
+	    // set JVM arguments for the test JVM(s)
+	    //jvmArgs '-XX:MaxPermSize=256m'
 
-    //depreciated
-    // compile "org.elasticsearch.plugin:shield:2.3.3"
-    compile 'org.elasticsearch.client:x-pack-transport:6.0.0'
-    compile 'org.elasticsearch:elasticsearch:6.0.0'
+	    // listen to events in the test execution lifecycle
+	    beforeTest { descriptor ->
+		logger.lifecycle("Running test: " + descriptor)
+	    }
 
-    //dbms drivers
-    compile("org.hsqldb:hsqldb")
-    compile 'org.hsqldb:hsqldb:2.3.3'
-    compile group: 'com.microsoft.sqlserver', name: 'mssql-jdbc', version: '6.1.0.jre8'
-    compile 'net.sourceforge.jtds:jtds:1.3.1'
-    compile group: 'mysql', name: 'mysql-connector-java', version: '3.1.14'
-    compile 'org.postgresql:postgresql:9.4-1205-jdbc42'
+	    // listen to standard out and standard error of the test JVM(s)
+	//    onOutput { descriptor, event ->
+	//        logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message)
+	//    }
+	}
 
-    //connection pool
-    compile group: 'com.zaxxer', name: 'HikariCP', version: '2.4.6'
+	task postgresIntegTest(type: Test) {
+	    testClassesDir = new File(sourceSets.integTest.output.classesDir.absolutePath
+		    +'/uk/ac/kcl/it/postgres')
+	    print testClassesDir.absolutePath
+	    classpath = sourceSets.integTest.runtimeClasspath
+	    print classpath
 
+	    beforeTest { descriptor ->
+		logger.lifecycle("Running test: " + descriptor)
+	    }
 
-    //spring framework
-    compile("org.springframework.boot:spring-boot-starter-batch")
-    compile('org.springframework.batch:spring-batch-core:3.0.7.RELEASE')
-    compile('org.springframework.batch:spring-batch-integration:3.0.7.RELEASE')
-    compile('org.springframework:spring-web:4.3.6.RELEASE')
-    compile('org.springframework:spring-core:4.3.6.RELEASE')
-    compile('org.springframework:spring-test:4.3.6.RELEASE')
-    compile('org.springframework:spring-jdbc:4.3.6.RELEASE')
-    compile('org.springframework:spring-context:4.3.6.RELEASE')
-    compile('org.springframework:spring-jms:4.3.6.RELEASE')
-    compile('org.springframework.integration:spring-integration-core:4.3.6.RELEASE')
-    compile('org.springframework.integration:spring-integration-jms:4.3.6.RELEASE')
+	    // listen to standard out and standard error of the test JVM(s)
+	    onOutput { descriptor, event ->
+		logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message)
+	    }
 
+	}
 
-    compile 'org.springframework.integration:spring-integration-java-dsl:1.1.2.RELEASE'
-    compile 'org.apache.activemq:activemq-core:5.7.0'
-    compile 'org.apache.activemq:activemq-spring:5.13.0'
+	task sqlServerIntegTest(type: Test) {
+	    testClassesDir = new File(sourceSets.integTest.output.classesDir.absolutePath
+		    +'/uk/ac/kcl/it/sqlserver')
+	    print testClassesDir.absolutePath
+	    classpath = sourceSets.integTest.runtimeClasspath
+	    print classpath
 
+	    beforeTest { descriptor ->
+		logger.lifecycle("Running test: " + descriptor)
+	    }
 
-    //nlp
-    compile group: 'org.apache.commons', name: 'commons-collections4', version: '4.1'
-    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
-    compile 'org.codehaus.groovy:groovy-all:2.4.4'
-    compile 'uk.ac.gate:gate-core:8.1'
-    compile 'xml-apis:xml-apis:1.4.01'
-    compile 'org.apache.tika:tika-core:1.15'
-    compile('org.apache.tika:tika-parsers:1.15') {
-        exclude group: 'commons-logging', module: 'commons-logging' //by both name and group
-    }
+	    // listen to standard out and standard error of the test JVM(s)
+	    onOutput { descriptor, event ->
+		logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message)
+	    }
 
-    compile group: 'org.apache.ws.commons.util', name: 'ws-commons-util', version: '1.0.2'
-    //test
-//    testCompile("junit:junit")
-    testCompile('org.mockito:mockito-all:1.10.19');
-    testCompile group: 'de.sven-jacobs', name: 'loremipsum', version: '1.0'
-}
+	}
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.3'
-}
+	task acceptTest(type: Test) {
+	    testClassesDir = new File(sourceSets.acceptTest.output.classesDir.absolutePath
+		    +'/uk/ac/kcl/at')
+	    print testClassesDir.absolutePath
+	    classpath = sourceSets.acceptTest.runtimeClasspath
+	    print classpath
 
-allprojects {
-    gradle.projectsEvaluated {
-        tasks.withType(JavaCompile) {
-            options.compilerArgs << "-Xlint:unchecked"
-        }
-    }
-}
+	    beforeTest { descriptor ->
+		logger.lifecycle("Running test: " + descriptor)
+	    }
+
+	    // listen to standard out and standard error of the test JVM(s)
+	    onOutput { descriptor, event ->
+		logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message)
+	    }
+
+	    beforeTest { descriptor ->
+		logger.lifecycle("Running test: " + descriptor)
+	    }
+
+	    // listen to standard out and standard error of the test JVM(s)
+	    onOutput { descriptor, event ->
+		logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message)
+	    }
+	}
 
 
-task buildCogstackContainer(type: Exec){
-    workingDir 'docker-cogstack/cogstack'
-    commandLine 'docker', 'build', '-t', 'richjackson/cogstack:'+jar.version, '.'
-}
+	jar {
+	    baseName = 'cogstack'
+	    version = '1.2.0'
+	}
 
-task runCogstackContainer(type: Exec){
-    commandLine 'docker', 'run',  '--name', 'some-cogstack', '-d', 'richjackson/cogstack:'+jar.version
-}
+	if (!hasProperty('mainClass')) {
+	    //ext.mainClass = 'org.springframework.batch.core.launch.support.CommandLineJobRunner'
+	    ext.mainClass = 'uk.ac.kcl.Main'
+	}
+	repositories {
+	    mavenCentral()
+	    //needed for locally installed jdbc4 from microsoft
+	    mavenLocal()
+	    maven {
+		url "https://artifacts.elastic.co/maven"
+	    }
+	    maven {
+		url "https://maven.elasticsearch.org/releases"
+	    }
+	}
 
-task buildPostgresContainer(type: Exec) {
-        workingDir 'docker-cogstack/postgres'
-        commandLine 'docker', 'build', '-t', 'richjackson/postgres', '.'
-}
-task runPostgresContainer(type: Exec){
-        commandLine 'docker', 'run', '-p', '5432:5432', '--name', 'some-postgres', '-d', 'richjackson/postgres'
-}
+	sourceCompatibility = 1.8
+	targetCompatibility = 1.8
 
-task buildElasticsearchContainer(type: Exec){
-        commandLine 'docker', 'pull', 'docker.elastic.co/elasticsearch/elasticsearch:6.0.0'
-}
+	dependencies {
+	    //logging
+	    compile 'org.slf4j:slf4j-api:1.7.21'
+	    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.7'
 
-task runElasticsearchContainer(type: Exec){
-    commandLine 'docker', 'run', '-p', '9200:9200', '-p', '9300:9300', '--name', 'some-elastic', '-d',
-            '-e', 'http.host=0.0.0.0' ,'-e', 'transport.host=127.0.0.1' ,
-    'docker.elastic.co/elasticsearch/elasticsearch:6.0.0'
-}
-task buildKibanaContainer(type: Exec){
-    commandLine 'docker', 'pull' ,'docker.elastic.co/kibana/kibana:5.4.2'
-}
-task runKibanaContainer(type: Exec){
-    commandLine 'docker', 'run', '--link', 'some-elastic:elasticsearch ', '-p', '5601:5601', '--name', 'some-kibana', '-d',
-            'docker.elastic.co/kibana/kibana:5.4.2'
-}
+	    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.8.2'
+	    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.8.2'
 
-task buildBiolarkContainer (type: Exec){
-        workingDir 'docker-cogstack/biolark'
-        commandLine 'docker', 'build', '-t', 'richjackson/biolark', '.'
-}
+	    //misc
+	    compile 'joda-time:joda-time:2.9.3'
+	    compile group: 'com.google.code.gson', name: 'gson', version: '2.6.2'
+	    compile 'commons-io:commons-io:2.4'
 
-task runBiolarkContainer (type: Exec){
-        commandLine 'docker', 'run', '-p', '5555:5555', '--name', 'some-biolark', '-d', 'richjackson/biolark'
-}
+	    //elasticsearch java api and apache asynch client
+	    compile group: 'org.elasticsearch.client', name: 'rest', version: '6.0.0-alpha1'
+	    compile group: 'org.apache.httpcomponents', name: 'httpasyncclient', version: '4.1.3'
+	//    compile "org.elasticsearch.client:x-pack-transport:5.4.2"
 
-task buildBioyodieContainer (type: Exec){
-        workingDir 'docker-cogstack/bioyodie'
-        commandLine 'docker', 'build', '-t', 'richjackson/bioyodie:D4.5', '.'
-}
-task runBioyodieContainer (type: Exec){
-        commandLine 'docker', 'run', '-p', '8080:8080', '--name', 'some-bioyodie', '-d', 'richjackson/bioyodie:D4.5'
+	    //depreciated
+	    // compile "org.elasticsearch.plugin:shield:2.3.3"
+	    compile 'org.elasticsearch.client:x-pack-transport:6.0.0'
+	    compile 'org.elasticsearch:elasticsearch:6.0.0'
+
+	    //dbms drivers
+	    compile("org.hsqldb:hsqldb")
+	    compile 'org.hsqldb:hsqldb:2.3.3'
+	    compile group: 'com.microsoft.sqlserver', name: 'mssql-jdbc', version: '6.1.0.jre8'
+	    compile 'net.sourceforge.jtds:jtds:1.3.1'
+	    compile group: 'mysql', name: 'mysql-connector-java', version: '3.1.14'
+	    compile 'org.postgresql:postgresql:9.4-1205-jdbc42'
+
+	    //connection pool
+	    compile group: 'com.zaxxer', name: 'HikariCP', version: '2.4.6'
+
+
+	    //spring framework
+	    compile("org.springframework.boot:spring-boot-starter-batch")
+	    compile('org.springframework.batch:spring-batch-core:3.0.7.RELEASE')
+	    compile('org.springframework.batch:spring-batch-integration:3.0.7.RELEASE')
+	    compile('org.springframework:spring-web:4.3.6.RELEASE')
+	    compile('org.springframework:spring-core:4.3.6.RELEASE')
+	    compile('org.springframework:spring-test:4.3.6.RELEASE')
+	    compile('org.springframework:spring-jdbc:4.3.6.RELEASE')
+	    compile('org.springframework:spring-context:4.3.6.RELEASE')
+	    compile('org.springframework:spring-jms:4.3.6.RELEASE')
+	    compile('org.springframework.integration:spring-integration-core:4.3.6.RELEASE')
+	    compile('org.springframework.integration:spring-integration-jms:4.3.6.RELEASE')
+
+
+	    compile 'org.springframework.integration:spring-integration-java-dsl:1.1.2.RELEASE'
+	    compile 'org.apache.activemq:activemq-core:5.7.0'
+	    compile 'org.apache.activemq:activemq-spring:5.13.0'
+
+
+	    //nlp
+	    compile group: 'org.apache.commons', name: 'commons-collections4', version: '4.1'
+	    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
+	    compile 'org.codehaus.groovy:groovy-all:2.4.4'
+	    compile 'uk.ac.gate:gate-core:8.1'
+	    compile 'xml-apis:xml-apis:1.4.01'
+	    compile 'org.apache.tika:tika-core:1.15'
+	    compile('org.apache.tika:tika-parsers:1.15') {
+		exclude group: 'commons-logging', module: 'commons-logging' //by both name and group
+	    }
+
+	    compile group: 'org.apache.ws.commons.util', name: 'ws-commons-util', version: '1.0.2'
+	    //test
+	//    testCompile("junit:junit")
+	    testCompile('org.mockito:mockito-all:1.10.19');
+	    testCompile group: 'de.sven-jacobs', name: 'loremipsum', version: '1.0'
+	}
+
+	task wrapper(type: Wrapper) {
+	    gradleVersion = '2.3'
+	}
+
+	allprojects {
+	    gradle.projectsEvaluated {
+		tasks.withType(JavaCompile) {
+		    options.compilerArgs << "-Xlint:unchecked"
+		}
+	    }
+	}
+
+
+	task buildCogstackContainer(type: Exec){
+	    workingDir 'docker-cogstack/cogstack'
+	    commandLine 'docker', 'build', '-t', 'cogstack.systems/cogstack:'+jar.version, '.'
+	}
+
+	task runCogstackContainer(type: Exec){
+	    commandLine 'docker', 'run',  '--name', 'some-cogstack', '-d', 'cogstack.systems/cogstack:'+jar.version
+	}
+
+	task buildPostgresContainer(type: Exec) {
+		workingDir 'docker-cogstack/postgres'
+		commandLine 'docker', 'build', '-t', 'cogstack.systems/postgres', '.'
+	}
+	task runPostgresContainer(type: Exec){
+		commandLine 'docker', 'run', '-p', '5432:5432', '--name', 'some-postgres', '-d', 'cogstack.systems/postgres'
+	}
+
+	task buildElasticsearchContainer(type: Exec){
+		commandLine 'docker', 'pull', 'docker.elastic.co/elasticsearch/elasticsearch:6.0.0'
+	}
+
+	task runElasticsearchContainer(type: Exec){
+	    commandLine 'docker', 'run', '-p', '9200:9200', '-p', '9300:9300', '--name', 'some-elastic', '-d',
+		    '-e', 'http.host=0.0.0.0' ,'-e', 'transport.host=127.0.0.1' ,
+	    'docker.elastic.co/elasticsearch/elasticsearch:6.0.0'
+	}
+	task buildKibanaContainer(type: Exec){
+	    commandLine 'docker', 'pull' ,'docker.elastic.co/kibana/kibana:5.4.2'
+	}
+	task runKibanaContainer(type: Exec){
+	    commandLine 'docker', 'run', '--link', 'some-elastic:elasticsearch ', '-p', '5601:5601', '--name', 'some-kibana', '-d',
+		    'docker.elastic.co/kibana/kibana:5.4.2'
+	}
+
+	task buildBiolarkContainer (type: Exec){
+		workingDir 'docker-cogstack/biolark'
+		commandLine 'docker', 'build', '-t', 'cogstack.systems/biolark', '.'
+	}
+
+	task runBiolarkContainer (type: Exec){
+		commandLine 'docker', 'run', '-p', '5555:5555', '--name', 'some-biolark', '-d', 'cogstack.systems/biolark'
+	}
+
+	task buildBioyodieContainer (type: Exec){
+		workingDir 'docker-cogstack/bioyodie'
+		commandLine 'docker', 'build', '-t', 'cogstack.systems/bioyodie:D4.5', '.'
+	}
+	task runBioyodieContainer (type: Exec){
+		commandLine 'docker', 'run', '-p', '8080:8080', '--name', 'some-bioyodie', '-d', 'cogstack.systems/bioyodie:D4.5'
 }
 
 task buildSimpleContainers {
