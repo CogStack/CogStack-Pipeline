@@ -1,30 +1,34 @@
-version: '2.1'
+version: '2'
 services:
   postgres:
-    image: richjackson/postgres
+    image: cogstack.systems/postgres
     ports:
       - 5432:5432
     networks:
       - esnet
   cogstack:
-    image: richjackson/cogstack:1.2.0
+    image: cogstack.systems/cogstack:1.2.0
     environment:
       - LOG_LEVEL=info
       - FILE_LOG_LEVEL=off
     networks:
       - esnet
   kibana:
-    image: docker.elastic.co/kibana/kibana:5.2.1
+    image: docker.elastic.co/kibana/kibana:5.4.2
+    environment:
+        ELASTICSEARCH_URL: http://elasticsearch:9200
     ports:
       - 5601:5601
     networks:
       - esnet
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:5.2.1
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.0.0
     environment:
       - cluster.name=docker-cluster
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - http.port=9200
+      - http.publish_port=9300
     ulimits:
       memlock:
         soft: -1
