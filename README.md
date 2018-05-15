@@ -114,9 +114,61 @@ Now bring the compose configuration down with from the same compose directory as
 docker-compose down
 ```
 
+to dispose of the volumes
+
+```
+docker-compose down -v
+```
 
 This is the most basic configuration, and really doesn't do too much other than convert a database table/view into an elasticsearch index.
 For more advanced use cases/configurations, check out the integration test below.
+
+### Multi-Node Elasticsearch + Cogstack Docker Compose Test Deployment
+
+- an example of a multi-container elasticsearch deployment without XPACK tooling disabled
+- 3 nodes of elasticsearch as a minimum for quorum and 1 kibana node, 1 cogstack node and 1 postgres for spring batch and dummy datasource
+- Elasticsearch should be loaded with a few Cogstack-Pipeline processed documents
+- There are two virtual networks (esnet & public), a present elasticsearch is forwarded to host ports, but in a production system perhaps this is not necessary and you can limit elasticsearch containers to the esnet network and add other services to the public network.
+
+clone the CogStack-Pipeline repository
+
+```sh
+cd docker-cogstack/compose-ymls/cogstack-clust/
+docker-compose up
+```
+
+```
+curl -XGET 'localhost:9200/_cluster/health?pretty'
+-----
+{
+  "cluster_name" : "docker-cluster",
+  "status" : "green",
+  "timed_out" : false,
+  "number_of_nodes" : 3,
+  "number_of_data_nodes" : 3,
+  "active_primary_shards" : 11,
+  "active_shards" : 22,
+  "relocating_shards" : 0,
+  "initializing_shards" : 0,
+  "unassigned_shards" : 0,
+  "delayed_unassigned_shards" : 0,
+  "number_of_pending_tasks" : 0,
+  "number_of_in_flight_fetch" : 0,
+  "task_max_waiting_in_queue_millis" : 0,
+  "active_shards_percent_as_number" : 100.0
+}
+```
+test a query against the Cogstack loaded data
+
+```
+curl -XGET http://localhost:9200/test_index2/_search?pretty&q=patient
+```
+
+in a browser, test the **Kibana** web application, you can check the status of the Elasticsearch 3-node cluster (under Monitoring or run searches after configuring an index and a time window (2017-2018 absolute timeframe as the test documents are timestamped with 2017 dates)
+
+```
+http://localhost:5601
+```
 
 
 
