@@ -132,10 +132,22 @@ For more advanced use cases/configurations, check out the integration test below
 
 clone the CogStack-Pipeline repository
 
+(see above `sudo sysctl -w vm.max_map_count=262144` is required to extend the virtual memory.
+
 ```sh
 cd docker-cogstack/compose-ymls/cogstack-clust/
+```
+
+this stack currently uses basic_auth see [README](https://github.com/CogStack/CogStack-Pipeline/blob/master/docker-cogstack/compose-ymls/cogstack-clust/nginx/auth/README.md)
+
+``` 
+#Password file creation utility such as apache2-utils
+sudo htpasswd -c ./auth/.htpasswd user1
+
+#start the stack
 docker-compose up
 ```
+
 
 ```
 curl -XGET 'localhost:9200/_cluster/health?pretty'
