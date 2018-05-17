@@ -8,4 +8,4 @@ nbproject/*
 .idea/*
 cogstack*log
 logs/*
-
+.htpasswd
