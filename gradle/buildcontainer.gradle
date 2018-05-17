@@ -29,7 +29,16 @@ task buildSimpleContainers {
         tasks.buildPostgresContainer.execute()
         tasks.buildElasticsearchContainer.execute()
         tasks.buildKibanaContainer.execute()
-        tasks.copyFilesToDockerDir.execute()
         tasks.buildCogstackContainer.execute()
+    }
+}
+
+task buildAllContainers {
+    doLast{
+        tasks.buildPostgresContainer.execute()
+        tasks.buildElasticsearchContainer.execute()
+        tasks.buildKibanaContainer.execute()
+        tasks.buildCogstackContainer.execute()
+        tasks.buildBioyodieContainer.execute()
     }
 }
