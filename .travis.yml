@@ -2,6 +2,17 @@ language: java
 jdk:
   - oraclejdk8
 sudo: false
+
+addons:
+  apt:
+    packages:
+      - tesseract-ocr
+      - libtesseract-dev
+      - imagemagick
+      - libmagickcore-dev
+      - libmagickwand-dev
+      - libmagic-dev
+
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/

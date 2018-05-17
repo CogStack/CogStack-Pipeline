@@ -71,7 +71,6 @@ if (!hasProperty('mainClass')) {
 
 jar {
 	baseName = 'cogstack'
-	version = version
 }
 
 idea {
