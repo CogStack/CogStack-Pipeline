@@ -1,0 +1,28 @@
+task buildCogstackContainer(type: Exec){
+    workingDir '../'
+    commandLine 'docker', 'build', '-t', 'cogstack.systems/cogstack:'+jar.version, '.'
+}
+
+task buildKibanaContainer(type: Exec){
+    commandLine 'docker', 'pull' ,'docker.elastic.co/kibana/kibana:5.4.2'
+}
+
+task buildBiolarkContainer (type: Exec){
+    workingDir '../docker-cogstack/biolark'
+    commandLine 'docker', 'build', '-t', 'cogstack.systems/biolark', '.'
+}
+
+task buildBioyodieContainer (type: Exec){
+    workingDir '../docker-cogstack/bioyodie'
+    commandLine 'docker', 'build', '-t', 'cogstack.systems/bioyodie:D4.5', '.'
+}
+
+task buildSimpleContainers {
+    doLast{
+        tasks.buildPostgresContainer.execute()
+        tasks.buildElasticsearchContainer.execute()
+        tasks.buildKibanaContainer.execute()
+        tasks.copyFilesToDockerDir.execute()
+        tasks.buildCogstackContainer.execute()
+    }
+}
