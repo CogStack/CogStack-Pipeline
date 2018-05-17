@@ -6,6 +6,7 @@ services:
 # Postgres container for spring batch / cogstack testing                    #
 #---------------------------------------------------------------------------#
   postgres:
+    build: ../../postgres
     image: cogstacksystems/postgres:latest
     container_name: postgres
     ports:
@@ -18,6 +19,7 @@ services:
 # CogStack containers                                                       #
 #---------------------------------------------------------------------------#
   cogstack:
+    build: ../../../
     image: cogstacksystems/cogstack-pipeline:latest
     container_name: cogstack
     environment:

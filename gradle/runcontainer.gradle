@@ -1,3 +1,5 @@
+// Deprecated. To be removed
+
 task runCogstackContainer(type: Exec){
     commandLine 'docker', 'run',  '--name', 'some-cogstack', '-d', 'cogstack.systems/cogstack:'+jar.version
 }
@@ -11,6 +13,9 @@ task runBiolarkContainer (type: Exec){
     commandLine 'docker', 'run', '-p', '5555:5555', '--name', 'some-biolark', '-d', 'cogstack.systems/biolark'
 }
 
+task runPostgresContainer(type: Exec){
+    commandLine 'docker', 'run', '-p', '5432:5432', '--name', 'some-postgres', '-d', 'cogstack.systems/postgres'
+}
 
 task runBioyodieContainer (type: Exec){
     commandLine 'docker', 'run', '-p', '8080:8080', '--name', 'some-bioyodie', '-d', 'cogstack.systems/bioyodie:D4.5'

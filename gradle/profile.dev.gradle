@@ -1,6 +1,8 @@
+// Default profile for building the app
+
 apply from: 'gradle/test.gradle'
-apply from: 'gradle/acceptancetest.profile.gradle'
-apply from: 'gradle/integrationtest.profile.gradle'
+apply from: 'gradle/acceptancetest.gradle'
+apply from: 'gradle/integrationtest.gradle'
 
 task downloadDependencies {
     description "Download dependencies"
