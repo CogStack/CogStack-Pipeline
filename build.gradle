@@ -147,6 +147,11 @@ dependencies {
 	}
 
 	compile group: 'org.apache.ws.commons.util', name: 'ws-commons-util', version: '1.0.2'
+
+	//tests
+	testCompile('org.mockito:mockito-all:1.10.19')
+	testCompile group: 'de.sven-jacobs', name: 'loremipsum', version: '1.0'
+
 }
 
 task wrapper(type: Wrapper) {
@@ -161,3 +166,9 @@ allprojects {
 		}
 	}
 }
+
+if (!hasProperty('profile')) {
+	ext.profile = 'dev'
+}
+
+apply from: "gradle/profile.${profile}.gradle"

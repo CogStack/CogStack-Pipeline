@@ -1,12 +1,14 @@
 version: '2'
 services:
   postgres:
+    build: ../../postgres
     image: cogstack.systems/postgres
     ports:
       - 5432:5432
     networks:
       - esnet
   cogstack:
+    build: ../../../
     image: cogstack.systems/cogstack:1.2.0
     environment:
       - LOG_LEVEL=info

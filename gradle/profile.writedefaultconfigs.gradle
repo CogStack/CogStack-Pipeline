@@ -1,3 +1,5 @@
+// Use this profile if you want to write the default example configuration files. This is deprecated and will be removed in future builds
+
 task writeExampleConfigs {
     //ItemProcessors
     String deidentification = new File("src/integration-test/resources/deidentification.properties").text
