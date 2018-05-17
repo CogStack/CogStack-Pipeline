@@ -1,0 +1,175 @@
+task writeExampleConfigs {
+    //ItemProcessors
+    String deidentification = new File("src/integration-test/resources/deidentification.properties").text
+    //moved to acceptance test
+    // String elasticgazetteer = new File("src/integration-test/resources/elasticgazetteer_test.properties").text
+    String tika = new File("src/integration-test/resources/tika_db.properties").text
+    String gate = new File("src/integration-test/resources/gate.properties").text
+    String reindex = new File("src/integration-test/resources/reindex.properties").text
+
+    String bioyodie = new File("src/integration-test/resources/bioyodie_webservice.properties").text
+
+    //Database connectivity
+    String postgres_db = new File("src/integration-test/resources/postgres_db.properties").text
+    String sql_server_db = new File("src/integration-test/resources/sql_server_db.properties").text
+
+    //ItemWriters
+    String elasticsearch = new File("src/integration-test/resources/elasticsearch.properties").text
+
+    //Job and Step
+    String jobAndStep = new File("src/integration-test/resources/jobAndStep.properties").text
+
+    //JMS
+    String jms = new File("src/integration-test/resources/jms.properties").text
+
+    //configured start
+    String configuredStart = new File("src/integration-test/resources/configured_start.properties").text
+
+    //Scheduling
+    String scheduling = new File("src/integration-test/resources/scheduling.properties").text
+
+    new File("exampleConfigs").mkdir()
+    def gateExample = new File("exampleConfigs/gateJob.properties")
+    gateExample.withWriter("UTF-8") { writer ->
+        writer.write("# EXAMPLE CONFIG FOR gateJob \n" +
+                elasticsearch
+                + "\n" + gate
+                + "\n" + jms
+                + "\n" + jobAndStep
+                + "\n" + sql_server_db
+                + "\n" + scheduling
+                + "\nspring.profiles.active=gate,localPartitioning,jdbc_in,elasticsearch,primaryKeyAndTimeStampPartition"
+
+        )
+    }
+    def tikaExample = new File("exampleConfigs/tikaJob.properties")
+    tikaExample.withWriter("UTF-8") { writer ->
+        writer.write("# EXAMPLE CONFIG FOR tikaJob \n" +
+                elasticsearch
+                + "\n" + tika
+                + "\n" + jms
+                + "\n" + jobAndStep
+                + "\n" + sql_server_db
+                + "\n" + scheduling
+                + "\nspring.profiles.active=tika,localPartitioning,jdbc_in,elasticsearch,primaryKeyAndTimeStampPartition"
+        )
+    }
+    def basicExample = new File("exampleConfigs/basicJob.properties")
+    basicExample.withWriter("UTF-8") { writer ->
+        writer.write("# EXAMPLE CONFIG FOR basicJob \n" +
+                elasticsearch
+                + "\n" + jms
+                + "\n" + jobAndStep
+                + "\n" + sql_server_db
+                + "\n" + scheduling
+                + "\nspring.profiles.active=basic,localPartitioning,jdbc_in,elasticsearch,primaryKeyAndTimeStampPartition"
+        )
+    }
+    def biolarkExample = new File("exampleConfigs/bioyodieJob.properties")
+    biolarkExample.withWriter("UTF-8") { writer ->
+        writer.write("# EXAMPLE CONFIG FOR biolark Job \n" +
+                elasticsearch
+                + "\n" + bioyodie
+                + "\n" + jms
+                + "\n" + jobAndStep
+                + "\n" + sql_server_db
+                + "\n" + scheduling
+                + "\nspring.profiles.active=bioyodie,localPartitioning,jdbc_in,elasticsearch,primaryKeyAndTimeStampPartition"
+        )
+    }
+    def reindexExample = new File("exampleConfigs/reindexJob.properties")
+    reindexExample.withWriter("UTF-8") { writer ->
+        writer.write("# EXAMPLE CONFIG FOR reindex Job \n" +
+                elasticsearch
+                + "\n" + reindex
+                + "\n" + jms
+                + "\n" + jobAndStep
+                + "\n" + sql_server_db
+                + "\n" + scheduling
+                + "\nspring.profiles.active=basic,localPartitioning,jdbc_in,elasticsearch,primaryKeyAndTimeStampPartition"
+        )
+    }
+    def basicExample2 = new File("exampleConfigs/basicJob2.properties")
+    basicExample2.withWriter("UTF-8") { writer ->
+        writer.write("# EXAMPLE CONFIG FOR basicJob with timestamp based processing, configured start date and scheduling on \n" +
+                elasticsearch
+                + "\n" + scheduling
+                + "\n" + configuredStart
+                + "\n" + jms
+                + "\n" + jobAndStep
+                + "\n" + sql_server_db
+                + "\n" + scheduling
+                + "\nspring.profiles.active=basic,localPartitioning,jdbc_in,elasticsearch,primaryKeyAndTimeStampPartition"
+        )
+    }
+
+    def dBLineFixerExample = new File("exampleConfigs/dBLineFixerJob.properties")
+    dBLineFixerExample.withWriter("UTF-8") { writer ->
+        writer.write("# EXAMPLE CONFIG FOR dBLineFixerJob \n" +
+                elasticsearch
+                + "\n" + jms
+                + "\n" + elasticsearch
+                + "\n" + jobAndStep
+                + "\n" + sql_server_db
+                + "\n" + scheduling
+                + "\nspring.profiles.active=dBLineFixer,localPartitioning,jdbc_in,elasticsearch,primaryKeyAndTimeStampPartition"
+        )
+    }
+
+    def deidentificationExample = new File("exampleConfigs/deidJob.properties")
+    deidentificationExample.withWriter("UTF-8") { writer ->
+        writer.write("# EXAMPLE CONFIG FOR deidentification Job \n" +
+                elasticsearch
+                + "\n" + deidentification
+                + "\n" + jms
+                + "\n" + jobAndStep
+                + "\n" + sql_server_db
+                + "\n" + scheduling
+                + "\nspring.profiles.active=deid,localPartitioning,jdbc_in,elasticsearch,primaryKeyAndTimeStampPartition"
+        )
+    }
+
+    def fullPipeline = new File("exampleConfigs/fullPipelineJob.properties")
+    fullPipeline.withWriter("UTF-8") { writer ->
+        writer.write("# EXAMPLE CONFIG FOR deidentification Job \n" +
+                elasticsearch
+                + "\n" + deidentification
+                + "\n" + bioyodie
+                + "\n" + jms
+                + "\n" + jobAndStep
+                + "\n" + postgres_db
+                + "\n" + scheduling
+                + "\nspring.profiles.active=deid,bioyodie,localPartitioning,jdbc_in,elasticsearch,primaryKeyAndTimeStampPartition"
+        )
+    }
+
+    def writeExecuteScript = new File("docker-cogstack/cogstack/test.sh")
+    writeExecuteScript.withWriter ("UTF-8"){ writer ->
+        writer.write(
+                "#!/bin/bash\n" +
+                        "\n" +
+                        "./wait-for-it.sh \"postgres:5432\" \"--timeout=0\"\n" +
+                        "./wait-for-it.sh \"elasticsearch:9200\" \"--timeout=0\"\n" +
+                        "\n" +
+                        "\n" +
+                        "java -DLOG_FILE_NAME=\$LOG_FILE_NAME -DLOG_LEVEL=\$LOG_LEVEL -DFILE_LOG_LEVEL=\$FILE_LOG_LEVEL -jar /usr/src/cogstack-"
+                        +jar.version +".jar /usr/src/cogstack_conf"
+        )
+    }
+
+    def exampleComposeConfig = new File("docker-cogstack/cogstack/cogstack_conf/example.properties")
+    exampleComposeConfig.withWriter ("UTF-8") { writer ->
+        writer.write(
+                elasticsearch
+                        + "\n" + jobAndStep
+                        + "\n" + postgres_db
+                        + "\n" + scheduling
+                        + "\nspring.profiles.active=localPartitioning,jdbc_in,elasticsearchRest,postgres"
+        )
+    }
+    def ant = getAnt()
+    ant.replace(file: exampleComposeConfig.canonicalPath, token: "localhost:8080", value: "bioyodie:8080")
+    ant.replace(file: exampleComposeConfig.canonicalPath, token: "localhost:5432", value: "postgres:5432")
+    ant.replace(file: exampleComposeConfig.canonicalPath, token: "elasticsearch.cluster.host =  localhost",
+            value: "elasticsearch.cluster.host =  elasticsearch")
+}

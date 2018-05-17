@@ -1,0 +1,2 @@
+apply from: 'buildcontainer.profile.gradle'
+apply from: 'runcontainer.profile.gradle'

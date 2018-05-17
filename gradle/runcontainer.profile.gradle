@@ -1,0 +1,27 @@
+task runCogstackContainer(type: Exec){
+    commandLine 'docker', 'run',  '--name', 'some-cogstack', '-d', 'cogstack.systems/cogstack:'+jar.version
+}
+
+task runKibanaContainer(type: Exec){
+    commandLine 'docker', 'run', '--link', 'some-elastic:elasticsearch ', '-p', '5601:5601', '--name', 'some-kibana', '-d',
+            'docker.elastic.co/kibana/kibana:5.4.2'
+}
+
+task runBiolarkContainer (type: Exec){
+    commandLine 'docker', 'run', '-p', '5555:5555', '--name', 'some-biolark', '-d', 'cogstack.systems/biolark'
+}
+
+
+task runBioyodieContainer (type: Exec){
+    commandLine 'docker', 'run', '-p', '8080:8080', '--name', 'some-bioyodie', '-d', 'cogstack.systems/bioyodie:D4.5'
+}
+
+task runAllContainers {
+    doLast {
+//    tasks.runBiolarkContainer.execute()
+        tasks.runBioyodieContainer.execute()
+        tasks.runElasticsearchContainer.execute()
+        tasks.runKibanaContainer.execute()
+        tasks.runPostgresContainer.execute()
+    }
+}
