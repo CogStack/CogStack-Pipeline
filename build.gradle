@@ -14,7 +14,7 @@ repositories {
 	maven { url "https://maven.elasticsearch.org/releases" }
 }
 
-version '0.1.2-SNAPSHOT'
+version '1.2.0'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -64,14 +64,14 @@ sourceSets {
 }
 
 
-jar {
-	baseName = 'cogstack'
-	version = '1.2.0'
-}
-
 if (!hasProperty('mainClass')) {
 	//ext.mainClass = 'org.springframework.batch.core.launch.support.CommandLineJobRunner'
 	ext.mainClass = 'uk.ac.kcl.Main'
+}
+
+jar {
+	baseName = 'cogstack'
+	version = version
 }
 
 idea {
@@ -147,10 +147,6 @@ dependencies {
 	}
 
 	compile group: 'org.apache.ws.commons.util', name: 'ws-commons-util', version: '1.0.2'
-	//test
-	//    testCompile("junit:junit")
-	testCompile('org.mockito:mockito-all:1.10.19');
-	testCompile group: 'de.sven-jacobs', name: 'loremipsum', version: '1.0'
 }
 
 task wrapper(type: Wrapper) {
