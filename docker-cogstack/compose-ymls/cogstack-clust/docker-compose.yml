@@ -6,7 +6,7 @@ services:
 # Postgres container for spring batch / cogstack testing                    #
 #---------------------------------------------------------------------------#
   postgres:
-    build: ../../postgres
+    # build: ../../postgres    Uncomment this if want to build from the source instead of pulling a pre-built image
     image: cogstacksystems/postgres:latest
     container_name: postgres
     ports:
@@ -19,9 +19,11 @@ services:
 # CogStack containers                                                       #
 #---------------------------------------------------------------------------#
   cogstack:
-    build: ../../../
+    # build: ../../../   Uncomment this if want to build from the source instead of pulling a pre-built image
     image: cogstacksystems/cogstack-pipeline:latest
     container_name: cogstack
+    volumes:
+      - ./cogstack/example.properties:/usr/src/docker-cogstack/cogstack/cogstack_conf/:ro
     environment:
       - LOG_LEVEL=info
       - FILE_LOG_LEVEL=off
