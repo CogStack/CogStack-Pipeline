@@ -65,7 +65,6 @@ sourceSets {
 
 
 if (!hasProperty('mainClass')) {
-	//ext.mainClass = 'org.springframework.batch.core.launch.support.CommandLineJobRunner'
 	ext.mainClass = 'uk.ac.kcl.Main'
 }
 
