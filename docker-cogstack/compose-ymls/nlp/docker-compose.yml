@@ -1,8 +1,7 @@
 version: '2.1'
 services:
   postgres:
-    build: ../../postgres
-    image: richjackson/postgres
+    image: cogstacksystems/postgres:latest
     ports:
       - 5432:5432
     networks:
