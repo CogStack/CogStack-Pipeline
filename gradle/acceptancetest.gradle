@@ -1,4 +1,4 @@
-task acceptTest(type: Test) {
+task acceptTest(type: Test, dependsOn: [ 'installSimpleCompose' ]) {
     testClassesDir = new File(sourceSets.acceptTest.output.classesDir.absolutePath
             +'/uk/ac/kcl/at')
     print testClassesDir.absolutePath
