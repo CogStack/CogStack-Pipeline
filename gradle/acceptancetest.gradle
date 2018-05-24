@@ -23,3 +23,5 @@ task acceptTest(type: Test, dependsOn: [ 'installSimpleCompose' ]) {
         logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message)
     }
 }
+
+acceptTest.finalizedBy stopSimpleCompose
