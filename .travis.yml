@@ -27,3 +27,5 @@ before_install:
 
 script:
   - ./gradlew build
+  - ./gradlew -i acceptTest
+  - ./gradlew -i postgresIntegTest
