@@ -65,9 +65,9 @@ public class DocmanReaderWithoutSchedulingTests {
         String testString = testUtils.getStringInEsDoc("1");
 
         assertTrue(testString
-                .contains("The patient’s name is Bart Davidson"));
+                .contains("tika/testdocs/pat_id_1.doc"));
         assertTrue(testUtils.getStringInEsDoc("2")
-                .contains("The patient’s name is David Harleyson"));
+                .contains("tika/testdocs/pat_id_2.doc"));
 
     }
 
