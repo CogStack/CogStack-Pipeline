@@ -1,7 +1,13 @@
 language: java
 jdk:
   - oraclejdk8
-sudo: false
+sudo: required
+
+services:
+  - docker
+
+env:
+  DOCKER_COMPOSE_VERSION: 1.14.0
 
 addons:
   apt:
@@ -23,9 +29,15 @@ cache:
     - $HOME/.gradle/wrapper/
 
 before_install:
+  - docker --version
+  - mkdir -p "$HOME/bin";
+  - export PATH="$HOME/bin:$PATH";
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > "$HOME/bin/docker-compose";
+  - chmod +x "$HOME/bin/docker-compose";
+  - sudo $HOME/bin/docker-compose --version
   - ./gradlew downloadDependencies
 
 script:
-  - ./gradlew build
-  - ./gradlew -i acceptTest
-  - ./gradlew -i postgresIntegTest
+  - ./gradlew -PdockerComposePath="$HOME/bin/docker-compose" build
+  - ./gradlew -PdockerComposePath="$HOME/bin/docker-compose" -i acceptTest
+  - ./gradlew -PdockerComposePath="$HOME/bin/docker-compose" -i postgresIntegTest
