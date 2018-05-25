@@ -43,5 +43,4 @@ before_install:
   - ./gradlew downloadDependencies > /dev/null
 
 script:
-  - ./gradlew -PdockerComposePath="$HOME/bin/docker-compose" acceptTest > /dev/null
-  - ./gradlew -PdockerComposePath="$HOME/bin/docker-compose" postgresIntegTest
+  - ./tavis_gradle_build.sh
