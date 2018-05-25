@@ -40,9 +40,8 @@ before_install:
   # wait for postgresql to shutdown
   - while sudo lsof -Pi :5432 -sTCP:LISTEN -t; do sleep 1; done
   - sudo $HOME/bin/docker-compose --version
-  - ./gradlew downloadDependencies
+  - ./gradlew downloadDependencies > /dev/null
 
 script:
-  - ./gradlew -PdockerComposePath="$HOME/bin/docker-compose" build
-  - ./gradlew -PdockerComposePath="$HOME/bin/docker-compose" -i acceptTest
-  - ./gradlew -PdockerComposePath="$HOME/bin/docker-compose" -i postgresIntegTest
+  - ./gradlew -PdockerComposePath="$HOME/bin/docker-compose" acceptTest > /dev/null
+  - ./gradlew -PdockerComposePath="$HOME/bin/docker-compose" postgresIntegTest
