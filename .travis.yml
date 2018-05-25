@@ -43,4 +43,4 @@ before_install:
   - ./gradlew downloadDependencies > /dev/null
 
 script:
-  - ./tavis_gradle_build.sh
+  - ./travis_gradle_build.sh
