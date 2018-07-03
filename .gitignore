@@ -1,11 +1,24 @@
-.nb-gradle/*
-build/*
-docker-cogstack/**/*.jar
-libs/*
-private/*
-nbproject/*
-.nb-gradle-properties
-.idea/*
+# logs
 cogstack*log
 logs/*
+
+# Intellij
+.idea/
+out/
+*.iml
+*.iws
+
+# Mac
+.DS_Store
+
+# Maven
+log/
+
+# Gradle
+.gradle/
+.gradletasknamecache
+
+# Build
+/build/
+
 .htpasswd

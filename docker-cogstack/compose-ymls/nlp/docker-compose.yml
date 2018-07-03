@@ -1,7 +1,7 @@
 version: '2.1'
 services:
   postgres:
-    image: richjackson/postgres
+    image: cogstacksystems/postgres:latest
     ports:
       - 5432:5432
     networks:
@@ -34,6 +34,7 @@ services:
     networks:
       - esnet
   bioyodie:
+    build: ../../bioyodie
     cpu_quota: 800000
     image: richjackson/bioyodie:D4.5
     ports:

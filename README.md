@@ -56,15 +56,7 @@ sudo sysctl -w vm.max_map_count=262144
 ```
 
 
-Now you need to build the required docker containers. Fortunately, the gradle build file can do this for you.
-
-From the CogStack top level directory:
-
-```
-gradlew buildSimpleContainers
-```
-
-Assuming the containers have been built successfully, simply navigate to
+Now simply navigate to
 ```
 cd docker-cogstack/compose-ymls/simple/
 ```
@@ -74,7 +66,7 @@ And type
 ```
 docker-compose up
 ```
-
+This will build/pull all the required containers and then run them.
 All of the docker containers should be up and communicating with each other. You can view their status with
 ```
 docker ps -a
@@ -185,10 +177,10 @@ To run the integration tests, ensure the required external services are availabl
 From the CogStack top level directory:
 
 ```
-  gradlew buildAllContainers
+  gradlew -Dorg.gradle.project.profile=run buildAllContainers
 ```
 
-
+Alternatively you can start up the containers using docker-compose as stated in the quickstart section.
 
 Note, Biolark and Bioyodie are external applications. Building their containers (and subsequently running their integration tests) may require you to
   meet their licencing conditions. Please check with [Tudor Groza](t.groza@garvan.org.au) (Biolark) and [Angus Roberts](angus.roberts@sheffield.ac.uk)/[Genevieve Gorrell](g.gorrell@sheffield.ac.uk) if in doubt.

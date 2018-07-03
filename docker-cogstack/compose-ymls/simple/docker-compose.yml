@@ -1,13 +1,13 @@
 version: '2'
 services:
   postgres:
-    image: cogstack.systems/postgres
+    image: cogstacksystems/postgres:latest
     ports:
       - 5432:5432
     networks:
       - esnet
   cogstack:
-    image: cogstack.systems/cogstack:1.2.0
+    image: cogstacksystems/cogstack-pipeline:latest
     environment:
       - LOG_LEVEL=info
       - FILE_LOG_LEVEL=off

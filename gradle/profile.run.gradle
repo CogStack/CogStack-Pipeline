@@ -1,0 +1,4 @@
+// Use this profile if you want to manually build and run the containers instead of using docker-compose files. This is deprecated and will be removed in future builds
+
+apply from: 'gradle/buildcontainer.gradle'
+apply from: 'gradle/runcontainer.gradle'

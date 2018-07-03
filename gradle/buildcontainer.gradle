@@ -1,0 +1,44 @@
+// Deprecated. To be removed
+
+task buildCogstackContainer(type: Exec){
+    workingDir '../'
+    commandLine 'docker', 'build', '-t', 'cogstack.systems/cogstack:'+jar.version, '.'
+}
+
+task buildKibanaContainer(type: Exec){
+    commandLine 'docker', 'pull' ,'docker.elastic.co/kibana/kibana:5.4.2'
+}
+
+task buildPostgresContainer(type: Exec) {
+    workingDir '../docker-cogstack/postgres'
+    commandLine 'docker', 'build', '-t', 'cogstack.systems/postgres', '.'
+}
+
+task buildBiolarkContainer (type: Exec){
+    workingDir '../docker-cogstack/biolark'
+    commandLine 'docker', 'build', '-t', 'cogstack.systems/biolark', '.'
+}
+
+task buildBioyodieContainer (type: Exec){
+    workingDir '../docker-cogstack/bioyodie'
+    commandLine 'docker', 'build', '-t', 'cogstack.systems/bioyodie:D4.5', '.'
+}
+
+task buildSimpleContainers {
+    doLast{
+        tasks.buildPostgresContainer.execute()
+        tasks.buildElasticsearchContainer.execute()
+        tasks.buildKibanaContainer.execute()
+        tasks.buildCogstackContainer.execute()
+    }
+}
+
+task buildAllContainers {
+    doLast{
+        tasks.buildPostgresContainer.execute()
+        tasks.buildElasticsearchContainer.execute()
+        tasks.buildKibanaContainer.execute()
+        tasks.buildCogstackContainer.execute()
+        tasks.buildBioyodieContainer.execute()
+    }
+}

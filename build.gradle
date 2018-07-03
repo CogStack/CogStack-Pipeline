@@ -1,539 +1,172 @@
-buildscript {
-	    repositories {
-		mavenCentral()
-	    }
-	    dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.1.RELEASE")
-	    }
+plugins {
+	// Apply the java plugin to add support for Java
+	id 'java'
+	id 'groovy'
+	id 'idea'
+	id 'org.springframework.boot' version "1.5.1.RELEASE"
+}
+
+repositories {
+	mavenCentral()
+	//needed for locally installed jdbc4 from microsoft
+	mavenLocal()
+	maven { url "https://artifacts.elastic.co/maven" }
+	maven { url "https://maven.elasticsearch.org/releases" }
+}
+
+version '1.2.0'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+sourceSets {
+	main {
+		java { srcDirs = [] }
+		groovy {
+			srcDirs = ['src/main/java', 'src/main/groovy']
+		}
+		resources {
+			srcDir 'src/main/resources'
+		}
+
 	}
-	apply plugin: 'groovy'
-	apply plugin: 'java'
-	apply plugin: 'idea'
-	apply plugin: 'org.springframework.boot'
-
-	sourceSets {
-	    main {
+	test {
 		java { srcDirs = [] }
 		groovy {
-		    srcDirs = ['src/main/java', 'src/main/groovy']
+			srcDirs = ["src/test/java"]
 		}
 		resources {
-		    srcDir 'src/main/resources'
+			srcDirs = ['src/test/resources']
 		}
 
-	    }
-	    test {
+	}
+	integTest {
 		java { srcDirs = [] }
 		groovy {
-		    srcDirs = ["src/test/java"]
+			srcDirs = ["src/integration-test/java"]
 		}
 		resources {
-		    srcDirs = ['src/test/resources']
-		}
-
-	    }
-	    integTest {
-		java { srcDirs = [] }
-		groovy {
-		    srcDirs = ["src/integration-test/java"]
-		}
-		resources {
-		    srcDirs = ['src/integration-test/resources']
+			srcDirs = ['src/integration-test/resources']
 		}
 		compileClasspath += sourceSets.main.output + sourceSets.test.output + configurations.testRuntime
 		runtimeClasspath += sourceSets.main.output + sourceSets.test.output + configurations.testRuntime
-	    }
-	    acceptTest {
+	}
+	acceptTest {
 		java { srcDirs = [] }
 		groovy {
-		    srcDirs = ["src/acceptance-test/java"]
+			srcDirs = ["src/acceptance-test/java"]
 		}
 		resources {
-		    srcDirs = ['src/acceptance-test/resources']
+			srcDirs = ['src/acceptance-test/resources']
 		}
 		compileClasspath += sourceSets.main.output + sourceSets.test.output + sourceSets.integTest.output + configurations.testRuntime
 		runtimeClasspath += sourceSets.main.output + sourceSets.test.output + sourceSets.integTest.output + configurations.testRuntime
-	    }
 	}
+}
 
 
+if (!hasProperty('mainClass')) {
+	ext.mainClass = 'uk.ac.kcl.Main'
+}
 
-	test {
-	    // enable TestNG support (default is JUnit)
-	    //useTestNG()
+jar {
+	baseName = 'cogstack'
+}
 
-	    // set a system property for the test JVM(s)
-	    //systemProperty 'some.prop', 'value'
-
-	    // explicitly include or exclude tests
-	    //include 'org/foo/**'
-	    //exclude 'org/boo/**'
-
-	    // show standard out and standard error of the test JVM(s) on the console
-	    //testLogging.showStandardStreams = true
-
-	    // set heap size for the test JVM(s)
-	    minHeapSize = "1G"
-	    maxHeapSize = "1G"
-
-	    // set JVM arguments for the test JVM(s)
-	    //jvmArgs '-XX:MaxPermSize=256m'
-
-	    // listen to events in the test execution lifecycle
-	    beforeTest { descriptor ->
-		logger.lifecycle("Running test: " + descriptor)
-	    }
-
-	    // listen to standard out and standard error of the test JVM(s)
-	//    onOutput { descriptor, event ->
-	//        logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message)
-	//    }
+idea {
+	module {
+		downloadSources = true
 	}
-
-	task postgresIntegTest(type: Test) {
-	    testClassesDir = new File(sourceSets.integTest.output.classesDir.absolutePath
-		    +'/uk/ac/kcl/it/postgres')
-	    print testClassesDir.absolutePath
-	    classpath = sourceSets.integTest.runtimeClasspath
-	    print classpath
-
-	    beforeTest { descriptor ->
-		logger.lifecycle("Running test: " + descriptor)
-	    }
-
-	    // listen to standard out and standard error of the test JVM(s)
-	    onOutput { descriptor, event ->
-		logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message)
-	    }
-
-	}
-
-	task sqlServerIntegTest(type: Test) {
-	    testClassesDir = new File(sourceSets.integTest.output.classesDir.absolutePath
-		    +'/uk/ac/kcl/it/sqlserver')
-	    print testClassesDir.absolutePath
-	    classpath = sourceSets.integTest.runtimeClasspath
-	    print classpath
-
-	    beforeTest { descriptor ->
-		logger.lifecycle("Running test: " + descriptor)
-	    }
-
-	    // listen to standard out and standard error of the test JVM(s)
-	    onOutput { descriptor, event ->
-		logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message)
-	    }
-
-	}
-
-	task acceptTest(type: Test) {
-	    testClassesDir = new File(sourceSets.acceptTest.output.classesDir.absolutePath
-		    +'/uk/ac/kcl/at')
-	    print testClassesDir.absolutePath
-	    classpath = sourceSets.acceptTest.runtimeClasspath
-	    print classpath
-
-	    beforeTest { descriptor ->
-		logger.lifecycle("Running test: " + descriptor)
-	    }
-
-	    // listen to standard out and standard error of the test JVM(s)
-	    onOutput { descriptor, event ->
-		logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message)
-	    }
-
-	    beforeTest { descriptor ->
-		logger.lifecycle("Running test: " + descriptor)
-	    }
-
-	    // listen to standard out and standard error of the test JVM(s)
-	    onOutput { descriptor, event ->
-		logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message)
-	    }
-	}
+}
 
 
-	jar {
-	    baseName = 'cogstack'
-	    version = '1.2.0'
-	}
+dependencies {
+	//logging
+	compile 'org.slf4j:slf4j-api:1.7.21'
+	compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.7'
 
-	if (!hasProperty('mainClass')) {
-	    //ext.mainClass = 'org.springframework.batch.core.launch.support.CommandLineJobRunner'
-	    ext.mainClass = 'uk.ac.kcl.Main'
-	}
-	repositories {
-	    mavenCentral()
-	    //needed for locally installed jdbc4 from microsoft
-	    mavenLocal()
-	    maven {
-		url "https://artifacts.elastic.co/maven"
-	    }
-	    maven {
-		url "https://maven.elasticsearch.org/releases"
-	    }
-	}
+	compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.8.2'
+	compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.8.2'
 
-	sourceCompatibility = 1.8
-	targetCompatibility = 1.8
+	//misc
+	compile 'joda-time:joda-time:2.9.3'
+	compile group: 'com.google.code.gson', name: 'gson', version: '2.6.2'
+	compile 'commons-io:commons-io:2.4'
 
-	dependencies {
-	    //logging
-	    compile 'org.slf4j:slf4j-api:1.7.21'
-	    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.7'
-
-	    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.8.2'
-	    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.8.2'
-
-	    //misc
-	    compile 'joda-time:joda-time:2.9.3'
-	    compile group: 'com.google.code.gson', name: 'gson', version: '2.6.2'
-	    compile 'commons-io:commons-io:2.4'
-
-	    //elasticsearch java api and apache asynch client
-	    compile group: 'org.elasticsearch.client', name: 'rest', version: '6.0.0-alpha1'
-	    compile group: 'org.apache.httpcomponents', name: 'httpasyncclient', version: '4.1.3'
+	//elasticsearch java api and apache asynch client
+	compile group: 'org.elasticsearch.client', name: 'rest', version: '6.0.0-alpha1'
+	compile group: 'org.apache.httpcomponents', name: 'httpasyncclient', version: '4.1.3'
 	//    compile "org.elasticsearch.client:x-pack-transport:5.4.2"
 
-	    //depreciated
-	    // compile "org.elasticsearch.plugin:shield:2.3.3"
-	    compile 'org.elasticsearch.client:x-pack-transport:6.0.0'
-	    compile 'org.elasticsearch:elasticsearch:6.0.0'
+	//depreciated
+	// compile "org.elasticsearch.plugin:shield:2.3.3"
+	compile 'org.elasticsearch.client:x-pack-transport:6.0.0'
+	compile 'org.elasticsearch:elasticsearch:6.0.0'
 
-	    //dbms drivers
-	    compile("org.hsqldb:hsqldb")
-	    compile 'org.hsqldb:hsqldb:2.3.3'
-	    compile group: 'com.microsoft.sqlserver', name: 'mssql-jdbc', version: '6.1.0.jre8'
-	    compile 'net.sourceforge.jtds:jtds:1.3.1'
-	    compile group: 'mysql', name: 'mysql-connector-java', version: '3.1.14'
-	    compile 'org.postgresql:postgresql:9.4-1205-jdbc42'
+	//dbms drivers
+	compile("org.hsqldb:hsqldb")
+	compile 'org.hsqldb:hsqldb:2.3.3'
+	compile group: 'com.microsoft.sqlserver', name: 'mssql-jdbc', version: '6.1.0.jre8'
+	compile 'net.sourceforge.jtds:jtds:1.3.1'
+	compile group: 'mysql', name: 'mysql-connector-java', version: '3.1.14'
+	compile 'org.postgresql:postgresql:9.4-1205-jdbc42'
 
-	    //connection pool
-	    compile group: 'com.zaxxer', name: 'HikariCP', version: '2.4.6'
-
-
-	    //spring framework
-	    compile("org.springframework.boot:spring-boot-starter-batch")
-	    compile('org.springframework.batch:spring-batch-core:3.0.7.RELEASE')
-	    compile('org.springframework.batch:spring-batch-integration:3.0.7.RELEASE')
-	    compile('org.springframework:spring-web:4.3.6.RELEASE')
-	    compile('org.springframework:spring-core:4.3.6.RELEASE')
-	    compile('org.springframework:spring-test:4.3.6.RELEASE')
-	    compile('org.springframework:spring-jdbc:4.3.6.RELEASE')
-	    compile('org.springframework:spring-context:4.3.6.RELEASE')
-	    compile('org.springframework:spring-jms:4.3.6.RELEASE')
-	    compile('org.springframework.integration:spring-integration-core:4.3.6.RELEASE')
-	    compile('org.springframework.integration:spring-integration-jms:4.3.6.RELEASE')
+	//connection pool
+	compile group: 'com.zaxxer', name: 'HikariCP', version: '2.4.6'
 
 
-	    compile 'org.springframework.integration:spring-integration-java-dsl:1.1.2.RELEASE'
-	    compile 'org.apache.activemq:activemq-core:5.7.0'
-	    compile 'org.apache.activemq:activemq-spring:5.13.0'
+	//spring framework
+	compile("org.springframework.boot:spring-boot-starter-batch")
+	compile('org.springframework.batch:spring-batch-core:3.0.7.RELEASE')
+	compile('org.springframework.batch:spring-batch-integration:3.0.7.RELEASE')
+	compile('org.springframework:spring-web:4.3.6.RELEASE')
+	compile('org.springframework:spring-core:4.3.6.RELEASE')
+	compile('org.springframework:spring-test:4.3.6.RELEASE')
+	compile('org.springframework:spring-jdbc:4.3.6.RELEASE')
+	compile('org.springframework:spring-context:4.3.6.RELEASE')
+	compile('org.springframework:spring-jms:4.3.6.RELEASE')
+	compile('org.springframework.integration:spring-integration-core:4.3.6.RELEASE')
+	compile('org.springframework.integration:spring-integration-jms:4.3.6.RELEASE')
 
 
-	    //nlp
-	    compile group: 'org.apache.commons', name: 'commons-collections4', version: '4.1'
-	    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
-	    compile 'org.codehaus.groovy:groovy-all:2.4.4'
-	    compile 'uk.ac.gate:gate-core:8.1'
-	    compile 'xml-apis:xml-apis:1.4.01'
-	    compile 'org.apache.tika:tika-core:1.15'
-	    compile('org.apache.tika:tika-parsers:1.15') {
+	compile 'org.springframework.integration:spring-integration-java-dsl:1.1.2.RELEASE'
+	compile 'org.apache.activemq:activemq-core:5.7.0'
+	compile 'org.apache.activemq:activemq-spring:5.13.0'
+
+
+	//nlp
+	compile group: 'org.apache.commons', name: 'commons-collections4', version: '4.1'
+	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
+	compile 'org.codehaus.groovy:groovy-all:2.4.4'
+	compile 'uk.ac.gate:gate-core:8.1'
+	compile 'xml-apis:xml-apis:1.4.01'
+	compile 'org.apache.tika:tika-core:1.15'
+	compile('org.apache.tika:tika-parsers:1.15') {
 		exclude group: 'commons-logging', module: 'commons-logging' //by both name and group
-	    }
-
-	    compile group: 'org.apache.ws.commons.util', name: 'ws-commons-util', version: '1.0.2'
-	    //test
-	//    testCompile("junit:junit")
-	    testCompile('org.mockito:mockito-all:1.10.19');
-	    testCompile group: 'de.sven-jacobs', name: 'loremipsum', version: '1.0'
 	}
 
-	task wrapper(type: Wrapper) {
-	    gradleVersion = '2.3'
-	}
+	compile group: 'org.apache.ws.commons.util', name: 'ws-commons-util', version: '1.0.2'
 
-	allprojects {
-	    gradle.projectsEvaluated {
+	//tests
+	testCompile('org.mockito:mockito-all:1.10.19')
+	testCompile group: 'de.sven-jacobs', name: 'loremipsum', version: '1.0'
+
+}
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '4.4'
+	distributionType 'all'
+}
+
+allprojects {
+	gradle.projectsEvaluated {
 		tasks.withType(JavaCompile) {
-		    options.compilerArgs << "-Xlint:unchecked"
+			options.compilerArgs << "-Xlint:unchecked"
 		}
-	    }
 	}
-
-
-	task buildCogstackContainer(type: Exec){
-	    workingDir 'docker-cogstack/cogstack'
-	    commandLine 'docker', 'build', '-t', 'cogstack.systems/cogstack:'+jar.version, '.'
-	}
-
-	task runCogstackContainer(type: Exec){
-	    commandLine 'docker', 'run',  '--name', 'some-cogstack', '-d', 'cogstack.systems/cogstack:'+jar.version
-	}
-
-	task buildPostgresContainer(type: Exec) {
-		workingDir 'docker-cogstack/postgres'
-		commandLine 'docker', 'build', '-t', 'cogstack.systems/postgres', '.'
-	}
-	task runPostgresContainer(type: Exec){
-		commandLine 'docker', 'run', '-p', '5432:5432', '--name', 'some-postgres', '-d', 'cogstack.systems/postgres'
-	}
-
-	task buildElasticsearchContainer(type: Exec){
-		commandLine 'docker', 'pull', 'docker.elastic.co/elasticsearch/elasticsearch:6.0.0'
-	}
-
-	task runElasticsearchContainer(type: Exec){
-	    commandLine 'docker', 'run', '-p', '9200:9200', '-p', '9300:9300', '--name', 'some-elastic', '-d',
-		    '-e', 'http.host=0.0.0.0' ,'-e', 'transport.host=127.0.0.1' ,
-	    'docker.elastic.co/elasticsearch/elasticsearch:6.0.0'
-	}
-	task buildKibanaContainer(type: Exec){
-	    commandLine 'docker', 'pull' ,'docker.elastic.co/kibana/kibana:5.4.2'
-	}
-	task runKibanaContainer(type: Exec){
-	    commandLine 'docker', 'run', '--link', 'some-elastic:elasticsearch ', '-p', '5601:5601', '--name', 'some-kibana', '-d',
-		    'docker.elastic.co/kibana/kibana:5.4.2'
-	}
-
-	task buildBiolarkContainer (type: Exec){
-		workingDir 'docker-cogstack/biolark'
-		commandLine 'docker', 'build', '-t', 'cogstack.systems/biolark', '.'
-	}
-
-	task runBiolarkContainer (type: Exec){
-		commandLine 'docker', 'run', '-p', '5555:5555', '--name', 'some-biolark', '-d', 'cogstack.systems/biolark'
-	}
-
-	task buildBioyodieContainer (type: Exec){
-		workingDir 'docker-cogstack/bioyodie'
-		commandLine 'docker', 'build', '-t', 'cogstack.systems/bioyodie:D4.5', '.'
-	}
-	task runBioyodieContainer (type: Exec){
-		commandLine 'docker', 'run', '-p', '8080:8080', '--name', 'some-bioyodie', '-d', 'cogstack.systems/bioyodie:D4.5'
 }
 
-task buildSimpleContainers {
-    doLast{
-        tasks.buildPostgresContainer.execute()
-        tasks.buildElasticsearchContainer.execute()
-        tasks.buildKibanaContainer.execute()
-        tasks.copyFilesToDockerDir.execute()
-        tasks.buildCogstackContainer.execute()
-    }
+if (!hasProperty('profile')) {
+	ext.profile = 'dev'
 }
 
-task buildAllContainers {
-    doLast{
-        tasks.buildPostgresContainer.execute()
-        tasks.buildElasticsearchContainer.execute()
-        tasks.buildKibanaContainer.execute()
-        tasks.buildBioyodieContainer.execute()
-        tasks.copyFilesToDockerDir.execute()
-        tasks.buildCogstackContainer.execute()
-    }
-}
-
-task runAllContainers {
-    doLast {
-//    tasks.runBiolarkContainer.execute()
-        tasks.runBioyodieContainer.execute()
-        tasks.runElasticsearchContainer.execute()
-        tasks.runKibanaContainer.execute()
-        tasks.runPostgresContainer.execute()
-    }
-}
-
-task startAllContainers (type: Exec){
-    doLast {
-        commandLine 'docker', 'start', 'some-postgres', 'some-bioyodie', 'some-elastic', 'some-kibana'
-    }
-}
-
-
-task writeExampleConfigs {
-    //ItemProcessors
-    String deidentification = new File("src/integration-test/resources/deidentification.properties").text
-    //moved to acceptance test
-    // String elasticgazetteer = new File("src/integration-test/resources/elasticgazetteer_test.properties").text
-    String tika = new File("src/integration-test/resources/tika_db.properties").text
-    String gate = new File("src/integration-test/resources/gate.properties").text
-    String reindex = new File("src/integration-test/resources/reindex.properties").text
-
-    String bioyodie = new File("src/integration-test/resources/bioyodie_webservice.properties").text
-
-    //Database connectivity
-    String postgres_db = new File("src/integration-test/resources/postgres_db.properties").text
-    String sql_server_db = new File("src/integration-test/resources/sql_server_db.properties").text
-
-    //ItemWriters
-    String elasticsearch = new File("src/integration-test/resources/elasticsearch.properties").text
-
-    //Job and Step
-    String jobAndStep = new File("src/integration-test/resources/jobAndStep.properties").text
-
-    //JMS
-    String jms = new File("src/integration-test/resources/jms.properties").text
-
-    //configured start
-    String configuredStart = new File("src/integration-test/resources/configured_start.properties").text
-
-    //Scheduling
-    String scheduling = new File("src/integration-test/resources/scheduling.properties").text
-
-    new File("exampleConfigs").mkdir()
-    def gateExample = new File("exampleConfigs/gateJob.properties")
-    gateExample.withWriter("UTF-8") { writer ->
-        writer.write("# EXAMPLE CONFIG FOR gateJob \n" +
-                elasticsearch
-                + "\n" + gate
-                + "\n" + jms
-                + "\n" + jobAndStep
-                + "\n" + sql_server_db
-                + "\n" + scheduling
-                + "\nspring.profiles.active=gate,localPartitioning,jdbc_in,elasticsearch,primaryKeyAndTimeStampPartition"
-
-        )
-    }
-    def tikaExample = new File("exampleConfigs/tikaJob.properties")
-    tikaExample.withWriter("UTF-8") { writer ->
-        writer.write("# EXAMPLE CONFIG FOR tikaJob \n" +
-                elasticsearch
-                + "\n" + tika
-                + "\n" + jms
-                + "\n" + jobAndStep
-                + "\n" + sql_server_db
-                + "\n" + scheduling
-                + "\nspring.profiles.active=tika,localPartitioning,jdbc_in,elasticsearch,primaryKeyAndTimeStampPartition"
-        )
-    }
-    def basicExample = new File("exampleConfigs/basicJob.properties")
-    basicExample.withWriter("UTF-8") { writer ->
-        writer.write("# EXAMPLE CONFIG FOR basicJob \n" +
-                elasticsearch
-                + "\n" + jms
-                + "\n" + jobAndStep
-                + "\n" + sql_server_db
-                + "\n" + scheduling
-                + "\nspring.profiles.active=basic,localPartitioning,jdbc_in,elasticsearch,primaryKeyAndTimeStampPartition"
-        )
-    }
-    def biolarkExample = new File("exampleConfigs/bioyodieJob.properties")
-    biolarkExample.withWriter("UTF-8") { writer ->
-        writer.write("# EXAMPLE CONFIG FOR biolark Job \n" +
-                elasticsearch
-                + "\n" + bioyodie
-                + "\n" + jms
-                + "\n" + jobAndStep
-                + "\n" + sql_server_db
-                + "\n" + scheduling
-                + "\nspring.profiles.active=bioyodie,localPartitioning,jdbc_in,elasticsearch,primaryKeyAndTimeStampPartition"
-        )
-    }
-    def reindexExample = new File("exampleConfigs/reindexJob.properties")
-    reindexExample.withWriter("UTF-8") { writer ->
-        writer.write("# EXAMPLE CONFIG FOR reindex Job \n" +
-                elasticsearch
-                + "\n" + reindex
-                + "\n" + jms
-                + "\n" + jobAndStep
-                + "\n" + sql_server_db
-                + "\n" + scheduling
-                + "\nspring.profiles.active=basic,localPartitioning,jdbc_in,elasticsearch,primaryKeyAndTimeStampPartition"
-        )
-    }
-    def basicExample2 = new File("exampleConfigs/basicJob2.properties")
-    basicExample2.withWriter("UTF-8") { writer ->
-        writer.write("# EXAMPLE CONFIG FOR basicJob with timestamp based processing, configured start date and scheduling on \n" +
-                elasticsearch
-                + "\n" + scheduling
-                + "\n" + configuredStart
-                + "\n" + jms
-                + "\n" + jobAndStep
-                + "\n" + sql_server_db
-                + "\n" + scheduling
-                + "\nspring.profiles.active=basic,localPartitioning,jdbc_in,elasticsearch,primaryKeyAndTimeStampPartition"
-        )
-    }
-
-    def dBLineFixerExample = new File("exampleConfigs/dBLineFixerJob.properties")
-    dBLineFixerExample.withWriter("UTF-8") { writer ->
-        writer.write("# EXAMPLE CONFIG FOR dBLineFixerJob \n" +
-                elasticsearch
-                + "\n" + jms
-                + "\n" + elasticsearch
-                + "\n" + jobAndStep
-                + "\n" + sql_server_db
-                + "\n" + scheduling
-                + "\nspring.profiles.active=dBLineFixer,localPartitioning,jdbc_in,elasticsearch,primaryKeyAndTimeStampPartition"
-        )
-    }
-
-    def deidentificationExample = new File("exampleConfigs/deidJob.properties")
-    deidentificationExample.withWriter("UTF-8") { writer ->
-        writer.write("# EXAMPLE CONFIG FOR deidentification Job \n" +
-                elasticsearch
-                + "\n" + deidentification
-                + "\n" + jms
-                + "\n" + jobAndStep
-                + "\n" + sql_server_db
-                + "\n" + scheduling
-                + "\nspring.profiles.active=deid,localPartitioning,jdbc_in,elasticsearch,primaryKeyAndTimeStampPartition"
-        )
-    }
-
-    def fullPipeline = new File("exampleConfigs/fullPipelineJob.properties")
-    fullPipeline.withWriter("UTF-8") { writer ->
-        writer.write("# EXAMPLE CONFIG FOR deidentification Job \n" +
-                elasticsearch
-                + "\n" + deidentification
-                + "\n" + bioyodie
-                + "\n" + jms
-                + "\n" + jobAndStep
-                + "\n" + postgres_db
-                + "\n" + scheduling
-                + "\nspring.profiles.active=deid,bioyodie,localPartitioning,jdbc_in,elasticsearch,primaryKeyAndTimeStampPartition"
-        )
-    }
-
-    def writeExecuteScript = new File("docker-cogstack/cogstack/test.sh")
-    writeExecuteScript.withWriter ("UTF-8"){ writer ->
-        writer.write(
-        "#!/bin/bash\n" +
-        "\n" +
-        "./wait-for-it.sh \"postgres:5432\" \"--timeout=0\"\n" +
-                "./wait-for-it.sh \"elasticsearch:9200\" \"--timeout=0\"\n" +
-        "\n" +
-        "\n" +
-        "java -DLOG_FILE_NAME=\$LOG_FILE_NAME -DLOG_LEVEL=\$LOG_LEVEL -DFILE_LOG_LEVEL=\$FILE_LOG_LEVEL -jar /usr/src/cogstack-"
-                +jar.version +".jar /usr/src/cogstack_conf"
-        )
-    }
-
-    def exampleComposeConfig = new File("docker-cogstack/cogstack/cogstack_conf/example.properties")
-    exampleComposeConfig.withWriter ("UTF-8") { writer ->
-        writer.write(
-                elasticsearch
-                        + "\n" + jobAndStep
-                        + "\n" + postgres_db
-                        + "\n" + scheduling
-                        + "\nspring.profiles.active=localPartitioning,jdbc_in,elasticsearchRest,postgres"
-        )
-    }
-    def ant = getAnt()
-    ant.replace(file: exampleComposeConfig.canonicalPath, token: "localhost:8080", value: "bioyodie:8080")
-    ant.replace(file: exampleComposeConfig.canonicalPath, token: "localhost:5432", value: "postgres:5432")
-    ant.replace(file: exampleComposeConfig.canonicalPath, token: "elasticsearch.cluster.host =  localhost",
-            value: "elasticsearch.cluster.host =  elasticsearch")
-}
-task copyJarToDocker(type: Copy) {
-    from 'build/libs/cogstack-'+jar.version+'.jar'
-    into 'docker-cogstack/cogstack/'
-}
-
-task copyFilesToDockerDir {
-    doLast {
-        tasks.writeExampleConfigs.execute()
-        tasks.copyJarToDocker.execute()
-    }
-}
+apply from: "gradle/profile.${profile}.gradle"
