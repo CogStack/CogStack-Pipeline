@@ -198,7 +198,8 @@ public class JobConfiguration {
         mainDatasource.setPassword(sourcePassword);
         mainDatasource.setIdleTimeout(sourceIdleTimeout);
         mainDatasource.setMaxLifetime(sourceMaxLifeTime);
-        if (Arrays.asList(this.env.getActiveProfiles()).contains("docman")){
+        // show tables query does not work with post gres
+        if (Arrays.asList(this.env.getActiveProfiles()).contains("docman") && ! Arrays.asList(this.env.getActiveProfiles()).contains("postgres")){
             mainDatasource.setConnectionTestQuery("show tables");
         }
         if (sourcePoolSize > 0){

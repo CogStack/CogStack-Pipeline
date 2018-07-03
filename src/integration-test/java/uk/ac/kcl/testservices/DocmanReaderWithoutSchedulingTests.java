@@ -15,7 +15,11 @@
  */
 package uk.ac.kcl.testservices;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.apache.log4j.Logger;
+import org.apache.tika.Tika;
+import org.apache.tika.exception.TikaException;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +30,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
 import uk.ac.kcl.utils.DbmsTestUtils;
 import uk.ac.kcl.utils.TestUtils;
+
+import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -63,10 +69,28 @@ public class DocmanReaderWithoutSchedulingTests {
         assertEquals(2,dbmsTestUtils.countRowsInOutputTable());
 
         String testString = testUtils.getStringInEsDoc("1");
+        JsonObject json = new JsonParser().parse(testString).getAsJsonObject();
+        String docStringPath1 = json.get("_source").getAsJsonObject().get("path").getAsString();
 
-        assertTrue(testString
+        testString = testUtils.getStringInEsDoc("2");
+        json = new JsonParser().parse(testString).getAsJsonObject();
+        String docStringPath2 = json.get("_source").getAsJsonObject().get("path").getAsString();
+
+        Tika tika = new Tika();
+
+        String doc1 = null;
+        String doc2 = null;
+        try {
+            doc1 = tika.parseToString(getClass().getClassLoader().getResourceAsStream(docStringPath1));
+            doc2 = tika.parseToString(getClass().getClassLoader().getResourceAsStream(docStringPath2));
+        } catch (TikaException | IOException e) {
+            logger.error("Cannot read the document at the specified path");
+            e.printStackTrace();
+        }
+
+        assertTrue(doc1
                 .contains("The patient’s name is Bart Davidson"));
-        assertTrue(testUtils.getStringInEsDoc("2")
+        assertTrue(doc2
                 .contains("The patient’s name is David Harleyson"));
 
     }

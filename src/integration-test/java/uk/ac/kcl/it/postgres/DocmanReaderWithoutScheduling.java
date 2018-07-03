@@ -73,6 +73,4 @@ public class DocmanReaderWithoutScheduling {
         docmanReaderWithoutSchedulingTests.docmanReaderTest();
     }
 
-
-
 }

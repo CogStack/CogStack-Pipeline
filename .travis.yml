@@ -1,7 +1,13 @@
 language: java
 jdk:
   - oraclejdk8
-sudo: false
+sudo: required
+
+services:
+  - docker
+
+env:
+  DOCKER_COMPOSE_VERSION: 1.14.0
 
 addons:
   apt:
@@ -23,7 +29,18 @@ cache:
     - $HOME/.gradle/wrapper/
 
 before_install:
-  - ./gradlew downloadDependencies
+  - docker --version
+  - mkdir -p "$HOME/bin";
+  - export PATH="$HOME/bin:$PATH";
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > "$HOME/bin/docker-compose";
+  - chmod +x "$HOME/bin/docker-compose";
+  - echo manual | sudo tee /etc/init/postgresql.override
+  # Stop postgresql. Related to this issue - https://github.com/travis-ci/travis-ci/issues/4842
+  - sudo service postgresql stop
+  # wait for postgresql to shutdown
+  - while sudo lsof -Pi :5432 -sTCP:LISTEN -t; do sleep 1; done
+  - sudo $HOME/bin/docker-compose --version
+  - ./gradlew downloadDependencies > /dev/null
 
 script:
-  - ./gradlew build
+  - ./travis_gradle_build.sh

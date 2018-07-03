@@ -29,38 +29,6 @@ sourceSets {
 		}
 
 	}
-	test {
-		java { srcDirs = [] }
-		groovy {
-			srcDirs = ["src/test/java"]
-		}
-		resources {
-			srcDirs = ['src/test/resources']
-		}
-
-	}
-	integTest {
-		java { srcDirs = [] }
-		groovy {
-			srcDirs = ["src/integration-test/java"]
-		}
-		resources {
-			srcDirs = ['src/integration-test/resources']
-		}
-		compileClasspath += sourceSets.main.output + sourceSets.test.output + configurations.testRuntime
-		runtimeClasspath += sourceSets.main.output + sourceSets.test.output + configurations.testRuntime
-	}
-	acceptTest {
-		java { srcDirs = [] }
-		groovy {
-			srcDirs = ["src/acceptance-test/java"]
-		}
-		resources {
-			srcDirs = ['src/acceptance-test/resources']
-		}
-		compileClasspath += sourceSets.main.output + sourceSets.test.output + sourceSets.integTest.output + configurations.testRuntime
-		runtimeClasspath += sourceSets.main.output + sourceSets.test.output + sourceSets.integTest.output + configurations.testRuntime
-	}
 }
 
 

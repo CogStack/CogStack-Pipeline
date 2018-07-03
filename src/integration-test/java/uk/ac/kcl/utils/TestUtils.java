@@ -356,10 +356,13 @@ public class TestUtils  {
     public void insertFreshDataIntoBasicTableAfterDelay(String tablename,long delay,int start,int end, boolean sameDay) {
         try {
             Thread.sleep(delay);
+            esRestService.init();
             System.out.println("********************* INSERTING FRESH DATA*******************");
             insertDataIntoBasicTable(tablename,true,start,end,sameDay);
             Thread.sleep(delay);
         } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -499,6 +502,7 @@ public class TestUtils  {
 
     public int countOutputDocsInES(){
         try {
+            esRestService.init();
            Response response = esRestService.getRestClient().performRequest(
                     "GET",
                     "/"+env.getProperty("elasticsearch.index.name")+"/"
@@ -510,6 +514,8 @@ public class TestUtils  {
             return  json.getInt("count");
         } catch (IOException e) {
             throw new RuntimeException("GET request failed:", e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

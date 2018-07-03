@@ -1,0 +1,52 @@
+version: '2'
+services:
+  postgres:
+    image: cogstacksystems/postgres:latest
+    command: "-c 'shared_buffers=256MB' -c 'max_connections=1000'"
+    ports:
+      - 5432:5432
+    networks:
+      - esnet
+  kibana:
+    image: docker.elastic.co/kibana/kibana:5.4.2
+    environment:
+        ELASTICSEARCH_URL: http://elasticsearch:9200
+    ports:
+      - 5601:5601
+    networks:
+      - esnet
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.4.2
+    environment:
+      - cluster.name=elasticsearch
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - http.port=9200
+      - http.publish_port=9300
+      - transport.host=localhost
+      - transport.tcp.port=9300
+      - network.host=0.0.0.0
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - 9200:9200
+      - 9300:9300
+    networks:
+      - esnet
+
+  bioyodie:
+      build: ../../../../docker-cogstack/bioyodie
+      cpu_quota: 800000
+      image: cogstacksystems/bioyodie:D4.5
+      ports:
+        - 8080:8080
+      restart: on-failure
+      networks:
+        - esnet
+
+networks:
+  esnet:
+    driver: bridge

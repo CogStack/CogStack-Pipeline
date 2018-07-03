@@ -1,3 +1,68 @@
+sourceSets {
+    test {
+        java { srcDirs = ["src/test/java"] }
+        groovy {
+            srcDirs = ["src/test/java"]
+        }
+        resources {
+            srcDirs = ['src/test/resources']
+        }
+    }
+    integTest {
+        java { srcDirs = ["src/integration-test/java"] }
+        groovy {
+            srcDirs = ["src/integration-test/java"]
+        }
+        resources {
+            srcDirs = ['src/integration-test/resources']
+        }
+        compileClasspath += sourceSets.main.output + sourceSets.test.output + configurations.testRuntime
+        runtimeClasspath += sourceSets.main.output + sourceSets.test.output + configurations.testRuntime
+    }
+    acceptTest {
+        java { srcDirs = ["src/acceptance-test/java"] }
+        groovy {
+            srcDirs = ["src/acceptance-test/java"]
+        }
+        resources {
+            srcDirs = ['src/acceptance-test/resources']
+        }
+        compileClasspath += sourceSets.main.output + sourceSets.test.output + sourceSets.integTest.output + configurations.testRuntime
+        runtimeClasspath += sourceSets.main.output + sourceSets.test.output + sourceSets.integTest.output + configurations.testRuntime
+    }
+}
+
+ext.dockerCompose = hasProperty('dockerComposePath') ? property('dockerComposePath') : 'docker-compose'
+ext.sudoLinux = System.properties['os.name'].toLowerCase().contains('linux') ? ['sudo'] : []
+
+ext.simpleComposePath = 'src/integration-test/resources/simple-compose-yaml/'
+
+task installSimpleCompose(type: Exec){//, dependsOn: [ 'buildDockerImage' ]) {
+    workingDir simpleComposePath
+    standardInput = System.in
+    commandLine sudoLinux + [dockerCompose, 'up', '-d']
+
+    doLast {
+        // wait until the elastic search is ready
+        sleep(120_000)
+    }
+}
+
+ext.stoppingSimpleCompose = false
+task stopSimpleCompose(type: Exec) {
+    doFirst{
+        stoppingSimpleCompose = true
+    }
+
+    standardInput = System.in
+    workingDir simpleComposePath
+    commandLine sudoLinux + [dockerCompose, 'down', '-v']
+
+    doLast{
+        stoppingSimpleCompose = false
+    }
+}
+
 test {
     // enable TestNG support (default is JUnit)
     //useTestNG()
@@ -29,3 +94,4 @@ test {
     //        logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message)
     //    }
 }
+
