@@ -20,6 +20,8 @@ services:
   cogstack:
     image: cogstacksystems/cogstack-pipeline:latest
     container_name: cogstack
+    volumes:
+      - ./cogstack/example.properties:/usr/src/docker-cogstack/cogstack/cogstack_conf/example.properties:ro
     environment:
       - LOG_LEVEL=info
       - FILE_LOG_LEVEL=off

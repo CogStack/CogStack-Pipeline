@@ -1,0 +1,18 @@
+// Default profile for building the app
+
+apply from: 'gradle/test.gradle'
+apply from: 'gradle/acceptancetest.gradle'
+apply from: 'gradle/integrationtest.gradle'
+
+task downloadDependencies {
+    description "Download dependencies"
+    doLast {
+        configurations.getAsMap().each { name, config ->
+            try {
+                config.files
+            } catch (e) {
+                project.logger.info e.message // some cannot be resolved, silentlyish skip them
+            }
+        }
+    }
+}
