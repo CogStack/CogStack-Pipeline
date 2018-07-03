@@ -1,4 +1,6 @@
-task postgresIntegTest(type: Test) {
+task postgresIntegTest(type: Test, dependsOn: [ 'installSimpleCompose' ]) {
+    // Exclude because requires gate plugins to be downloaded
+    exclude '**/GATEWithoutScheduling.class'
     testClassesDir = new File(sourceSets.integTest.output.classesDir.absolutePath
             +'/uk/ac/kcl/it/postgres')
     print testClassesDir.absolutePath
@@ -13,10 +15,9 @@ task postgresIntegTest(type: Test) {
     onOutput { descriptor, event ->
         logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message)
     }
-
 }
 
-task sqlServerIntegTest(type: Test) {
+task sqlServerIntegTest(type: Test, dependsOn: [ 'installSimpleCompose' ]) {
     testClassesDir = new File(sourceSets.integTest.output.classesDir.absolutePath
             +'/uk/ac/kcl/it/sqlserver')
     print testClassesDir.absolutePath
@@ -31,5 +32,7 @@ task sqlServerIntegTest(type: Test) {
     onOutput { descriptor, event ->
         logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message)
     }
-
 }
+
+postgresIntegTest.finalizedBy(stopSimpleCompose)
+sqlServerIntegTest.finalizedBy(stopSimpleCompose)

@@ -172,37 +172,18 @@ Although cogstack has unit tests where appropriate, the nature of the project is
 To run the integration tests, ensure the required external services are available
  (which also give a good idea of how cogstack is configured). These services are Postgresql, Biolark, Bioyodie and Elasticsearch.  The easiest
  way to get these going is with [Docker](https://www.docker.com/). Once you have docker installed, cogstack handily will
- build the containers you need for you (apart from elasticsearch, where the official image will suffice). To build the containers:
-
-From the CogStack top level directory:
-
-```
-  gradlew -Dorg.gradle.project.profile=run buildAllContainers
-```
-
-Alternatively you can start up the containers using docker-compose as stated in the quickstart section.
+ build and run the required containers.
 
 Note, Biolark and Bioyodie are external applications. Building their containers (and subsequently running their integration tests) may require you to
   meet their licencing conditions. Please check with [Tudor Groza](t.groza@garvan.org.au) (Biolark) and [Angus Roberts](angus.roberts@sheffield.ac.uk)/[Genevieve Gorrell](g.gorrell@sheffield.ac.uk) if in doubt.
 
-Assuming the containers have been built successfully, navigate to
-```
-cd docker-cogstack/compose-ymls/nlp/
-```
-And type
-```
-docker-compose up
-```
-
-to launch all of the external services.
-
-
-All being well, you should now be able to run the integration tests. Each of these demonstrate a different facet of cogstack's functionality.
-Each integration test follows the same pattern:
-
+A single command can be used to run the integration tests. Each of these demonstrate a different facet of cogstack's functionality.
+Each time an integration test is run, it follows the same pattern:
+* Start up the required services using docker-compose
 * Generate some dummy data for processing, by using an integration test execution listener
 * Activate a configuration appropriate for the data and run cogstack
 * Verify results
+* Stop all the services
 
 All integration tests for Postgres can be run by using:
 
