@@ -194,27 +194,24 @@ create view patient_encounters_view as
 
 
 /*
-create view procedures_view as 
+create view observations_view as 
 	select 
 		patient_encounters_view.*, 
-		procedures.*,
-
-		-- for CogStack compaibility -- this will be replicated for other views
-		'src_field_name'::text as cog_src_field_name,
-		'procedures_view'::text as cog_src_table_name,
-		procedures.CID as cog_pk,
-		'cog_pk'::text as cog_pk_field_name,
+		observations.*,
+		'src_field_name'::text as cog_src_field_name,		-- for CogStack compatibility
+		'observations_view'::text as cog_src_table_name,	-- (*)
+		observations.CID as cog_pk,							-- (*)
+		'cog_pk'::text as cog_pk_field_name,				-- (*)
 		coalesce(patient_encounters_view.encounter_stop, 
 					 patient_encounters_view.encounter_start) 
-					 as cog_update_time
-		--
+					 as cog_update_time						-- (*)
 	from 
 		patient_encounters_view 
 	join 
-		procedures 
+		observations 
 	on 
-		procedures.PATIENT = patient_encounters_view.patient_id and 
-		procedures.ENCOUNTER = patient_encounters_view.encounter_id 
+		observations.PATIENT = patient_encounters_view.patient_id and 
+		observations.ENCOUNTER = patient_encounters_view.encounter_id 
 	;
 */
 
