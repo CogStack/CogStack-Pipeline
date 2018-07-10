@@ -10,16 +10,15 @@ services:
 #---------------------------------------------------------------------------#
 # Postgres container for input data                                         #
 #---------------------------------------------------------------------------#
-  sampledb:
-    image: postgres:9.6-alpine
-    container_name: sampledb
+  synsamples:
+    image: postgres:10.4-alpine
+    container_name: pgsynsamples
     # use this when exceeding the max connections of postgres
 #    command: "-c 'shared_buffers=256MB' -c 'max_connections=1000'"
     volumes:
-      - ./rawdata:/data:ro
+      - ./db_dump/syn:/data/:ro
       - ./sampledb/init_db.sh:/docker-entrypoint-initdb.d/init_db.sh:ro
-      - ./sampledb/db_create_schema.sql:/conf/db_create_schema.sql:ro
-      - sdbdata:/var/lib/postgresql/data
+      - pgsyndata:/var/lib/postgresql/data
     ports:
 #      - 5432
       # <host:container> expose the postgres DB to host for debugging purposes
@@ -28,9 +27,23 @@ services:
       - esnet
       - public
 
+  mtsamples:
+    image: postgres:10.4-alpine
+    container_name: pgmtsamples
+    volumes:
+      - ./db_dump/mt:/data:ro
+      - ./sampledb/init_db.sh:/docker-entrypoint-initdb.d/init_db.sh:ro
+      - pgmtdata:/var/lib/postgresql/data
+    ports:
+      - "5556:5432"
+    networks:
+      - esnet
+      - public
+
 
 #---------------------------------------------------------------------------#
 # Postgres container for spring batch / cogstack testing                    #
+# TODO: fix password management
 #---------------------------------------------------------------------------#
   postgres:
     image: postgres:9.6-alpine
@@ -49,14 +62,15 @@ services:
 #---------------------------------------------------------------------------#
   cogstack:
     image: cogstacksystems/cogstack-pipeline:latest
-    container_name: cogstack
+    container_name: cogengine
     volumes:
       - ./cogstack/conf:/usr/src/docker-cogstack/cogstack/cogstack_conf:ro
     environment:
       - LOG_LEVEL=info
       - FILE_LOG_LEVEL=off
     depends_on:
-      - sampledb
+      - synsamples
+      - mtsamples
       - postgres
 #      - elasticsearch3
       - elasticsearch
@@ -182,7 +196,9 @@ volumes:
 #    driver: local
 #  esdata3:
 #    driver: local
-  sdbdata:
+  pgsyndata:
+    driver: local
+  pgmtdata:
     driver: local
   pgdata:
     driver: local

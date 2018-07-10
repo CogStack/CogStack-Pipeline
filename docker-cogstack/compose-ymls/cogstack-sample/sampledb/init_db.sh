@@ -5,7 +5,10 @@ set -e
 # global variables
 #
 DB_USER='test'
-DB_NAME='db_sample'
+DB_NAME='db_samples'
+
+DATA_DIR="/data"
+DB_DUMP_FILE="db_samples.sql.gz"
 
 
 # create the user, the database and set up the access
@@ -20,43 +23,11 @@ EOSQL
 export PGPASWORD='test'
 
 
-# create schemas
-#
-echo "Defining DB schemas"
-psql -v ON_ERROR_STOP=1 -U $DB_USER -d $DB_NAME -f /conf/db_create_schema.sql
-
-
-# load data -- the secure option
-#
-echo "Loading data into DB"
-csv_files=(
-	patients
-	encounters
-	observations
-	procedures
-	allergies
-	careplans
-	conditions
-	imaging_studies
-	immunizations
-	medications
-	)
-
-for f in ${csv_files[@]}; do
-	echo "-- Loading table: ${f}"
-	header=$(head -n 1 "/data/${f}.csv")
-	tail -n +2 "/data/${f}.csv" | psql -v ON_ERROR_STOP=1 -U $DB_USER -d $DB_NAME -c "COPY ${f}($header) FROM STDIN DELIMITER ',' CSV"
-done
-
+echo "Restoring DB from dump"
+gunzip -c $DATA_DIR/$DB_DUMP_FILE | psql -v ON_ERROR_STOP=1 -U $POSTGRES_USER -d $DB_NAME
 
 
 # cleanup
 #
 echo "Done with initializing the sample data."
 
-
-#psql -v ON_ERROR_STOP=1 -U test -d sample_db -f psql_load_data.sql
-#psql -v ON_ERROR_STOP=1 --username "test" -d sample_db <<-EOSQL
-#COPY patients FROM '/data/patients.csv' DELIMITER ',' CSV HEADER;
-#-- ...
-#EOSQL
