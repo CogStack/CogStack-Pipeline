@@ -1,0 +1,212 @@
+version: '2.0'
+
+#---------------------------------------------------------------------------#
+# Used services                                                             #
+#---------------------------------------------------------------------------#
+services:
+
+#---------------------------------------------------------------------------#
+# Postgres container for input data                                         #
+#---------------------------------------------------------------------------#
+  synsamples:
+    image: postgres:10.4-alpine
+    container_name: pgsynsamples
+    # use this when exceeding the max connections of postgres
+#    command: "-c 'shared_buffers=256MB' -c 'max_connections=1000'"
+    volumes:
+      - ./db_dump/syn:/data/:ro
+      - ./__common/pgsamples/init_db.sh:/docker-entrypoint-initdb.d/init_db.sh:ro
+      - pgsyndata:/var/lib/postgresql/data
+    ports:
+#      - 5432
+      # <host:container> expose the postgres DB to host for debugging purposes
+      - "5555:5432"
+    networks:
+      - esnet
+      - public
+
+  mtsamples:
+    image: postgres:10.4-alpine
+    container_name: pgmtsamples
+    volumes:
+      - ./db_dump/mt:/data:ro
+      - ./__common/pgsamples/init_db.sh:/docker-entrypoint-initdb.d/init_db.sh:ro
+      - pgmtdata:/var/lib/postgresql/data
+    ports:
+      - "5556:5432"
+    networks:
+      - esnet
+      - public
+
+
+#---------------------------------------------------------------------------#
+# Postgres container for spring batch / cogstack testing                    #
+# TODO: fix password management
+#---------------------------------------------------------------------------#
+  postgres:
+    image: postgres:9.6-alpine
+    container_name: postgres
+    volumes:
+      - ./__common/postgres/create_repo.sh:/docker-entrypoint-initdb.d/create_repo.sh:ro
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - 5432
+    networks:
+      - esnet
+
+
+#---------------------------------------------------------------------------#
+# CogStack containers                                                       #
+#---------------------------------------------------------------------------#
+  cogstack:
+    image: cogstacksystems/cogstack-pipeline:latest
+    container_name: cogengine
+    volumes:
+      - ./__cogstack/:/usr/src/docker-cogstack/cogstack/cogstack_conf:ro
+    environment:
+      - LOG_LEVEL=info
+      - FILE_LOG_LEVEL=off
+    depends_on:
+      - synsamples
+      - mtsamples
+      - postgres
+#      - elasticsearch3
+      - elasticsearch
+    networks:
+      - esnet
+
+
+#---------------------------------------------------------------------------#
+# Elasticsearch cluster                                                     #
+#---------------------------------------------------------------------------#
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.2.4
+    container_name: elasticsearch
+    environment:
+      - cluster.name=docker-cluster
+#      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    depends_on:
+      - postgres
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata1:/usr/share/elasticsearch/data
+      - ./__common/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+    ports:
+#      - "9200:9200"    #without proxy, forward to host:9200
+      - 9200
+    networks:
+      - esnet
+
+
+#  elasticsearch2:
+#    image: docker.elastic.co/elasticsearch/elasticsearch:6.2.4
+#    container_name: elasticsearch2
+#    environment:
+#      - cluster.name=docker-cluster
+#      - bootstrap.memory_lock=true
+#      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+#      - "discovery.zen.ping.unicast.hosts=elasticsearch"
+#    depends_on:
+#      - elasticsearch
+#    ulimits:
+#      memlock:
+#        soft: -1
+#        hard: -1
+#    volumes:
+#      - esdata2:/usr/share/elasticsearch/data
+#      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+#    networks:
+#      - esnet
+
+
+#  elasticsearch3:
+#    image: docker.elastic.co/elasticsearch/elasticsearch:6.2.4
+#    container_name: elasticsearch3
+#    environment:
+#      - cluster.name=docker-cluster
+#      - bootstrap.memory_lock=true
+#      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+#      - "discovery.zen.ping.unicast.hosts=elasticsearch"
+#    depends_on:
+#      - elasticsearch2
+#    ulimits:
+#      memlock:
+#        soft: -1
+#        hard: -1
+#    volumes:
+#      - esdata3:/usr/share/elasticsearch/data
+#      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+#    networks:
+#      - esnet
+
+
+#---------------------------------------------------------------------------#
+# Kibana webapp                                                             #
+#---------------------------------------------------------------------------#
+  kibana:
+    image: docker.elastic.co/kibana/kibana:6.2.4
+    container_name: kibana
+    ports:
+#      - "5601:5601"    #without proxy, forward to host:5601
+      - "5601"        #with nginx proxy forwarding host:5601/ --> [kibana]:5601 
+    depends_on:
+#      - elasticsearch3
+      - elasticsearch
+    volumes:
+      - ./__common/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro 
+    networks:
+      - esnet
+      - public
+
+#---------------------------------------------------------------------------#
+# Reverse proxy (+ host-container proxy and basic auth)                     #
+#---------------------------------------------------------------------------#
+  proxy:
+    image: nginx:1.13.1-alpine
+    restart: always
+    networks:
+      - public
+      - esnet
+    depends_on:
+      - kibana
+      - elasticsearch
+    ports:
+#      - "80:80"
+#      - "443:443"
+      - "5601:5601" #nginx listening to container:5601, forward to host:5601 
+      - "9200:9200" #nginx listening to container:9200, forward to host:9200
+#      - "5432:5432"
+    volumes:
+      - ./__common/nginx/config/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./__common/nginx/auth/.htpasswd:/etc/apache2/.htpasswd:ro
+
+#---------------------------------------------------------------------------#
+# Docker named volumes                                                      #
+#---------------------------------------------------------------------------#
+volumes:
+  esdata1:
+    driver: local
+#  esdata2:
+#    driver: local
+#  esdata3:
+#    driver: local
+  pgsyndata:
+    driver: local
+  pgmtdata:
+    driver: local
+  pgdata:
+    driver: local
+
+
+#---------------------------------------------------------------------------#
+# Docker virtual networks                                                   #
+#---------------------------------------------------------------------------#
+networks:
+  esnet:
+    driver: bridge
+  public:
+    driver: bridge
