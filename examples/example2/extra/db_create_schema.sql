@@ -40,7 +40,7 @@ DESCRIPTION varchar(256) not null,
 COST real not null,
 REASONCODE varchar(64),
 REASONDESCRIPTION varchar(256),
-DOCUMENT text default 'none'
+DOCUMENT text default 'none'						-- MTSamples document content
 ) ;
 
 create table observations (
