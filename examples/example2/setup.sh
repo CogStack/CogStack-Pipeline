@@ -25,7 +25,7 @@ cp -r $COMMON_DIR/* $COMMON_OUT_DIR/
 if [ ! -e $COMMON_OUT_DIR/nginx/auth/.htpasswd ]; then
 	echo "Generating user:password --> 'test:test' for nginx proxy"
 	mkdir $COMMON_OUT_DIR/nginx/auth
-	htpasswd -b -c ./nginx/auth/.htpasswd 'test' 'test'
+	htpasswd -b -c $COMMON_OUT_DIR/nginx/auth/.htpasswd 'test' 'test'
 fi
 
 
