@@ -314,7 +314,8 @@ DATE,PATIENT,ENCOUNTER,CODE,DESCRIPTION,VALUE,UNITS,TYPE
 and the corresponding table definition:
 ```sql
   create table observations (
-  CID serial primary key, -- (*)
+  CID serial primary key,                   -- (*)
+  DCT timestamp default current_timestamp,  -- (*)
   DATE date, 
   PATIENT uuid references patients,
   ENCOUNTER uuid references encounters,
@@ -326,7 +327,7 @@ and the corresponding table definition:
 ) ;
 ```
 
-Here, with `--(*)` has been marked an additional `CID` field which is used as a automatically generated primary key. It will be later used by CogStack engine for data partitioning when processing the records. The `patient` and `encouters` tables have their primary keys (`ID` field) already defined (of `uuid` type) and are included in the input CSV files.
+Here, with `--(*)` have been marked additional fields with auto-generated values. These are: `CID` -- an automatically generated primary key and `DCT` -- a document creation timestamp. They will be later used by CogStack engine for data partitioning when processing the records. The `patient` and `encouters` tables have their primary keys (`ID` field) already defined (of `uuid` type) and are included in the input CSV files.
 
 
 ## Database schema -- views
@@ -377,7 +378,7 @@ create view observations_view as
     'observations_view'::text as cog_src_table_name,  -- (b)
     obs.CID as cog_pk,                                -- (c)
     'cog_pk'::text as cog_pk_field_name,              -- (d)
-    coalesce(enc.STOP, enc.START) as cog_update_time  -- (e)
+    obs.DCT as cog_update_time                        -- (e)
   from 
     patients p, 
     encounters enc,
