@@ -44,7 +44,8 @@ REASONDESCRIPTION text_type
 ) ;
 
 create table observations (
-CID serial primary key,								-- for CogStack compatibility
+CID serial primary key,							-- for CogStack compatibility
+DCT timestamp default current_timestamp,		-- (*)
 DATE date not null, 
 PATIENT key_type references patients,
 ENCOUNTER key_type references encounters,
@@ -105,7 +106,7 @@ create view observations_view as
 		'observations_view'::text as cog_src_table_name,  -- (b)
 		obs.CID as cog_pk,                                -- (c)
 		'cog_pk'::text as cog_pk_field_name,              -- (d)
-		coalesce(enc.STOP, enc.START) as cog_update_time  -- (e)
+		obs.DCT as cog_update_time                 -- (e)
 	from 
 		patients p, 
 		encounters enc,

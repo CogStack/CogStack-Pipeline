@@ -48,6 +48,7 @@ REASONDESCRIPTION text_type
 
 create table observations (
 CID serial primary key,								-- for CogStack compatibility
+DCT timestamp default current_timestamp,			-- (*)
 DATE date not null, 
 PATIENT key_type references patients,
 ENCOUNTER key_type references encounters,
@@ -55,11 +56,12 @@ CODE varchar(64) not null,
 DESCRIPTION text_type not null,
 VALUE varchar(64) not null,
 UNITS varchar(64),
-TYPE varchar(64) not null--,
+TYPE varchar(64) not null
 ) ;
 
 create table procedures (
 CID serial primary key,								-- for CogStack compatibility
+DCT timestamp default current_timestamp,			-- (*)
 DATE date not null,
 PATIENT key_type references patients,
 ENCOUNTER key_type references encounters,
@@ -72,6 +74,7 @@ REASONDESCRIPTION text_type
 
 create table medications (
 CID serial primary key,								-- for CogStack compatibility
+DCT timestamp default current_timestamp,			-- (*)
 START date not null,
 STOP date,
 PATIENT key_type references patients,
@@ -87,6 +90,7 @@ REASONDESCRIPTION text_type
 
 create table immunizations (
 CID serial primary key,								-- for CogStack compatibility
+DCT timestamp default current_timestamp,			-- (*)
 DATE date not null,
 PATIENT key_type references patients,
 ENCOUNTER key_type references encounters,
@@ -97,6 +101,7 @@ COST numeric not null
 
 create table imaging_studies (
 CID serial,-- primary key,							-- TODO: check if ID field will be sufficient
+DCT timestamp default current_timestamp,			-- (*)
 ID key_type primary key,
 DATE date not null,
 PATIENT key_type references patients,
@@ -111,6 +116,7 @@ SOP_DESCRIPTION varchar(64) not null
 
 create table careplans (
 CID serial,-- primary key,							-- TODO: check if ID field will be sufficient
+DCT timestamp default current_timestamp,			-- (*)
 ID key_type primary key,
 START date not null,
 STOP date,
@@ -124,6 +130,7 @@ REASONDESCRIPTION text_type --not null, 			-- not matching with the specs
 
 create table allergies (
 CID serial primary key,								-- for CogStack compatibility
+DCT timestamp default current_timestamp,			-- (*)
 START date not null,
 STOP date,
 PATIENT key_type references patients,
@@ -134,6 +141,7 @@ DESCRIPTION text_type not null
 
 create table conditions (
 CID serial primary key,								-- for CogStack compatibility
+DCT timestamp default current_timestamp,			-- (*)
 START date not null,
 STOP date,
 PATIENT key_type references patients,
@@ -195,28 +203,6 @@ create view patient_encounters_view as
 */
 
 
-/*
-create view procedures_view as 
-	select 
-		patient_encounters_view.*, 
-		procedures.*,
-
-		-- for CogStack compaibility -- this will be replicated for other views
-		'procedures_view'::text as cog_src_table_name,
-		procedures.CID as cog_pk,
-		'cog_pk'::text as cog_pk_field_name
-		--
-	from 
-		patient_encounters_view 
-	join 
-		procedures 
-	on 
-		procedures.PATIENT = patient_encounters_view.patient_id and 
-		procedures.ENCOUNTER = patient_encounters_view.encounter_id 
-	;
-*/
-
-
 /* Function to create views joined with patients_encounters view
 */
 create or replace function create_paenc_view(table_name varchar(32)) returns void 
@@ -235,9 +221,7 @@ begin
 			''%I''::text as cog_src_table_name,
 			%I.CID as cog_pk,
 			\'cog_pk\'::text as cog_pk_field_name,
-			coalesce(patient_encounters_view.encounter_stop, 
-					 patient_encounters_view.encounter_start) 
-					 as cog_update_time
+			%I.DCT as cog_update_time
 		from 
 			patient_encounters_view 
 		join 
@@ -246,7 +230,7 @@ begin
 			%I.PATIENT = patient_encounters_view.patient_id and 
 			%I.ENCOUNTER = patient_encounters_view.encounter_id 
 		', 
-		view_name, table_name, view_name, table_name, table_name, table_name, table_name, table_name);
+		view_name, table_name, view_name, table_name, table_name, table_name, table_name, table_name, table_name);
 end
 $func$ language plpgsql;
 
@@ -261,72 +245,3 @@ select create_paenc_view('imaging_studies');
 select create_paenc_view('careplans');
 select create_paenc_view('allergies');
 select create_paenc_view('conditions');
-
-
-/* 
-
-echo "Generating numerical key column indices"
-psql -v ON_ERROR_STOP=1 -U $DB_USER -d $DB_NAME <<-EOSQL
---ALTER TABLE patients ADD COLUMN pkid SERIAL;
---ALTER TABLE encounters ADD COLUMN pkid SERIAL;
---ALTER TABLE observations ADD COLUMN pkid SERIAL;
---
-
-create view sample_view_2 as
-	select 
-		--p.ID as p_id, 
-		p.BIRTHDATE as p_birt_date,
-		p.DEATHDATE as p_death_date,
-		p.SSN as p_SSN,
-		p.DRIVERS as p_drivers,
-		--p.PASSPORT as p_passport,
-		p.PREFIX as p_prefix,
-		p.FIRST as p_first_name,
-		p.LAST as p_last_name,
-		p.SUFFIX as p_suffix,
-		--p.MAIDEN as p_maiden,
-		p.MARITAL as p_marital,
-		p.RACE as p_race,
-		p.ETHNICITY as p_ethnicity,
-		p.GENDER as p_gender,
-		--p.BIRTHPLACE as p_birthplace,
-		--p.ADDRESS as p_addr,
-		p.CITY as p_city,
-		p.STATE as p_state,
-		p.ZIP as p_zip,
-		
-		--enc.ID as enc_id,
-		enc.START as enc_start,
-		enc.STOP as enc_stop,
-		--enc.CODE as enc_code,
-		enc.DESCRIPTION as enc_desc,
-		enc.COST as enc_cost,
-		--enc.REASONCODE as enc_reason_code,
-		enc.REASONDESCRIPTION as enc_reason_desc,
-		
-		obs.DATE as enc_date,
-		obs.CODE as obs_code,
-		obs.DESCRIPTION as obs_desc,
-		obs.VALUE as obs_value,
-		obs.UNITS as obs_units,
-		obs.TYPE as obs_type,
-
--- for CogStack compaibility:
-		'src_field_name'::text as cog_src_field_name,						-- [srcTableName]: dummy field name for CogStack
-		'sample_view'::text as cog_src_table_name,							-- [srcColumnFieldName]: name of the (current/different) table/document to query
-		'primaryKeyFieldValue'::text as cog_pk_field_name,					-- [primaryKeyFieldName]: name of the primary key column
-		row_number() OVER (PARTITION BY true) as cog_pk,					-- [primaryKeyFieldValue]: primary key field value
-		COALESCE(enc.stop, enc.start) as cog_update_time					-- [updateTime]: time for partitioning, used with primary key
---
-
-	from patients p,
-		encounters enc,
-		observations obs
-
-	where enc.PATIENT = p.ID and
-		obs.PATIENT = p.ID and
-		obs.ENCOUNTER = enc.ID
-	;
-EOSQL
-
-*/

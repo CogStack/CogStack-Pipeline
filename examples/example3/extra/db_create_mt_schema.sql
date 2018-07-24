@@ -3,14 +3,14 @@
 */
 
 create table samples (
-CID serial primary key,
+CID serial primary key, 								-- for CogStack compatibility
+DCT timestamp default current_timestamp,				-- (*)
 SAMPLE_ID integer not null,
 TYPE varchar(256) not null,
 TYPE_ID integer not null,
 NAME varchar(256) not null,
 DESCRIPTION text not null,
-DOCUMENT text not null,
-DCT timestamp not null
+DOCUMENT text not null
 ) ;
 
 create view samples_view as 
@@ -20,7 +20,7 @@ create view samples_view as
 		'samples_view'::text as cog_src_table_name,			-- (*)
 		samples.CID as cog_pk,								-- (*)
 		'cog_pk'::text as cog_pk_field_name,				-- (*)
-		DCT as cog_update_time								-- (*)
+		samples.DCT as cog_update_time						-- (*)
 	from 
 		samples 
 	;
