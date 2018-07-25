@@ -9,9 +9,11 @@ SOFFICE_BIN="/Applications/LibreOffice.app/Contents/MacOS/soffice"
 DATA_DIR="./rawdata/"
 IN_MT_DATA="$DATA_DIR/mtsamples.tgz"
 OUT_MT_PDF_DATA="$DATA_DIR/mtsamples-pdf.tar.bz2"
+OUT_MT_JPG_DATA="$DATA_DIR/mtsamples-jpg.tar.bz2"
 
 TMP_DIR=__tmp
 OUT_PDF_DIR=__out_pdf
+OUT_JPG_DIR=__out_jpg
 LOG_FILE=__prepare_docs.log
 
 
@@ -40,7 +42,7 @@ tar -xzf $IN_MT_DATA -C $TMP_DIR
 # process the documents
 #
 NF=$(ls -l $TMP_DIR | wc -l)
-echo "Processing the documents -- total: $NF files"
+echo "Processing the documents -- files in total: $NF"
 
 echo "Converting: TXT -> PDF"
 
@@ -49,11 +51,25 @@ if [ -e $OUT_PDF_DIR ]; then rm -rf $OUT_PDF_DIR; fi
 mkdir $OUT_PDF_DIR
 
 echo "*---> processing documents in bulk using LibreOffice"
-
-$SOFFICE_BIN --headless --convert-to pdf --outdir $OUT_PDF_DIR $TMP_DIR/mtsamples-type-*.txt >> $LOG_FILE
+$SOFFICE_BIN --headless --invisible --convert-to pdf --outdir $OUT_PDF_DIR $TMP_DIR/mtsamples-type-*.txt >> $LOG_FILE
 
 echo "*---> compressing the documents and storing them as $OUT_MT_PDF_DATA"
 ( cd $OUT_PDF_DIR && tar -cJf ../$OUT_MT_PDF_DATA mtsamples-type-*.pdf )
+
+
+echo "Converting: TXT -> JPG -> PDF"
+
+if [ -e $OUT_JPG_DIR ]; then rm -rf $OUT_JPG_DIR; fi
+mkdir $OUT_JPG_DIR
+
+echo "*---> processing documents in bulk using LibreOffice [TXT -> JPG]"
+$SOFFICE_BIN --headless --invisible --convert-to jpg --outdir $TMP_DIR $TMP_DIR/mtsamples-type-*.txt >> $LOG_FILE
+
+echo "*---> processing documents in bulk using LibreOffice [JPG -> PDF]"
+$SOFFICE_BIN --headless --invisible --convert-to pdf --outdir $OUT_JPG_DIR $TMP_DIR/mtsamples-type-*.jpg >> $LOG_FILE
+
+echo "*---> compressing the documents and storing them as $OUT_MT_JPG_DATA"
+( cd $OUT_JPG_DIR && tar -cJf ../$OUT_MT_JPG_DATA mtsamples-type-*.pdf )
 
 
 # cleanup
@@ -61,6 +77,7 @@ echo "*---> compressing the documents and storing them as $OUT_MT_PDF_DATA"
 echo "Cleaning up"
 rm -rf $TMP_DIR
 rm -rf $OUT_PDF_DIR
+rm -rf $OUT_JPG_DIR
 
 echo "Done."
 echo "For more information on documents processing, see log: $LOG_FILE"
