@@ -2,7 +2,7 @@
 
 set -e
 
-LOG_FILE=__prepare_data.log
+LOG_FILE=__prepare_examples.log
 
 echo "Preparing examples data for deployment"
 
