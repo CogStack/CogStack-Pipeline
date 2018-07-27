@@ -12,7 +12,7 @@ POSTGRES_USER=postgres
 
 # HINT: this can be provided as an input parameter
 IN_SYN_DATA="../../rawdata/synsamples.tgz"
-IN_MT_PDF_DATA="../../rawdata/mtsamples-pdf.tar.bz2"
+IN_MT_PDF_DATA="../../rawdata/mtsamples-docx.tar.bz2-small"
 
 
 
@@ -61,7 +61,7 @@ echo "- Parsing mt samples data"
 SQL_FILE=__update_mt.sql
 if [ -e $SQL_FILE ]; then rm $SQL_FILE; fi
 
-NF=$( ls -1q $TMP_DIR/mtsamples-type-*.pdf | wc -l )
+NF=$( ls -1q $TMP_DIR/mtsamples-type-* | wc -l )
 i=1
 # HINT: we can multiply the documents count by x2-5
 for f in $TMP_DIR/mtsamples-type-*; do
