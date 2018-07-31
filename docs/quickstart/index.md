@@ -110,9 +110,12 @@ The collection comprises in total of 4873 documents. A sample document is shown 
 
 ## Preparing the data
 
-For the ease of use a database dump with predefined schema and preloaded data is provided in `examples/example2/docker/db_dump` directory. This way, the PostgreSQL database will be automatically initialized when deployed using Docker.
+For the ease of use a database dump with predefined schema and preloaded data will be provided in `examples/example2/db_dump` directory. This way, the PostgreSQL database will be automatically initialized when deployed using Docker. The dabatase dump for this example (alongside the others) can be directly downloaded from Amazon S3 by running in the main examples directory:
+```bash
+bash download_db_dumps.sh
+```
 
-The PostgreSQL database schema definition used in this tutorial `db_create_schema.sql` is stored in `examples/example2/extra/` directory alongside the script `prepare_db.sh` to generate the database dump. More information covering the creation of database schema can be found in [Advanced: preparing a DB schema for CogStack](#advanced-schema) part. 
+A;ternatively, the PostgreSQL database schema definition used in this tutorial `db_create_schema.sql` is stored in `examples/example2/extra/` directory alongside the script `prepare_db.sh` to generate the database dump. More information covering the creation of database schema can be found in [Advanced: preparing a DB schema for CogStack](#advanced-schema) part. 
 
 
 
@@ -144,10 +147,12 @@ For the ease of use CogStack is being deployed and run using Docker. However, be
 ```bash
 bash setup.sh
 ```
+As a result, a temporary directory `__deploy` will be created containing all the necessary artifacts to deploy CogStack.
+
 
 ## Docker-based deployment
 
-Next, we can proceed to deploy CogStack ecosystem using Docker Compose. It will configure and start microservices based on the provided Compose file: `examples/example2/docker/docker-compose.yml`. Moreover, the PostgreSQL database container comes with pre-initialized database dump ready to be loaded directly into. In order to run CogStack, type in the `examples/example2/docker/` directory:
+Next, we can proceed to deploy CogStack ecosystem using Docker Compose. It will configure and start microservices based on the provided Compose file: `examples/example2/docker/docker-compose.yml`. Moreover, the PostgreSQL database container comes with pre-initialized database dump ready to be loaded directly into. In order to run CogStack, type in the `examples/example2/__deploy/` directory:
 ```bash
 docker-compose up
 ```
