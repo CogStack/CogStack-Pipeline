@@ -2,3 +2,5 @@ __cogstack
 __common
 __prepare_*.log
 __tmp
+__out*
+__deploy
