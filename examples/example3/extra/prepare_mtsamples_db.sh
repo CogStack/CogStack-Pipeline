@@ -8,13 +8,18 @@ export LC_ALL=C
 
 DB_USER='test'
 DB_NAME='db_samples'
-DB_DUMP_FILE="db_mtsamples.sql.gz"
+DB_DUMP_FILE="db_samples-mt.sql.gz"
 
 POSTGRES_USER=postgres
 
 # HINT: this can be provided as an input parameter
 DATA_DIR="../../rawdata"
-IN_DATA='mtsamples.tgz'
+IN_DATA='mtsamples-txt-full.tgz'
+
+
+# entry point
+#
+if [ ! -e $DATA_DIR/$IN_DATA ]; then echo "Missing input data: $DATA_DIR/$IN_DATA" && exit 1; fi
 
 
 # create the user, the database and set up the access

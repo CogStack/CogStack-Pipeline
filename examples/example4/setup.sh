@@ -9,6 +9,7 @@ COMMON_DIR="../docker-common"
 
 COMMON_OUT_DIR="common"
 COGSTACK_OUT_DIR="cogstack"
+DB_DIR="db_dump"
 
 
 # main entry point
@@ -24,25 +25,28 @@ echo "Generating user:password --> 'test:test' for nginx proxy"
 mkdir $TMP_DIR
 htpasswd -b -c "$TMP_DIR/.htpasswd" 'test' 'test'
 
-
-#if [ ! -e $COMMON_OUT_DIR/nginx/auth/.htpasswd ]; then
-#	echo "Generating user:password --> 'test:test' for nginx proxy"
-#	mkdir $COMMON_OUT_DIR/nginx/auth
-#	htpasswd -b -c $COMMON_OUT_DIR/nginx/auth/.htpasswd 'test' 'test'
-#fi
-
-doc_types=(
+doc_types=(docx
 	pdf-text
 	pdf-img
-	docx
 	jpg)
 
 for dt in ${doc_types[@]}; do
 	echo "Generating use-case: ${dt}"
-	dp="$DEPLOY_DIR/${dt}"
 
-	if [ -e "${dp}" ]; then rm -r "${dp}"; fi
+	dp="$DEPLOY_DIR/${dt}"
 	mkdir "${dp}"
+
+	# copy database dump
+	#
+	echo "-- copying db dump file"
+	DATA_SIZE="small"
+	db_file="$DB_DIR/db_samples-${dt}-$DATA_SIZE.sql.gz"
+	if [ ! -e $db_file ]; then
+		echo "DB dump file: $db_file does not exist"
+		exit 1
+	fi
+	mkdir "${dp}/$DB_DIR"
+	cp $db_file "${dp}/$DB_DIR/db_samples.sql.gz"
 
 	# copy the relevant common data
 	#
@@ -70,19 +74,11 @@ for dt in ${doc_types[@]}; do
 	#
 	echo "-- copying docker-compose file"
 	cp docker/docker-compose.yml "${dp}/"
-
-	# copy database dump
-	#
-	echo "-- copying db dump file"
-	mkdir "${dp}/db_dump"
-	cp "db_dump/db_samples-${dt}.sql.gz" "${dp}/db_dump/db_samples.sql.gz"
-
 done
 
 
 # cleanup
 #
 rm -rf $TMP_DIR
-
 
 echo "Done."

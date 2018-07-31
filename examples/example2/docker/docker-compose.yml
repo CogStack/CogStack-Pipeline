@@ -15,7 +15,7 @@ services:
     container_name: pgsamples
     volumes:
       - ./db_dump:/data/:ro
-      - ./__common/pgsamples/init_db.sh:/docker-entrypoint-initdb.d/init_db.sh:ro
+      - ./common/pgsamples/init_db.sh:/docker-entrypoint-initdb.d/init_db.sh:ro
       - pgsamdata:/var/lib/postgresql/data
     ports:
 #      - 5432
@@ -33,7 +33,7 @@ services:
     image: postgres:9.6-alpine
     container_name: postgres
     volumes:
-      - ./__common/postgres/create_repo.sh:/docker-entrypoint-initdb.d/create_repo.sh:ro
+      - ./common/postgres/create_repo.sh:/docker-entrypoint-initdb.d/create_repo.sh:ro
       - pgdata:/var/lib/postgresql/data
     ports:
       - 5432
@@ -47,7 +47,7 @@ services:
     image: cogstacksystems/cogstack-pipeline:latest
     container_name: cogengine
     volumes:
-      - ./__cogstack:/usr/src/docker-cogstack/cogstack/cogstack_conf:ro
+      - ./cogstack:/usr/src/docker-cogstack/cogstack/cogstack_conf:ro
     environment:
       - LOG_LEVEL=info
       - FILE_LOG_LEVEL=off
@@ -77,7 +77,7 @@ services:
         hard: -1
     volumes:
       - esdata1:/usr/share/elasticsearch/data
-      - ./__common/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - ./common/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
     ports:
 #      - "9200:9200"    #without proxy, forward to host:9200
       - 9200
@@ -96,7 +96,7 @@ services:
     depends_on:
       - elasticsearch
     volumes:
-      - ./__common/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro 
+      - ./common/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro 
     networks:
       - esnet
       - public
@@ -117,8 +117,8 @@ services:
       - "5601:5601"
       - "9200:9200"
     volumes:
-      - ./__common/nginx/config/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./__common/nginx/auth/.htpasswd:/etc/apache2/.htpasswd:ro
+      - ./common/nginx/config/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./common/nginx/auth/.htpasswd:/etc/apache2/.htpasswd:ro
 
 #---------------------------------------------------------------------------#
 # Docker named volumes                                                      #

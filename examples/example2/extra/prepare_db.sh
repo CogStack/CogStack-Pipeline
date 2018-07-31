@@ -13,7 +13,13 @@ POSTGRES_USER=postgres
 # HINT: this can be provided as an input parameter
 DATA_DIR="../../rawdata"
 IN_SYN_DATA='synsamples.tgz'
-IN_MT_DATA='mtsamples.tgz'
+IN_MT_DATA='mtsamples-txt-full.tgz'
+
+
+# entry point
+#
+if [ ! -e $DATA_DIR/$IN_SYN_DATA ]; then echo "Missing input data: $DATA_DIR/$IN_SYN_DATA" && exit 1; fi
+if [ ! -e $DATA_DIR/$IN_MT_DATA ]; then echo "Missing input data: $DATA_DIR/$IN_MT_DATA" && exit 1; fi
 
 
 # create the user, the database and set up the access
@@ -24,8 +30,6 @@ CREATE DATABASE $DB_NAME;
 CREATE ROLE $DB_USER WITH PASSWORD 'test' LOGIN;
 GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO test;
 EOSQL
-
-export PGPASWORD='postgres'
 
 
 # create schemas
