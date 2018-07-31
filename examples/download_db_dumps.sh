@@ -22,6 +22,8 @@ for filename in ${files[@]}; do
 	ex_dir="${filename%/*}"
 	out_file="$ex_dir/db_dump/$db_file"
 
+	if [ ! -e $ex_dir/db_dump ]; then mkdir $ex_dir/db_dump; fi
+
 	echo "Downloading:"
 	echo "-- url: $url"
 	echo "-- saving as: $out_file"
