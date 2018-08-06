@@ -49,6 +49,8 @@ services:
     volumes:
       - ./cogstack:/usr/src/docker-cogstack/cogstack/cogstack_conf:ro
       - ./cogstack/test2.sh:/usr/src/test2.sh:ro
+#      - ./cogstack:/cogstack/cogstack_conf:ro
+#      - ./cogstack/test2.sh:/cogstack/test2.sh:ro
     environment:
       - LOG_LEVEL=info
       - FILE_LOG_LEVEL=off

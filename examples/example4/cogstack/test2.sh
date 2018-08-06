@@ -22,3 +22,7 @@ runtime_h=$((runtime_m/60))
 
 echo "Duration: $runtime_h h $((runtime_m-(runtime_h*60))) m $((runtime_s-(runtime_m*60))) s"
 echo "Total: $runtime_s sec"
+
+#TIME_TO_SLEEP_S=600
+#echo "And now, going to sleep $TIME_TO_SLEEP_S s..."
+#sleep $TIME_TO_SLEEP_S
