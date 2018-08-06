@@ -67,9 +67,9 @@ These datasets, although unrelated, are used together to compose a semi-structur
 
 ## <a name="samples-syn"></a> Synthetic -- synthea-based
 
-This dataset consists of synthetic EHRs that were generated using [synthea](https://synthetichealth.github.io/synthea/) application -- the synthetic patient generator that models the medical history of generated patients. For this tutorial, we generated EHRs for 1000 patients and exported them as CSV files. Typed in the main synthea directory, the command line for running it:
+This dataset consists of synthetic EHRs that were generated using [synthea](https://synthetichealth.github.io/synthea/) application -- the synthetic patient generator that models the medical history of generated patients. For this tutorial, we generated EHRs for 100 patients and exported them as CSV files. Typed in the main synthea directory, the command line for running it:
 ```bash
-./run_synthea -p 1000 \ 
+./run_synthea -p 100 \ 
   --generate.append_numbers_to_person_names=false \
     --exporter.csv.export=true
 ```
@@ -422,6 +422,20 @@ Each CogStack data processing pipeline is configured using a number of parameter
 There are multiple configurable parameters available to tailor the CogStack data processing pipeline to the specific data processing needs and available resources. Here we will cover only the most important parameters related with configuring the input source, the output sink and data processing workflow. For a more detailed description of the available parameters, please refer to the [CogStack documentation (WIP)](https://github.com/CogStack/CogStack-Pipeline).
 
 
+### Spring profiles
+
+CogStack configuration file uses Spring profiles, which enable different components of the data processing pipeline. In our example we use:
+```
+spring.profiles.active = jdbc_in,elasticsearchRest,localPartitioning
+```
+which denotes that only such profiles will be active:
+* `jdbc_in` for JDBC input database connector, 
+* `elasticsearchRest` for using REST API for inserting documents to ElasticSearch,
+* `partitioning` functionality.
+
+For a more detailed description of available profiles please refer to [CogStack documentation](https://github.com/CogStack/CogStack-Pipeline).
+
+
 ### Data source
 
 The parameters for specifying the data source are defined as follows:
@@ -439,15 +453,15 @@ Please note that the `source.poolSize` defines the maximum size of the connectio
 
 Next, we need to instruct CogStack workers how to query the records from the data source:
 ```properties
+source.selectClause = SELECT *
+source.sortKey = cog_pk
+source.fromClause = FROM observations_view
+
 source.srcTableName = cog_src_table_name
 source.srcColumnFieldName = cog_src_field_name
 source.primaryKeyFieldName = cog_pk_field_name
 source.primaryKeyFieldValue = cog_pk
 source.timeStamp = cog_update_time
-
-source.selectClause = SELECT *
-source.sortKey = cog_pk
-source.fromClause = FROM observations_view
 
 source.dbmsToJavaSqlTimestampType = TIMESTAMP
 ```
@@ -474,16 +488,10 @@ In the next step, we specify the ElasticSearch indexing parameters:
 ```properties
 elasticsearch.index.name = sample_observations_view
 elasticsearch.type = doc
-elasticsearch.excludeFromIndexing = binaryContent,cog_pk,cog_pk_field_name,cog_src_field_name,cog_src_table_name
+elasticsearch.excludeFromIndexing = cog_pk,cog_pk_field_name,cog_src_field_name,cog_src_table_name
 elasticsearch.datePattern = yyyy-MM-dd'T'HH:mm:ss.SSS
 ```
 We specify the index name which will be used to store the documents processed by CogStack workers. Additionally, we specify which fields should be excluded from the indexing -- by default, we exclude the binary content, the constant-value fields and the primary key from the `observations_view` (see: [Advanced: preparing a DB schema for CogStack](#advanced-schema)).
-
-
-Moreover, when inserting JSON documents to ElasticSearch (or to any other possible data sink) it is required to define how CogStack will construct the query. This is defined in the following line:
-```properties
-target.Sql = INSERT INTO tblOutputDocs (cog_src_field_name, cog_src_table_name, cog_pk_field_name, cog_pk, cog_update_time, output) VALUES (:cog_src_field_name, :cog_src_table_name, :cog_pk_field_name, CAST ( :cog_pk AS integer), :timeStamp, :outputData)
-```
 
 
 As a side note, although it's mostly for testing purposes at the moment, the same information regarding the source database host and credentials needs to be provided for defining the target (in our case it is ElasticSearch anyway):
@@ -527,18 +535,3 @@ Apart from data partitioning, it can be useful to set up the scheduler -- the fo
 scheduler.useScheduling = false
 ```
 In this example we do not use scheduler, since we ingest EHRs from the data source only once. However, in case when the data is being generated in a continuous way, scheduler should be enabled to periodically run CogStack jobs to process the new EHRs.
-
-
-### Spring profiles
-
-Finally, there are multiple Spring profiles, which enable different components of the data processing pipeline. In our example we use:
-```
-spring.profiles.active = localPartitioning,jdbc_in,elasticsearchRest,postgres
-```
-which denotes that only such profiles will be active:
-* `partitioning` functionality,
-* `jdbc_in` for JDBC input database connectors, 
-* `elasticsearchRest` for using REST API for inserting documents to ElasticSearch,
-* `postgres` for serving as a CogStack engine job repository.
-
-For a more detailed description of available profiles please refer to [CogStack documentation](https://github.com/CogStack/CogStack-Pipeline).
