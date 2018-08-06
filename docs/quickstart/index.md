@@ -370,6 +370,7 @@ create view observations_view as
     enc.COST as encounter_cost,
     enc.REASONCODE as encounter_reason_code,
     enc.REASONDESCRIPTION as encounter_reason_desc,
+    enc.DOCUMENT as encounter_document,
 
     obs.DATE as observation_date,
     obs.CODE as observation_code,
@@ -396,7 +397,7 @@ create view observations_view as
 ```
 The goal here is to denormalize the database schema for CogStack and ElasticSearch data ingestion, as the `observations` table is referencing both the `patient` and `encounters` tables by their primary key. In the current implementation, CogStack engine cannot yet perform dynamic joins over the relational data from specific database tables.
 
-Apart from exposing the fields from the previously defined tables, some extra fields `cog_*` have been added. They are required for compatibility with CogStack data processing engine, but they may be possibly removed or modified in the upcoming version of CogStack. However, in the current implementation, these fields are required to properly configure the CogStack database reader, and to properly schedule and partition the data of the running CogStack data processing workers.
+Apart from exposing the fields from the previously defined tables, some extra fields `cog_*` have been added. They are required for compatibility with CogStack data processing engine, but they may be possibly removed or modified in the upcoming version of CogStack. However, in the current implementation, these fields are required to properly configure the CogStack database reader, database row mapper, to properly schedule and partition the data of the running CogStack data processing workers.
 
 These additional fields are:
 * `cog_src_field_name` -- related with processing the text documents (not used in this example),
