@@ -5,7 +5,7 @@ TAG=local
 
 ( cd docker-cogstack/java ; docker build -t cogstacksystems/cogstack-java-run:$TAG . )
 
-#( cd docker-cogstack/fluentd ; docker build -t cogstacksystems/fluentd:$TAG . )
+( cd docker-cogstack/fluentd ; docker build -t cogstacksystems/fluentd:$TAG . )
 
 docker build -t cogstacksystems/cogstack-java-devel:$TAG -f Dockerfile.devel .
 
