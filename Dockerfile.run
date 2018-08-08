@@ -1,0 +1,27 @@
+FROM cogstacksystems/cogstack-java-run:local
+
+# setup env
+#
+RUN mkdir -p /usr/src
+WORKDIR /usr/src/
+
+# copy artifacts
+#
+#COPY --from=cogstacksystems/cogstack-java-devel:1.2.0 /devel/docker-compose/cogstack /cogstack/
+#COPY --from=cogstacksystems/cogstack-java-devel:1.2.0 /devel/build/libs/cogstack-*.jar /cogstack/
+#COPY ./docker-cogstack/cogstack /cogstack/
+#COPY ./build/libs/cogstack-*.jar /cogstack/
+
+RUN mkdir -p /usr/src/build/libs/
+COPY --from=cogstacksystems/cogstack-java-devel:local /devel/build/libs/cogstack-*.jar /usr/src/build/libs/
+
+RUN mkdir -p /usr/src/docker-cogstack/cogstack/
+COPY --from=cogstacksystems/cogstack-java-devel:local /devel/docker-cogstack/cogstack/ /usr/src/docker-cogstack/cogstack/
+COPY --from=cogstacksystems/cogstack-java-devel:local /devel/docker-cogstack/cogstack/test2.sh /usr/src/
+
+# entry point
+#
+#CMD ./test2.sh /cogstack/cogstack-*.jar /cogstack/cogstack_conf
+#CMD ./test2.sh /usr/src/cogstack-*.jar /usr/src/cogstack_conf
+
+CMD ./test2.sh /usr/src/build/libs/cogstack-*.jar /usr/src/docker-cogstack/cogstack/cogstack_conf

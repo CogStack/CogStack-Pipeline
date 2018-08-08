@@ -1,0 +1,9 @@
+.git
+.gradle
+.idea
+__tmp
+__deploy
+build
+out
+examples
+docs
