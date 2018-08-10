@@ -17,11 +17,10 @@ COPY --from=cogstacksystems/cogstack-java-devel:local /devel/build/libs/cogstack
 
 RUN mkdir -p /usr/src/docker-cogstack/cogstack/
 COPY --from=cogstacksystems/cogstack-java-devel:local /devel/docker-cogstack/cogstack/ /usr/src/docker-cogstack/cogstack/
-COPY --from=cogstacksystems/cogstack-java-devel:local /devel/docker-cogstack/cogstack/test2.sh /usr/src/
+COPY --from=cogstacksystems/cogstack-java-devel:local /devel/docker-cogstack/cogstack/*.sh /usr/src/
 
 # entry point
 #
 #CMD ./test2.sh /cogstack/cogstack-*.jar /cogstack/cogstack_conf
-#CMD ./test2.sh /usr/src/cogstack-*.jar /usr/src/cogstack_conf
 
 CMD ./test2.sh /usr/src/build/libs/cogstack-*.jar /usr/src/docker-cogstack/cogstack/cogstack_conf
