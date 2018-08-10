@@ -7,7 +7,7 @@
         </filter>
         <encoder>
             <!-- handling parsing of of multi-line exceptions -->
-            <pattern>[%level] %d{HH:mm:ss} %X{contextID} %thread %logger %line %msg %replace( %replace( %xException{short} ){'\n',''} ){'\t', ' '}%nopex%n</pattern>
+            <pattern>[%level] %d{HH:mm:ss.SSS} %X{contextID} %thread - %logger @ %line : %msg %replace( %replace( %xException{short} ){'\n',''} ){'\t', ' '}%nopex%n</pattern>
         </encoder>
     </appender>
 
@@ -16,7 +16,7 @@
         <target>System.out</target>
         <encoder>
             <!-- handling parsing of of multi-line exceptions -->
-            <pattern>[%level] %d{HH:mm:ss} %X{contextID} %thread %logger %line %msg %replace( %replace( %xException{short} ){'\n',''} ){'\t', ' '}%nopex%n</pattern>
+            <pattern>[%level] %d{HH:mm:ss.SSS} %X{contextID} %thread - %logger @ %line : %msg %replace( %replace( %xException{short} ){'\n',''} ){'\t', ' '}%nopex%n</pattern>
         </encoder>
     </appender>
 
