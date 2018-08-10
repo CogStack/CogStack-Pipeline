@@ -156,7 +156,7 @@ services:
     image: cogstacksystems/fluentd:local # needs a custom image to include selected plugins
     container_name: fluentd
     volumes:
-      - ./common/fluentd/logs:/fluentd/log
+      - ./__logs:/fluentd/log
       - ./common/fluentd/conf/fluent.conf:/fluentd/etc/fluent.conf
     ports:
       - "24224:24224"
