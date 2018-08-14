@@ -3,7 +3,7 @@
     <appender name="console-stderr" class="ch.qos.logback.core.ConsoleAppender">
         <target>System.err</target>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>ERROR</level>
+            <level>WARN</level>
         </filter>
         <encoder>
             <!-- handling parsing of of multi-line exceptions -->
