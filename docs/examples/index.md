@@ -18,10 +18,11 @@ This document describes the available examples of CogStack data processing workf
 4. [Running CogStack](#running-cogstack)
 5. Detailed description of examples, which currently are:
 * [Example 1](#example-1) -- processing a simple, structured dataset from a single DB source.
-* [Example 2](#example-2) -- processing a semi-structured dataset from a single DB source (as in Quistart).
+* [Example 2](#example-2) -- processing a semi-structured dataset from a single DB source (as in [CogStack Quickstart](https://github.com/CogStack/CogStack-Pipeline)).
 * [Example 3](#example-3) -- processing a semi-structured dataset from multiple DB sources, multiple jobs.
 * [Example 4](#example-4) -- processing a semi-structured dataset with embedded documents from a single DB source.
 * [Example 5](#example-5) -- 2-step processing of a semi-structured dataset with embedded documents from a single DB source.
+* [Example 6](#example-6) -- Example 2 extended with logging mechanisms.
 
 The main directory with resources used in this tutorial is available in the the CogStack bundle under `examples` directory.
 
@@ -1234,3 +1235,66 @@ The *properties* file used in this example is similar to the one from [Example 1
 When running `setup.sh` script, a number of separate directories will be created, each corresponding to a document format use-case.
 
 Apart from that, this example uses a standard stack of microservices and runs only one instance of CogStack data processing engine. However, since this example implements 2-step processing, two CogStack instances are run, but in a sequential manner. Firstly, CogStack pipeline is executed using `reports.properties` configuration file and after that it is run with supplied `observations.properties` file.
+
+
+
+
+
+# <a name="example-6"></a> Example 6
+[//]: # "-------------------------------------------------------------------------------------"
+
+## General information
+
+This example is an extension of [Example 2](#example-2) providing logging mechanism using [Fluentd](https://www.fluentd.org/) log collector and it only focuses on the logging part.
+
+
+## Deployment information
+
+This example uses the standard stack of microservices (see: [CogStack ecosystem](#cogstack-ecosystem)), but extended with Fluentd logging driver. When deployed, Fluend will be running as an additional microservice in order to collect and filter logs from the ones running in CogStack ecosystem.
+
+For each microservice used an additional section has been added regarding logging -- e.g., in case of CogStack engine:
+```yml
+  cogstack:
+    image: cogstacksystems/cogstack-pipeline:latest
+    
+    ...
+    
+    logging:
+      driver: "fluentd"
+      options:
+        tag: cog.java.engine
+```
+
+`"fluentd"` is used as the logging `driver`. All the messages from the `cogstack` microservice will be forwarded to the fluentd driver using `cog.java.engine` as `tag`. The directory with the output logs from fluentd running container will be mapped to a local path in the deployment directory: `examples/example6/__deploy/__logs`. For the full configuration of running microservices, please refer to `examples/example6/docker/docker-compose.yml`.
+
+
+## Fluentd
+
+### Custom image
+
+In our setup, Fluend needs some additional filter plugins to be installed, hence a custom Fluentd image is used (as specified in the Docker Compose file). This image is available to download directly from CogStack Dockerhub under the name `cogstacksystems/fluentd`. Alternatively, the image can be build locally using the Dockerfile in the directory `docker-cogstack/fluentd` in the CogStack package.
+
+### Configuration file
+
+Fluentd uses configuration files to define the filtering and output rules for messages coming from predefined source(s). In our current setup, the Fluentd driver is listening at `localhost` on port `24224` for the incoming messages, as defined both in the Docker Compose file and Fluentd configuration files. The default configuration file for Fluentd is `docker-cogstack/fluentd/conf/fluent.conf` and the same one is used in this example (`examples/docker-common/fluentd/conf/fluent.conf`). However, here we won't go too much into logging configuration details and just cover the most important bits.
+
+
+In this example, all the running microservices output the messages to standard output or standard error. However, not all the messages will be displayed to the end-user. They are firstly forwarded to fluentd driver using a separate tag per each microservice as defined in the Docker Compose file. The general rule applied here is that all the messages which have been previously sent to `stderr` will be classified as error messages, where as the ones sent to `stdout` -- as informative ones. 
+
+After filtering and parsing, all the messages are output into files, separate per each service tag. The logs containing only error messages are stored in files starting with `erorr.*` prefix, whereas the full logs are stored in files starting with `full.*` prefix. The log files are managed using log rotating policy, keeping new logs for 24 hours, before being archived. 
+
+As a side note, since the error messages are of high importance, on arrival they are additionally printed to the standard output for the user's instant inspection.
+
+
+### Output logs format
+
+The logs are output to files in JSON format and they contain such fields:
+- `container_id` and `container_name` of the running microservice,
+- `log` message,
+- `time` of the message arrival.
+
+To parse the logs, one easy way is to use [jq](https://stedolan.github.io/jq/) -- a flexible JSON command-line processor. For example, to parse the `log` message field, one may use:
+```bash
+jq ".log" example6/__deploy/__logs/<filename>.log
+```
+where `<filename>` is the filename of a sample log file.
