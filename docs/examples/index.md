@@ -1248,6 +1248,11 @@ Apart from that, this example uses a standard stack of microservices and runs on
 This example is an extension of [Example 2](#example-2) providing logging mechanism using [Fluentd](https://www.fluentd.org/) log collector and it only focuses on the logging part.
 
 
+[//]: # "<span style='color:red'> NOTE: </span>"
+**Note: For the moment, the Docker containers used in this example: `cogstack-pipeline` and `fluentd` are not yet available to pull the official CogStack Dockerhub repository. These images need to be build locally. The scripts to build these images are available in the main CogStack bundle in the directory `localBuild/`.**
+
+
+
 ## Deployment information
 
 This example uses the standard stack of microservices (see: [CogStack ecosystem](#cogstack-ecosystem)), but extended with Fluentd logging driver. When deployed, Fluend will be running as an additional microservice in order to collect and filter logs from the ones running in CogStack ecosystem.

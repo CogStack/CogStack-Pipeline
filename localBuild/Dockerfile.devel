@@ -1,4 +1,6 @@
-FROM cogstacksystems/cogstack-java-run:local
+ARG VERSION
+
+FROM cogstacksystems/cogstack-java-run:${VERSION}
 
 # setup the build environment
 #
