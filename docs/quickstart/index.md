@@ -10,18 +10,39 @@ output:
 # <a name="intro"></a> Introduction
 [//]: # "-------------------------------------------------------------------------------------"
 [//]: # "Tutorial introduction"
-This simple tutorial demonstrates how to get CogStack running on a sample electronic health record (EHR) dataset stored initially in an external database. CogStack ecosystem has been designed with handling efficiently both structured and unstructured EHR data in mind. It shows its strength while working with the unstructured type of data, especially as some input data can be provided as documents in PDF or image formats. For the moment, however, we only show how to run CogStack on a set of structured and semi-structured EHRs that have been already digitalized. The part covering unstructured type of data in form of PDF documents, images and other clinical notes which needs to processed prior to analysis will come shortly.
+This simple tutorial demonstrates how to get CogStack running on a sample electronic health record (EHR) dataset stored initially in an external database. CogStack ecosystem has been designed with handling efficiently both structured and unstructured EHR data in mind. It shows its strength while working with the unstructured type of data, especially as some input data can be provided as documents in PDF or image formats. For the moment, however, we only show how to run CogStack on a set of structured and free-text EHRs that have been already digitalized. The part covering unstructured type of data in form of PDF documents, images and other clinical notes which needs to processed prior to analysis will come shortly.
 
 This tutorial is divided into 5 parts:
-1. A brief description of how does CogStack work and its ecosystem ([link](#how-does-it-work)),
-2. A brief description of the sample datasets used ([link](#datasets)), 
-3. Running CogStack 'out-of-the-box' using the dataset already preloaded into a sample database ([link](#running-cogstack)),
-4. For advanced users: preparing a database schema according to the sample dataset and to the current CogStack data processing engine requirements ([link](#advanced-schema)),
-5. For advanced users: preparing the configuration file for CogStack engine according to the used database schema and used microservices ([link](#advanced-properties)).
+1. Getting CogStack ([link](#getting-cogstack)),
+2. A brief description of how does CogStack work and its ecosystem ([link](#how-does-it-work)),
+3. A brief description of the sample datasets used ([link](#datasets)), 
+4. Running CogStack 'out-of-the-box' using the dataset already preloaded into a sample database ([link](#running-cogstack)),
+5. For advanced users: preparing a database schema according to the sample dataset and to the current CogStack data processing engine requirements ([link](#advanced-schema)),
+6. For advanced users: preparing the configuration file for CogStack engine according to the used database schema and used microservices ([link](#advanced-properties)).
 
 To skip the brief description and to get hands on running CogStack please head directly to [Running CogStack](#running-cogstack) part.
 
-The main directory with resources used in this tutorial is available in the CogStack bundle under `examples`. This tutorial is based on the **Example 2**, however, there are more examples available to play with.
+The main directory with resources used in this tutorial is available in the CogStack bundle under `examples/`. This tutorial is based on the **Example 2**, however, there are more examples available to play with.
+
+
+# <a name="getting-cogstack"></a> Getting CogStack
+
+The most convenient way to get CogStack bundle is to download it directly from the [official github repository](https://github.com/CogStack/CogStack-Pipeline) either by cloning it using git:
+
+```bash
+git clone -b dev --single-branch https://github.com/CogStack/CogStack-Pipeline.git
+```
+or by downloading it from the repository and decompressing it:
+```bash
+wget 'https://github.com/CogStack/CogStack-Pipeline/archive/dev.zip'
+unzip dev.zip
+```
+The content will be decompressed into `CogStack-Pipeline/` directory.
+
+
+[//]: # "<span style='color:red'> NOTE: </span>"
+**Note: For the moment the CogStack bundle is obtained from the `dev` branch -- soon it will be merged into `master` branch with a version tag for a direct download.**
+
 
 
 
@@ -36,7 +57,7 @@ The data processing workflow of CogStack is based on [Java Spring Batch](https:/
 
 
 [//]: # "Content description"
-In this tutorial we only focus on a simple and very common use-case, where CogStack reads and process semi-structured EHRs from a single PostgreSQL database. The result is then stored in ElasticSearch where the data can be easily queried in [Kibana](https://www.elastic.co/products/kibana) dashboard. However, CogStack engine also supports multiple data sources -- please see **Example 3** which covers such case.
+In this tutorial we only focus on a simple and very common use-case, where CogStack reads and process structured and free-text EHRs data from a single PostgreSQL database. The result is then stored in ElasticSearch where the data can be easily queried in [Kibana](https://www.elastic.co/products/kibana) dashboard. However, CogStack engine also supports multiple data sources -- please see **Example 3** which covers such case.
 
 
 ## CogStack ecosystem
@@ -62,7 +83,7 @@ The sample dataset used in this tutorial consists of two types of EHR data:
 * Synthetic -- structured, synthetic EHRs, generated using [synthea](https://synthetichealth.github.io/synthea/) application,
 * Medial reports -- unstructured, medical health report documents obtained from [MTsamples](https://www.mtsamples.com).
 
-These datasets, although unrelated, are used together to compose a semi-structured dataset.
+These datasets, although unrelated, are used together to compose a combined dataset.
 
 
 ## <a name="samples-syn"></a> Synthetic -- synthea-based
@@ -110,12 +131,12 @@ The collection comprises in total of 4873 documents. A sample document is shown 
 
 ## Preparing the data
 
-For the ease of use a database dump with predefined schema and preloaded data will be provided in `examples/example2/db_dump` directory. This way, the PostgreSQL database will be automatically initialized when deployed using Docker. The dabatase dump for this example (alongside the others) can be directly downloaded from Amazon S3 by running in the main examples directory:
+For the ease of use a database dump with predefined schema and preloaded data will be provided in `examples/example2/db_dump` directory. This way, the PostgreSQL database will be automatically initialized when deployed using Docker. The database dump for this example (alongside the others) can be also directly downloaded from Amazon S3 by running in the main `examples/` directory:
 ```bash
 bash download_db_dumps.sh
 ```
 
-A;ternatively, the PostgreSQL database schema definition used in this tutorial `db_create_schema.sql` is stored in `examples/example2/extra/` directory alongside the script `prepare_db.sh` to generate the database dump. More information covering the creation of database schema can be found in [Advanced: preparing a DB schema for CogStack](#advanced-schema) part. 
+Alternatively, the PostgreSQL database schema definition used in this tutorial `db_create_schema.sql` is stored in `examples/example2/extra/` directory alongside the script `prepare_db.sh` to generate the database dump. More information covering the creation of database schema can be found in [Advanced: preparing a DB schema for CogStack](#advanced-schema) part. 
 
 
 
@@ -123,31 +144,21 @@ A;ternatively, the PostgreSQL database schema definition used in this tutorial `
 # <a name="running-cogstack"></a> Running CogStack
 [//]: # "-------------------------------------------------------------------------------------"
 
-## Getting CogStack
+## Running CogStack for the first time
 
-The most convenient way to get CogStack bundle is to download it directly from the [official github repository](https://github.com/CogStack/CogStack-Pipeline) either by cloning it using git:
-
+For the ease of use CogStack is being deployed and run using Docker. However, before starting the CogStack ecosystem for the first time, one needs to have the database dump files for sample data either by creating them locally or downloading from Amazon S3.
+To download the database dumps, just type in the main `examples/` directory:
 ```bash
-git clone -b sample_data --single-branch https://github.com/CogStack/CogStack-Pipeline.git
-```
-or by downloading it from the repository and decompressing it:
-```bash
-curl 'https://github.com/CogStack/CogStack-Pipeline/archive/sample_data.zip'
-unzip sample_data.zip
+bash download_db_dumps.sh
 ```
 
-[//]: # "<span style='color:red'> NOTE: </span>"
-**Note: For the moment the CogStack bundle is obtained from the `sample_data` branch -- soon it will be merged into `master` branch with a version tag for a direct download.**
-
-
-## Setup
-
-For the ease of use CogStack is being deployed and run using Docker. However, before starting the CogStack ecosystem for the first time, a setup scripts needs to be run locally to prepare the Docker images and configuration files for CogStack data processing engine. The script is available in `examples/example2/` path and can be run as:
+Next, a setup scripts needs to be run locally to prepare the Docker images and configuration files for CogStack data processing engine. The script is available in `examples/example2/` path and can be run as:
 
 ```bash
 bash setup.sh
 ```
-As a result, a temporary directory `__deploy` will be created containing all the necessary artifacts to deploy CogStack.
+
+As a result, a temporary directory `__deploy/` will be created containing all the necessary artifacts to deploy CogStack.
 
 
 ## Docker-based deployment
@@ -172,7 +183,7 @@ Assuming that everything is working fine, we should be able to connect to the ru
 
 ### Kibana and ElasticSearch
 
-Kibana dashboard used to query the EHRs can be accessed directly in browser via URL: `http://localhost:5601/`. The data can be queried using a number of ElasticSearch indices, e.g. `sample_observations_view`. Usually, each index will correspond to the database view in `db_samples` (`pgsamples` PostgreSQL database) from which the data was ingested.
+Kibana dashboard used to query the EHRs can be accessed directly in browser via URL: `http://localhost:5601/`. The data can be queried using a number of ElasticSearch indices, e.g. `sample_observations_view`. Usually, each index will correspond to the database view in `db_samples` (`pgsamples` PostgreSQL database) from which the data was ingested. However, when entering Kibana dashboard for the first time, an index pattern needs to be configured in the Kibana management panel -- for more information about its creation, please refer to the official [Kibana documentation](https://www.elastic.co/guide/en/kibana/current/tutorial-define-index.html).
 
 In addition, ElasticSearch REST end-point can be accessed via URL `http://localhost:9200/`. It can be used to perform manual queries or to be used by other external services -- for example, one can list the available indices:
 ```bash
@@ -182,6 +193,7 @@ or query one of the available indices -- `sample_observations_view`:
 ```bash
 curl 'http://localhost:9200/sample_observations_view'
 ```
+For more information about possible documents querying or modification operations, please refer to the official [ElasticSearch documentation](https://www.elastic.co/guide/en/elasticsearch/reference/current/getting-started.html).
 
 ### PostgreSQL sample database
 
@@ -274,7 +286,7 @@ create table encounters (
 ```
 Here, with `--(*)` has been marked an additional `DOCUMENT` field. This extra field will be used to store a document from [MTSamples dataset](#samples-mt). 
 
-Just to clarify, [Synthea-based](#samples-syn) and [MTSamples](#samples-mt) are two unrelated datasets. Here, we are extending the synthetic dataset with the clinical documents from the MTSamples to create a semi-structural one, to be able to perform more advanced queries.
+Just to clarify, [Synthea-based](#samples-syn) and [MTSamples](#samples-mt) are two unrelated datasets. Here, we are extending the synthetic dataset with the clinical documents from the MTSamples to create a combined one, to be able to perform more advanced queries.
 
 A sample document from MTSamples dataset is presented below:
 ```text
