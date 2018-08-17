@@ -59,6 +59,9 @@ Each of the examples is organized in a way that it can be deployed and run indep
 │   ├── elasticsearch
 │   │   └── config
 │   │       └── elasticsearch.yml
+│   ├── fluentd
+│   │   └── conf
+│   │       └── fluent.conf
 │   ├── kibana
 │   │   └── config
 │   │       └── kibana.yml
