@@ -150,6 +150,19 @@ Each of the examples is organized in a way that it can be deployed and run indep
 │   │   └── prepare_single_db.sh
 │   └── setup.sh
 │
+├── example6
+│   ├── cogstack
+│   │   ├── observations.properties
+│   │   └── test2.sh
+│   ├── db_dump
+│   │   └── db_samples.sql.gz
+│   ├── docker
+│   │   └── docker-compose.yml
+│   ├── extra
+│   │   ├── db_create_schema.sql
+│   │   └── prepare_db.sh
+│   └── setup.sh
+│
 ├── rawdata
 │   ├── mtsamples-txt-full.tgz
 │   ├── mtsamples-txt-small.tgz
