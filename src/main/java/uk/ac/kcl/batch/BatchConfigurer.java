@@ -67,6 +67,10 @@ public class BatchConfigurer extends DefaultBatchConfigurer {
         mainDatasource.setPassword(env.getProperty("jobRepository.password"));
         mainDatasource.setIdleTimeout(Long.valueOf(env.getProperty("jobRepository.idleTimeout")));
         mainDatasource.setMaxLifetime(Long.valueOf(env.getProperty("jobRepository.maxLifetime")));
+
+        if (env.getProperty("jobRepository.poolSize") != null) {
+            mainDatasource.setMaximumPoolSize(Integer.valueOf(env.getProperty("jobRepository.poolSize")));
+        }
         //mainDatasource.setAutoCommit(false);
         return mainDatasource;
     }

@@ -182,7 +182,7 @@ public class JobConfiguration {
     private Long sourceMaxLifeTime;
     @Value("${source.leakDetectionThreshold}")
     private Long sourceLeakDetection;
-    @Value("${source.poolSize}")
+    @Value("${source.poolSize:10}")
     private Integer sourcePoolSize;
 
 
@@ -227,6 +227,8 @@ public class JobConfiguration {
     private Long targetIdleTimeout;
     @Value("${target.maxLifetime}")
     private Long targetMaxLifeTime;
+    @Value("${target.poolSize:10}")
+    private Integer targetPoolSize;
 
     @Bean(destroyMethod = "close")
 //    @Primary
@@ -240,6 +242,9 @@ public class JobConfiguration {
         mainDatasource.setPassword(targetPassword);
         mainDatasource.setIdleTimeout(targetIdleTimeout);
         mainDatasource.setMaxLifetime(targetMaxLifeTime);
+        if (targetPoolSize > 0){
+            mainDatasource.setMaximumPoolSize(targetPoolSize);
+        }
         return mainDatasource;
     }
 
