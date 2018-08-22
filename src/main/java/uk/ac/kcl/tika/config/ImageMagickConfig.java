@@ -81,6 +81,7 @@ public class ImageMagickConfig implements Serializable{
     private int maxTiffSize = Integer.MAX_VALUE;
     private int minTiffSize = 0;
 
+
 	/**
 	 * Default contructor.
 	 */
@@ -116,7 +117,6 @@ public class ImageMagickConfig implements Serializable{
 				}
 			}
 		}
-
 		setTesseractPath(
 				getProp(props, "tesseractPath", getTesseractPath()));
 		setLanguage(
@@ -152,7 +152,7 @@ public class ImageMagickConfig implements Serializable{
 	/**
 	 * Set tesseract installation folder, needed if it is not on system path.
 	 */
-	private void setTesseractPath(String tesseractPath) {
+	public void setTesseractPath(String tesseractPath) {
 		if(!tesseractPath.isEmpty() && !tesseractPath.endsWith(File.separator))
 			tesseractPath += File.separator;
 		
@@ -160,7 +160,7 @@ public class ImageMagickConfig implements Serializable{
 	}
 	
 	/** @see #setLanguage(String language)*/
-	private String getLanguage() {
+	public String getLanguage() {
 		return language;
 	}
 	
@@ -168,7 +168,7 @@ public class ImageMagickConfig implements Serializable{
 	 * Set tesseract language dictionary to be used. Default is "eng".
 	 * Multiple languages may be specified, separated by plus characters.
 	 */
-	private void setLanguage(String language) {
+	public void setLanguage(String language) {
 		if (!language.matches("([A-Za-z](\\+?))*")) {
 			throw new IllegalArgumentException("Invalid language code");
 		}
@@ -176,7 +176,7 @@ public class ImageMagickConfig implements Serializable{
 	}
 	
 	/** @see #setPageSegMode(String pageSegMode)*/
-	private String getPageSegMode() {
+	public String getPageSegMode() {
 		return pageSegMode;
 	}
 	
@@ -184,7 +184,7 @@ public class ImageMagickConfig implements Serializable{
 	 * Set tesseract page segmentation mode.
 	 * Default is 1 = Automatic page segmentation with OSD (Orientation and Script Detection)
 	 */
-	private void setPageSegMode(String pageSegMode) {
+	public void setPageSegMode(String pageSegMode) {
 		if (!pageSegMode.matches("[1-9]|10")) {
 			throw new IllegalArgumentException("Invalid language code");
 		}
@@ -192,7 +192,7 @@ public class ImageMagickConfig implements Serializable{
 	}
 	
 	/** @see #setMinFileSizeToOcr(int minFileSizeToOcr)*/
-	private int getMinFileSizeToOcr() {
+	public int getMinFileSizeToOcr() {
 		return minFileSizeToOcr;
 	}
 	
@@ -200,12 +200,12 @@ public class ImageMagickConfig implements Serializable{
 	 * Set minimum file size to submit file to ocr.
 	 * Default is 0.
 	 */
-	private void setMinFileSizeToOcr(int minFileSizeToOcr) {
+	public void setMinFileSizeToOcr(int minFileSizeToOcr) {
 		this.minFileSizeToOcr = minFileSizeToOcr;
 	}
 	
 	/** @see #setMaxFileSizeToOcr(int maxFileSizeToOcr)*/
-	private int getMaxFileSizeToOcr() {
+	public int getMaxFileSizeToOcr() {
 		return maxFileSizeToOcr;
 	}
 	
@@ -213,7 +213,7 @@ public class ImageMagickConfig implements Serializable{
 	 * Set maximum file size to submit file to ocr.
 	 * Default is Integer.MAX_VALUE.
 	 */
-	private void setMaxFileSizeToOcr(int maxFileSizeToOcr) {
+	public void setMaxFileSizeToOcr(int maxFileSizeToOcr) {
 		this.maxFileSizeToOcr = maxFileSizeToOcr;
 	}
 
@@ -221,7 +221,7 @@ public class ImageMagickConfig implements Serializable{
 	 * Set maximum time (seconds) to wait for the ocring process to terminate.
 	 * Default value is 120s.
 	 */
-	private void setTimeout(int timeout) {
+	public void setTimeout(int timeout) {
 		this.timeout = timeout;
 	}
 
@@ -277,11 +277,11 @@ public class ImageMagickConfig implements Serializable{
         return quality;
     }
 
-    private int getMaxTiffSize() {
+	public int getMaxTiffSize() {
         return maxTiffSize;
     }
 
-    private void setMaxTiffSize(int maxTiffSize) {
+	public void setMaxTiffSize(int maxTiffSize) {
         this.maxTiffSize = maxTiffSize;
     }
 
@@ -289,23 +289,23 @@ public class ImageMagickConfig implements Serializable{
         this.imageMagickPath = imageMagickPath;
     }
 
-    private void setDensity(String density) {
+	public void setDensity(String density) {
         this.density = density;
     }
 
-    private void setDepth(String depth) {
+	public void setDepth(String depth) {
         this.depth = depth;
     }
 
-    private void setQuality(String quality) {
+	public void setQuality(String quality) {
         this.quality = quality;
     }
 
-    private int getMinTiffSize() {
+	public int getMinTiffSize() {
         return minTiffSize;
     }
 
-    private void setMinTiffSize(int minTiffSize) {
+	public void setMinTiffSize(int minTiffSize) {
         this.minTiffSize = minTiffSize;
     }
     
