@@ -167,6 +167,7 @@ public class ESRestService {
         }
     }
 
+    @PreDestroy
     public void destroy() throws IOException {
         LOG.debug("ESRestService.destroy() called");
         restClient.close();
