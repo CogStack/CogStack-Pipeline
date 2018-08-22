@@ -53,8 +53,7 @@ services:
 # CogStack containers                                                       #
 #---------------------------------------------------------------------------#
   cogstack:
-#    image: cogstacksystems/cogstack-pipeline:latest
-    image: cogstacksystems/cogstack-pipeline:local
+    image: cogstacksystems/cogstack-pipeline:dev-latest
     container_name: cogengine
     volumes:
       - ./cogstack:/usr/src/docker-cogstack/cogstack/cogstack_conf:ro
@@ -153,8 +152,7 @@ services:
 # Logging : Fluentd                                                         #
 #---------------------------------------------------------------------------#
   fluent:
-#    image: cogstacksystems/fluentd:latest # needs a custom image to include selected plugins
-    image: cogstacksystems/fluentd:local
+    image: cogstacksystems/fluentd:dev-latest
     container_name: fluentd
     volumes:
       - ./__logs:/fluentd/log
