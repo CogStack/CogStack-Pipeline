@@ -11,17 +11,17 @@ output:
 # <a name="intro"></a> Introduction
 [//]: # "-------------------------------------------------------------------------------------"
 This document describes the available examples of CogStack data processing workflows. The document is divided into following parts:
-1. [Getting CogStack](#getting-cogstack)
-2. [How are the examples organized](#how-they-are-organized)
-2. [How does CogStack work](#how-does-it-work)
-3. [Available datasets](#datasets)
-4. [Running CogStack](#running-cogstack)
-5. Detailed description of examples, which currently are:
+1. [Getting CogStack](#getting-cogstack).
+2. [How are the examples organized](#how-they-are-organized).
+3. [How does CogStack work](#how-does-it-work).
+4. [Available datasets](#datasets).
+5. [Running CogStack](#running-cogstack).
+6. Detailed description of examples, which currently are:
 * [Example 1](#example-1) -- processing a simple, structured dataset from a single DB source.
-* [Example 2](#example-2) -- processing a semi-structured dataset from a single DB source (as in [CogStack Quickstart](https://github.com/CogStack/CogStack-Pipeline)).
-* [Example 3](#example-3) -- processing a semi-structured dataset from multiple DB sources, multiple jobs.
-* [Example 4](#example-4) -- processing a semi-structured dataset with embedded documents from a single DB source.
-* [Example 5](#example-5) -- 2-step processing of a semi-structured dataset with embedded documents from a single DB source.
+* [Example 2](#example-2) -- processing a combined structured and free-text dataset from a single DB source (as in Quistart).
+* [Example 3](#example-3) -- processing a combined dataset from multiple DB sources, multiple jobs.
+* [Example 4](#example-4) -- processing a combined dataset with embedded documents from a single DB source.
+* [Example 5](#example-5) -- 2-step processing of a combined dataset with embedded documents from a single DB source.
 * [Example 6](#example-6) -- Example 2 extended with logging mechanisms.
 
 The main directory with resources used in this tutorial is available in the the CogStack bundle under `examples` directory.
@@ -36,13 +36,15 @@ Some parts of this document are also used in [CogStack Quickstart](https://githu
 The most convenient way to get CogStack bundle is to download it directly from the [official github repository](https://github.com/CogStack/CogStack-Pipeline) either by cloning it using git:
 
 ```bash
-git clone -b sample_data --single-branch https://github.com/CogStack/CogStack-Pipeline.git
+git clone -b dev --single-branch https://github.com/CogStack/CogStack-Pipeline.git
 ```
 or by downloading it from the repository and decompressing it:
 ```bash
-curl 'https://github.com/CogStack/CogStack-Pipeline/archive/sample_data.zip'
-unzip sample_data.zip
+wget 'https://github.com/CogStack/CogStack-Pipeline/archive/dev.zip'
+unzip dev.zip
 ```
+The content will be decompressed into `CogStack-Pipeline/` directory.
+
 
 [//]: # "<span style='color:red'> NOTE: </span>"
 **Note: For the moment the CogStack bundle is obtained from the `sample_data` branch -- soon it will be merged into `master` branch with a version tag for a direct download.**
@@ -52,7 +54,8 @@ unzip sample_data.zip
 # <a name="how-they-are-organized"></a> How are the examples organized
 [//]: # "-------------------------------------------------------------------------------------"
 
-Each of the examples is organized in a way that it can be deployed and run independently. The directory structure of `examples` tree is as follows:
+Each of the examples is organized in a way that it can be deployed and run independently. The directory structure of `examples/` tree is as follows:
+
 ```tree
 .
 ├── docker-common
@@ -318,7 +321,7 @@ The base dataset used in examples consists of two types of EHR data:
 * Synthetic -- structured, synthetic EHRs, generated using [Synthea](https://synthetichealth.github.io/synthea/) application,
 * Medial reports -- unstructured, medical health report documents obtained from [MTsamples](https://www.mtsamples.com).
 
-These datasets, although unrelated, are used together to compose a semi-structured dataset.
+These datasets, although unrelated, are used together to compose a combined dataset.
 
 
 ## <a name="samples-syn"></a> Synthetic -- synthea-based
@@ -364,12 +367,13 @@ The collection comprises in total of 4873 documents. The sample document is show
 
 ## Preparing the data
 
-For the ease of use a database dump with predefined schema and preloaded data will be provided in each of the examples `examples/example*/db_dump/` directory. This way, the PostgreSQL database with sample data will be automatically initialized when deployed using Docker. The dabatase dumps can be directly downloaded from [Amazon S3](https://aws.amazon.com/s3) bucket by running in the main examples directory:
+For the ease of use a database dump with predefined schema and preloaded data will be provided in each of the examples `examples/example*/db_dump/` directory. This way, the PostgreSQL database with sample data will be automatically initialized when deployed using Docker. The dabatase dumps can be directly downloaded from [Amazon S3](https://aws.amazon.com/s3) bucket by running in the main `examples/` directory:
+
 ```bash
 bash download_db_dumps.sh
 ```
 
-Alternatively, the PostgreSQL database schema definitions are stored in `examples/example*/extra/` directories alongside the scripts to generate the database dumps locally. However, some examples may require pre-processed documents data to be available prior running -- the script `prepare_docs.sh` in the main examples takes care of that. The script `prepare_db_dumps.sh` is used to prepare locally all the database dumps to initialize the examples.
+Alternatively, the PostgreSQL database schema definitions are stored in `examples/example*/extra/` directories alongside the scripts to generate the database dumps locally. However, some examples may require pre-processed documents data to be available prior running -- the script `prepare_docs.sh` in the main `examples/` directory takes care of that. The script `prepare_db_dumps.sh` is used to prepare locally all the database dumps to initialize the examples.
 
 
 
@@ -408,7 +412,7 @@ Assuming that everything is working fine, we should be able to connect to the ru
 
 ### Kibana and ElasticSearch
 
-Kibana dashboard used to query the EHRs can be accessed directly in browser via URL: `http://localhost:5601/`. The data can be queried using a number of ElasticSearch indices, e.g. `sample_observations_view`. Usually, each index will correspond to the database view in `db_samples` (`pgsamples` PostgreSQL database) from which the data was ingested.
+Kibana dashboard used to query the EHRs can be accessed directly in browser via URL: `http://localhost:5601/`. The data can be queried using a number of ElasticSearch indices, e.g. `sample_observations_view`. Usually, each index will correspond to the database view in `db_samples` (`pgsamples` PostgreSQL database) from which the data was ingested. However, when entering Kibana dashboard for the first time, an index pattern needs to be configured in the Kibana management panel -- for more information about its creation, please refer to the official [Kibana documentation](https://www.elastic.co/guide/en/kibana/current/tutorial-define-index.html).
 
 In addition, ElasticSearch REST end-point can be accessed via URL `http://localhost:9200/`. It can be used to perform manual queries or to be used by other external services -- for example, one can list the available indices:
 ```bash
@@ -418,6 +422,8 @@ or query one of the available indices -- `sample_observations_view`:
 ```bash
 curl 'http://localhost:9200/sample_observations_view'
 ```
+
+For more information about possible documents querying or modification operations, please refer to the official [ElasticSearch documentation](https://www.elastic.co/guide/en/elasticsearch/reference/current/getting-started.html).
 
 ### PostgreSQL sample database
 
@@ -766,7 +772,7 @@ It also uses a single CogStack *properties* file (see `examples/example1/cogstac
 
 ## General information
 
-This example is an extension of [Example 1](#example-1). Apart from containing structured synthetic data, it also contains free-text documents data, hence creating a semi-structured dataset. 
+This example is an extension of [Example 1](#example-1). Apart from containing structured synthetic data, it also contains free-text documents data, hence creating a combined dataset. 
 
 This example is also covered as a main part of [CogStack Quickstart](https://github.com/CogStack/CogStack-Pipeline) tutorial.
 
@@ -795,7 +801,7 @@ create table encounters (
 ```
 Here, with `-- (*)` has been marked an additional `DOCUMENT` column field. This extra field will be used to store the content of a document from [MTSamples dataset](#samples-mt). 
 
-Just to clarify, [Synthea-based](#samples-syn) and [MTSamples](#samples-mt) datasets are two unrelated datasets. Here, we are extending the synthetic dataset with the clinical documents from the MTSamples to create a semi-structural one, to be able to perform a bit more interesting queries.
+Just to clarify, [Synthea-based](#samples-syn) and [MTSamples](#samples-mt) datasets are two unrelated datasets. Here, we are extending the synthetic dataset with the clinical documents from the MTSamples to create a combined one, to be able to perform a bit more interesting queries.
 
 A sample document from MTSamples dataset is presented below:
 ```text
@@ -1251,8 +1257,6 @@ The *properties* file used in this example is similar to the one from [Example 1
 When running `setup.sh` script, a number of separate directories will be created, each corresponding to a document format use-case.
 
 Apart from that, this example uses a standard stack of microservices and runs only one instance of CogStack data processing engine. However, since this example implements 2-step processing, two CogStack instances are run, but in a sequential manner. Firstly, CogStack pipeline is executed using `reports.properties` configuration file and after that it is run with supplied `observations.properties` file.
-
-
 
 
 
