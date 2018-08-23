@@ -45,10 +45,23 @@ public class JobCompleteNotificationListener implements JobExecutionListener {
   @Autowired(required = false)
   @Qualifier("esRestService")
   private ESRestService esRestService;
+  private boolean esServiceAlreadyClosed = false;
 
   @Override
   public void beforeJob(JobExecution jobExecution) {
     columnRangePartitioner.setJobExecution(jobExecution);
+
+    // *** Workaround -- re-initialising the ES REST service for scheduled jobs (see afterJob() )
+    if (esRestService != null && esServiceAlreadyClosed) {
+      try {
+        esRestService.init();
+        esServiceAlreadyClosed = false;
+        log.debug("Re-initialising ElasticSearch REST service");
+      }
+      catch (Exception e) {
+        log.warn("Cannot re-initialise ElasticSearch REST service");
+      }
+    }
   }
 
   @Autowired
@@ -63,17 +76,17 @@ public class JobCompleteNotificationListener implements JobExecutionListener {
       log.info("!!! JOB FINISHED! promoting last good record date to JobExecutionContext");
       jobExecution.getExecutionContext().put("last_successful_timestamp_from_this_job", timeOfNextJob);
       jobRepository.updateExecutionContext(jobExecution);
-    }
 
-    if (esRestService != null) {
       // Workaround to close ElasticSearch REST properly (the job was stuck before this change)
-      try {
-        esRestService.destroy();
-      } catch (IOException e) {
-        log.warn("IOException when destroying ElasticSearch REST service");
+      if (esRestService != null) {
+        try {
+          esRestService.destroy();
+        } catch (IOException e) {
+          log.warn("IOException when destroying ElasticSearch REST service");
+        }
+        log.debug("Shutting down ElasticSearch REST service");
+        esServiceAlreadyClosed = true;
       }
     }
   }
-
-
 }
