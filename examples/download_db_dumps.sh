@@ -5,7 +5,8 @@ AWS_S3_BUCKET_URL="http://cogstack.s3.amazonaws.com"
 DATA_PATH="share/examples/db_dump"
 DATA_PATH_URL="$AWS_S3_BUCKET_URL/$DATA_PATH"
 
-
+# download the db dumps for examples
+#
 files=(
 example1/db_samples.sql.gz
 example2/db_samples.sql.gz
@@ -32,5 +33,14 @@ for filename in ${files[@]}; do
 
 	echo "OK."
 done
+
+
+# copy the downloaded database dumps
+#
+if [ ! -e example5/db_dump ]; then mkdir example5/db_dump; fi
+cp example4/db_dump/db_samples-*.sql.gz example5/db_dump/
+
+if [ ! -e example6/db_dump ]; then mkdir example6/db_dump; fi
+cp example2/db_dump/db_samples.sql.gz example6/db_dump/
 
 echo "Done."
