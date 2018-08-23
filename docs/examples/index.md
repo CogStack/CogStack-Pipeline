@@ -1269,7 +1269,7 @@ This example is an extension of [Example 2](#example-2) providing logging mechan
 
 
 [//]: # "<span style='color:red'> NOTE: </span>"
-**Note: For the moment, the Docker containers used in this example: `cogstack-pipeline` and `fluentd` are not yet available to pull the official CogStack Dockerhub repository. These images need to be build locally. The scripts to build these images are available in the main CogStack bundle in the directory `localBuild/`.**
+**Note: For the moment, the Docker containers used in this example are: `cogstacksystems/cogstack-pipeline:dev-latest` and `cogstacksystems/fluentd:dev-latest`. These containers are build from the `dev` branch. However, once the development branch will be merged to `master` the container names will be updated.**
 
 
 
