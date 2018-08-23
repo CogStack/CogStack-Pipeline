@@ -3,7 +3,16 @@
 
 cmdname=$(basename $0)
 
-echoerr() { if [[ $QUIET -ne 1 ]]; then echo "$@" 1>&2; fi }
+echoerr() 
+{ 
+    if [[ $QUIET -ne 1 ]]; then
+        if [[ $STDOUT -ne 1 ]]; then
+            echo "$@" 1>&2
+        else
+            echo "$@"
+        fi
+    fi 
+}
 
 usage()
 {
@@ -15,6 +24,7 @@ Usage:
                                 Alternatively, you specify the host and port as host:port
     -s | --strict               Only execute subcommand if the test succeeds
     -q | --quiet                Don't output any status messages
+    -o | --stdout               Use stdout for status messages  
     -t TIMEOUT | --timeout=TIMEOUT
                                 Timeout in seconds, zero for no timeout
     -- COMMAND ARGS             Execute command with args after the test finishes
@@ -80,6 +90,10 @@ do
         QUIET=1
         shift 1
         ;;
+        -o | --stdout)
+        STDOUT=1
+        shift 1
+        ;;
         -s | --strict)
         STRICT=1
         shift 1
@@ -135,6 +149,7 @@ TIMEOUT=${TIMEOUT:-15}
 STRICT=${STRICT:-0}
 CHILD=${CHILD:-0}
 QUIET=${QUIET:-0}
+STDOUT=${STDOUT:-0}
 
 if [[ $CHILD -gt 0 ]]; then
     wait_for

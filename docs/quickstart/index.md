@@ -10,6 +10,7 @@ output:
 # <a name="intro"></a> Introduction
 [//]: # "-------------------------------------------------------------------------------------"
 [//]: # "Tutorial introduction"
+
 This simple tutorial demonstrates how to get CogStack running on a sample electronic health record (EHR) dataset stored initially in an external database. CogStack ecosystem has been designed with handling efficiently both structured and unstructured EHR data in mind. It shows its strength while working with the unstructured type of data, especially as some input data can be provided as documents in PDF or image formats. For the moment, however, we only show how to run CogStack on a set of structured and free-text EHRs that have been already digitalized. The part covering unstructured type of data in form of PDF documents, images and other clinical notes which needs to processed prior to analysis will come shortly.
 
 This tutorial is divided into 5 parts:
@@ -42,7 +43,6 @@ The content will be decompressed into `CogStack-Pipeline/` directory.
 
 [//]: # "<span style='color:red'> NOTE: </span>"
 **Note: For the moment the CogStack bundle is obtained from the `dev` branch -- soon it will be merged into `master` branch with a version tag for a direct download.**
-
 
 
 
@@ -132,6 +132,7 @@ The collection comprises in total of 4873 documents. A sample document is shown 
 ## Preparing the data
 
 For the ease of use a database dump with predefined schema and preloaded data will be provided in `examples/example2/db_dump` directory. This way, the PostgreSQL database will be automatically initialized when deployed using Docker. The database dump for this example (alongside the others) can be also directly downloaded from Amazon S3 by running in the main `examples/` directory:
+
 ```bash
 bash download_db_dumps.sh
 ```
@@ -193,7 +194,9 @@ or query one of the available indices -- `sample_observations_view`:
 ```bash
 curl 'http://localhost:9200/sample_observations_view'
 ```
+
 For more information about possible documents querying or modification operations, please refer to the official [ElasticSearch documentation](https://www.elastic.co/guide/en/elasticsearch/reference/current/getting-started.html).
+
 
 ### PostgreSQL sample database
 
@@ -287,6 +290,7 @@ create table encounters (
 Here, with `--(*)` has been marked an additional `DOCUMENT` field. This extra field will be used to store a document from [MTSamples dataset](#samples-mt). 
 
 Just to clarify, [Synthea-based](#samples-syn) and [MTSamples](#samples-mt) are two unrelated datasets. Here, we are extending the synthetic dataset with the clinical documents from the MTSamples to create a combined one, to be able to perform more advanced queries.
+
 
 A sample document from MTSamples dataset is presented below:
 ```text
