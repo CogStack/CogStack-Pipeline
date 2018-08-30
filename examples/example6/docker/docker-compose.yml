@@ -88,10 +88,9 @@ services:
       - ./common/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro 
     ports:
 #      - "5601:5601"    #without proxy, forward to host:5601
-      - "5601"        #with nginx proxy forwarding host:5601/ --> [kibana]:5601 
+      - 5601        #with nginx proxy forwarding host:5601/ --> [kibana]:5601 
     networks:
       - esnet
-      - public
 
 #---------------------------------------------------------------------------#
 # Reverse proxy (+ host-container proxy and basic auth)                     #
