@@ -18,8 +18,8 @@ This tutorial is divided into 5 parts:
 2. A brief description of how does CogStack work and its ecosystem ([link](#how-does-it-work)),
 3. A brief description of the sample datasets used ([link](#datasets)), 
 4. Running CogStack 'out-of-the-box' using the dataset already preloaded into a sample database ([link](#running-cogstack)),
-5. For advanced users: preparing a database schema according to the sample dataset and to the current CogStack data processing engine requirements ([link](#advanced-schema)),
-6. For advanced users: preparing the configuration file for CogStack engine according to the used database schema and used microservices ([link](#advanced-properties)).
+5. For advanced users: preparing a database schema according to the sample dataset and to the current CogStack pipeline requirements ([link](#advanced-schema)),
+6. For advanced users: preparing the configuration file for CogStack data processing engine according to the used database schema and used microservices ([link](#advanced-properties)).
 
 To skip the brief description and to get hands on running CogStack please head directly to [Running CogStack](#running-cogstack) part.
 
@@ -57,7 +57,7 @@ The data processing workflow of CogStack is based on [Java Spring Batch](https:/
 
 
 [//]: # "Content description"
-In this tutorial we only focus on a simple and very common use-case, where CogStack reads and process structured and free-text EHRs data from a single PostgreSQL database. The result is then stored in ElasticSearch where the data can be easily queried in [Kibana](https://www.elastic.co/products/kibana) dashboard. However, CogStack engine also supports multiple data sources -- please see **Example 3** which covers such case.
+In this tutorial we only focus on a simple and very common use-case, where CogStack reads and process structured and free-text EHRs data from a single PostgreSQL database. The result is then stored in ElasticSearch where the data can be easily queried in [Kibana](https://www.elastic.co/products/kibana) dashboard. However, CogStack data processing engine also supports multiple data sources -- please see **Example 3** which covers such case.
 
 
 ## CogStack ecosystem
@@ -66,11 +66,10 @@ CogStack ecosystem consists of multiple inter-connected microservices running to
 
 In this tutorial the CogStack ecosystem is composed of the following microservices:
 * `pgsamples` -- PostgreSQL database loaded with a sample dataset under `db_samples` name,
-* `cogengine` -- CogStack data processing engine with worker(s),
+* `cogstack` -- CogStack data processing pipeline with worker(s),
 * `postgres` -- PostgreSQL database for storing information about CogStack jobs,
 * `elasticsearch` -- ElasticSearch search engine (single node) for storing and querying the processed EHR data,
-* `kibana` -- Kibana data visualization tool for querying the data from ElasticSearch,
-* `nginx` -- [nginx](https://www.nginx.com/) serving as reverse proxy for providing secure access to the services.
+* `kibana` -- Kibana data visualization tool for querying the data from ElasticSearch.
 
 The Docker Compose file with configuration of these microservices can be found in `examples/example2/docker/docker-compose.yml`.
 
@@ -153,7 +152,7 @@ To download the database dumps, just type in the main `examples/` directory:
 bash download_db_dumps.sh
 ```
 
-Next, a setup scripts needs to be run locally to prepare the Docker images and configuration files for CogStack data processing engine. The script is available in `examples/example2/` path and can be run as:
+Next, a setup scripts needs to be run locally to prepare the Docker images and configuration files for CogStack data processing pipeline. The script is available in `examples/example2/` path and can be run as:
 
 ```bash
 bash setup.sh
@@ -180,7 +179,7 @@ The picture below sketches a general idea on how the microservices are running a
 ![alt text]({{ site.url }}/assets/uservices.png "CogStack data processing workflow")
 
 [//]: # "Connecting to ES, Kibana and PostgreSQL"
-Assuming that everything is working fine, we should be able to connect to the running microservices. For the ease of access, selected running services (`elasticsearch` and `kibana`) have their port connections forwarded to `localhost` via `nginx` proxy. When accessing webservices and when asked for **credentials** the username is *test* with password *test*. 
+Assuming that everything is working fine, we should be able to connect to the running microservices. Selected running services (`elasticsearch` and `kibana`) have their port connections forwarded to host `localhost`. When accessing webservices and when asked for **credentials** the username is *test* with password *test*. 
 
 ### Kibana and ElasticSearch
 
@@ -200,7 +199,7 @@ For more information about possible documents querying or modification operation
 
 ### PostgreSQL sample database
 
-Moreover, the access PostgreSQL database with the input sample data is exposed directly at `localhost:5555` (skipping the `nginx` proxy). The database name is `db_sample` with user *test* and password *test*. To connect, one can run:
+Moreover, the access PostgreSQL database with the input sample data is exposed directly at `localhost:5555`. The database name is `db_sample` with user *test* and password *test*. To connect, one can run:
 ```bash
 psql -U 'test' -W -d 'db_samples' -h localhost -p 5555
 ```
@@ -348,7 +347,7 @@ and the corresponding table definition:
 ) ;
 ```
 
-Here, with `--(*)` have been marked additional fields with auto-generated values. These are: `CID` -- an automatically generated primary key and `DCT` -- a document creation timestamp. They will be later used by CogStack engine for data partitioning when processing the records. The `patient` and `encouters` tables have their primary keys (`ID` field) already defined (of `uuid` type) and are included in the input CSV files.
+Here, with `--(*)` have been marked additional fields with auto-generated values. These are: `CID` -- an automatically generated primary key and `DCT` -- a document creation timestamp. They will be later used by CogStack pipeline for data partitioning when processing the records. The `patient` and `encouters` tables have their primary keys (`ID` field) already defined (of `uuid` type) and are included in the input CSV files.
 
 
 ## Database schema -- views

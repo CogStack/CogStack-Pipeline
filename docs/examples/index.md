@@ -22,7 +22,8 @@ This document describes the available examples of CogStack data processing workf
 * [Example 3](#example-3) -- processing a combined dataset from multiple DB sources, multiple jobs.
 * [Example 4](#example-4) -- processing a combined dataset with embedded documents from a single DB source.
 * [Example 5](#example-5) -- 2-step processing of a combined dataset with embedded documents from a single DB source.
-* [Example 6](#example-6) -- Example 2 extended with logging mechanisms.
+* [Example 6](#example-6) -- Example 2 extended with reverse proxy enabling a secure access.
+* [Example 7](#example-7) -- Example 6 extended with logging mechanisms.
 
 The main directory with resources used in this tutorial is available in the the CogStack bundle under `examples` directory.
 
@@ -159,14 +160,19 @@ Each of the examples is organized in a way that it can be deployed and run indep
 ├── example6
 │   ├── cogstack
 │   │   ├── observations.properties
-│   │   └── test2.sh
 │   ├── db_dump
 │   │   └── db_samples.sql.gz
 │   ├── docker
 │   │   └── docker-compose.yml
-│   ├── extra
-│   │   ├── db_create_schema.sql
-│   │   └── prepare_db.sh
+│   └── setup.sh
+│
+├── example7
+│   ├── cogstack
+│   │   ├── observations.properties
+│   ├── db_dump
+│   │   └── db_samples.sql.gz
+│   ├── docker
+│   │   └── docker-compose.yml
 │   └── setup.sh
 │
 ├── rawdata
@@ -182,10 +188,12 @@ Each of the examples is organized in a way that it can be deployed and run indep
 ## Common and reusable components
 
 The directory `docker-common` contains some common components and microservice configuration files that are used within all the examples (see [Running CogStack](#running-cogstack)). These components include:
+* PostgreSQL databases,
 * ElasticSearch node,
 * Kibana webservice dashboard,
-* nginx reverse proxy,
-* PostgreSQL databases.
+* nginx reverse proxy service,
+* Fkuentd logging driver.
+
 
 
 ## Examples
@@ -194,7 +202,7 @@ The directories `example*` stores the content of the examples, each containing s
 * `cogstack` directory containing CogStack configuration files and/or custom pipeline scripts,
 * `db_dump` directory containing database dumps used to initialize the samples input database,
 * `docker` directory containing configuration files for docker-based deployment,
-* `extra` directory containing scripts to generate database dumps locally,
+* `extra` directory containing scripts to generate database dumps locally (optional),
 * `setup.sh` script to initialize the example before running it for the first time.
 
 For a detailed description of each example please refer to its appropriate section.
@@ -239,8 +247,7 @@ In the provided examples, the CogStack ecosystem is usually composed of the foll
 * `cogengine` -- CogStack data processing engine,
 * `postgres` -- PostgreSQL database for storing information about CogStack jobs and status,
 * `elasticsearch` -- ElasticSearch node(s) for storing and querying the processed EHR data,
-* `kibana` -- Kibana data visualization tool for querying the data from ElasticSearch,
-* `nginx` -- [nginx](https://www.nginx.com/) serving as reverse proxy for providing secure access to the services.
+* `kibana` -- Kibana data visualization tool for querying the data from ElasticSearch.
 
 The Docker Compose file with configuration of these microservices can be found in each of the examples `docker` subdirectory: `examples/example*/docker/docker-compose.yml`.
 
@@ -407,8 +414,8 @@ The picture below sketches a general idea on how the microservices are running a
 
 ![alt text]({{ site.url }}/assets/uservices.png "CogStack data processing workflow")
 
-[//]: # "Connecting to ES, Kibana and PostgreSQL"
-Assuming that everything is working fine, we should be able to connect to the running microservices. For the ease of access, selected running services (`elasticsearch` and `kibana`) have their port connections forwarded to `localhost` via `nginx` proxy. When accessing webservices and when asked for **credentials** the username is *test* with password *test*. 
+Assuming that everything is working fine, we should be able to connect to the running microservices.
+
 
 ### Kibana and ElasticSearch
 
@@ -427,7 +434,7 @@ For more information about possible documents querying or modification operation
 
 ### PostgreSQL sample database
 
-Moreover, the access PostgreSQL database with the input sample data is exposed directly at `localhost:5555` (skipping the `nginx` proxy). The database name is `db_sample` with user *test* and password *test*. To connect, one can run:
+Moreover, the access PostgreSQL database with the input sample data is exposed directly at `localhost:5555`. The database name is `db_sample` with user *test* and password *test*. To connect, one can run:
 ```bash
 psql -U 'test' -W -d 'db_samples' -h localhost -p 5555
 ```
@@ -1265,7 +1272,57 @@ Apart from that, this example uses a standard stack of microservices and runs on
 
 ## General information
 
-This example is an extension of [Example 2](#example-2) providing logging mechanism using [Fluentd](https://www.fluentd.org/) log collector and it only focuses on the logging part.
+This example is based on [Example 2](#example-2) which extends it with basic security mechanisms implemented by [Nginx](https://www.nginx.com/) -- a web service that can be used as a load balancer, reverse proxy or HTTP cache. In this example, Nginx will be used as a reverse proxy providing a security layer used to connect to running microservices in CogStack ecosystem.
+
+
+## Deployment information
+
+To deploy the example (after running `setup.sh` script) just type in `__deploy/` directory:
+```bash
+docker-compose up
+```
+
+Assuming that everything is working fine, we should be able to connect to the running microservices as shown in [Example 2](#example-2). When accessing webservices and when asked for **credentials** the username is *test* with password *test*.
+
+
+This example uses the standard stack of microservices (see: [CogStack ecosystem](#cogstack-ecosystem)), but extended with Nginx reverse proxy service and internal network. For a better control and isolation of the services, in Docker Compose file (`examples/example6/docker/docker-compose.yml`) we defined 2 networks: `esnet` and `public`. The `esnet` network will be used as a internal, private network for the data processing pipeline and services -- the access should be highly restricted. The `public` network will be used as a bridge to connect the services to the outside host. When deployed, Nginx will be running as an additional microservice in the CogStack ecosystem using both `esnet` and `public` networks. It will control the communication between selected running microservices (`elasticsearch` and `kibana`) and the outside world. The only one difference here is the `pgsamples` database service, which for debugging purposes is using both networks and have ports directly exposed and bound to `localhost:5555`. 
+
+The picture below illustrates such deployment scenario.
+
+![cogstack-ecosystem-nginx]({{ site.url }}/assets/uservices-nginx.png "CogStack ecosystem")
+
+
+## Nginx
+
+### Security
+
+As mentioned previously, in this example, Nginx is used only as a reverse proxy service providing a simple security layer used to connect the running microservices inside the private network to the outside world. It implements a simple secure HTTP access to `kibana` and `elasticsearch` services running at `5601` and `9200` ports respectively. Configured with Docker Compose file, all the HTTP traffic coming to the host on the specified ports will be forwarded to the respective microservices running inside private network through Nginx.
+
+
+### Configuration file
+
+In this example, Nginx only implements basic HTTP access authentication. The authentication is based on a preconfigured `.htpasswd` file, as specified in Nginx configuration file `docker-cogstack/nginx/conf/nginx.conf`. The `.htpasswd` file with login credentials `test:test` will be automatically created when running `setup.sh` script. Although the security is very basic here, it can be easily extended to handle other protocols and access patterns. For more information about possible Nginx security configurationsm, please refer to the official [Nginx documentation]().
+
+
+### ElasticSearch X-Pack Security
+
+In this example, Nginx provides just a basic security layer for the running microservices and is free to use. However, for a more advanced functionality related with secure access to ElasticSearach microservices stack, the [X-Pack Security](https://www.elastic.co/guide/en/elastic-stack-overview/current/xpack-security.html) module can be considered. X-Pack Security, although requiring a [commercial license](https://www.elastic.co/subscriptions), offers functionality, such as:
+
+- user authentication inside ElasticSearch and Kibana,
+- role-based and attribute-based control for the data access,
+- field- and document-level security,
+- encryption of the communication between ES nodes.
+
+For a detailed list of features, please refer to the official [ElasticSearch X-Pack documentation](https://www.elastic.co/guide/en/elastic-stack-overview/current/xpack-security.html).
+
+
+
+# <a name="example-7"></a> Example 7
+[//]: # "-------------------------------------------------------------------------------------"
+
+## General information
+
+This example is an extension of [Example 6](#example-6) providing logging mechanism using [Fluentd](https://www.fluentd.org/) log collector and it only focuses on the logging part.
 
 
 [//]: # "<span style='color:red'> NOTE: </span>"
@@ -1275,12 +1332,16 @@ This example is an extension of [Example 2](#example-2) providing logging mechan
 
 ## Deployment information
 
-This example uses the standard stack of microservices (see: [CogStack ecosystem](#cogstack-ecosystem)), but extended with Fluentd logging driver. When deployed, Fluend will be running as an additional microservice in order to collect and filter logs from the ones running in CogStack ecosystem.
+This example uses the stack of microservices used in [Example 6](#example-6), but extending it with Fluentd logging driver. When deployed, Fluend will be running as an additional microservice in order to collect and filter logs from the ones running in CogStack ecosystem. The picture below illustrates such deployment scenario.
 
-For each microservice used an additional section has been added regarding logging -- e.g., in case of CogStack engine:
+![cogstack-ecosystem-fluentd]({{ site.url }}/assets/uservices-fluentd.png "CogStack ecosystem")
+
+
+
+Regarding Docker Compose configuration file, for each microservice used an additional section has been added regarding logging -- e.g., in case of CogStack pipeline:
 ```yml
   cogstack:
-    image: cogstacksystems/cogstack-pipeline:latest
+    image: cogstacksystems/cogstack-pipeline:dev-latest
     
     ...
     
@@ -1290,7 +1351,7 @@ For each microservice used an additional section has been added regarding loggin
         tag: cog.java.engine
 ```
 
-`"fluentd"` is used as the logging `driver`. All the messages from the `cogstack` microservice will be forwarded to the fluentd driver using `cog.java.engine` as `tag`. The directory with the output logs from fluentd running container will be mapped to a local path in the deployment directory: `examples/example6/__deploy/__logs`. For the full configuration of running microservices, please refer to `examples/example6/docker/docker-compose.yml`.
+`"fluentd"` is used as the logging `driver`. All the messages from the `cogstack` microservice will be forwarded to the fluentd driver using `cog.java.engine` as `tag`. The directory with the output logs from fluentd running container will be mapped to a local path in the deployment directory: `examples/example7/__deploy/__logs`. For the full configuration of running microservices, please refer to `examples/example7/docker/docker-compose.yml`.
 
 
 ## Fluentd
@@ -1320,6 +1381,6 @@ The logs are output to files in JSON format and they contain such fields:
 
 To parse the logs, one easy way is to use [jq](https://stedolan.github.io/jq/) -- a flexible JSON command-line processor. For example, to parse the `log` message field, one may use:
 ```bash
-jq ".log" example6/__deploy/__logs/<filename>.log
+jq ".log" example7/__deploy/__logs/<filename>.log
 ```
 where `<filename>` is the filename of a sample log file.
