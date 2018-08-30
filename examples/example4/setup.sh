@@ -57,8 +57,6 @@ for dt in ${doc_types[@]}; do
 	if [ -e "${dp}/$COMMON_OUT_DIR" ]; then rm -r "${dp}/$COMMON_OUT_DIR"; fi
 	mkdir "${dp}/$COMMON_OUT_DIR"
 
-	#cp -r $COMMON_DIR/* "${dp}/$COMMON_OUT_DIR"
-
 	for sv in ${services[@]}; do
 		echo "---- setting up: ${sv}" 
 		cp -r $COMMON_DIR/${sv} "${dp}/$COMMON_OUT_DIR/"

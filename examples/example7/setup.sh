@@ -32,12 +32,13 @@ mkdir $DB_OUT_DIR
 cp $DB_DUMP_FILE $DB_OUT_DIR/
 
 
-# copy the relevant configuration data for microservices
+# used services
 #
 services=(postgres
 	pgsamples
 	elasticsearch
 	kibana
+	fluentd
 	nginx)
 
 echo "Copying the configuration files for the common docker images and setting up services"
