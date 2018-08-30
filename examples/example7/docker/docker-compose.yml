@@ -114,7 +114,6 @@ services:
       - 5601        #with nginx proxy forwarding host:5601/ --> [kibana]:5601 
     networks:
       - esnet
-      - public
     logging:
       driver: "fluentd"
       options:
