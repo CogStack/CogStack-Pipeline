@@ -32,12 +32,14 @@ mkdir $DB_OUT_DIR
 cp $DB_DUMP_FILE $DB_OUT_DIR/
 
 
-# copy the relevant configuration data for microservices
+# used services
 #
 services=(postgres
 	pgsamples
 	elasticsearch
-	kibana)
+	kibana
+	fluentd
+	nginx)
 
 echo "Copying the configuration files for the common docker images and setting up services"
 mkdir $COMMON_OUT_DIR
@@ -46,6 +48,14 @@ for sv in ${services[@]}; do
 	echo "-- Setting up: ${sv}" 
 	cp -r $COMMON_DIR/${sv} $COMMON_OUT_DIR/
 done
+
+# setup nginx
+#
+if [ ! -e $COMMON_OUT_DIR/nginx/auth/.htpasswd ]; then
+	echo "-- Generating user:password --> 'test:test' for nginx proxy"
+	mkdir $COMMON_OUT_DIR/nginx/auth
+	htpasswd -b -c $COMMON_OUT_DIR/nginx/auth/.htpasswd 'test' 'test'
+fi
 
 cp $DOCKER_DIR/*.yml $DEPLOY_DIR/
 

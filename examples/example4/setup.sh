@@ -3,7 +3,6 @@ set -e
 
 
 DEPLOY_DIR="__deploy"
-TMP_DIR="$DEPLOY_DIR/__tmp"
 
 COMMON_DIR="../docker-common"
 
@@ -19,12 +18,15 @@ if [ -e $DEPLOY_DIR ]; then rm -rf $DEPLOY_DIR; fi
 mkdir $DEPLOY_DIR
 
 
-# setup the common containers
+# used services
 #
-echo "Generating user:password --> 'test:test' for nginx proxy"
-mkdir $TMP_DIR
-htpasswd -b -c "$TMP_DIR/.htpasswd" 'test' 'test'
+services=(postgres
+	pgsamples
+	elasticsearch
+	kibana)
 
+# document-type use-cases
+#
 doc_types=(docx
 	pdf-text
 	pdf-img
@@ -50,17 +52,15 @@ for dt in ${doc_types[@]}; do
 
 	# copy the relevant common data
 	#
-	echo "-- copying the configuration files for the common docker images"
+	echo "-- copying the configuration files for the common docker images and setting up services"
 
 	if [ -e "${dp}/$COMMON_OUT_DIR" ]; then rm -r "${dp}/$COMMON_OUT_DIR"; fi
 	mkdir "${dp}/$COMMON_OUT_DIR"
 
-	cp -r $COMMON_DIR/* "${dp}/$COMMON_OUT_DIR"
-
-	# copy the generated .htpasswd file
-	#
-	if [ ! -e "${dp}/$COMMON_OUT_DIR/nginx/auth" ]; then mkdir "${dp}/$COMMON_OUT_DIR/nginx/auth"; fi
-	cp $TMP_DIR/.htpasswd "${dp}/$COMMON_OUT_DIR/nginx/auth/"
+	for sv in ${services[@]}; do
+		echo "---- setting up: ${sv}" 
+		cp -r $COMMON_DIR/${sv} "${dp}/$COMMON_OUT_DIR/"
+	done
 
 	# setup cogstack
 	#
@@ -76,9 +76,5 @@ for dt in ${doc_types[@]}; do
 	cp docker/docker-compose.yml "${dp}/"
 done
 
-
-# cleanup
-#
-rm -rf $TMP_DIR
 
 echo "Done."

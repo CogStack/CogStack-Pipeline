@@ -43,4 +43,7 @@ cp example4/db_dump/db_samples-*.sql.gz example5/db_dump/
 if [ ! -e example6/db_dump ]; then mkdir example6/db_dump; fi
 cp example2/db_dump/db_samples.sql.gz example6/db_dump/
 
+if [ ! -e example7/db_dump ]; then mkdir example7/db_dump; fi
+cp example2/db_dump/db_samples.sql.gz example7/db_dump/
+
 echo "Done."
