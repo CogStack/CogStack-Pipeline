@@ -1434,9 +1434,6 @@ This example covers a simple use-case of running NLP applications as one of the 
 [//]: # "<span style='color:red'> NOTE: </span>"
 **Note: For the moment, the example application is based on the GATE version < 8.5. The GATE in version >= 8.5 introduced a significant change in resources handling and as CogStack uses the previous version of GATE library it needs to be updated in the upcoming release.**
 
-[//]: # "<span style='color:red'> NOTE: </span>"
-**Note: For the moment, the CogStack Docker image used in this example is `cogstacksystems/cogstack-pipeline-gate:dev-latest`. This image is build from the `dev` branch. However, once the development branch will be merged to `master` the image name will be updated.**
-
 
 ## Example GATE application
 
@@ -1445,7 +1442,7 @@ CogStack pipeline allows to include custom user GATE applications as one of the 
 
 ### GATE ANNIE Gazetteer
 
-In this example, we developed a simple GATE application to annotate common drugs and medications. The application is using the GATE ANNIE plugin (with default configuration), implementing a custom version of ANNIE Gazetteer. The application has been created in GATE Developer studio and exported into *gapp* format. This application is hence ready to be used by GATE and is stored in `gate/app` directory as `drug.gapp` alongside the used resources.
+In this example, we developed a simple GATE application to annotate common drugs and medications. The application is using the GATE ANNIE plugin (with default configuration), implementing a custom version of [ANNIE Gazetteer](https://gate.ac.uk/sale/tao/splitch13.html). The application has been created in GATE Developer studio and exported into *gapp* format. This application is hence ready to be used by GATE and is stored in `gate/app` directory as `drug.gapp` alongside the used resources.
 
 The list of drugs and medications to annotate is based on a publicly available list of FDA-approved drugs and active ingredients. The data can be downloaded directly from [Drugs@FDA database](https://www.fda.gov/drugs/informationondrugs/ucm079750.htm). The list of used drugs is stored as `drug.lst` and active ingredients as `active.lst`.
 
@@ -1492,6 +1489,8 @@ When running `setup.sh` script, a number of separate directories will be created
 
 Apart from that, this example uses the standard stack of microservices (see: [CogStack ecosystem](#cogstack-ecosystem)) and also uses a single CogStack *properties* file, running only one instance of CogStack data processing engine.
 
+[//]: # "<span style='color:red'> NOTE: </span>"
+**Note: For the moment, the CogStack Docker image used in this example is `cogstacksystems/cogstack-pipeline-gate:dev-latest`. This image are build from the `dev` branch. However, once the development branch will be merged to `master` the image name will be updated.**
 
 
 
@@ -1506,18 +1505,15 @@ This example covers a use-case of running a pipeline of multiple components comb
 - annotation extraction using [GATE](https://gate.ac.uk/) suite,
 - generating output documents in JSON format and storing them in ElasticSearch sink.
 
-The example is based on [Example 4](#example-4), which uses Apache Tika to extract text from PDF documents and on [Example 9](#example-9) which uses simple GATE NLP application to annotate drugs and active ingredients in medical text.
+The example is based on [Example 4](#example-4), which uses Apache Tika to extract text from PDF documents and on [Example 8](#example-8) which uses simple GATE NLP application to annotate drugs and active ingredients in medical text.
 
 [//]: # "<span style='color:red'> NOTE: </span>"
 **Note: For the moment, the example application is based on the GATE version < 8.5. The GATE in version >= 8.5 introduced a significant change in resources handling and as CogStack uses the previous version of GATE library it needs to be updated in the upcoming release.**
 
-[//]: # "<span style='color:red'> NOTE: </span>"
-**Note: For the moment, the CogStack Docker image used in this example is `cogstacksystems/cogstack-pipeline-gate:dev-latest`. This image are build from the `dev` branch. However, once the development branch will be merged to `master` the image name will be updated.**
-
 
 ## Properties file
 
-The *properties* file used in this example is based on both [Example 4](#example-4) and [Example 9](#example-9). The Spring active profiles used are both `tika` and `gate`. However, the most important bit is to specify how the document text is passed from Tika processor to GATE document processor:
+The *properties* file used in this example is based on both [Example 4](#example-4) and [Example 8](#example-8). The Spring active profiles used are both `tika` and `gate`. However, the most important bit is to specify how the document text is passed from Tika processor to GATE document processor:
 ```properties
 ## TIKA CONFIGURATION
 ##
@@ -1542,3 +1538,6 @@ Tika item processor will extract the text from the document initially stored in 
 When running `setup.sh` script, a number of separate directories will be created. Since NLP components for pipelines require additional applications to be installed in the system, CogStack provides another, extended image containing them. In this example, hence `cogstacksystems/cogstack-pipeline-gate:dev-latest` image is being used.
 
 Apart from that, this example uses the standard stack of microservices (see: [CogStack ecosystem](#cogstack-ecosystem)) and also uses a single CogStack *properties* file, running only one instance of CogStack data processing engine.
+
+[//]: # "<span style='color:red'> NOTE: </span>"
+**Note: For the moment, the CogStack Docker image used in this example is `cogstacksystems/cogstack-pipeline-gate:dev-latest`. This image are build from the `dev` branch. However, once the development branch will be merged to `master` the image name will be updated.**
