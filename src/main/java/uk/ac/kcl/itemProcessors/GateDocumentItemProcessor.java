@@ -73,8 +73,17 @@ public class GateDocumentItemProcessor extends TLItemProcessor implements ItemPr
         int contentLength = doc.getAssociativeArray().keySet()
                                .stream()
                                .filter(k -> fieldsToGate.contains(k.toLowerCase()))
+                               .filter(k -> doc.getAssociativeArray().get(k) != null)
                                .mapToInt(k -> ((String) doc.getAssociativeArray().get(k)).length())
                                .sum();
+
+        if (contentLength == 0) {
+            LOG.debug("{};Primary-Key:{};Total-Content-Length:{}",
+                    this.getClass().getSimpleName(),
+                    doc.getPrimaryKeyFieldValue(),
+                    contentLength);
+            return doc;
+        }
 
         HashMap<String,Object> newMap = new HashMap<>();
         newMap.putAll(doc.getAssociativeArray());
@@ -88,7 +97,7 @@ public class GateDocumentItemProcessor extends TLItemProcessor implements ItemPr
                 try {
                     gateDoc = Factory
                             .newDocument((String) v);
-                    LOG.info("Going to process key: {} in document PK: {}, content length: {}",
+                    LOG.debug("Going to process key: {} in document PK: {}, content length: {}",
                              k, doc.getPrimaryKeyFieldValue(), ((String) v).length());
                     gateService.processDoc(gateDoc);
                     ((HashMap<String,Object>) newMap.get(fieldName)).put(k, gateService.convertDocToJSON(gateDoc));
@@ -115,7 +124,7 @@ public class GateDocumentItemProcessor extends TLItemProcessor implements ItemPr
         doc.getAssociativeArray().clear();
         doc.getAssociativeArray().putAll(newMap);
         long endTime = System.currentTimeMillis();
-        LOG.info("{};Primary-Key:{};Total-Content-Length:{};Time:{} ms",
+        LOG.debug("{};Primary-Key:{};Total-Content-Length:{};Time:{} ms",
                  this.getClass().getSimpleName(),
                  doc.getPrimaryKeyFieldValue(),
                  contentLength,

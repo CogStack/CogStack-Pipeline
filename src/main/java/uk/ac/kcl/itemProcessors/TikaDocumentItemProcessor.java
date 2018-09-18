@@ -103,6 +103,13 @@ public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemPr
 
     @Override
     public Document process(final Document doc) throws Exception {
+
+        if (doc.getBinaryContent() == null) {
+            LOG.debug("{};No-binary-document",
+                    this.getClass().getSimpleName());
+            return doc;
+        }
+
         LOG.debug("starting " + this.getClass().getSimpleName() +" on doc " +doc.getDocName());
         long startTime = System.currentTimeMillis();
         ContentHandler handler;
