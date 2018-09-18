@@ -5,8 +5,6 @@ AWS_S3_BUCKET_URL="http://cogstack.s3.amazonaws.com"
 DATA_PATH="share/examples/db_dump"
 DATA_PATH_URL="$AWS_S3_BUCKET_URL/$DATA_PATH"
 
-if [ 1 == 2 ]; then
-
 # download the db dumps for examples
 #
 files=(
@@ -35,8 +33,6 @@ for filename in ${files[@]}; do
 
 	echo "OK."
 done
-
-fi
 
 
 # link the downloaded database dumps
