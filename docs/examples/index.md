@@ -314,7 +314,7 @@ CogStack configuration file uses Spring profiles, which enable different compone
 * `deid` -- de-identification process using GATE or ElasticGazetteer service (*not covered by the examples*),
 * `tika` -- documents processing service,
 * `biolark` -- NLP data processing service (*not covered by the examples*),
-* `gate` NLP data processing service (*not covered by the examples*),
+* `gate` NLP data processing service,
 * `bioyodie` NLP data processing service (*not covered by the examples*),
 * `pdfGeneration`, `thumbnailGeneration` -- PDF thumbnail generation service (*not covered by the examples*),
 * `dBLineFixer` -- records modification process (*not covered by the examples*),
@@ -1437,14 +1437,16 @@ This example covers a simple use-case of running NLP applications as one of the 
 
 ## Example GATE application
 
-CogStack pipeline allows to include custom user GATE applications as one of the data processing components. These applications can be previously designed in GATE suite (e.g., using GATE Developer GUI application) and stored as a custom *gapp* or *xgapp* application with the used resources. CogStack implements *GateService* which uses GATE API to run these applications using the GATE Embedded version.
+CogStack pipeline allows to include custom user GATE applications as one of the data processing components. These applications can be previously designed in GATE suite (e.g., using GATE Developer GUI application) and exported as a custom GATE application (with *.gapp* or *.xgapp* extension) with the necessary resources. CogStack implements *GateService* which uses GATE API to run these applications using the GATE Embedded version.
 
 
 ### GATE ANNIE Gazetteer
 
-In this example, we developed a simple GATE application to annotate common drugs and medications. The application is using the GATE ANNIE plugin (with default configuration), implementing a custom version of [ANNIE Gazetteer](https://gate.ac.uk/sale/tao/splitch13.html). The application has been created in GATE Developer studio and exported into *gapp* format. This application is hence ready to be used by GATE and is stored in `gate/app` directory as `drug.gapp` alongside the used resources.
+In this example, we developed a simple GATE application to annotate common drugs and medications. The application is using the GATE ANNIE plugin (with default configuration), implementing a custom version of [ANNIE Gazetteer](https://gate.ac.uk/sale/tao/splitch13.html). The application has been created in GATE Developer studio and exported into GATE application format. This application is hence ready to be used by GATE and is stored in `gate/app` directory as `drug.gapp` with the necessary resources.
 
 The list of drugs and medications to annotate is based on a publicly available list of FDA-approved drugs and active ingredients. The data can be downloaded directly from [Drugs@FDA database](https://www.fda.gov/drugs/informationondrugs/ucm079750.htm). The list of used drugs is stored as `drug.lst` and active ingredients as `active.lst`.
+
+Please note that this is a pretty basic example using only ANNIE Gazetteer for extracting drug annotations using names present in the provided resources. The example could be further extended with support for drug ontologies, taxonomies and/or algorithms for performing synonym aggregation. These functionalities, however, would be implemented using different GATE plugins and possibly chained together forming an NLP pipeline.
 
 More information about creating custom GATE applications can be found in the official [GATE documentation](https://gate.ac.uk/documentation.html).
 
@@ -1478,7 +1480,7 @@ gate.fieldsToGate = encounter_document
 gate.gateAnnotationTypes = Drug
 gate.gateFieldName = gate
 ```
-The property `gate.gateHome` denotes the home directory of GATE application, which should be the same for all GATE applications when using CogStack GATE image from Dockerhub (please see below). `gate.gateApp` denotes the name of the GATE application to be run -- in our example, the application directory (containing the *gapp* application with resources) will be directly mounted into CogStack container into `/gate/app/` directory.
+The property `gate.gateHome` denotes the home directory of GATE application, which should be the same for all GATE applications when using CogStack GATE image from Dockerhub (please see below). `gate.gateApp` denotes the name of the GATE application to be run -- in our example, the application directory (containing the `drug.gapp` with the necessary resources) will be directly mounted into CogStack container into `/gate/app/` directory.
 
 The property `gate.fieldsToGate` specifies the name of the field from the input database table that contains the text to be processed by the GATE application. The property `gate.gateAnnotationTypes` specifies the annotations to be extracted (available in the GATE application). Finally, the property `gate.gateFieldName` defines the custom name of the key in the resulting JSON file (or output table) under which the extracted annotations will be stored.
 
