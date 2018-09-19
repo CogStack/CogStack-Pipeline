@@ -35,15 +35,22 @@ for filename in ${files[@]}; do
 done
 
 
-# copy the downloaded database dumps
+# link the downloaded database dumps
 #
 if [ ! -e example5/db_dump ]; then mkdir example5/db_dump; fi
-cp example4/db_dump/db_samples-*.sql.gz example5/db_dump/
+ln -s $PWD/example4/db_dump/db_samples-*.sql.gz example5/db_dump/
 
 if [ ! -e example6/db_dump ]; then mkdir example6/db_dump; fi
-cp example2/db_dump/db_samples.sql.gz example6/db_dump/
+ln -s $PWD/example2/db_dump/db_samples.sql.gz example6/db_dump/
 
 if [ ! -e example7/db_dump ]; then mkdir example7/db_dump; fi
-cp example2/db_dump/db_samples.sql.gz example7/db_dump/
+ln -s $PWD/example2/db_dump/db_samples.sql.gz example7/db_dump/
+
+if [ ! -e example8/db_dump ]; then mkdir example8/db_dump; fi
+ln -s $PWD/example2/db_dump/db_samples.sql.gz example8/db_dump/
+
+# use only pdf-text DB dump for example 9
+if [ ! -e example9/db_dump ]; then mkdir example9/db_dump; fi
+ln -s $PWD/example4/db_dump/db_samples-pdf-text-small.sql.gz example9/db_dump/db_samples.sql.gz
 
 echo "Done."
