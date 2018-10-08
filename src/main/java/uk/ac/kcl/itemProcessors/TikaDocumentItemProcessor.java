@@ -104,9 +104,9 @@ public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemPr
     @Override
     public Document process(final Document doc) throws Exception {
 
-        if (doc.getBinaryContent() == null) {
-            LOG.debug("{};No-binary-document",
-                    this.getClass().getSimpleName());
+        byte[] content = doc.getBinaryContent();
+        if (content == null || content.length == 0) {
+            LOG.debug("Document " + doc.getDocName() + " has no binary content");
             return doc;
         }
 
@@ -121,7 +121,7 @@ public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemPr
 
         Metadata metadata = new Metadata();
         String contentType = "TL_CONTENT_TYPE_UNKNOWN";
-        try (InputStream stream = new ByteArrayInputStream(doc.getBinaryContent())) {
+        try (InputStream stream = new ByteArrayInputStream(content)) {
             // configure parsing context
             ParseContext context = new ParseContext();
             context.set(TikaConfig.class, tikaConfig);
