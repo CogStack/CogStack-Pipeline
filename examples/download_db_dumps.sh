@@ -15,7 +15,11 @@ example3/db_samples-mt.sql.gz
 example4/db_samples-docx-small.sql.gz
 example4/db_samples-pdf-text-small.sql.gz
 example4/db_samples-pdf-img-small.sql.gz
-example4/db_samples-jpg-small.sql.gz)
+example4/db_samples-jpg-small.sql.gz
+example5/db_samples-docx-small.sql.gz
+example5/db_samples-pdf-text-small.sql.gz
+example5/db_samples-pdf-img-small.sql.gz
+example5/db_samples-jpg-small.sql.gz)
 
 for filename in ${files[@]}; do
 	url="$DATA_PATH_URL/$filename"
@@ -37,9 +41,6 @@ done
 
 # link the downloaded database dumps
 #
-if [ ! -e example5/db_dump ]; then mkdir example5/db_dump; fi
-ln -s $PWD/example4/db_dump/db_samples-*.sql.gz example5/db_dump/
-
 if [ ! -e example6/db_dump ]; then mkdir example6/db_dump; fi
 ln -s $PWD/example2/db_dump/db_samples.sql.gz example6/db_dump/
 
