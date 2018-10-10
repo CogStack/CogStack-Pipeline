@@ -50,7 +50,7 @@ public class RemoteConfiguration {
 
     @Autowired
     Environment env;
-    @Value("${partitioner.gridSize:3}")
+    @Value("${partitioner.gridSize:1}")
     private int gridSize;
 
     @Value("${job.jobName:defaultJob}")
