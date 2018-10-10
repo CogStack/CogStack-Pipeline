@@ -211,35 +211,26 @@ public class JobConfiguration {
     }
 
 
-
-
-
-
-    @Value("${target.Driver}")
-    private String targetDriver;
-    @Value("${target.JdbcPath}")
-    private String targetJdbcPath;
-    @Value("${target.username}")
-    private String targetUserName;
-    @Value("${target.password}")
-    private String targetPassword;
-    @Value("${target.idleTimeout}")
+    // optional target DB properties and their default values
+    @Value("${target.idleTimeout:30000}")
     private Long targetIdleTimeout;
-    @Value("${target.maxLifetime}")
+    @Value("${target.maxLifetime:60000}")
     private Long targetMaxLifeTime;
     @Value("${target.poolSize:10}")
     private Integer targetPoolSize;
 
+    @Profile({"jdbc_out", "jdbc_out_map"})
     @Bean(destroyMethod = "close")
-//    @Primary
     @Qualifier("targetDataSource")
     public DataSource targetDataSource() {
         HikariDataSource mainDatasource = new HikariDataSource();
-        executeSessionScripts(mainDatasource,targetDriver);
-        mainDatasource.setDriverClassName(targetDriver);
-        mainDatasource.setJdbcUrl(targetJdbcPath);
-        mainDatasource.setUsername(targetUserName);
-        mainDatasource.setPassword(targetPassword);
+        // read and set the mandatory DB connector properties
+        executeSessionScripts(mainDatasource, env.getRequiredProperty("target.Driver"));
+        mainDatasource.setDriverClassName(env.getRequiredProperty("target.Driver"));
+        mainDatasource.setJdbcUrl(env.getRequiredProperty("target.JdbcPath"));
+        mainDatasource.setUsername(env.getRequiredProperty("target.username"));
+        mainDatasource.setPassword(env.getRequiredProperty("target.password"));
+        // set optional properties
         mainDatasource.setIdleTimeout(targetIdleTimeout);
         mainDatasource.setMaxLifetime(targetMaxLifeTime);
         if (targetPoolSize > 0){
