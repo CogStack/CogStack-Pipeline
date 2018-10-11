@@ -31,7 +31,6 @@ import uk.ac.kcl.utils.PostGresTestUtils;
 import uk.ac.kcl.utils.TestUtils;
 import uk.ac.kcl.scheduling.SingleJobLauncher;
 import uk.ac.kcl.testexecutionlisteners.FullPipelineTestExecutionListener;
-import org.apache.log4j.Logger;
 
 import static org.junit.Assert.assertEquals;
 
@@ -67,8 +66,6 @@ import static org.junit.Assert.assertEquals;
 //@ActiveProfiles({"webservice","deid","tika","localPartitioning","jdbc_in","jdbc_out","elasticsearch","primaryKeyPartition","sqlserver"})
 public class FullPipelineWithoutScheduling {
 
-    final static Logger logger = Logger.getLogger(FullPipelineWithoutScheduling.class);
-
     @Autowired
     FullPipelineWithoutSchedulingTests fullPipelineWithoutSchedulingTests;
 
@@ -76,8 +73,7 @@ public class FullPipelineWithoutScheduling {
     @Test
     @DirtiesContext
     public void fullPipelineWithoutScheduling(){
-        logger.info("Tests temporarily disabled due to BioYodie UMLS resources licensing problem");
-        //fullPipelineWithoutSchedulingTests.fullPipelineTest();
+        fullPipelineWithoutSchedulingTests.fullPipelineTest();
     }
 
 

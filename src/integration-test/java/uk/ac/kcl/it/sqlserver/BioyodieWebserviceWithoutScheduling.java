@@ -63,8 +63,7 @@ public class BioyodieWebserviceWithoutScheduling {
     @Test
     @DirtiesContext
     public void bioyodieWebserviceWithoutScheduling(){
-        logger.info("Tests temporarily disabled due to BioYodie UMLS resources licensing problem");
-        //bioyodieWebserviceWithoutSchedulingTests.bioyodieTest();
+        bioyodieWebserviceWithoutSchedulingTests.bioyodieTest();
     }
 
 
