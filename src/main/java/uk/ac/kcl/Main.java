@@ -66,7 +66,7 @@ public class Main {
                         ctx.setEnvironment(environment);
                         String scheduling;
                         try {
-                            scheduling = properties.getProperty("scheduler.useScheduling");
+                            scheduling = properties.getProperty("scheduler.useScheduling", "false");
                             if (scheduling.equalsIgnoreCase("true")) {
                                 ctx.register(ScheduledJobLauncher.class);
                                 ctx.refresh();
