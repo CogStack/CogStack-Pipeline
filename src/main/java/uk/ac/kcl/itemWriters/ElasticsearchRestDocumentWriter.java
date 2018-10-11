@@ -65,10 +65,9 @@ public class ElasticsearchRestDocumentWriter implements ItemWriter<Document> {
     @Qualifier("esRestService")
     private ESRestService esRestService;
 
-    @Value("${elasticsearch.index.name:#{null}}")
+    @Value("${elasticsearch.index.name:defaultIndex}")
     private String indexName;
-
-    @Value("${elasticsearch.type:#{null}}")
+    @Value("${elasticsearch.type:doc}") // deprecated
     private String typeName;
 
     @Override
