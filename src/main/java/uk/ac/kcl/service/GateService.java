@@ -23,6 +23,7 @@ import gate.util.GateException;
 import gate.util.persistence.PersistenceManager;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -49,11 +50,20 @@ public class GateService {
 
 
     private LinkedBlockingQueue<CorpusController> genericQueue;
-    private int poolSize;
     private Collection<String> annotationSets;
     private Collection<String> annotationTypes;
 
     private LinkedBlockingQueue<CorpusController> deIdQueue;
+
+    // mandatory properties
+    @Value("${gate.gateHome}")
+    private String gateHomePath;
+    @Value("${gate.gateApp}")
+    private String gateAppPath;
+
+    // optional properties
+    @Value("${gate.poolSize:1}")
+    private int poolSize;
 
 
     @Autowired
@@ -65,8 +75,7 @@ public class GateService {
     @PostConstruct
     public void init() throws GateException, IOException {
 
-        File gateHome = new File(env.getProperty("gate.gateHome"));
-        poolSize = Integer.parseInt(env.getProperty("gate.poolSize"));
+        File gateHome = new File(gateHomePath);
         //in case called by other contexts
         if(!Gate.isInitialised()) {
             Gate.setGateHome(gateHome);
@@ -83,7 +92,7 @@ public class GateService {
         Gate.getCreoleRegister().getAllInstances("gate.Resource").forEach(Factory::deleteResource);
 
         if(activeProfiles.contains("gate")){
-            File gateApp = new File(env.getProperty("gate.gateApp"));
+            File gateApp = new File(gateAppPath);
             annotationSets = new ArrayList<>();
             try{
                 annotationSets.addAll(Arrays.asList(env.getProperty("gate.gateAnnotationSets").split(",")));
