@@ -50,24 +50,27 @@ public class RemoteConfiguration {
 
     @Autowired
     Environment env;
+
+    // mandatory properties
+    @Value("${jms.ip}")
+    private String jmsip;
+    @Value("${jms.username}")
+    private String jmsUsername;
+    @Value("${jms.password}")
+    private String jmsPassword;
+
+    // optional properties with default values
+    @Value("${jms.closeTimeout:100000}")
+    private int jmsCloseTimeout;
+
     @Value("${partitioner.gridSize:1}")
     private int gridSize;
 
-    @Value("${job.jobName:defaultJob}")
-    private String jobName;
-
-
-    @Value("${jms.ip}")
-    private String jmsip;
-    @Value("${jms.username")
-    private String jmsUsername;
-    @Value("${jms.password")
-    private String jmsPassword;
-    @Value("${jms.closeTimeout")
-    private int jmsCloseTimeout;
-    @Value("${partitioner.partitionHandlerTimeout}")
+    @Value("${partitioner.partitionHandlerTimeout:10000000}")
     private int partitionHandlerTimeout;
 
+    @Value("${job.jobName:defaultJob}")
+    private String jobName;
 
 
     @Bean
