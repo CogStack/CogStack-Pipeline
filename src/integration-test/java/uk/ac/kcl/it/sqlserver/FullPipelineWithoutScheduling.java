@@ -68,8 +68,7 @@ public class FullPipelineWithoutScheduling {
     @Test
     @DirtiesContext
     public void fullPipelineWithoutScheduling(){
-        logger.info("Tests temporarily disabled due to BioYodie UMLS resources licensing problem");
-        //fullPipelineWithoutSchedulingTests.fullPipelineTest();
+        fullPipelineWithoutSchedulingTests.fullPipelineTest();
     }
 
 
