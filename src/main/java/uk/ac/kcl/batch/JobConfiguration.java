@@ -148,7 +148,7 @@ public class JobConfiguration {
     @Autowired
     public Environment env;
 
-    @Value("${step.concurrencyLimit:1}")
+    @Value("${step.concurrencyLimit:2}")
     int concurrencyLimit;
 
     @Value("${step.chunkSize:50}")
