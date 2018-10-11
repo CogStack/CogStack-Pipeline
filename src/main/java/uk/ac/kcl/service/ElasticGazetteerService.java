@@ -3,6 +3,7 @@ package uk.ac.kcl.service;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
@@ -48,10 +49,26 @@ public class ElasticGazetteerService {
     @Autowired
     private Environment env;
 
-
     private JdbcTemplate jdbcTemplate;
     private  List<String> datePatterns;
+
+    // mandatory properties
+    @Value("${deid.stringTermsSQLFront}")
+    private String FrontSQLTermForStringValue;
+    @Value("${deid.timestampTermsSQLFront}")
+    private String FrontSQLTermForTimestampValue;
+
+    // optional properties with default values
+    @Value("${deid.stringTermsSQLBack:#{null}}")
+    private String BackSQLTermForStringValue;
+    @Value("${deid.timestampTermsSQLBack:#{null}}")
+    private String BackSQLTermForTimestampValue;
+
+    @Value("${deid.levDistance:30}")
     private Integer levDistance;
+    @Value("${deid.minWordLength:3}")
+    private Integer minWordLength;
+
 
     @PostConstruct
     private void init() throws IOException {
@@ -60,7 +77,6 @@ public class ElasticGazetteerService {
         Resource datePatternsResource = resourceLoader.getResource("classpath:datePatterns.txt");
         this.datePatterns = new ArrayList<>();
         InputStream inputStream = datePatternsResource.getInputStream();
-        levDistance = Integer.valueOf(env.getProperty("deid.levDistance"));
 
         try(BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))){
             String line;
@@ -129,7 +145,7 @@ public class ElasticGazetteerService {
             stringSet.add(string);
             stringSet.addAll(StringTools.getApproximatelyMatchingStringList(document, string,levDistance));
             stringSet.addAll((StringTools.splitIntoWordsWithLengthHigherThan(
-                    string, Integer.valueOf(env.getProperty("deid.minWordLength")))));
+                    string, minWordLength)));
         }
 
         Set<Pattern> patterns = new HashSet<>();
@@ -156,15 +172,17 @@ public class ElasticGazetteerService {
 
     }
     private List<String> getStrings(String docPrimaryKey){
-        String sql = env.getProperty("deid.stringTermsSQLFront");
-        sql = sql + " '" + docPrimaryKey + "' ";
-        sql = sql + env.getProperty("deid.stringTermsSQLBack");
+        String sql = FrontSQLTermForStringValue + " '" + docPrimaryKey + "' ";
+        if (BackSQLTermForStringValue != null)
+            sql += BackSQLTermForStringValue;
+        LOG.info("Executing SQL query: " + sql);
         return jdbcTemplate.queryForList(sql, String.class);
     }
     private List<Timestamp> getTimestamps(String docPrimaryKey){
-        String sql = env.getProperty("deid.timestampTermsSQLFront");
-        sql = sql + " '" + docPrimaryKey + "' ";
-        sql = sql + env.getProperty("deid.timestampTermsSQLBack");
+        String sql = FrontSQLTermForTimestampValue + " '" + docPrimaryKey + "' ";
+        if (BackSQLTermForTimestampValue != null)
+            sql += BackSQLTermForTimestampValue;
+        LOG.info("Executing SQL query: " + sql);
         return jdbcTemplate.queryForList(sql, Timestamp.class);
     }
 }
