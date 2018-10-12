@@ -54,9 +54,8 @@ public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemPr
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(TikaDocumentItemProcessor.class);
 
     // the name of the field in the resulting JSON file that will hold the content of the parsed document
-    @Value("${tika.tikaFieldName}")
+    @Value("${tika.tikaFieldName:outTikaField}")
     String tikaFieldName;
-
 
     // whether shall we parse all the document data into XHTML format
     @Value("${tika.keepTags:false}")
