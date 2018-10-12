@@ -55,7 +55,7 @@ public class ESRestService {
     private int port;
 
     // optional properties
-    @Value("${elasticsearch.index.name:defaultIndex")
+    @Value("${elasticsearch.index.name:default_index")
     private String indexName;
     @Value("${elasticsearch.type:doc}")
     private String typeName;
