@@ -71,7 +71,7 @@ import static org.junit.Assert.assertEquals;
         PostGresTestUtils.class,
         TestUtils.class},
         loader = AnnotationConfigContextLoader.class)
-@ActiveProfiles({"deid","localPartitioning","jdbc_in","elasticsearchRest","primaryKeyPartition","postgres"})
+@ActiveProfiles({"deid","localPartitioning","jdbc_in","elasticsearchRest","primaryKeyPartition","postgres", "jdbc_out"})
 //@ActiveProfiles({"deid","basic","localPartitioning","jdbc","primaryKeyPartition","sqlserver"})
 public class ElasticGazetteerAcceptanceTest {
 

@@ -53,25 +53,25 @@ public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemPr
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(TikaDocumentItemProcessor.class);
 
-    // whether shall we parse all the document data into XHTML format
-    @Value("${tika.keepTags}")
-    private boolean keepTags;
-
     // the name of the field in the resulting JSON file that will hold the content of the parsed document
-    @Value("${tika.tikaFieldName}")
+    @Value("${tika.tikaFieldName:outTikaField}")
     String tikaFieldName;
 
-    // configuration of Tika module plus individual parsers
-    private TikaConfig tikaConfig;
+    // whether shall we parse all the document data into XHTML format
+    @Value("${tika.keepTags:false}")
+    private boolean keepTags;
 
-    @Value("${tika.tesseract.timeout:#{null}}")
+    @Value("${tika.tesseract.timeout:120}")
     Integer tesseractTimeout;
     private TesseractOCRConfig tesseractConfig;
 
-    @Value("${tika.convert.timeout:#{null}}")
+    @Value("${tika.convert.timeout:120}")
     Integer convertTimeout;
-    private ImageMagickConfig imgConfig;
 
+
+    // configuration of Tika module plus individual parsers
+    private TikaConfig tikaConfig;
+    private ImageMagickConfig imgConfig;
     private AutoDetectParser parser;
 
 
@@ -88,13 +88,13 @@ public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemPr
 
         // load tesseract ocr configuration
         tesseractConfig = new TesseractOCRConfig();
-        if (tesseractTimeout != null && tesseractTimeout > 0) {
+        if (tesseractTimeout > 0) {
             tesseractConfig.setTimeout(tesseractTimeout);
         }
 
         // load image magick configuration -- used for tiff conversion
         imgConfig = new ImageMagickConfig();
-        if (convertTimeout != null && convertTimeout > 0) {
+        if (convertTimeout > 0) {
             imgConfig.setTimeout(convertTimeout);
         }
 

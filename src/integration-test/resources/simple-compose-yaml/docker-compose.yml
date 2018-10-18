@@ -37,15 +37,16 @@ services:
     networks:
       - esnet
 
-  bioyodie:
-      build: ../../../../docker-cogstack/bioyodie
-      cpu_quota: 800000
-      image: cogstacksystems/bioyodie:D4.5
-      ports:
-        - 8080:8080
-      restart: on-failure
-      networks:
-        - esnet
+# disabling Bio-Yodie due to UMLS license issues
+#  bioyodie:
+#      build: ../../../../docker-cogstack/bioyodie
+#      cpu_quota: 800000
+#      image: cogstacksystems/bioyodie:D4.5
+#      ports:
+#        - 8080:8080
+#      restart: on-failure
+#      networks:
+#        - esnet
 
 networks:
   esnet:

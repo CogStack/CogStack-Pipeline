@@ -51,22 +51,8 @@ public class DocumentRowMapper implements RowMapper<Document>{
     BatchJobUtils batchJobUtils;
     @Autowired
     ApplicationContext context;
-    @Value("${reindexColumn:#{null}}")
-    private String reindexColumn;
-    @Value("${elasticsearch.datePattern:yyyy-MM-dd'T'HH:mm:ss.SSS}")
-    private String esDatePattern;
-    @Value("${reindex:false}")
-    private boolean reindex;
-    @Value("${reindexField:#{null}}")
-    private String reindexField;
-    @Value("${tika.binaryPathPrefix:#{null}}")
-    private String pathPrefix;
-    @Value("${tika.binaryFileExts:#{null}}")
-    private String fileExts;
-    @Value("${tika.binaryContentSource:#{null}}")
-    private String binaryContentSource;
-    @Value("${tika.binaryFieldName:#{null}}")
-    private String binaryContentFieldName;
+
+    // mandatory properties required to perform record mapping
     @Value("${source.srcTableName}")
     private String srcTableName;
     @Value("${source.srcColumnFieldName}")
@@ -77,6 +63,28 @@ public class DocumentRowMapper implements RowMapper<Document>{
     private String primaryKeyFieldValue;
     @Value("${source.timeStamp}")
     private String timeStamp;
+
+    // profile-specific properties used when performing mapping
+    @Value("${reindexColumn:#{null}}")
+    private String reindexColumn;
+    @Value("${reindex:false}")
+    private boolean reindex;
+    @Value("${reindexField:#{null}}")
+    private String reindexField;
+
+    @Value("${elasticsearch.datePattern:yyyy-MM-dd'T'HH:mm:ss.SSS}")
+    private String esDatePattern;
+
+    @Value("${tika.binaryContentSource:database}")
+    private String binaryContentSource;
+    @Value("${tika.binaryPathPrefix:#{null}}")
+    private String pathPrefix;
+    @Value("${tika.binaryFileExts:#{null}}")
+    private String fileExts;
+    @Value("${tika.binaryFieldName:#{null}}")
+    private String binaryContentFieldName;
+
+
     private DateTimeFormatter eSCompatibleDateTimeFormatter;
     private List<String> fieldsToIgnore;
     

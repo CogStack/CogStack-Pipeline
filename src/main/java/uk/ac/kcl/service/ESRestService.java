@@ -47,53 +47,46 @@ public class ESRestService {
 
     private static final Logger LOG = LoggerFactory.getLogger(uk.ac.kcl.service.ESRestService.class);
 
-    @Value("${elasticsearch.index.name:#{null}}")
-    private String indexName;
 
-    @Value("${elasticsearch.type:#{null}}")
+    // mandatory properties
+    @Value("${elasticsearch.cluster.host}")
+    private String clusterHost;
+    @Value("${elasticsearch.cluster.port}")
+    private int port;
+
+    // optional properties
+    @Value("${elasticsearch.index.name:default_index")
+    private String indexName;
+    @Value("${elasticsearch.type:doc}")
     private String typeName;
 
-    @Value("${elasticsearch.xpack.enabled:false}")
-    private boolean securityEnabled;
-
-    @Value("${elasticsearch.xpack.security.transport.ssl.enabled:false}")
-    private boolean sslEnabled;
-
-    @Value("${elasticsearch.cluster.name:#{null}}")
+    @Value("${elasticsearch.cluster.name:elasticsearch")
     private String clusterName;
-
-    @Value("${elasticsearch.cluster.host:#{null}}")
-    private String clusterHost;
-
     @Value("${elasticsearch.connect.timeout:5000}")
     private long connTimeout;
-
     @Value("${elasticsearch.response.timeout:60000}")
     private int respTimeout;
-
     @Value("${elasticsearch.retry.timeout:60000}")
     private int retryTimeout;
 
-    @Value("${elasticsearch.cluster.port:#{null}}")
-    private int port;
+    @Value("${elasticsearch.xpack.enabled:false}")
+    private boolean securityEnabled;
+    @Value("${elasticsearch.xpack.security.transport.ssl.enabled:false}")
+    private boolean sslEnabled;
 
     @Value("${elasticsearch.xpack.user:#{null}}")
     private String user;
-
     @Value("${elasticsearch.xpack.password:#{null}}")
     private String userPassword;
-
     @Value("${elasticsearch.xpack.ssl.keystore.path:#{null}}")
     private String sslKeyStorePath;
-
     @Value("${elasticsearch.xpack.ssl.keystore.password:#{null}}")
     private String keyStorePassword;
-
     @Value("${elasticsearch.xpack.ssl.truststore.path:#{null}}")
     private String sslTrustStorePath;
-
     @Value("${elasticsearch.xpack.ssl.truststore.password:#{null}}")
     private String trustStorePassword;
+
 
     @Autowired
     Environment env;

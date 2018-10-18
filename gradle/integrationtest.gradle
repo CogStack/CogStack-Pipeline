@@ -1,6 +1,11 @@
 task postgresIntegTest(type: Test, dependsOn: [ 'installSimpleCompose' ]) {
     // Exclude because requires gate plugins to be downloaded
     exclude '**/GATEWithoutScheduling.class'
+    // Exclude BioYodie as it requires UMLS resources which are limited by license
+    exclude '**/BioyodieWebserviceWithoutScheduling.class'
+    // Exclude FullPipeline as it uses BioYodie
+    exclude '**/FullPipelineWithoutScheduling.class'
+
     testClassesDir = new File(sourceSets.integTest.output.classesDir.absolutePath
             +'/uk/ac/kcl/it/postgres')
     print testClassesDir.absolutePath

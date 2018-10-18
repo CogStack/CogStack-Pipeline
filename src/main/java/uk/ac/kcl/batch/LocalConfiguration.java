@@ -48,7 +48,7 @@ public class LocalConfiguration {
     @Autowired
     Environment env;
 
-    @Value("${partitioner.gridSize:3}")
+    @Value("${partitioner.gridSize:1}")
     int gridSize;
 
     @Value("${job.jobName:defaultJob}")
