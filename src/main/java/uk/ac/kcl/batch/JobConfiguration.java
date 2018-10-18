@@ -84,7 +84,7 @@ import java.util.Arrays;
 public class JobConfiguration {
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(JobConfiguration.class);
 
-    ///Configure order of processoer and writer composites here
+    ///Configure order of processor and writer composites here
 
     @Bean
     @Qualifier("compositeItemProcessorr")
@@ -148,7 +148,7 @@ public class JobConfiguration {
     @Autowired
     public Environment env;
 
-    @Value("${step.concurrencyLimit:1}")
+    @Value("${step.concurrencyLimit:2}")
     int concurrencyLimit;
 
     @Value("${step.chunkSize:50}")
@@ -168,6 +168,7 @@ public class JobConfiguration {
     }
 
 
+    // obligatory source DB properties
     @Value("${source.Driver}")
     private String sourceDriver;
     @Value("${source.JdbcPath}")
@@ -176,11 +177,13 @@ public class JobConfiguration {
     private String sourceUserName;
     @Value("${source.password}")
     private String sourcePassword;
-    @Value("${source.idleTimeout}")
+
+    // optional source DB properties with default values
+    @Value("${source.idleTimeout:30000}")
     private Long sourceIdleTimeout;
-    @Value("${source.maxLifetime}")
+    @Value("${source.maxLifetime:60000}")
     private Long sourceMaxLifeTime;
-    @Value("${source.leakDetectionThreshold}")
+    @Value("${source.leakDetectionThreshold:0}")
     private Long sourceLeakDetection;
     @Value("${source.poolSize:10}")
     private Integer sourcePoolSize;
@@ -211,35 +214,26 @@ public class JobConfiguration {
     }
 
 
-
-
-
-
-    @Value("${target.Driver}")
-    private String targetDriver;
-    @Value("${target.JdbcPath}")
-    private String targetJdbcPath;
-    @Value("${target.username}")
-    private String targetUserName;
-    @Value("${target.password}")
-    private String targetPassword;
-    @Value("${target.idleTimeout}")
+    // optional target DB properties and their default values
+    @Value("${target.idleTimeout:30000}")
     private Long targetIdleTimeout;
-    @Value("${target.maxLifetime}")
+    @Value("${target.maxLifetime:60000}")
     private Long targetMaxLifeTime;
     @Value("${target.poolSize:10}")
     private Integer targetPoolSize;
 
+    @Profile({"jdbc_out", "jdbc_out_map"})
     @Bean(destroyMethod = "close")
-//    @Primary
     @Qualifier("targetDataSource")
     public DataSource targetDataSource() {
         HikariDataSource mainDatasource = new HikariDataSource();
-        executeSessionScripts(mainDatasource,targetDriver);
-        mainDatasource.setDriverClassName(targetDriver);
-        mainDatasource.setJdbcUrl(targetJdbcPath);
-        mainDatasource.setUsername(targetUserName);
-        mainDatasource.setPassword(targetPassword);
+        // read and set the mandatory DB connector properties
+        executeSessionScripts(mainDatasource, env.getRequiredProperty("target.Driver"));
+        mainDatasource.setDriverClassName(env.getRequiredProperty("target.Driver"));
+        mainDatasource.setJdbcUrl(env.getRequiredProperty("target.JdbcPath"));
+        mainDatasource.setUsername(env.getRequiredProperty("target.username"));
+        mainDatasource.setPassword(env.getRequiredProperty("target.password"));
+        // set optional properties
         mainDatasource.setIdleTimeout(targetIdleTimeout);
         mainDatasource.setMaxLifetime(targetMaxLifeTime);
         if (targetPoolSize > 0){
@@ -346,6 +340,8 @@ public class JobConfiguration {
     @Autowired
     StepPartitioner stepPartitioner;
 
+
+
     @Bean
     @StepScope
     @Qualifier("documentItemReader")
@@ -360,13 +356,23 @@ public class JobConfiguration {
 
         JdbcPagingItemReader<Document> reader = new JdbcPagingItemReader<>();
         reader.setDataSource(jdbcDocumentSource);
+
+        // read and set obligatory properties
         SqlPagingQueryProviderFactoryBean qp = new SqlPagingQueryProviderFactoryBean();
-        qp.setSelectClause(env.getProperty("source.selectClause"));
-        qp.setFromClause(env.getProperty("source.fromClause"));
-        qp.setSortKey(env.getProperty("source.sortKey"));
+        qp.setSelectClause(env.getRequiredProperty("source.selectClause"));
+        qp.setFromClause(env.getRequiredProperty("source.fromClause"));
+        qp.setSortKey(env.getRequiredProperty("source.sortKey"));
         qp.setWhereClause(stepPartitioner.getPartitioningLogic(minValue,maxValue, minTimeStamp,maxTimeStamp));
         qp.setDataSource(jdbcDocumentSource);
-        reader.setPageSize(Integer.parseInt(env.getProperty("source.pageSize")));
+
+        // set optional properties
+        if (env.containsProperty("source.pageSize")) {
+            reader.setPageSize(Integer.parseInt(env.getProperty("source.pageSize")));
+        }
+        else { // it's a good idea to batch size and page size (commit interval) set to the same value
+            LOG.info("property: 'source.pageSize' not specified -> setting DB reader page size to batch step chunk size: {}", chunkSize);
+            reader.setPageSize(chunkSize);
+        }
         reader.setQueryProvider(qp.getObject());
         reader.setRowMapper(documentRowmapper);
         return reader;
@@ -380,7 +386,7 @@ public class JobConfiguration {
             @Qualifier("targetDataSource") DataSource jdbcDocumentTarget) {
         JdbcBatchItemWriter<Document> writer = new JdbcBatchItemWriter<>();
         writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
-        writer.setSql(env.getProperty("target.Sql"));
+        writer.setSql(env.getRequiredProperty("target.Sql"));
         writer.setDataSource(jdbcDocumentTarget);
         return writer;
     }
@@ -393,7 +399,7 @@ public class JobConfiguration {
             @Qualifier("targetDataSource") DataSource jdbcDocumentTarget) {
         JdbcBatchItemWriter<Document> writer = new JdbcBatchItemWriter<>();
         writer.setItemSqlParameterSourceProvider(new MapItemSqlParameterSourceProvider<Document>());
-        writer.setSql(env.getProperty("target.Sql"));
+        writer.setSql(env.getRequiredProperty("target.Sql"));
         writer.setDataSource(jdbcDocumentTarget);
         return writer;
     }
