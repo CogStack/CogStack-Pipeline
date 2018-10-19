@@ -52,6 +52,9 @@ The content will be decompressed into `CogStack-Pipeline/` directory.
 [//]: # "<span style='color:red'> NOTE: </span>"
 **Note: For the moment the CogStack bundle is obtained from the `dev` branch -- soon it will be merged into `master` branch with a version tag for a direct download.**
 
+[//]: # "<span style='color:red'> NOTE: </span>"
+**Note: For the moment, the CogStack pipeline Docker image used in this example is `cogstacksystems/cogstack-pipeline:dev-latest` However, once the development branch will be merged to `master` the image names will be updated.**
+
 
 
 # <a name="how-they-are-organized"></a> How are the examples organized
@@ -229,7 +232,7 @@ The directory `docker-common` contains some common components and microservice c
 * ElasticSearch node,
 * Kibana webservice dashboard,
 * nginx reverse proxy service,
-* Fkuentd logging driver.
+* Fluentd logging driver.
 
 
 
@@ -281,7 +284,7 @@ CogStack ecosystem consists of multiple inter-connected microservices running to
 
 In the provided examples, the CogStack ecosystem is usually composed of the following microservices:
 * `*samples` -- PostgreSQL database(s) loaded with a sample dataset under `db_samples` name,
-* `cogengine` -- CogStack data processing engine,
+* `cogengine` -- CogStack pipeline -- the data processing engine,
 * `postgres` -- PostgreSQL database for storing information about CogStack jobs and status,
 * `elasticsearch` -- ElasticSearch node(s) for storing and querying the processed EHR data,
 * `kibana` -- Kibana data visualization tool for querying the data from ElasticSearch.
@@ -716,7 +719,6 @@ source.JdbcPath = jdbc:postgresql://pgsamples:5432/db_samples
 source.Driver = org.postgresql.Driver
 source.username = test
 source.password = test
-source.poolSize = 10
 ```
 In this example we are using a PostgreSQL database which driver is defined by `source.Driver` parameter. The PostgreSQL database service is available in the CogStack ecosystem as `pgsamples`, has exposed port `5432` for connections and the sample database name is `db_samples` -- all these details need to be included in the `source.JdbcPath` parameter field.
 
@@ -745,31 +747,17 @@ Next, we need to define the data sink -- in our example, and by default, Elastic
 elasticsearch.cluster.name = elasticsearch
 elasticsearch.cluster.host = elasticsearch
 elasticsearch.cluster.port = 9200
-
-elasticsearch.security.enabled = false
-elasticsearch.ssl.enabled = false
 ```
 Similarly, as when defining the sample database source, we need to provide the ElasticSearch host and port configuration according to the microservices definition in the corresponding Docker Compose file (see `examples/example1/docker/docker-compose.yml`).
 
 
-In the next step, we specify the ElasticSearch indexing parameters:
+In the next step, we specify the ElasticSearch indexing parameters (optional):
 ```properties
 elasticsearch.index.name = sample_observations_view
-elasticsearch.type = doc
 elasticsearch.excludeFromIndexing = cog_pk,cog_pk_field_name,cog_src_field_name,cog_src_table_name
-elasticsearch.datePattern = yyyy-MM-dd'T'HH:mm:ss.SSS
 ```
 We specify the index name which will be used to store the documents processed by CogStack engine. Additionally, we specify which fields should be excluded from the indexing -- by default, we exclude the binary content, the constant-value fields and the primary key from the `observations_view`.
 
-
-As a side note, although it's mostly for testing purposes at the moment, the same information regarding the source database host and credentials needs to be provided for defining the target (in our case it is ElasticSearch anyway):
-```properties
-target.JdbcPath = jdbc:postgresql://pgsamples:5432/db_samples
-target.Driver = org.postgresql.Driver
-target.username = test
-target.password = test
-```
-This is a concept that will be possibly redesigned in future versions of CogStack.
 
 
 ### Jobs and CogStack engine configuration
@@ -783,7 +771,7 @@ jobRepository.password = mysecretpassword
 
 job.jobName = job_observations_view
 ```
-The last parameter `job.jobName` is a default name for the jobs that will be created.
+The last parameter `job.jobName` is a default name for the jobs that will be created (optional).
 
 
 ### Partitioner and scheduler
@@ -796,7 +784,7 @@ partitioner.pkColumnName = cog_pk
 partitioner.timeStampColumnName = cog_update_time
 ```
 
-Apart from data partitioning, it can be useful to set up the scheduler -- the following line corresponds to the scheduler configuration:
+Apart from data partitioning, although optional, it can be sometimes useful to set up the scheduler -- the following line corresponds to the scheduler configuration:
 ```properties
 scheduler.useScheduling = false
 ```
@@ -1045,7 +1033,7 @@ The *properties* file used in this example is based on the one from [Example 2](
 
 The spring profile part has been updated with adding a `tika` profile:
 ```properties
-spring.profiles.active=jdbc_in,elasticsearchRest,localPartitioning,tika
+spring.profiles.active = jdbc_in,elasticsearchRest,localPartitioning,tika
 ```
 
 
@@ -1057,12 +1045,26 @@ tika.tikaFieldName = tika_output
 tika.binaryContentSource = database
 tika.binaryFieldName = cog_binary_doc
 ```
-The property `tika.tikaFieldName` denotes the name of the key field `tika_output`. This field will be present in the output JSON file where the value will hold the content of the Tika-parsed document.
+The property `tika.tikaFieldName` denotes the name of the key field `tika_output`. This field will be present in the output JSON file where the value will hold the content of the Tika-parsed document. It is an optional value to specify -- by default `outTikaField` name is used. 
 
-The property `tika.binaryContentSource` defines the source where the documents are stored -- in our case: `database`. Following, the property `tika.binaryFieldName` denotes the name of column that contains binary document data -- in our case that is `cog_binary_doc` field in `observations_view` view.
+The property `tika.binaryContentSource` defines the source where the documents are stored -- in our case: `database`. Following, the property `tika.binaryFieldName` denotes the name of column that contains binary document data -- in our case that is `cog_binary_doc` field in `observations_view` view. It is an optional property to set, as by default `database` will be used.
 
 It's important to note that the remaining information about mapping and querying of the source database tables and record fields are covered by `source.*` properties, as explained in [Example 1](#example-1).
 
+
+### Performance tweaking
+
+Processing the documents and extracting the text can be a computationally expensive task. Depending on the documents type and whether the documents contain images, one may try to tweak the performance of the ingestion pipeline according to the available resources.
+
+For example, one may use a larger number of processing threads by specifying:
+```properties
+step.concurrencyLimit = 8
+```
+
+Additionally, one may reduce the default value of the data chunk size, which specifies the batch processing size before committing the results:
+```properties
+step.chunkSize = 10
+```
 
 ## Deployment information
 
@@ -1240,7 +1242,7 @@ The *properties* files used in this step is based on [Example 4](#example-4) -- 
 
 The spring profiles used in this step are:
 ```properties
-spring.profiles.active=jdbc_in,jdbc_out,localPartitioning,tika
+spring.profiles.active = jdbc_in,jdbc_out,localPartitioning,tika
 ```
 In general, this tells us that the documents will be read from an input database (profile: `jdbc_in`), processed using `tika` with `localPartitioning` scheme and stored in an output database (profile: `jdbc_out`).
 
@@ -1285,7 +1287,7 @@ tika.binaryFieldName = cog_binary_doc
 tika.tikaFieldName = tika_output
 tika.binaryContentSource = database
 ```
-The property `tika.tikaFieldName` denotes the name of the key field `tika_output` in the output JSON file where the value will contain the content of the Tika-parsed document. See, e.g., the `reports_processed_view` where the content of `tika_output` is accessed and parsed.
+The property `tika.tikaFieldName` denotes the name of the key field `tika_output` in the output JSON file where the value will contain the content of the Tika-parsed document (optional value). See, e.g., the `reports_processed_view` where the content of `tika_output` is accessed and parsed.
 
 The property `tika.binaryFieldName` denotes the name of the column that contains the binary document data -- in our case it is the `cog_binary_doc` field in `reports_binary_view` view.
 
@@ -1467,7 +1469,7 @@ The *properties* file used in this example is based on the one from [Example 2](
 
 The spring profile part has been updated with adding a `gate` profile:
 ```properties
-spring.profiles.active=jdbc_in,elasticsearchRest,gate,localPartitioning
+spring.profiles.active = jdbc_in,elasticsearchRest,gate,localPartitioning
 ```
 
 ### GATE configuration

@@ -39,7 +39,7 @@ services:
 # CogStack containers                                                       #
 #---------------------------------------------------------------------------#
   cogstack:
-    image: cogstacksystems/cogstack-pipeline:latest
+    image: cogstacksystems/cogstack-pipeline:dev-latest
     volumes:
       - ./cogstack:/usr/src/docker-cogstack/cogstack/cogstack_conf:ro
     environment:
