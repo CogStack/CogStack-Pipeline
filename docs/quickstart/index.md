@@ -11,17 +11,17 @@ output:
 [//]: # "-------------------------------------------------------------------------------------"
 [//]: # "Tutorial introduction"
 
-This simple tutorial demonstrates how to get CogStack running on a sample electronic health record (EHR) dataset stored initially in an external database. CogStack ecosystem has been designed with handling efficiently both structured and unstructured EHR data in mind. It shows its strength while working with the unstructured type of data, especially as some input data can be provided as documents in PDF or image formats. For the moment, however, we only show how to run CogStack on a set of structured and free-text EHRs that have been already digitalized. The part covering unstructured type of data in form of PDF documents, images and other clinical notes which needs to processed prior to analysis will come shortly.
+This simple tutorial demonstrates how to get *CogStack Pipeline* running on a sample electronic health record (EHR) dataset stored initially in an external database. CogStack ecosystem has been designed with handling efficiently both structured and unstructured EHR data in mind. It shows its strength while working with the unstructured type of data, especially as some input data can be provided as documents in PDF or image formats. For the moment, however, we only show how to run CogStack on a set of structured and free-text EHRs that have been already digitalized. The part covering unstructured type of data in form of PDF documents, images and other clinical notes which needs to processed prior to analysis will come shortly.
 
 This tutorial is divided into 5 parts:
 1. Getting CogStack ([link](#getting-cogstack)),
-2. A brief description of how does CogStack work and its ecosystem ([link](#how-does-it-work)),
+2. A brief description of how does CogStack pipeline work and its ecosystem ([link](#how-does-it-work)),
 3. A brief description of the sample datasets used ([link](#datasets)), 
-4. Running CogStack 'out-of-the-box' using the dataset already preloaded into a sample database ([link](#running-cogstack)),
+4. Running CogStack pipeline 'out-of-the-box' using the dataset already preloaded into a sample database ([link](#running-cogstack)),
 5. For advanced users: preparing a database schema according to the sample dataset and to the current CogStack pipeline requirements ([link](#advanced-schema)),
-6. For advanced users: preparing the configuration file for CogStack data processing engine according to the used database schema and used microservices ([link](#advanced-properties)).
+6. For advanced users: preparing the configuration file for CogStack data processing pipeline according to the used database schema and used microservices ([link](#advanced-properties)).
 
-To skip the brief description and to get hands on running CogStack please head directly to [Running CogStack](#running-cogstack) part.
+To skip the brief description and to get hands on running CogStack pipeline please head directly to [Running CogStack](#running-cogstack) part.
 
 The main directory with resources used in this tutorial is available in the CogStack bundle under `examples/`. This tutorial is based on the **Example 2**, however, there are more examples available to play with.
 
@@ -51,13 +51,13 @@ The content will be decompressed into `CogStack-Pipeline/` directory.
 
 ## Data processing workflow
 
-The data processing workflow of CogStack is based on [Java Spring Batch](https://spring.io/) framework. Not to dwell too much into technical details and just to give a general idea -- the data is being read from a predefined *data source*, later it follows a number of *processing operations* with the final result stored in a predefined *data sink*. CogStack implements variety of data processors, data readers and writers with scalability mechanisms that can be selected in CogStack job configuration. Although the data can be possibly read from different sources, the most frequently used data sink is [ElasicSearch](https://www.elastic.co/). For more details about the CogStack functionality, please refer to the [CogStack Documentation (WIP)](https://github.com/CogStack/CogStack-Pipeline).
+The data processing workflow of CogStack pipeline is based on [Java Spring Batch](https://spring.io/) framework. Not to dwell too much into technical details and just to give a general idea -- the data is being read from a predefined *data source*, later it follows a number of *processing operations* with the final result stored in a predefined *data sink*. CogStack pipeline implements variety of data processors, data readers and writers with scalability mechanisms that can be selected in CogStack job configuration. Although the data can be possibly read from different sources, the most frequently used data sink is [ElasicSearch](https://www.elastic.co/). For more details about the CogStack functionality, please refer to the [CogStack Documentation](https://cogstack.atlassian.net/wiki/spaces/COGDOC/overview).
 
-![cogstack](https://raw.githubusercontent.com/CogStack/CogStack-Pipeline/master/fig/cogstack_pipeline_sm2.png "CogStack data processing workflow")
+![cogstack](https://raw.githubusercontent.com/CogStack/CogStack-Pipeline/master/fig/cogstack_pipeline_sm2.png "CogStack platform and data processing workflow")
 
 
 [//]: # "Content description"
-In this tutorial we only focus on a simple and very common use-case, where CogStack reads and process structured and free-text EHRs data from a single PostgreSQL database. The result is then stored in ElasticSearch where the data can be easily queried in [Kibana](https://www.elastic.co/products/kibana) dashboard. However, CogStack data processing engine also supports multiple data sources -- please see **Example 3** which covers such case.
+In this tutorial we only focus on a simple and very common use-case, where CogStack pipeline reads and process structured and free-text EHRs data from a single PostgreSQL database. The result is then stored in ElasticSearch where the data can be easily queried in [Kibana](https://www.elastic.co/products/kibana) dashboard. However, CogStack pipeline data processing engine also supports multiple data sources -- please see **Example 3** which covers such case.
 
 
 ## CogStack ecosystem
@@ -109,7 +109,7 @@ The generated dataset consists of the following files:
 - `patients.csv` -- Patient demographic data,
 - `procedures.csv` -- Patient procedure data including surgeries.
 
-For more details about the generated files and the schema definition please refer to the [official synthea wiki page](https://github.com/synthetichealth/synthea/wiki/CSV-File-Data-Dictionary). The sample records are shown in [Advanced: preparing a DB schema for CogStack](#advanced-schema) part. 
+For more details about the generated files and the schema definition please refer to the [official synthea wiki page](https://github.com/synthetichealth/synthea/wiki/CSV-File-Data-Dictionary). The sample records are shown in [Advanced: preparing a DB schema for CogStack pipeline](#advanced-schema) part. 
 
 In this example we use a subset of the available data -- as a simple use-case, only *patients.csv*, *encounters.csv* and *observations.csv* file are used related. These files also represent separate tables in the `db_samples` database. For more advanced use-cases please check the **Example 3** which uses the full dataset.
 
@@ -125,7 +125,7 @@ Each report contain such information as:
 * Short Description,
 * Medical Transcription Sample Report (in free text format).
 
-The collection comprises in total of 4873 documents. A sample document is shown in [Advanced: preparing a DB schema for CogStack](#advanced-schema) part.
+The collection comprises in total of 4873 documents. A sample document is shown in [Advanced: preparing a DB schema for CogStack pipeline](#advanced-schema) part.
 
 
 ## Preparing the data
@@ -136,15 +136,15 @@ For the ease of use a database dump with predefined schema and preloaded data wi
 bash download_db_dumps.sh
 ```
 
-Alternatively, the PostgreSQL database schema definition used in this tutorial `db_create_schema.sql` is stored in `examples/example2/extra/` directory alongside the script `prepare_db.sh` to generate the database dump. More information covering the creation of database schema can be found in [Advanced: preparing a DB schema for CogStack](#advanced-schema) part. 
+Alternatively, the PostgreSQL database schema definition used in this tutorial `db_create_schema.sql` is stored in `examples/example2/extra/` directory alongside the script `prepare_db.sh` to generate the database dump. More information covering the creation of database schema can be found in [Advanced: preparing a DB schema for CogStack pipeline](#advanced-schema) part. 
 
 
 
 
-# <a name="running-cogstack"></a> Running CogStack
+# <a name="running-cogstack"></a> Running CogStack platform
 [//]: # "-------------------------------------------------------------------------------------"
 
-## Running CogStack for the first time
+## Running CogStack pipeline for the first time
 
 For the ease of use CogStack is being deployed and run using Docker. However, before starting the CogStack ecosystem for the first time, one needs to have the database dump files for sample data either by creating them locally or downloading from Amazon S3.
 To download the database dumps, just type in the main `examples/` directory:
@@ -208,12 +208,12 @@ The information about connecting to the micro-services and resources will become
 
 
 
-# <a name="advanced-schema"></a> Advanced: preparing a DB schema for CogStack 
+# <a name="advanced-schema"></a> Advanced: preparing a DB schema for CogStack pipeline
 [//]: # "-------------------------------------------------------------------------------------"
 
 ## General information
 
-In the current implementation, CogStack can only ingest EHR data from a specified input database. This is why, in order to process the sample patient data covered in this tutorial, one needs to create an appropriate database schema and load the data.
+In the current implementation, CogStack pipeline can only ingest EHR data from a specified input database. This is why, in order to process the sample patient data covered in this tutorial, one needs to create an appropriate database schema and load the data.
 
 Moreover, as relational join statements have a high performance burden for ElasticSearch, the EHR data is best to be stored denormalized in ElasticSearch. This is why, for the moment, we rely on ingesting the data from additional view(s) created in the sample database.
 
@@ -410,7 +410,7 @@ create view observations_view as
     obs.ENCOUNTER = enc.ID
   ;
 ```
-The goal here is to denormalize the database schema for CogStack and ElasticSearch data ingestion, as the `observations` table is referencing both the `patient` and `encounters` tables by their primary key. In the current implementation, CogStack engine cannot yet perform dynamic joins over the relational data from specific database tables.
+The goal here is to denormalize the database schema for CogStack and ElasticSearch data ingestion, as the `observations` table is referencing both the `patient` and `encounters` tables by their primary key. In the current implementation, CogStack pipeline engine cannot yet perform dynamic joins over the relational data from specific database tables.
 
 Apart from exposing the fields from the previously defined tables, some extra fields `cog_*` have been added. They are required for compatibility with CogStack data processing engine, but they may be possibly removed or modified in the upcoming version of CogStack. However, in the current implementation, these fields are required to properly configure the CogStack database reader, database row mapper, to properly schedule and partition the data of the running CogStack data processing workers.
 
@@ -425,7 +425,7 @@ These fields are later used when [preparing the configuration file for CogStack 
 
 
 
-# <a name="advanced-properties"></a> Advanced: preparing a configuration file for CogStack
+# <a name="advanced-properties"></a> Advanced: preparing a configuration file for CogStack pipeline
 [//]: # "-------------------------------------------------------------------------------------"
 
 ## General information
@@ -435,7 +435,9 @@ Each CogStack data processing pipeline is configured using a number of parameter
 
 ## Properties description
 
-There are multiple configurable parameters available to tailor the CogStack data processing pipeline to the specific data processing needs and available resources. Here we will cover only the most important parameters related with configuring the input source, the output sink and data processing workflow. For a more detailed description of the available parameters, please refer to the [CogStack documentation (WIP)](https://github.com/CogStack/CogStack-Pipeline).
+There are multiple configurable parameters available to tailor the CogStack data processing pipeline to the specific data processing needs and available resources. Here we will cover only the most important parameters related with configuring the input source, the output sink and data processing workflow. 
+
+For a more detailed description of the available properties and available profiles, please refer to the official [CogStack Documentation](https://cogstack.atlassian.net/wiki/spaces/COGDOC/overview).
 
 
 ### Spring profiles
@@ -447,9 +449,7 @@ spring.profiles.active = jdbc_in,elasticsearchRest,localPartitioning
 which denotes that only such profiles will be active:
 * `jdbc_in` for JDBC input database connector, 
 * `elasticsearchRest` for using REST API for inserting documents to ElasticSearch,
-* `partitioning` functionality.
-
-For a more detailed description of available profiles please refer to [CogStack documentation](https://github.com/CogStack/CogStack-Pipeline).
+* local `partitioning` functionality (for data processing).
 
 
 ### Data source
@@ -460,11 +460,8 @@ source.JdbcPath = jdbc:postgresql://pgsamples:5432/db_samples
 source.Driver = org.postgresql.Driver
 source.username = test
 source.password = test
-source.poolSize = 10
 ```
 In this example we are using a PostgreSQL database which driver is defined by `source.Driver` parameter. The PostgreSQL database service is available in the CogStack ecosystem as `pgsamples`, has exposed port `5432` and the sample database name is `db_samples` -- all these details need to be included in the `source.JdbcPath` parameter field. The information about the data source host and port directly corresponds to the `pgsamples` microservice configuration specified in the Docker Compose file (`examples/example2/docker/docker-compose.yml`) as mentioned in the [Running CogStack](#running-cogstack) part.
-
-Please note that the `source.poolSize` defines the maximum size of the connection pool available for performing queries by CogStack workers. A PostgreSQL database, by default, has a maximum connection limit set to `100`, hence exceeding the limit (either by a single job or multiple parallel ones) may lead to termination of the data pipeline.
 
 
 Next, we need to instruct CogStack workers how to query the records from the data source:
@@ -481,43 +478,27 @@ source.timeStamp = cog_update_time
 
 source.dbmsToJavaSqlTimestampType = TIMESTAMP
 ```
-This is where the previously defined `observations_view` with additional CogStack-specific fields are used (see: [Advanced: preparing a DB schema for CogStack](#advanced-schema) part).
+This is where the previously defined `observations_view` with additional CogStack-specific fields are used (see: [Advanced: preparing a DB schema for CogStack pipeline](#advanced-schema) part).
 
 
 ### Data sink
 
 Next, we need to define the data sink -- in our example, and by default, ElasticSearch is being used:
 ```properties
-elasticsearch.cluster.name = elasticsearch
 elasticsearch.cluster.host = elasticsearch
 elasticsearch.cluster.port = 9200
-
-elasticsearch.security.enabled = false
-elasticsearch.ssl.enabled = false
 ```
 Similarly, as when defining the sample database source, we need to provide the ElasticSearch host and port configuration according to the microservices definition in the corresponding Docker Compose file.
 
-As an additional feature, security and ssl encryption can be enabled for communication with ElasticSearch. However, it uses the [ElasticSearch X-Pack bundle](https://www.elastic.co/guide/en/x-pack/current/xpack-introduction.html) and requires license for commercial deployments, hence it is disabled by default.
+As a side note, security and ssl encryption can be enabled for communication with ElasticSearch. However, it uses the [ElasticSearch X-Pack bundle](https://www.elastic.co/guide/en/x-pack/current/xpack-introduction.html) and requires license for commercial deployments, hence it is disabled by default.
 
 
-In the next step, we specify the ElasticSearch indexing parameters:
+In the next step, we can specify some optional (albeit helpful) ElasticSearch indexing parameters:
 ```properties
 elasticsearch.index.name = sample_observations_view
-elasticsearch.type = doc
 elasticsearch.excludeFromIndexing = cog_pk,cog_pk_field_name,cog_src_field_name,cog_src_table_name
-elasticsearch.datePattern = yyyy-MM-dd'T'HH:mm:ss.SSS
 ```
-We specify the index name which will be used to store the documents processed by CogStack workers. Additionally, we specify which fields should be excluded from the indexing -- by default, we exclude the binary content, the constant-value fields and the primary key from the `observations_view` (see: [Advanced: preparing a DB schema for CogStack](#advanced-schema)).
-
-
-As a side note, although it's mostly for testing purposes at the moment, the same information regarding the source database host and credentials needs to be provided for defining the target (in our case it is ElasticSearch anyway):
-```properties
-target.JdbcPath = jdbc:postgresql://pgsamples:5432/db_samples
-target.Driver = org.postgresql.Driver
-target.username = test
-target.password = test
-```
-This is a concept that will be possibly redesigned in future versions of CogStack.
+We specify the index name which will be used to store the documents processed by CogStack workers. Additionally, we specify which fields should be excluded from the indexing -- by default, we exclude the binary content, the constant-value fields and the primary key from the `observations_view` (see: [Advanced: preparing a DB schema for CogStack pipeline](#advanced-schema)).
 
 
 ### Jobs and CogStack workers configuration
@@ -528,10 +509,19 @@ jobRepository.JdbcPath = jdbc:postgresql://postgres:5432/cogstack
 jobRepository.Driver = org.postgresql.Driver
 jobRepository.username = cogstack
 jobRepository.password = mysecretpassword
-
-job.jobName = job_observations_view
 ```
-The last parameter `job.jobName` is a default name for the jobs that will be created.
+
+Moreover, a property can be specified to set a unique name for jobs that will be created:
+```properties
+job.jobName = job_observations
+```
+It should be an unique name per running CogStack pipeline instance, but it is an optional parameter (default: `defaultJob`).
+
+Additionally, a number of available worker threads can be specified by specifying:
+```properties
+step.concurrencyLimit = 4
+```
+However, this property is optional and set to `2` by default.
 
 
 ### Partitioner and scheduler
@@ -539,15 +529,12 @@ The last parameter `job.jobName` is a default name for the jobs that will be cre
 Another set of useful parameters are related with controlling the job execution and data partitioning:
 ```properties
 partitioner.partitionType = PKTimeStamp
+
 partitioner.tableToPartition = observations_view
 partitioner.pkColumnName = cog_pk
 partitioner.timeStampColumnName = cog_update_time
 ```
-In the current implementation, CogStack engine can only partition the data using the records' primary key (`cog_pk` field, containing unique values) and records' update time (`cog_update_time` field) as defined in `observations_view`. This is specified by `PKTimeStamp` partitioning method types.
+In the current implementation, CogStack engine can only partition the data using the records' primary key (`cog_pk` field, containing unique values) and records' update time (`cog_update_time` field) as defined in `observations_view`. This is specified by `PKTimeStamp` partitioning method type (default value).
 
 
-Apart from data partitioning, it can be useful to set up the scheduler -- the following line corresponds to the scheduler configuration:
-```properties
-scheduler.useScheduling = false
-```
-In this example we do not use scheduler, since we ingest EHRs from the data source only once. However, in case when the data is being generated in a continuous way, scheduler should be enabled to periodically run CogStack jobs to process the new EHRs.
+Apart from data partitioning, it once can also set up the scheduler. Although it is disabled by default (`scheduler.useScheduling=false`), it can be easily configured. In this example we do not use scheduler, since we ingest EHRs from the data source only once. However, in case when the data is being generated in a continuous way, scheduler should be enabled to periodically run CogStack jobs to process the new EHRs.
