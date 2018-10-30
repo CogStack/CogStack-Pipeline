@@ -3,7 +3,7 @@ plugins {
 	id 'java'
 	id 'groovy'
 	id 'idea'
-	id 'org.springframework.boot' version "1.5.1.RELEASE"
+	id 'org.springframework.boot' version "2.0.6.RELEASE"
 }
 
 repositories {
@@ -67,13 +67,7 @@ dependencies {
 	// elasticsearch x-pack support
 	compile 'org.elasticsearch.client:x-pack-transport:6.4.2'
 
-	// elasticsearch java client
-	// deprecated -- will be removed in the next version with ElasticSearchDocumentWriter
-	compile 'org.elasticsearch:elasticsearch:6.0.0'
-	//
-
 	// dbms drivers
-	// compile("org.hsqldb:hsqldb")
 	compile group: 'org.hsqldb', name: 'hsqldb', version: '2.4.1'
 	compile group: 'com.microsoft.sqlserver', name: 'mssql-jdbc', version: '7.0.0.jre8'
 	compile group: 'net.sourceforge.jtds', name: 'jtds', version: '1.3.1'
@@ -85,22 +79,27 @@ dependencies {
 
 
 	// spring framework
-	compile("org.springframework.boot:spring-boot-starter-batch")
-	compile('org.springframework.batch:spring-batch-core:3.0.7.RELEASE')
-	compile('org.springframework.batch:spring-batch-integration:3.0.7.RELEASE')
-	compile('org.springframework:spring-web:4.3.6.RELEASE')
-	compile('org.springframework:spring-core:4.3.6.RELEASE')
-	compile('org.springframework:spring-test:4.3.6.RELEASE')
-	compile('org.springframework:spring-jdbc:4.3.6.RELEASE')
-	compile('org.springframework:spring-context:4.3.6.RELEASE')
-	compile('org.springframework:spring-jms:4.3.6.RELEASE')
-	compile('org.springframework.integration:spring-integration-core:4.3.6.RELEASE')
-	compile('org.springframework.integration:spring-integration-jms:4.3.6.RELEASE')
+	compile("org.springframework.boot:spring-boot-starter-batch:2.0.6.RELEASE")
 
+	compile('org.springframework.batch:spring-batch-core:4.0.1.RELEASE')
+	compile('org.springframework.batch:spring-batch-integration:4.0.1.RELEASE')
 
-	compile 'org.springframework.integration:spring-integration-java-dsl:1.1.2.RELEASE'
-	compile 'org.apache.activemq:activemq-core:5.7.0'
-	compile 'org.apache.activemq:activemq-spring:5.13.0'
+	compile('org.springframework:spring-web:5.1.2.RELEASE')
+	compile('org.springframework:spring-core:5.1.2.RELEASE')
+	compile('org.springframework:spring-test:5.1.2.RELEASE')
+	compile('org.springframework:spring-jdbc:5.1.2.RELEASE')
+	compile('org.springframework:spring-context:5.1.2.RELEASE')
+	compile('org.springframework:spring-jms:5.1.2.RELEASE')
+
+	compile('org.springframework.integration:spring-integration-core:5.0.9.RELEASE')
+	compile('org.springframework.integration:spring-integration-jms:5.0.9.RELEASE')
+
+	compile 'org.springframework.integration:spring-integration-java-dsl:1.2.3.RELEASE'
+
+	// need to cover these in integration tests:
+	compile 'org.apache.activemq:activemq-broker:5.15.7'
+	compile 'org.apache.activemq:activemq-client:5.15.7'
+	compile 'org.apache.activemq:activemq-spring:5.15.7'
 
 
 	// nlp-related
@@ -125,6 +124,7 @@ dependencies {
 	compile group: 'org.apache.ws.commons.util', name: 'ws-commons-util', version: '1.0.2'
 
 	//tests
+	testCompile group: 'junit', name: 'junit', version: '4.12'
 	testCompile group: 'org.mockito', name: 'mockito-core', version: '2.23.0'
 	testCompile group: 'de.sven-jacobs', name: 'loremipsum', version: '1.0'
 
