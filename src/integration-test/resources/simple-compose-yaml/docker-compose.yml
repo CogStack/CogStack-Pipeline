@@ -8,7 +8,7 @@ services:
     networks:
       - esnet
   kibana:
-    image: docker.elastic.co/kibana/kibana:5.4.2
+    image: docker.elastic.co/kibana/kibana-oss:6.4.2
     environment:
         ELASTICSEARCH_URL: http://elasticsearch:9200
     ports:
@@ -16,11 +16,11 @@ services:
     networks:
       - esnet
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:5.4.2
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.4.2
     environment:
       - cluster.name=elasticsearch
       - bootstrap.memory_lock=true
-      - xpack.security.enabled=false
+#      - xpack.security.enabled=false
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - http.port=9200
       - http.publish_port=9300
