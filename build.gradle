@@ -114,19 +114,18 @@ dependencies {
 	compile group: 'xml-apis', name: 'xml-apis', version: '1.4.01'
 
 	// tika
-	compile 'org.apache.tika:tika-core:1.19.1'
-	compile('org.apache.tika:tika-parsers:1.19.1') {
+	compile group: 'org.apache.tika', name: 'tika-core', version: '1.19.1'
+	compile group: 'org.apache.tika', name: 'tika-parsers', version: '1.19.1' {
 		exclude group: 'commons-logging', module: 'commons-logging' //by both name and group
 	}
 
 	// temporary transitive dependencies fix
-	compile 'org.json:json:20171018'
+	compile group: 'org.json', name: 'json', version: '20171018'
 
 	compile group: 'org.apache.ws.commons.util', name: 'ws-commons-util', version: '1.0.2'
 
 	//tests
-	testCompile('org.mockito:mockito-all:1.10.19')
-	// testCompile group: 'org.mockito', name: 'mockito-core', version: '2.23.0'
+	testCompile group: 'org.mockito', name: 'mockito-core', version: '2.23.0'
 	testCompile group: 'de.sven-jacobs', name: 'loremipsum', version: '1.0'
 
 }
