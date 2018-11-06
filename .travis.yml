@@ -1,6 +1,6 @@
 language: java
 jdk:
-  - oraclejdk8
+  - openjdk11
 sudo: required
 
 services:
@@ -29,7 +29,6 @@ cache:
     - $HOME/.gradle/wrapper/
 
 before_install:
-  - docker --version
   - mkdir -p "$HOME/bin";
   - export PATH="$HOME/bin:$PATH";
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > "$HOME/bin/docker-compose";
@@ -39,7 +38,11 @@ before_install:
   - sudo service postgresql stop
   # wait for postgresql to shutdown
   - while sudo lsof -Pi :5432 -sTCP:LISTEN -t; do sleep 1; done
+  # print versions of used applications
+  - docker --version
   - sudo $HOME/bin/docker-compose --version
+  - tesseract --version
+  - convert --version
   - ./gradlew downloadDependencies > /dev/null
 
 script:
