@@ -4,8 +4,13 @@ set -e
 VERSION_TAG=local
 
 echo "--------------------------------"
+echo "building image: cogstacksystems/cogstack-java-devel:$VERSION_TAG"
+( cd ../docker-cogstack/java ; docker build -t cogstacksystems/cogstack-java-devel:$VERSION_TAG -f Dockerfile.devel . )
+echo ""
+
+echo "--------------------------------"
 echo "building image: cogstacksystems/cogstack-java-run:$VERSION_TAG"
-( cd ../docker-cogstack/java ; docker build -t cogstacksystems/cogstack-java-run:$VERSION_TAG . )
+( cd ../docker-cogstack/java ; docker build -t cogstacksystems/cogstack-java-run:$VERSION_TAG -f Dockerfile.run . )
 echo ""
 
 echo "--------------------------------"

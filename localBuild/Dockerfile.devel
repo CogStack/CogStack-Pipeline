@@ -1,6 +1,6 @@
 ARG VERSION
 
-FROM cogstacksystems/cogstack-java-run:${VERSION}
+FROM cogstacksystems/cogstack-java-devel:${VERSION}
 
 # setup the build environment
 #
@@ -17,6 +17,6 @@ COPY . /devel/
 
 
 # build cogstack
-RUN ./gradlew bootRepackage
+RUN ./gradlew bootJar --no-daemon
 
 #CMD ./gradlew bootRepackage
