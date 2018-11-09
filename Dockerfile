@@ -70,19 +70,16 @@ FROM java-runner
 
 # setup env
 #RUN apt-get update && apt-get install -y procps
-RUN mkdir -p /usr/src
-WORKDIR /usr/src/
+RUN mkdir -p /cogstack
+WORKDIR /cogstack
 
 
 # copy artifacts
-RUN mkdir -p /usr/src/build/libs/
-COPY --from=cogstack-builder /devel/build/libs/cogstack-*.jar /usr/src/build/libs/
+COPY --from=cogstack-builder /devel/build/libs/cogstack-*.jar ./
 
-RUN mkdir -p /usr/src/docker-cogstack/cogstack/
-COPY --from=cogstack-builder /devel/docker-cogstack/cogstack/ /usr/src/docker-cogstack/cogstack/
-COPY --from=cogstack-builder /devel/docker-cogstack/cogstack/*.sh /usr/src/
+COPY --from=cogstack-builder /devel/docker-cogstack/cogstack/ ./
+COPY --from=cogstack-builder /devel/docker-cogstack/cogstack/*.sh ./
 
 
 # entry point
-#CMD ./test2.sh /cogstack/cogstack-*.jar /cogstack/cogstack_conf
-CMD ./test2.sh /usr/src/build/libs/cogstack-*.jar /usr/src/docker-cogstack/cogstack/cogstack_conf
+CMD ./test2.sh /cogstack/cogstack-*.jar /cogstack/cogstack_conf
