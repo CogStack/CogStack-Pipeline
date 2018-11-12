@@ -3,7 +3,7 @@ plugins {
 	id 'java'
 	id 'groovy'
 	id 'idea'
-	id 'org.springframework.boot' version "1.5.1.RELEASE"
+	id 'org.springframework.boot' version "2.0.6.RELEASE"
 }
 
 repositories {
@@ -15,8 +15,8 @@ repositories {
 }
 
 version '1.2.0'
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
 sourceSets {
 	main {
@@ -49,79 +49,105 @@ idea {
 
 dependencies {
 	//logging
-	compile 'org.slf4j:slf4j-api:1.7.21'
-	compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.7'
+	compile group: 'org.slf4j', name:'slf4j-api', version:'1.7.25'
+	compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+	compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.11.1'
+	compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.1'
 
-	compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.8.2'
-	compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.8.2'
+	// misc
+	compile group: 'joda-time', name: 'joda-time', version: '2.10.1'
+	compile group: 'com.google.code.gson', name: 'gson', version: '2.8.5'
+	compile group: 'commons-io', name: 'commons-io', version: '2.6'
 
-	//misc
-	compile 'joda-time:joda-time:2.9.3'
-	compile group: 'com.google.code.gson', name: 'gson', version: '2.6.2'
-	compile 'commons-io:commons-io:2.4'
 
-	//elasticsearch java api and apache asynch client
-	compile group: 'org.elasticsearch.client', name: 'rest', version: '6.0.0-alpha1'
-	compile group: 'org.apache.httpcomponents', name: 'httpasyncclient', version: '4.1.3'
-	//    compile "org.elasticsearch.client:x-pack-transport:5.4.2"
+	// elasticsearch rest client and apache asynch client
+	compile group: 'org.elasticsearch.client', name: 'elasticsearch-rest-client', version: '6.4.2'
+	compile group: 'org.apache.httpcomponents', name: 'httpasyncclient', version: '4.1.4'
 
-	//depreciated
-	// compile "org.elasticsearch.plugin:shield:2.3.3"
-	compile 'org.elasticsearch.client:x-pack-transport:6.0.0'
-	compile 'org.elasticsearch:elasticsearch:6.0.0'
+	// elasticsearch x-pack support
+	compile 'org.elasticsearch.client:x-pack-transport:6.4.2'
 
-	//dbms drivers
-	compile("org.hsqldb:hsqldb")
-	compile 'org.hsqldb:hsqldb:2.3.3'
-	compile group: 'com.microsoft.sqlserver', name: 'mssql-jdbc', version: '6.1.0.jre8'
-	compile 'net.sourceforge.jtds:jtds:1.3.1'
-	compile group: 'mysql', name: 'mysql-connector-java', version: '3.1.14'
-	compile 'org.postgresql:postgresql:9.4-1205-jdbc42'
 
-	//connection pool
+	// dbms drivers
+	compile group: 'org.hsqldb', name: 'hsqldb', version: '2.4.1'
+	compile group: 'com.microsoft.sqlserver', name: 'mssql-jdbc', version: '7.0.0.jre8'
+	compile group: 'net.sourceforge.jtds', name: 'jtds', version: '1.3.1'
+	compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.13'
+	compile group: 'org.postgresql', name: 'postgresql', version: '42.2.5'
+
+	// connection pool
 	compile group: 'com.zaxxer', name: 'HikariCP', version: '2.4.6'
 
 
-	//spring framework
-	compile("org.springframework.boot:spring-boot-starter-batch")
-	compile('org.springframework.batch:spring-batch-core:3.0.7.RELEASE')
-	compile('org.springframework.batch:spring-batch-integration:3.0.7.RELEASE')
-	compile('org.springframework:spring-web:4.3.6.RELEASE')
-	compile('org.springframework:spring-core:4.3.6.RELEASE')
-	compile('org.springframework:spring-test:4.3.6.RELEASE')
-	compile('org.springframework:spring-jdbc:4.3.6.RELEASE')
-	compile('org.springframework:spring-context:4.3.6.RELEASE')
-	compile('org.springframework:spring-jms:4.3.6.RELEASE')
-	compile('org.springframework.integration:spring-integration-core:4.3.6.RELEASE')
-	compile('org.springframework.integration:spring-integration-jms:4.3.6.RELEASE')
+	// spring framework
+	compile("org.springframework.boot:spring-boot-starter-batch:2.0.6.RELEASE")
+
+	compile('org.springframework.batch:spring-batch-core:4.0.1.RELEASE')
+	compile('org.springframework.batch:spring-batch-integration:4.0.1.RELEASE')
+
+	compile('org.springframework:spring-web:5.1.2.RELEASE')
+	compile('org.springframework:spring-core:5.1.2.RELEASE')
+	compile('org.springframework:spring-test:5.1.2.RELEASE')
+	compile('org.springframework:spring-jdbc:5.1.2.RELEASE')
+	compile('org.springframework:spring-context:5.1.2.RELEASE')
+	compile('org.springframework:spring-jms:5.1.2.RELEASE')
+
+	compile('org.springframework.integration:spring-integration-core:5.0.9.RELEASE')
+	compile('org.springframework.integration:spring-integration-jms:5.0.9.RELEASE')
+
+	compile 'org.springframework.integration:spring-integration-java-dsl:1.2.3.RELEASE'
+
+	// need to cover these in integration tests:
+	compile 'org.apache.activemq:activemq-broker:5.15.7'
+	compile 'org.apache.activemq:activemq-client:5.15.7'
+	compile 'org.apache.activemq:activemq-spring:5.15.7'
 
 
-	compile 'org.springframework.integration:spring-integration-java-dsl:1.1.2.RELEASE'
-	compile 'org.apache.activemq:activemq-core:5.7.0'
-	compile 'org.apache.activemq:activemq-spring:5.13.0'
+	// nlp-related
+	compile group: 'org.apache.commons', name: 'commons-collections4', version: '4.2'
+	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.8.1'
+	compile group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.5.3'
+
+	// gate framework
+	// deprecated -- any nlp applications will be run as separate services
+	compile group: 'uk.ac.gate', name: 'gate-core', version: '8.4.1'
+	compile group: 'xml-apis', name: 'xml-apis', version: '1.4.01'
 
 
-	//nlp
-	compile group: 'org.apache.commons', name: 'commons-collections4', version: '4.1'
-	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
-	compile 'org.codehaus.groovy:groovy-all:2.4.4'
-	compile 'uk.ac.gate:gate-core:8.1'
-	compile 'xml-apis:xml-apis:1.4.01'
-	compile 'org.apache.tika:tika-core:1.15'
-	compile('org.apache.tika:tika-parsers:1.15') {
+	// tika
+	compile group: 'org.apache.tika', name: 'tika-core', version: '1.19.1'
+	compile (group: 'org.apache.tika', name: 'tika-parsers', version: '1.19.1') {
 		exclude group: 'commons-logging', module: 'commons-logging' //by both name and group
 	}
 
+	// for tika prior to 1.17 -- old J2EE support
+	//compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0'
+	//compile group: 'com.sun.xml.bind', name: 'jaxb-core', version: '2.3.0'
+	//compile group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '2.3.0'
+	//compile group: 'javax.activation', name: 'activation', version: '1.1.1'
+
+	// tika parsers dependencies
+	compile group: 'org.apache.pdfbox', name: 'jbig2-imageio', version: '3.0.2'
+    compile group: 'com.github.jai-imageio', name: 'jai-imageio-jpeg2000', version: '1.3.0'
+	compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.25.2'
+
+
+	// temporary transitive dependencies fix
+	compile group: 'org.json', name: 'json', version: '20171018'
+
 	compile group: 'org.apache.ws.commons.util', name: 'ws-commons-util', version: '1.0.2'
 
-	//tests
-	testCompile('org.mockito:mockito-all:1.10.19')
+
+	// tests
+	// TODO: move from JUnit4 to JUnit5
+	testCompile group: 'junit', name: 'junit', version: '4.12'
+	testCompile group: 'org.mockito', name: 'mockito-core', version: '2.23.0'
 	testCompile group: 'de.sven-jacobs', name: 'loremipsum', version: '1.0'
 
 }
 
 task wrapper(type: Wrapper) {
-	gradleVersion = '4.4'
+	gradleVersion = '4.10.2'
 	distributionType 'all'
 }
 
