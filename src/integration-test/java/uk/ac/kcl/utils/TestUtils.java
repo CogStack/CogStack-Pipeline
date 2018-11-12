@@ -472,20 +472,38 @@ public class TestUtils  {
         setUpESMapping();
     }
     private void setUpESMapping(){
-        HttpEntity entity = new NStringEntity("{" +
+        // mapping is only necessary to set when using nested types
+        if (!env.containsProperty("webservice.name") && !env.containsProperty("gateFieldName"))
+            return;
+
+        String entityString = "{" +
                 "  \"mappings\": {" +
                 "    \""+env.getProperty("elasticsearch.type")+"\": {" +
-                "      \"properties\": {" +
-                "        \""+env.getProperty("webservice.name")+"\": {" +
+                "      \"properties\": {";
+
+        if (env.containsProperty("webservice.name")) {
+            entityString +=
+                "        \"" + env.getProperty("webservice.name") + "\": {" +
                 "          \"type\": \"nested\" " +
-                "        }," +
-                "        \""+env.getProperty("gateFieldName")+"\": {" +
+                "        }";
+            if (env.containsProperty("gateFieldName"))
+                entityString += ",";
+        };
+
+        if (env.containsProperty("gateFieldName")) {
+            entityString +=
+                "        \"" + env.getProperty("gateFieldName") + "\": {" +
                 "          \"type\": \"nested\" " +
-                "        }" +
+                "        }";
+        };
+
+        entityString +=
                 "      }" +
                 "    }" +
                 "  }" +
-                "}", ContentType.APPLICATION_JSON);
+                "}";
+
+        HttpEntity entity = new NStringEntity(entityString, ContentType.APPLICATION_JSON);
 
         try {
             esRestService.getRestClient().performRequest(

@@ -140,9 +140,14 @@ public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemPr
 
             extractPageCountMetadata(doc, metaKeys, metadata);
 
-            addField(doc, handler.toString());
+            String documentContent = handler.toString();
+            if (documentContent.length() == 0) {
+                LOG.warn("Empty content for document with PK: {}", doc.getPrimaryKeyFieldValue());
+            }
+
+            addField(doc, documentContent);
         } catch (Exception ex) {
-            LOG.warn("Document parsing failed -- exception: {}", ex.getMessage());
+            LOG.warn("Document with PK {} parsing failed: {}", doc.getPrimaryKeyFieldValue(), ex.getMessage());
             addField(doc, ex.getMessage());
         }
         long endTime = System.currentTimeMillis();
