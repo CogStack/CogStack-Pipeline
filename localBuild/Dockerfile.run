@@ -2,8 +2,13 @@ ARG VERSION
 
 FROM cogstacksystems/cogstack-java-run:${VERSION}
 
+
 # setup env
 #
+# DEBUG:
+#RUN apt-get update && apt-get install -y procps
+#
+
 RUN mkdir -p /usr/src
 WORKDIR /usr/src/
 
