@@ -33,6 +33,9 @@ echo "Copying the DB dump"
 mkdir $DB_OUT_DIR
 cp -r $DB_DIR/* $DB_OUT_DIR/
 
+# rename the synthetic db dump file to match with the standard one for container
+mv $DB_OUT_DIR/db_samples-syn.sql.gz $DB_OUT_DIR/db_samples.sql.gz
+
 
 # copy the relevant configuration data for microservices
 #
@@ -49,7 +52,10 @@ for sv in ${services[@]}; do
 	cp -r $COMMON_DIR/${sv} $COMMON_OUT_DIR/
 done
 
-cp $DOCKER_DIR/*.yml $DEPLOY_DIR/
+# copy only the local docker compose file to have all the services
+# defined in one place
+cp $DOCKER_DIR/docker-compose.override.yml $DEPLOY_DIR/
+cp $COMMON_DIR/docker-compose.yml $DEPLOY_DIR/
 
 
 # setup cogstack

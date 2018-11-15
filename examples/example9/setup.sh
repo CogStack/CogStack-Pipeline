@@ -53,6 +53,7 @@ for sv in ${services[@]}; do
 done
 
 cp $DOCKER_DIR/*.yml $DEPLOY_DIR/
+cp $COMMON_DIR/*.yml $DEPLOY_DIR/
 
 
 # setup cogstack

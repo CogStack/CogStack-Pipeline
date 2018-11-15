@@ -1,0 +1,131 @@
+version: '2.0'
+
+#---------------------------------------------------------------------------#
+# Used services                                                             #
+#---------------------------------------------------------------------------#
+services:
+
+#---------------------------------------------------------------------------#
+# Postgres container for input data                                         #
+#---------------------------------------------------------------------------#
+  pgsamples:
+    depends_on:
+      - fluent
+    ports:
+      # <host:container> expose the postgres DB to host for debugging purposes
+      - "5555:5432"
+    networks:
+      - esnet
+      - public
+    logging:
+      driver: "fluentd"
+      options:
+        tag: in.pg.samples
+
+#---------------------------------------------------------------------------#
+# Postgres container for spring batch / cogstack testing                    #
+# TODO: fix password management
+#---------------------------------------------------------------------------#
+  postgres:
+    depends_on:
+      - fluent
+    networks:
+      - esnet
+    logging:
+      driver: "fluentd"
+      options:
+        tag: cog.pg.jobs
+
+#---------------------------------------------------------------------------#
+# CogStack containers                                                       #
+#---------------------------------------------------------------------------#
+  cogstack:
+    depends_on:
+      - fluent
+    networks:
+      - esnet
+    logging:
+      driver: "fluentd"
+      options:
+        tag: cog.java.engine
+
+#---------------------------------------------------------------------------#
+# Elasticsearch cluster                                                     #
+#---------------------------------------------------------------------------#
+  elasticsearch:
+    depends_on:
+      - fluent
+    ports:
+#      - "9200:9200"    #without proxy, forward to host:9200
+      - 9200
+    networks:
+      - esnet
+    logging:
+      driver: "fluentd"
+      options:
+        tag: es.node
+
+#---------------------------------------------------------------------------#
+# Kibana webapp                                                             #
+#---------------------------------------------------------------------------#
+  kibana:
+    depends_on:
+      - fluent
+    ports:
+#      - "5601:5601"    #without proxy, forward to host:5601
+      - 5601        #with nginx proxy forwarding host:5601/ --> [kibana]:5601 
+    networks:
+      - esnet
+    logging:
+      driver: "fluentd"
+      options:
+        tag: es.kibana
+
+#---------------------------------------------------------------------------#
+# Reverse proxy (+ host-container proxy and basic auth)                     #
+#---------------------------------------------------------------------------#
+  proxy:
+    image: nginx:1.13.1-alpine
+    restart: always
+    depends_on:
+      - kibana
+      - elasticsearch
+      - fluent
+    volumes:
+      - ./common/nginx/config/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./common/nginx/auth/.htpasswd:/etc/apache2/.htpasswd:ro
+    ports:
+      - "5601:5601"
+      - "9200:9200"
+    networks:
+      - public
+      - esnet
+    logging:
+      driver: "fluentd"
+      options:
+        tag: www.nginx
+
+#---------------------------------------------------------------------------#
+# Logging : Fluentd                                                         #
+#---------------------------------------------------------------------------#
+  fluent:
+    image: cogstacksystems/fluentd:dev-latest
+    volumes:
+      - ./__logs:/fluentd/log
+      - ./common/fluentd/conf/fluent.conf:/fluentd/etc/fluent.conf
+    ports:
+      - "24224:24224"
+      - "24224:24224/udp"
+    networks:
+      - esnet
+      - public
+
+
+#---------------------------------------------------------------------------#
+# Docker virtual networks                                                   #
+#---------------------------------------------------------------------------#
+networks:
+  esnet:
+    driver: bridge
+  public:
+    driver: bridge
