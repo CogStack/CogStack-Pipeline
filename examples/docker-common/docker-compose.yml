@@ -34,7 +34,7 @@ services:
 # CogStack containers                                                       #
 #---------------------------------------------------------------------------#
   cogstack:
-    image: cogstacksystems/cogstack-pipeline:local
+    image: cogstacksystems/cogstack-pipeline:dev-latest
     volumes:
       - ./cogstack:/cogstack/job_config:ro
     environment:
