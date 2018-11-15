@@ -34,9 +34,9 @@ services:
 # CogStack containers                                                       #
 #---------------------------------------------------------------------------#
   cogstack:
-    image: cogstacksystems/cogstack-pipeline:dev-latest
+    image: cogstacksystems/cogstack-pipeline:local
     volumes:
-      - ./cogstack:/cogstack/cogstack_conf:ro
+      - ./cogstack:/cogstack/job_config:ro
     environment:
       - LOG_LEVEL=info
       - FILE_LOG_LEVEL=off
@@ -44,6 +44,7 @@ services:
       - pgsamples
       - postgres
       - elasticsearch
+    command: ./run_pipeline.sh /cogstack/cogstack-*.jar /cogstack/job_config
 
 #---------------------------------------------------------------------------#
 # Elasticsearch cluster                                                     #

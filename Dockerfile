@@ -76,10 +76,8 @@ WORKDIR /cogstack
 
 # copy artifacts
 COPY --from=cogstack-builder /devel/build/libs/cogstack-*.jar ./
-
-COPY --from=cogstack-builder /devel/docker-cogstack/cogstack/ ./
-COPY --from=cogstack-builder /devel/docker-cogstack/cogstack/*.sh ./
+COPY --from=cogstack-builder /devel/scripts/*.sh ./
 
 
 # entry point
-CMD ./test2.sh /cogstack/cogstack-*.jar /cogstack/cogstack_conf
+CMD /bin/bash
