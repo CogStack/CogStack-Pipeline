@@ -74,7 +74,8 @@ for dt in ${doc_types[@]}; do
 	# copy docker files
 	#
 	echo "-- copying docker-compose file"
-	cp docker/docker-compose.yml "${dp}/"
+	cp docker/docker-compose.override.yml "${dp}/"
+	cp $COMMON_DIR/docker-compose.yml "${dp}/"
 done
 
 echo "Done."

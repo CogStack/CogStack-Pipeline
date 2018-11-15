@@ -9,8 +9,7 @@ echo "*** Starting CogStack service ***"
 
 cog_start=`date +%s`
 
-#COG_PATH=/cogstack
-COG_PATH=/usr/src/docker-cogstack/cogstack
+COG_PATH=/cogstack
 
 #COG_CONFIG_PATH=$COG_PATH/conf
 COG_CONFIG_PATH=$COG_PATH/cogstack_conf

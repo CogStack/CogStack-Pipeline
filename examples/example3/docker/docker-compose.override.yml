@@ -2,20 +2,16 @@ version: '2.0'
 
 #---------------------------------------------------------------------------#
 # Used services                                                             #
+#                                                                           #
+# Since we use 2 data sources with different dependencies                   #
+# it's easier here not to use services condifuration override file          #
 #---------------------------------------------------------------------------#
 services:
 
 #---------------------------------------------------------------------------#
 # Postgres containers for input data                                        #
 #---------------------------------------------------------------------------#
-  pgsynsamples:
-    image: postgres:10.4-alpine
-    # use this when exceeding the max connections of postgres
-#    command: "-c 'shared_buffers=256MB' -c 'max_connections=1000'"
-    volumes:
-      - ./db_dump/db_samples-syn.sql.gz:/data/db_samples.sql.gz:ro
-      - ./common/pgsamples/init_db.sh:/docker-entrypoint-initdb.d/init_db.sh:ro
-      - pgsyndata:/var/lib/postgresql/data
+  pgsamples:
     ports:
       # <host:container> expose the postgres DB to host for debugging purposes
       - "5555:5432"
@@ -34,10 +30,6 @@ services:
 # TODO: fix password management
 #---------------------------------------------------------------------------#
   postgres:
-    image: postgres:9.6-alpine
-    volumes:
-      - ./common/postgres/create_repo.sh:/docker-entrypoint-initdb.d/create_repo.sh:ro
-      - pgdata:/var/lib/postgresql/data
     ports:
       - 5432
 
@@ -45,36 +37,13 @@ services:
 # CogStack containers                                                       #
 #---------------------------------------------------------------------------#
   cogstack:
-    image: cogstacksystems/cogstack-pipeline:dev-latest
-    volumes:
-      - ./cogstack/:/usr/src/docker-cogstack/cogstack/cogstack_conf:ro
-    environment:
-      - LOG_LEVEL=info
-      - FILE_LOG_LEVEL=off
     depends_on:
-      - pgsynsamples
       - pgmtsamples
-      - postgres
-      - elasticsearch
 
 #---------------------------------------------------------------------------#
 # Elasticsearch cluster                                                     #
 #---------------------------------------------------------------------------#
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:6.2.4
-    environment:
-      - cluster.name=docker-cluster
-#      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    depends_on:
-      - postgres
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    volumes:
-      - esdata1:/usr/share/elasticsearch/data
-      - ./common/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
     ports:
       - "9200:9200"
 
@@ -82,11 +51,6 @@ services:
 # Kibana webapp                                                             #
 #---------------------------------------------------------------------------#
   kibana:
-    image: docker.elastic.co/kibana/kibana:6.2.4
-    depends_on:
-      - elasticsearch
-    volumes:
-      - ./common/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro 
     ports:
       - "5601:5601"
 
@@ -95,11 +59,5 @@ services:
 # Docker named volumes                                                      #
 #---------------------------------------------------------------------------#
 volumes:
-  esdata1:
-    driver: local
-  pgsyndata:
-    driver: local
   pgmtdata:
-    driver: local
-  pgdata:
     driver: local
