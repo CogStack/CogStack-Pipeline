@@ -5,11 +5,15 @@ server.name: kibana
 server.host: "0"
 elasticsearch.url: http://elasticsearch:9200
 
-# X-Pack features:
+
 # --------
-xpack.security.enabled: false
-xpack.graph.enabled: false
-xpack.ml.enabled: false
-xpack.monitoring.enabled: false
+# X-Pack features
+# disabled by default when using '-oss' images
+# need to be disabled manually when using standard images from elastic
+# --------
+#xpack.security.enabled: false
+#xpack.graph.enabled: false
+#xpack.ml.enabled: false
+#xpack.monitoring.enabled: false
 #xpack.reporting.enabled: false
-xpack.watcher.enabled: false
+#xpack.watcher.enabled: false
