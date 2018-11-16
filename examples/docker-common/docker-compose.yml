@@ -9,24 +9,30 @@ services:
 # Postgres container for input data                                         #
 #---------------------------------------------------------------------------#
   pgsamples:
-    image: postgres:10.4-alpine
+    image: postgres:11.1-alpine
     volumes:
       - ./db_dump:/data/:ro
       - ./common/pgsamples/init_db.sh:/docker-entrypoint-initdb.d/init_db.sh:ro
       - pgsamdata:/var/lib/postgresql/data
+# TODO: fix POSTGRES password management                                    #
+#    environment:
+#      - "POSTGRES_PASSWORD=postgresadminpass"
+# pgsamples will be usually available at this port
 #    ports:
       # <host:container> expose the postgres DB to host for debugging purposes
 #      - "5555:5432"
 
 #---------------------------------------------------------------------------#
 # Postgres container for spring batch / cogstack testing                    #
-# TODO: fix password management
 #---------------------------------------------------------------------------#
   postgres:
-    image: postgres:9.6-alpine
+    image: postgres:11.1-alpine
     volumes:
       - ./common/postgres/create_repo.sh:/docker-entrypoint-initdb.d/create_repo.sh:ro
       - pgdata:/var/lib/postgresql/data
+# TODO: fix POSTGRES password management
+#    environment:
+#      - "POSTGRES_PASSWORD=postgresadminpass"
     ports:
       - 5432
 
@@ -35,11 +41,13 @@ services:
 #---------------------------------------------------------------------------#
   cogstack:
     image: cogstacksystems/cogstack-pipeline:dev-latest
+#    image: cogstacksystems/cogstack-pipeline:local
     volumes:
       - ./cogstack:/cogstack/job_config:ro
     environment:
       - LOG_LEVEL=info
       - FILE_LOG_LEVEL=off
+      - LOG_FILE_NAME=cogstack_job_log
     depends_on:
       - pgsamples
       - postgres
@@ -64,6 +72,7 @@ services:
     volumes:
       - esdata1:/usr/share/elasticsearch/data
       - ./common/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+# elastic will be usually available at this port
 #    ports:
 #      - "9200:9200"
 
@@ -75,7 +84,8 @@ services:
     depends_on:
       - elasticsearch
     volumes:
-      - ./common/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro 
+      - ./common/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
+# kibana will be usually available at this port
 #    ports:
 #      - "5601:5601"
 
