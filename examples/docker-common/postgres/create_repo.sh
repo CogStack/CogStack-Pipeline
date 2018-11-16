@@ -2,18 +2,15 @@
 set -e
 
 
-echo "CREATE ROLE cogstack WITH UNENCRYPTED  PASSWORD 'mysecretpassword';" | psql -U "$POSTGRES_USER"
-
-
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
-CREATE DATABASE cogstack;
-GRANT ALL PRIVILEGES ON DATABASE cogstack TO cogstack;
 
-ALTER ROLE cogstack LOGIN;
+CREATE DATABASE cogstack;
+CREATE ROLE cogstack WITH PASSWORD 'mysecretpassword' LOGIN;
+GRANT ALL PRIVILEGES ON DATABASE cogstack TO cogstack;
 
 EOSQL
 
-export PGPASWORD='mysecretpassword'
+
 
 psql -v ON_ERROR_STOP=1 -U cogstack -d cogstack <<-EOSQL
 
@@ -96,30 +93,5 @@ CREATE TABLE BATCH_JOB_EXECUTION_CONTEXT  (
 CREATE SEQUENCE BATCH_STEP_EXECUTION_SEQ MAXVALUE 9223372036854775807 NO CYCLE;
 CREATE SEQUENCE BATCH_JOB_EXECUTION_SEQ MAXVALUE 9223372036854775807 NO CYCLE;
 CREATE SEQUENCE BATCH_JOB_SEQ MAXVALUE 9223372036854775807 NO CYCLE;
-
-/*
-CREATE TABLE tblInputDocs( ID  SERIAL PRIMARY KEY
-                , srcColumnFieldName text
-                , srcTableName text
-                , primaryKeyFieldName text
-                , primaryKeyFieldValue integer
-                , updateTime TIMESTAMP
-                , someText text
-                , anotherTime TIMESTAMP );
-
-INSERT INTO tblInputDocs (
-            srcColumnFieldName
-            , srcTableName
-            , primaryKeyFieldName
-            , primaryKeyFieldValue
-            , updateTime
-            , someText
-            , anotherTime
-            ) VALUES
-    ('testfield', 'tblInputDocs', 'ID', 1, '2017-03-07 11:40:16.135000', 'The patient has arthritis.', '2017-03-07 11:40:16.135000'),
-    ('testfield', 'tblInputDocs', 'ID', 2, '2017-04-07 11:40:16.135000', 'The patient has anxiety.', '2017-04-07 11:40:16.135000'),
-    ('testfield', 'tblInputDocs', 'ID', 3, '2017-05-07 11:40:16.135000', 'The patient has ear pain.', '2017-05-07 11:40:16.135000'),
-    ('testfield', 'tblInputDocs', 'ID', 4, '2017-06-07 11:40:16.135000', 'The patient has a broken leg.', '2017-06-07 11:40:16.135000');
-*/
 
 EOSQL
