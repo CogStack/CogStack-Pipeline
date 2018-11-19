@@ -9,41 +9,35 @@ version: '2.0'
 services:
 
 #---------------------------------------------------------------------------#
-# Postgres containers for input data                                        #
+# Postgres containers with sample data                                      #
 #---------------------------------------------------------------------------#
-  pgsamples:
+  samples-db:
     ports:
-      # <host:container> expose the postgres DB to host for debugging purposes
+#       <host:container> expose the postgres DB to host for debugging purposes
       - "5555:5432"
 
-  pgmtsamples:
-    image: postgres:10.4-alpine
+  mtsamples-db:
+    image: postgres:11.1-alpine
     volumes:
       - ./db_dump/db_samples-mt.sql.gz:/data/db_samples.sql.gz:ro
       - ./common/pgsamples/init_db.sh:/docker-entrypoint-initdb.d/init_db.sh:ro
-      - pgmtdata:/var/lib/postgresql/data
+      - mtsamples-vol:/var/lib/postgresql/data
     ports:
       - "5556:5432"
 
 #---------------------------------------------------------------------------#
-# Postgres container for spring batch / cogstack testing                    #
-# TODO: fix password management
+# CogStack-Pipeline related containers                                      #
 #---------------------------------------------------------------------------#
-  postgres:
-    ports:
-      - 5432
-
-#---------------------------------------------------------------------------#
-# CogStack containers                                                       #
-#---------------------------------------------------------------------------#
-  cogstack:
+  cogstack-pipeline:
+    environment:
+      - SERVICES_USED=cogstack-job-repo:5432,samples-db:5432,mtsamples-db:5432,elasticsearch-1:9200
     depends_on:
-      - pgmtsamples
+      - mtsamples-db
 
 #---------------------------------------------------------------------------#
 # Elasticsearch cluster                                                     #
 #---------------------------------------------------------------------------#
-  elasticsearch:
+  elasticsearch-1:
     ports:
       - "9200:9200"
 
@@ -59,5 +53,5 @@ services:
 # Docker named volumes                                                      #
 #---------------------------------------------------------------------------#
 volumes:
-  pgmtdata:
+  mtsamples-vol:
     driver: local

@@ -68,7 +68,6 @@ for dt in ${doc_types[@]}; do
 	mkdir "${dp}/$COGSTACK_OUT_DIR"
 
 	cp cogstack/*.properties "${dp}/$COGSTACK_OUT_DIR/"
-	cp cogstack/test2.sh "${dp}/$COGSTACK_OUT_DIR/"
 
 	# copy docker files
 	#
