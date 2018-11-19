@@ -1,4 +1,4 @@
-FROM cogstacksystems/cogstack-pipeline:dev-latest
+FROM cogstacksystems/cogstack-pipeline:local
 
 RUN apt-get update && \
 	apt-get install -y curl && \
@@ -9,7 +9,6 @@ RUN apt-get update && \
 # GATE directories structure:
 # - core components: /gate/home/
 # - custom user apps: /gate/app/
-RUN mkdir -p /gate/
 WORKDIR /gate/
 
 # for the moment use the older GATE bundle containing all plugins and core components 
@@ -21,5 +20,4 @@ RUN curl -L 'https://downloads.sourceforge.net/project/gate/gate/8.4.1/gate-8.4.
 ENV GATE_HOME=/gate/home
 
 # switch to CogStack main directory
-# TODO: refactor the CogStack Pipeline base image
-WORKDIR /usr/src/
+WORKDIR /cogstack/
