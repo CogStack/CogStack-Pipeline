@@ -39,7 +39,7 @@ cp -r $GATE_DIR $GATE_OUT_DIR
 
 # copy the relevant configuration data for microservices
 #
-services=(postgres
+services=(pgjobrepo
 	pgsamples
 	elasticsearch
 	kibana)
