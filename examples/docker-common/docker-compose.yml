@@ -44,7 +44,7 @@ services:
   cogstack-job-repo:
     image: postgres:11.1-alpine
     volumes:
-      - ./common/postgres/create_repo.sh:/docker-entrypoint-initdb.d/create_repo.sh:ro
+      - ./common/pgjobrepo/create_repo.sh:/docker-entrypoint-initdb.d/create_repo.sh:ro
       - cogstack-job-vol:/var/lib/postgresql/data
 # TODO: fix POSTGRES password management
 #    environment:
