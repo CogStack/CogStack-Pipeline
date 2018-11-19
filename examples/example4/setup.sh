@@ -20,7 +20,7 @@ mkdir $DEPLOY_DIR
 
 # used services
 #
-services=(postgres
+services=(pgjobrepo
 	pgsamples
 	elasticsearch
 	kibana)
