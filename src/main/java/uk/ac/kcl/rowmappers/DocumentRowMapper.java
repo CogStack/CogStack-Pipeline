@@ -159,9 +159,12 @@ public class DocumentRowMapper implements RowMapper<Document>{
     }
 
     private void mapDBMetadata(Document doc, ResultSet rs) throws SQLException {
-        doc.setSrcTableName(rs.getString(srcTableName));
-        doc.setSrcColumnFieldName(rs.getString(srcColumnFieldName));
-        doc.setPrimaryKeyFieldName(rs.getString(primaryKeyFieldName));
+        if (Arrays.asList(this.env.getActiveProfiles()).contains("docman")) {
+            // these fields are only used when reading documents from metadata tables using docman profile
+            doc.setSrcTableName(rs.getString(srcTableName));
+            doc.setSrcColumnFieldName(rs.getString(srcColumnFieldName));
+            doc.setPrimaryKeyFieldName(rs.getString(primaryKeyFieldName));
+        }
         doc.setPrimaryKeyFieldValue(rs.getString(primaryKeyFieldValue));
         doc.setTimeStamp(rs.getTimestamp(timeStamp));
     }
