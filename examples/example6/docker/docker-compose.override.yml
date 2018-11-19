@@ -8,7 +8,7 @@ services:
 #---------------------------------------------------------------------------#
 # Postgres container for input data                                         #
 #---------------------------------------------------------------------------#
-  pgsamples:
+  samples-db:
     ports:
       # <host:container> expose the postgres DB to host for debugging purposes
       - "5555:5432"
@@ -17,27 +17,20 @@ services:
       - public
 
 #---------------------------------------------------------------------------#
-# Postgres container for spring batch / cogstack testing                    #
-# TODO: fix password management
+# CogStack-Pipeline related containers                                      #
 #---------------------------------------------------------------------------#
-  postgres:
-    ports:
-      - 5432
+  cogstack-pipeline:
     networks:
       - esnet
 
-#---------------------------------------------------------------------------#
-# CogStack containers                                                       #
-#---------------------------------------------------------------------------#
-  cogstack:
+  cogstack-job-repo:
     networks:
       - esnet
-
 
 #---------------------------------------------------------------------------#
 # Elasticsearch cluster                                                     #
 #---------------------------------------------------------------------------#
-  elasticsearch:
+  elasticsearch-1:
     ports:
       - 9200
     networks:
@@ -53,7 +46,7 @@ services:
 #---------------------------------------------------------------------------#
 # Reverse proxy (+ host-container proxy and basic auth)                     #
 #---------------------------------------------------------------------------#
-  proxy:
+  nginx-proxy:
     image: nginx:1.13.1-alpine
     restart: always
     networks:
@@ -61,7 +54,7 @@ services:
       - esnet
     depends_on:
       - kibana
-      - elasticsearch
+      - elasticsearch-1
     ports:
       - "5601:5601"
       - "9200:9200"

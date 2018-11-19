@@ -6,17 +6,16 @@ version: '2.0'
 services:
 
 #---------------------------------------------------------------------------#
-# Postgres container for input data                                         #
+# Postgres container with sample data                                       #
 #---------------------------------------------------------------------------#
-  pgsamples:
+  samples-db:
     ports:
-      # <host:container> expose the postgres DB to host for debugging purposes
       - "5555:5432"
 
 #---------------------------------------------------------------------------#
 # Elasticsearch cluster                                                     #
 #---------------------------------------------------------------------------#
-  elasticsearch:
+  elasticsearch-1:
     ports:
       - "9200:9200"
 
