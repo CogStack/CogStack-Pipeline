@@ -41,7 +41,7 @@ public class ReindexWithoutSchedulingTests {
     public void reindexTest() {
         jobLauncher.launchJob();
         try {
-            Thread.sleep(5000);
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
