@@ -45,7 +45,7 @@ public class Main {
         for (File listOfFile : listOfFiles) {
             if (listOfFile.isFile()) {
                 if (listOfFile.getName().endsWith(".properties")) {
-                    LOG.info("Properties sile found:" + listOfFile.getName() +
+                    LOG.info("Properties file found:" + listOfFile.getName() +
                             ". Attempting to launch application context");
                     Properties properties = new Properties();
                     InputStream input;
