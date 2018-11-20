@@ -63,8 +63,8 @@ public class ESRestService {
     // optional properties
     //
     // additional ES nodes provided as a list 'address1:port1,address2:port2',...
-    @Value("${elasticsearch.cluster.extraNodes:#{null}}")
-    private String extraNodes;
+    @Value("${elasticsearch.cluster.slaveNodes:#{null}}")
+    private String slaveNodes;
 
     @Value("${elasticsearch.index.name:default_index")
     private String indexName;
@@ -200,8 +200,8 @@ public class ESRestService {
 
         // add the extra nodes if provided
         try {
-            if (extraNodes != null && extraNodes.length() > 0) {
-                String[] hosts = extraNodes.split(",");
+            if (slaveNodes != null && slaveNodes.length() > 0) {
+                String[] hosts = slaveNodes.split(",");
                 for (String h : hosts) {
                     // get the last index of ':' since the hosts can start with 'xxx://...'
                     int i = h.lastIndexOf(':');
