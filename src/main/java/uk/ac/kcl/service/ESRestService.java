@@ -35,7 +35,12 @@ import java.nio.file.Files;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.List;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.stream.*;
+import java.util.Arrays;
 
 /**
  * Created by rich on 05/03/17.
@@ -49,12 +54,18 @@ public class ESRestService {
 
 
     // mandatory properties
+    //
     @Value("${elasticsearch.cluster.host}")
-    private String clusterHost;
+    private String clusterMainHost;
     @Value("${elasticsearch.cluster.port}")
-    private int port;
+    private int clusterMainHostPort;
 
     // optional properties
+    //
+    // additional ES nodes provided as a list 'address1:port1,address2:port2',...
+    @Value("${elasticsearch.cluster.extraNodes:#{null}}")
+    private String extraNodes;
+
     @Value("${elasticsearch.index.name:default_index")
     private String indexName;
     @Value("${elasticsearch.type:doc}")
@@ -101,12 +112,18 @@ public class ESRestService {
     @PostConstruct
     public void init() throws IOException, KeyStoreException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException, KeyManagementException {
 
+        List<Map.Entry<String, Integer>> hostsInfo = getParsedHosts();
+
         if (securityEnabled && sslEnabled) {
             credentialsProvider = new BasicCredentialsProvider();
             credentialsProvider.setCredentials(AuthScope.ANY,
                     new UsernamePasswordCredentials(user, userPassword));
 
-            restClient = RestClient.builder(new HttpHost(clusterHost, port, "https"))
+            List<HttpHost> nodes = hostsInfo.stream()
+                    .map(x -> new HttpHost(x.getKey(), x.getValue(), "https"))
+                    .collect(Collectors.toList());
+
+            restClient = RestClient.builder(nodes.toArray(HttpHost[]::new))
                     .setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
                         @Override
                         public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
@@ -129,7 +146,11 @@ public class ESRestService {
             credentialsProvider.setCredentials(AuthScope.ANY,
                     new UsernamePasswordCredentials(user));
 
-            restClient = RestClient.builder(new HttpHost(clusterHost, port))
+            List<HttpHost> nodes = hostsInfo.stream()
+                    .map(x -> new HttpHost(x.getKey(), x.getValue()))
+                    .collect(Collectors.toList());
+
+            restClient = RestClient.builder(nodes.toArray(HttpHost[]::new))
                     .setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
                         @Override
                         public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
@@ -147,7 +168,11 @@ public class ESRestService {
                     })
                     .build();
         } else {
-            restClient = RestClient.builder(new HttpHost(clusterHost, port, "http"))
+            List<HttpHost> nodes = hostsInfo.stream()
+                    .map(x -> new HttpHost(x.getKey(), x.getValue(), "http"))
+                    .collect(Collectors.toList());
+
+            restClient = RestClient.builder(nodes.toArray(HttpHost[]::new))
                     .setRequestConfigCallback(new RestClientBuilder.RequestConfigCallback() {
                         @Override
                         public RequestConfig.Builder customizeRequestConfig(RequestConfig.Builder requestConfigBuilder) {
@@ -165,6 +190,32 @@ public class ESRestService {
         LOG.debug("ESRestService.destroy() called");
         restClient.close();
         LOG.debug("restClient.close() completed");
+    }
+
+    private List<Map.Entry<String, Integer>> getParsedHosts() {
+        ArrayList<Map.Entry<String, Integer>> hostsInfo = new ArrayList<>();
+
+        // add the main node
+        hostsInfo.add(new SimpleEntry<>(clusterMainHost, clusterMainHostPort));
+
+        // add the extra nodes if provided
+        try {
+            if (extraNodes != null && extraNodes.length() > 0) {
+                String[] hosts = extraNodes.split(",");
+                for (String h : hosts) {
+                    // get the last index of ':' since the hosts can start with 'xxx://...'
+                    int i = h.lastIndexOf(':');
+                    String host = h.substring(0, i);
+                    String port = h.substring(i+1);
+                    hostsInfo.add(new SimpleEntry<>(host.trim(), Integer.parseInt(port)));
+                }
+            }
+        } catch (Exception e) {
+            LOG.error("Error parsing additional ES nodes");
+            throw e;
+        }
+
+        return hostsInfo;
     }
 
 
