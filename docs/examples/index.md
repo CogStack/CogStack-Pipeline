@@ -80,8 +80,9 @@ Each of the examples is organized in a way that it can be deployed and run indep
 │   │       └── nginx.conf
 │   ├── pgsamples
 │   │   └── init_db.sh
-│   └── postgres
-│       └── create_repo.sh
+│   ├── pgjobrepo
+│   │   └── create_repo.sh
+│   └── docker.compose.yml   
 │
 ├── example1
 │   ├── cogstack
@@ -89,7 +90,7 @@ Each of the examples is organized in a way that it can be deployed and run indep
 │   ├── db_dump
 │   │   └── db_samples.sql.gz
 │   ├── docker
-│   │   └── docker-compose.yml
+│   │   └── docker-compose.override.yml
 │   ├── extra
 │   │   ├── db_create_schema.sql
 │   │   └── prepare_db.sh
@@ -101,7 +102,7 @@ Each of the examples is organized in a way that it can be deployed and run indep
 │   ├── db_dump
 │   │   └── db_samples.sql.gz
 │   ├── docker
-│   │   └── docker-compose.yml
+│   │   └── docker-compose.override.yml
 │   ├── extra
 │   │   ├── db_create_schema.sql
 │   │   └── prepare_db.sh
@@ -116,7 +117,7 @@ Each of the examples is organized in a way that it can be deployed and run indep
 │   │   ├── db_samples-mt.sql.gz
 │   │   └── db_samples-syn.sql.gz
 │   ├── docker
-│   │   └── docker-compose.yml
+│   │   └── docker-compose.override.yml
 │   ├── extra
 │   │   ├── db_create_mt_schema.sql
 │   │   ├── db_create_syn_schema.sql
@@ -134,7 +135,7 @@ Each of the examples is organized in a way that it can be deployed and run indep
 │   │   ├── db_samples-pdf-img-small.sql.gz
 │   │   └── db_samples-pdf-text-small.sql.gz
 │   ├── docker
-│   │   └── docker-compose.yml
+│   │   └── docker-compose.override.yml
 │   ├── extra
 │   │   ├── db_create_schema.sql
 │   │   ├── prepare_db.sh
@@ -155,7 +156,7 @@ Each of the examples is organized in a way that it can be deployed and run indep
 │   │   ├── db_samples-pdf-img-small.sql.gz
 │   │   └── db_samples-pdf-text-small.sql.gz
 │   ├── docker
-│   │   └── docker-compose.yml
+│   │   └── docker-compose.override.yml
 │   ├── extra
 │   │   ├── db_create_schema.sql
 │   │   ├── prepare_db.sh
@@ -168,7 +169,7 @@ Each of the examples is organized in a way that it can be deployed and run indep
 │   ├── db_dump
 │   │   └── db_samples.sql.gz
 │   ├── docker
-│   │   └── docker-compose.yml
+│   │   └── docker-compose.override.yml
 │   └── setup.sh
 │
 ├── example7
@@ -177,7 +178,7 @@ Each of the examples is organized in a way that it can be deployed and run indep
 │   ├── db_dump
 │   │   └── db_samples.sql.gz
 │   ├── docker
-│   │   └── docker-compose.yml
+│   │   └── docker-compose.override.yml
 │   └── setup.sh
 │
 ├── example8
@@ -186,7 +187,7 @@ Each of the examples is organized in a way that it can be deployed and run indep
 │   ├── db_dump
 │   │   └── db_samples.sql.gz
 │   ├── docker
-│   │   └── docker-compose.yml
+│   │   └── docker-compose.override.yml
 │   ├── gate
 │   │   └── app
 │   │       ├── active.lst
@@ -203,7 +204,7 @@ Each of the examples is organized in a way that it can be deployed and run indep
 │   ├── db_dump
 │   │   └── db_samples.sql.gz
 │   ├── docker
-│   │   └── docker-compose.yml
+│   │   └── docker-compose.override.yml
 │   ├── gate
 │   │   └── app
 │   │       ├── active.lst
@@ -228,11 +229,12 @@ Each of the examples is organized in a way that it can be deployed and run indep
 ## Common and reusable components
 
 The directory `docker-common` contains some common components and microservice configuration files that are used within all the examples (see [Running CogStack](#running-cogstack)). These components include:
-* PostgreSQL databases,
-* ElasticSearch node,
-* Kibana webservice dashboard,
-* nginx reverse proxy service,
-* Fluentd logging driver.
+* PostgreSQL databases: `pgsamples` and `pgjobrepo` directories,
+* ElasticSearch node: `elasticsearch` directory,
+* Kibana webservice dashboard: `kibana` directory,
+* nginx reverse proxy service: `nginx` directory,
+* Fluentd logging driver: `fluentd` directory,
+* Common microservices Docker Compose base configuration file used across examples: `docker-compose.yml`.
 
 
 
@@ -284,15 +286,15 @@ CogStack ecosystem consists of multiple inter-connected microservices running to
 
 In the provided examples, the CogStack ecosystem is usually composed of the following microservices:
 * `*samples` -- PostgreSQL database(s) loaded with a sample dataset under `db_samples` name,
-* `cogengine` -- CogStack pipeline -- the data processing engine,
-* `postgres` -- PostgreSQL database for storing information about CogStack jobs and status,
-* `elasticsearch` -- ElasticSearch node(s) for storing and querying the processed EHR data,
+* `cogstack-pipeline` -- CogStack pipeline -- the data processing engine,
+* `cogstack-job-repo` -- PostgreSQL database for storing information about CogStack jobs and status,
+* `elasticsearch-1` -- ElasticSearch node(s) for storing and querying the processed EHR data,
 * `kibana` -- Kibana data visualization tool for querying the data from ElasticSearch.
 
-The Docker Compose file with configuration of these microservices can be found in each of the examples `docker` subdirectory: `examples/example*/docker/docker-compose.yml`.
+The common Docker Compose base configuration file for these microservices which is shared among all the examples can be found in `examples/docker-common/docker-compose.yml`. The microservices configuration specific to each example can be found in `docker` subdirectory: `examples/example*/docker/docker-compose.override.yml` of each example.
 
 
-## CogStack engine configuration
+## CogStack Pipeline configuration
 
 There are multiple configurable parameters available to tailor the CogStack data processing pipeline to the specific data processing needs and available resources. Here we will cover only the most important parameters related with selecting the data processing components, configuring the input source, the output sink and data processing workflow for a given example.
 
@@ -322,7 +324,8 @@ CogStack configuration file uses Spring profiles, which enable different compone
 * `pdfGeneration`, `thumbnailGeneration` -- PDF thumbnail generation service (*not covered by the examples*),
 * `dBLineFixer` -- records modification process (*not covered by the examples*),
 * `pdfbox` -- documents processing sugin PDFBox (*not covered by the examples*),
-* `metadata` -- document metadata generation (*not covered by the examples*).
+* `metadata` -- document metadata generation (*not covered by the examples*),
+* `docman` -- mixed (both DB and filesystem) document processing (*not covered by the examples*).
 
 
 ### Item readers
@@ -459,7 +462,7 @@ Assuming that everything is working fine, we should be able to connect to the ru
 
 ### Kibana and ElasticSearch
 
-Kibana dashboard used to query the EHRs can be accessed directly in browser via URL: `http://localhost:5601/`. The data can be queried using a number of ElasticSearch indices, e.g. `sample_observations_view`. Usually, each index will correspond to the database view in `db_samples` (`pgsamples` PostgreSQL database) from which the data was ingested. However, when entering Kibana dashboard for the first time, an index pattern needs to be configured in the Kibana management panel -- for more information about its creation, please refer to the official [Kibana documentation](https://www.elastic.co/guide/en/kibana/current/tutorial-define-index.html).
+Kibana dashboard used to query the EHRs can be accessed directly in browser via URL: `http://localhost:5601/`. The data can be queried using a number of ElasticSearch indices, e.g. `sample_observations_view`. Usually, each index will correspond to the database view in `db_samples` (`samples-db` PostgreSQL database) from which the data was ingested. However, when entering Kibana dashboard for the first time, an index pattern needs to be configured in the Kibana management panel -- for more information about its creation, please refer to the official [Kibana documentation](https://www.elastic.co/guide/en/kibana/current/tutorial-define-index.html).
 
 In addition, ElasticSearch REST end-point can be accessed via URL `http://localhost:9200/`. It can be used to perform manual queries or to be used by other external services -- for example, one can list the available indices:
 ```bash
@@ -478,6 +481,8 @@ Moreover, the access PostgreSQL database with the input sample data is exposed d
 ```bash
 psql -U 'test' -W -d 'db_samples' -h localhost -p 5555
 ```
+
+As a side note, the name for ElasticSearch node in the Docker Compose has been set as `elasticsearch-1`. The `-1` ending emphasizes that for larger-scale deployments, multiple ElasticSearch nodes can be used -- typically, minimum of 3.
 
 
 # <a name="examples-general"></a> General information about examples
@@ -507,7 +512,7 @@ As an additional feature, security and ssl encryption can be enabled for communi
 
 ### Partitioner
 
-In the current implementation, CogStack engine can only partition the data using the records' primary key (`cog_pk` field, containing unique values) and records' update time (`cog_update_time` field) as defined in created views. This is specified by `PKTimeStamp` partitioning method types:
+In the current implementation, CogStack Pipeline can only partition the data using the records' primary key (`partitioner.pkColumnName` property, containing unique values) and records' update time (`partitioner.timeStampColumnName` property) as defined in created views. This is specified by `PKTimeStamp` partitioning method types:
 ```properties
 partitioner.partitionType = PKTimeStamp
 ```
@@ -683,10 +688,10 @@ The goal here is to denormalize the database schema for CogStack and ElasticSear
 Apart from exposing the fields from the previously defined tables, some extra fields `cog_*` have been added. They are required for compatibility with CogStack data processing engine, but they may be possibly removed or modified in the upcoming version of CogStack. However, in the current implementation, these fields are required to properly configure the CogStack database reader, and to properly schedule and partition the data of the running CogStack data processing workers.
 
 These additional fields are:
-* `cog_src_field_name` -- related with processing the text documents (not used in this example),
-* `cog_src_table_name` -- the name of the table (or view) containing records to process,
+* **deprecated:** `cog_src_field_name` -- related with processing the text documents (not used in this example),
+* **deprecated:** `cog_src_table_name` -- the name of the table (or view) containing records to process,
+* **deprecated:**  `cog_pk_field_name` -- the name of the field in the current table/view containing the value of primary key values,
 * `cog_pk` -- primary key value (or any unique) used for partitioning the data into batches (for the moment, needs to be of numeric type),
-* `cog_pk_field_name` -- the name of the field in the current table/view containing the value of primary key values,
 * `cog_update_time` -- the last update/modification time of the record, used for checking for new records and for partitioning.
 
 These fields will be later used when preparing the *properties* configuration file for CogStack data processing workflow.
@@ -708,30 +713,30 @@ spring.profiles.active = jdbc_in,elasticsearchRest,localPartitioning
 which denotes that only such profiles will be active:
 * `jdbc_in` for JDBC input database connector, 
 * `elasticsearchRest` for using REST API for inserting documents to ElasticSearch,
-* `localPartitioning` functionality.
+* `localPartitioning` functionality (an optional parameter, `localPartitioning` is used by default).
 
 
 ### Data source
 
 The parameters for specifying the data source are defined as follows:
 ```properties
-source.JdbcPath = jdbc:postgresql://pgsamples:5432/db_samples
+source.JdbcPath = jdbc:postgresql://samples-db:5432/db_samples
 source.Driver = org.postgresql.Driver
 source.username = test
 source.password = test
 ```
-In this example we are using a PostgreSQL database which driver is defined by `source.Driver` parameter. The PostgreSQL database service is available in the CogStack ecosystem as `pgsamples`, has exposed port `5432` for connections and the sample database name is `db_samples` -- all these details need to be included in the `source.JdbcPath` parameter field.
+In this example we are using a PostgreSQL database which driver is defined by `source.Driver` parameter. The PostgreSQL database service is available in the CogStack ecosystem as `samples-db`, has exposed port `5432` for connections and the sample database name is `db_samples` -- all these details need to be included in the `source.JdbcPath` parameter field.
 
 
 Next, we need to instruct CogStack engine how to query the records from the data source:
 ```properties
 source.selectClause = SELECT *
-source.sortKey = cog_pk
 source.fromClause = FROM observations_view
+source.sortKey = cog_pk
 
-source.srcTableName = cog_src_table_name
-source.srcColumnFieldName = cog_src_field_name
-source.primaryKeyFieldName = cog_pk_field_name
+## source.srcTableName = cog_src_table_name
+## source.srcColumnFieldName = cog_src_field_name
+## source.primaryKeyFieldName = cog_pk_field_name
 source.primaryKeyFieldValue = cog_pk
 source.timeStamp = cog_update_time
 
@@ -744,8 +749,7 @@ This is where the previously defined `observations_view` with additional CogStac
 
 Next, we need to define the data sink -- in our example, and by default, ElasticSearch is being used:
 ```properties
-elasticsearch.cluster.name = elasticsearch
-elasticsearch.cluster.host = elasticsearch
+elasticsearch.cluster.host = elasticsearch-1
 elasticsearch.cluster.port = 9200
 ```
 Similarly, as when defining the sample database source, we need to provide the ElasticSearch host and port configuration according to the microservices definition in the corresponding Docker Compose file (see `examples/example1/docker/docker-compose.yml`).
@@ -754,7 +758,7 @@ Similarly, as when defining the sample database source, we need to provide the E
 In the next step, we specify the ElasticSearch indexing parameters (optional):
 ```properties
 elasticsearch.index.name = sample_observations_view
-elasticsearch.excludeFromIndexing = cog_pk,cog_pk_field_name,cog_src_field_name,cog_src_table_name
+elasticsearch.excludeFromIndexing = cog_pk
 ```
 We specify the index name which will be used to store the documents processed by CogStack engine. Additionally, we specify which fields should be excluded from the indexing -- by default, we exclude the binary content, the constant-value fields and the primary key from the `observations_view`.
 
@@ -762,9 +766,9 @@ We specify the index name which will be used to store the documents processed by
 
 ### Jobs and CogStack engine configuration
 
-CogStack engine in order to coordinate the workers needs to keep the information about the current jobs in an additional PostgreSQL database -- `postgres`. Hence, similarly as when defining the source database, this database needs to specified:
+CogStack engine in order to coordinate the workers needs to keep the information about the current jobs in an additional PostgreSQL database -- `cogstack-job-repo`. Hence, similarly as when defining the source database, this database needs to specified:
 ```properties
-jobRepository.JdbcPath = jdbc:postgresql://postgres:5432/cogstack
+jobRepository.JdbcPath = jdbc:postgresql://cogstack-job-repo:5432/cogstack
 jobRepository.Driver = org.postgresql.Driver
 jobRepository.username = cogstack
 jobRepository.password = mysecretpassword
@@ -793,7 +797,7 @@ In this example we do not use the scheduler, since we ingest EHRs from the data 
 
 ## Deployment information
 
-This example uses the standard stack of microservices as presented in [CogStack ecosystem](#cogstack-ecosystem) with the Docker Compose file `examples/example1/docker/docker-compose.yml`.
+This example uses the standard stack of microservices as presented in [CogStack ecosystem](#cogstack-ecosystem) with the Docker Compose file override in `examples/example1/docker/docker-compose.override.yml`.
 
 It also uses a single CogStack *properties* file (see `examples/example1/cogstack/observations.properties`) and hence runs only one instance of CogStack data processing engine.
 
@@ -875,7 +879,7 @@ The *properties* file used in this example is the same as in [Example 1](#exampl
 
 ## Deployment information
 
-Similarly as in Example 1, this one uses the standard stack of microservices defined in `examples/example2/docker/docker-compose.yml`. 
+Similarly as in Example 1, this one uses the standard stack of microservices overriden in `examples/example2/docker/docker-compose.override.yml`. 
 
 It also uses a single CogStack *properties* file and hence runs only one instance of CogStack data processing engine (see: `examples/example2/cogstack/observations.properties`).
 
@@ -943,7 +947,7 @@ Apart from that, a separate `mt.properties` file is provided for processing MTSa
 
 ## Deployment information
 
-This example uses the standard stack of microservices (see: [CogStack ecosystem](#cogstack-ecosystem)), but extended with additional database storing input sample data. It uses 2 separate input databases as the data source: `pgmtsamples` and `pgsynsamples` -- see: `examples/example3/docker/docker-compose.yml`.
+This example uses the standard stack of microservices (see: [CogStack ecosystem](#cogstack-ecosystem)), but extended with additional database storing input sample data. It uses 2 separate input databases as the data source: `mtsamples-db` and `samples-db` -- see: `examples/example3/docker/docker-compose.override.yml`.
 
 It also uses multiple CogStack *properties* files, hence multiple instances of CogStack data processing engine are run, one per each *properties* file.
 
@@ -1033,7 +1037,7 @@ The *properties* file used in this example is based on the one from [Example 2](
 
 The spring profile part has been updated with adding a `tika` profile:
 ```properties
-spring.profiles.active = jdbc_in,elasticsearchRest,localPartitioning,tika
+spring.profiles.active = jdbc_in,elasticsearchRest,tika,localPartitioning
 ```
 
 
@@ -1242,7 +1246,7 @@ The *properties* files used in this step is based on [Example 4](#example-4) -- 
 
 The spring profiles used in this step are:
 ```properties
-spring.profiles.active = jdbc_in,jdbc_out,localPartitioning,tika
+spring.profiles.active = jdbc_in,jdbc_out,tika,localPartitioning
 ```
 In general, this tells us that the documents will be read from an input database (profile: `jdbc_in`), processed using `tika` with `localPartitioning` scheme and stored in an output database (profile: `jdbc_out`).
 
@@ -1250,12 +1254,12 @@ In general, this tells us that the documents will be read from an input database
 
 The source and target database are specified as follows:
 ```properties
-source.JdbcPath      = jdbc:postgresql://pgsamples:5432/db_samples
+source.JdbcPath      = jdbc:postgresql://samples-db:5432/db_samples
 source.Driver        = org.postgresql.Driver
 source.username      = test
 source.password      = test
 
-target.JdbcPath      = jdbc:postgresql://pgsamples:5432/db_samples
+target.JdbcPath      = jdbc:postgresql://samples-db:5432/db_samples
 target.Driver        = org.postgresql.Driver
 target.username      = test
 target.password      = test
@@ -1263,15 +1267,15 @@ target.password      = test
 
 The data source and target binding for CogStack engine is defined as follows:
 ```properties
-source.srcTableName = cog_src_table_name
-source.srcColumnFieldName = cog_src_field_name
-source.primaryKeyFieldName = cog_pk_field_name
+### source.srcTableName = cog_src_table_name
+### source.srcColumnFieldName = cog_src_field_name
+### source.primaryKeyFieldName = cog_pk_field_name
 source.primaryKeyFieldValue = cog_pk
 source.timeStamp = cog_update_time
 
 source.selectClause = SELECT *
-source.sortKey = cog_pk
 source.fromClause = FROM reports_binary_view
+source.sortKey = cog_pk
 
 target.Sql = INSERT INTO medical_reports_processed (cid, dct, output) VALUES ( CAST( :primaryKeyFieldValue AS integer ), :timeStamp, :outputData)
 ```
@@ -1324,7 +1328,7 @@ docker-compose up
 Assuming that everything is working fine, we should be able to connect to the running microservices as shown in [Example 2](#example-2). When accessing webservices and when asked for **credentials** the username is *test* with password *test*.
 
 
-This example uses the standard stack of microservices (see: [CogStack ecosystem](#cogstack-ecosystem)), but extended with Nginx reverse proxy service and internal network. For a better control and isolation of the services, in Docker Compose file (`examples/example6/docker/docker-compose.yml`) we defined 2 networks: `esnet` and `public`. The `esnet` network will be used as a internal, private network for the data processing pipeline and services -- the access should be highly restricted. The `public` network will be used as a bridge to connect the services to the outside host. When deployed, Nginx will be running as an additional microservice in the CogStack ecosystem using both `esnet` and `public` networks. It will control the communication between selected running microservices (`elasticsearch` and `kibana`) and the outside world. The only one difference here is the `pgsamples` database service, which for debugging purposes is using both networks and have ports directly exposed and bound to `localhost:5555`. 
+This example uses the standard stack of microservices (see: [CogStack ecosystem](#cogstack-ecosystem)), but extended with Nginx reverse proxy service and internal network. For a better control and isolation of the services, in Docker Compose file (`examples/example6/docker/docker-compose.override.yml`) we defined 2 networks: `esnet` and `public`. The `esnet` network will be used as a internal, private network for the data processing pipeline and services -- the access should be highly restricted. The `public` network will be used as a bridge to connect the services to the outside host. When deployed, Nginx will be running as an additional microservice in the CogStack ecosystem using both `esnet` and `public` networks. It will control the communication between selected running microservices (`elasticsearch-1` and `kibana`) and the outside world. The only one difference here is the `samples-db` database service, which for debugging purposes is using both networks and have ports directly exposed and bound to `localhost:5555`. 
 
 The picture below illustrates such deployment scenario.
 
@@ -1335,7 +1339,7 @@ The picture below illustrates such deployment scenario.
 
 ### Security
 
-As mentioned previously, in this example, Nginx is used only as a reverse proxy service providing a simple security layer used to connect the running microservices inside the private network to the outside world. It implements a simple secure HTTP access to `kibana` and `elasticsearch` services running at `5601` and `9200` ports respectively. Configured with Docker Compose file, all the HTTP traffic coming to the host on the specified ports will be forwarded to the respective microservices running inside private network through Nginx.
+As mentioned previously, in this example, Nginx is used only as a reverse proxy service providing a simple security layer used to connect the running microservices inside the private network to the outside world. It implements a simple secure HTTP access to `kibana` and `elasticsearch-1` services running at `5601` and `9200` ports respectively. Configured with Docker Compose file, all the HTTP traffic coming to the host on the specified ports will be forwarded to the respective microservices running inside private network through Nginx.
 
 
 ### Configuration file
@@ -1390,7 +1394,7 @@ Regarding Docker Compose configuration file, for each microservice used an addit
         tag: cog.java.engine
 ```
 
-`"fluentd"` is used as the logging `driver`. All the messages from the `cogstack` microservice will be forwarded to the fluentd driver using `cog.java.engine` as `tag`. The directory with the output logs from fluentd running container will be mapped to a local path in the deployment directory: `examples/example7/__deploy/__logs`. For the full configuration of running microservices, please refer to `examples/example7/docker/docker-compose.yml`.
+`"fluentd"` is used as the logging `driver`. All the messages from the `cogstack` microservice will be forwarded to the fluentd driver using `cog.java.engine` as `tag`. The directory with the output logs from fluentd running container will be mapped to a local path in the deployment directory: `examples/example7/__deploy/__logs`. For the full configuration of running microservices, please refer to `examples/example7/docker/docker-compose.override.yml`.
 
 
 ## Fluentd
