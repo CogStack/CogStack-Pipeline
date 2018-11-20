@@ -53,16 +53,18 @@ public class DocumentRowMapper implements RowMapper<Document>{
     ApplicationContext context;
 
     // mandatory properties required to perform record mapping
-    @Value("${source.srcTableName}")
-    private String srcTableName;
-    @Value("${source.srcColumnFieldName}")
-    private String srcColumnFieldName;
-    @Value("${source.primaryKeyFieldName}")
-    private String primaryKeyFieldName;
     @Value("${source.primaryKeyFieldValue}")
     private String primaryKeyFieldValue;
     @Value("${source.timeStamp}")
     private String timeStamp;
+
+    // optional fields, required in docman profile
+    @Value("${source.srcTableName:#{null}}")
+    private String srcTableName;
+    @Value("${source.srcColumnFieldName:#{null}}")
+    private String srcColumnFieldName;
+    @Value("${source.primaryKeyFieldName:#{null}}")
+    private String primaryKeyFieldName;
 
     // profile-specific properties used when performing mapping
     @Value("${reindexColumn:#{null}}")
