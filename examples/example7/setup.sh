@@ -57,7 +57,8 @@ if [ ! -e $COMMON_OUT_DIR/nginx/auth/.htpasswd ]; then
 	htpasswd -b -c $COMMON_OUT_DIR/nginx/auth/.htpasswd 'test' 'test'
 fi
 
-cp $DOCKER_DIR/*.yml $DEPLOY_DIR/
+cp $DOCKER_DIR/docker-compose.override.yml $DEPLOY_DIR/
+cp $COMMON_DIR/docker-compose.yml $DEPLOY_DIR/
 
 
 # setup cogstack

@@ -5,28 +5,18 @@ version: '2.0'
 #---------------------------------------------------------------------------#
 services:
 
-
 #---------------------------------------------------------------------------#
 # Postgres container for input data                                         #
 #---------------------------------------------------------------------------#
   pgsamples:
     image: postgres:10.4-alpine
-    depends_on:
-      - fluent
     volumes:
       - ./db_dump:/data/:ro
       - ./common/pgsamples/init_db.sh:/docker-entrypoint-initdb.d/init_db.sh:ro
       - pgsamdata:/var/lib/postgresql/data
-    ports:
+#    ports:
       # <host:container> expose the postgres DB to host for debugging purposes
-      - "5555:5432"
-    networks:
-      - esnet
-      - public
-    logging:
-      driver: "fluentd"
-      options:
-        tag: in.pg.samples
+#      - "5555:5432"
 
 #---------------------------------------------------------------------------#
 # Postgres container for spring batch / cogstack testing                    #
@@ -34,19 +24,11 @@ services:
 #---------------------------------------------------------------------------#
   postgres:
     image: postgres:9.6-alpine
-    depends_on:
-      - fluent
     volumes:
       - ./common/postgres/create_repo.sh:/docker-entrypoint-initdb.d/create_repo.sh:ro
       - pgdata:/var/lib/postgresql/data
     ports:
       - 5432
-    networks:
-      - esnet
-    logging:
-      driver: "fluentd"
-      options:
-        tag: cog.pg.jobs
 
 #---------------------------------------------------------------------------#
 # CogStack containers                                                       #
@@ -54,7 +36,7 @@ services:
   cogstack:
     image: cogstacksystems/cogstack-pipeline:dev-latest
     volumes:
-      - ./cogstack:/usr/src/docker-cogstack/cogstack/cogstack_conf:ro
+      - ./cogstack:/cogstack/job_config:ro
     environment:
       - LOG_LEVEL=info
       - FILE_LOG_LEVEL=off
@@ -62,13 +44,7 @@ services:
       - pgsamples
       - postgres
       - elasticsearch
-      - fluent
-    networks:
-      - esnet
-    logging:
-      driver: "fluentd"
-      options:
-        tag: cog.java.engine
+    command: ./run_pipeline.sh /cogstack/cogstack-*.jar /cogstack/job_config
 
 #---------------------------------------------------------------------------#
 # Elasticsearch cluster                                                     #
@@ -81,7 +57,6 @@ services:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     depends_on:
       - postgres
-      - fluent
     ulimits:
       memlock:
         soft: -1
@@ -89,15 +64,8 @@ services:
     volumes:
       - esdata1:/usr/share/elasticsearch/data
       - ./common/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
-    ports:
-#      - "9200:9200"    #without proxy, forward to host:9200
-      - 9200
-    networks:
-      - esnet
-    logging:
-      driver: "fluentd"
-      options:
-        tag: es.node
+#    ports:
+#      - "9200:9200"
 
 #---------------------------------------------------------------------------#
 # Kibana webapp                                                             #
@@ -106,57 +74,10 @@ services:
     image: docker.elastic.co/kibana/kibana:6.2.4
     depends_on:
       - elasticsearch
-      - fluent
     volumes:
-      - ./common/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
-    ports:
-#      - "5601:5601"    #without proxy, forward to host:5601
-      - 5601        #with nginx proxy forwarding host:5601/ --> [kibana]:5601 
-    networks:
-      - esnet
-    logging:
-      driver: "fluentd"
-      options:
-        tag: es.kibana
-
-#---------------------------------------------------------------------------#
-# Reverse proxy (+ host-container proxy and basic auth)                     #
-#---------------------------------------------------------------------------#
-  proxy:
-    image: nginx:1.13.1-alpine
-    restart: always
-    depends_on:
-      - kibana
-      - elasticsearch
-      - fluent
-    volumes:
-      - ./common/nginx/config/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./common/nginx/auth/.htpasswd:/etc/apache2/.htpasswd:ro
-    ports:
-      - "5601:5601"
-      - "9200:9200"
-    networks:
-      - public
-      - esnet
-    logging:
-      driver: "fluentd"
-      options:
-        tag: www.nginx
-
-#---------------------------------------------------------------------------#
-# Logging : Fluentd                                                         #
-#---------------------------------------------------------------------------#
-  fluent:
-    image: cogstacksystems/fluentd:dev-latest
-    volumes:
-      - ./__logs:/fluentd/log
-      - ./common/fluentd/conf/fluent.conf:/fluentd/etc/fluent.conf
-    ports:
-      - "24224:24224"
-      - "24224:24224/udp"
-    networks:
-      - esnet
-      - public
+      - ./common/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro 
+#    ports:
+#      - "5601:5601"
 
 
 #---------------------------------------------------------------------------#
@@ -169,13 +90,3 @@ volumes:
     driver: local
   pgdata:
     driver: local
-
-
-#---------------------------------------------------------------------------#
-# Docker virtual networks                                                   #
-#---------------------------------------------------------------------------#
-networks:
-  esnet:
-    driver: bridge
-  public:
-    driver: bridge

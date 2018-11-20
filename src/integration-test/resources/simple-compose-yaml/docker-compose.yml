@@ -1,7 +1,7 @@
 version: '2'
 services:
   postgres:
-    image: cogstacksystems/postgres:latest
+    build: ../../../../test/dockerfiles/postgres
     command: "-c 'shared_buffers=256MB' -c 'max_connections=1000'"
     ports:
       - 5432:5432
