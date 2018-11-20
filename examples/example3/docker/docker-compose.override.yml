@@ -4,7 +4,7 @@ version: '2.0'
 # Used services                                                             #
 #                                                                           #
 # Since we use 2 data sources with different dependencies                   #
-# it's easier here not to use services condifuration override file          #
+# it's easier here not to use services configuration override file          #
 #---------------------------------------------------------------------------#
 services:
 
