@@ -65,13 +65,13 @@ In this tutorial we only focus on a simple and very common use-case, where CogSt
 CogStack ecosystem consists of multiple inter-connected microservices running together. For the ease of use and deployment we use [Docker](https://www.docker.com/) (more specifically, [Docker Compose](https://docs.docker.com/compose/)), and provide Compose files for configuring and running the microservices. The selection of running microservices depends mostly on the specification of EHR data source(s), data extraction and processing requirements.
 
 In this tutorial the CogStack ecosystem is composed of the following microservices:
-* `pgsamples` -- PostgreSQL database loaded with a sample dataset under `db_samples` name,
-* `cogstack` -- CogStack data processing pipeline with worker(s),
-* `postgres` -- PostgreSQL database for storing information about CogStack jobs,
-* `elasticsearch` -- ElasticSearch search engine (single node) for storing and querying the processed EHR data,
+* `samples-db` -- PostgreSQL database loaded with a sample dataset under `db_samples` name,
+* `cogstack-pipeline` -- CogStack data processing pipeline with worker(s),
+* `cogstack-job-repo` -- PostgreSQL database for storing information about CogStack jobs,
+* `elasticsearch-1` -- ElasticSearch search engine (single node) for storing and querying the processed EHR data,
 * `kibana` -- Kibana data visualization tool for querying the data from ElasticSearch.
 
-The Docker Compose file with configuration of these microservices can be found in `examples/example2/docker/docker-compose.yml`.
+Since all the examples share the common configuration for the microservices used, the base Doocker Compose file is provided in `examples/docker-common/docker/docker-compose.yml`. The Docker Compose file with configuration of microservices being overriden for this example can be found in `examples/example2/docker/docker-compose.override.yml`. Both configuration files are automatically used by Docker Compose when deploying CogStack, as will be shown later.
 
 
 
@@ -163,7 +163,12 @@ As a result, a temporary directory `__deploy/` will be created containing all th
 
 ## Docker-based deployment
 
-Next, we can proceed to deploy CogStack ecosystem using Docker Compose. It will configure and start microservices based on the provided Compose file: `examples/example2/docker/docker-compose.yml`. Moreover, the PostgreSQL database container comes with pre-initialized database dump ready to be loaded directly into. In order to run CogStack, type in the `examples/example2/__deploy/` directory:
+Next, we can proceed to deploy CogStack ecosystem using Docker Compose. It will configure and start microservices based on the provided Compose files:
+- common base configuration, copied from `examples/docker-common/docker/docker-compose.yml` ,
+- example-specific configuration copied from `examples/example2/docker/docker-compose.override.yml`.
+Moreover, the PostgreSQL database container comes with pre-initialized database dump ready to be loaded directly into. 
+
+In order to run CogStack, type in the `examples/example2/__deploy/` directory:
 ```bash
 docker-compose up
 ```
@@ -179,11 +184,11 @@ The picture below sketches a general idea on how the microservices are running a
 ![alt text]({{ site.url }}/assets/uservices.png "CogStack data processing workflow")
 
 [//]: # "Connecting to ES, Kibana and PostgreSQL"
-Assuming that everything is working fine, we should be able to connect to the running microservices. Selected running services (`elasticsearch` and `kibana`) have their port connections forwarded to host `localhost`. When accessing webservices and when asked for **credentials** the username is *test* with password *test*. 
+Assuming that everything is working fine, we should be able to connect to the running microservices. Selected running services (`elasticsearch-1` and `kibana`) have their port connections forwarded to host `localhost`. When accessing webservices and when asked for **credentials** the username is *test* with password *test*. 
 
 ### Kibana and ElasticSearch
 
-Kibana dashboard used to query the EHRs can be accessed directly in browser via URL: `http://localhost:5601/`. The data can be queried using a number of ElasticSearch indices, e.g. `sample_observations_view`. Usually, each index will correspond to the database view in `db_samples` (`pgsamples` PostgreSQL database) from which the data was ingested. However, when entering Kibana dashboard for the first time, an index pattern needs to be configured in the Kibana management panel -- for more information about its creation, please refer to the official [Kibana documentation](https://www.elastic.co/guide/en/kibana/current/tutorial-define-index.html).
+Kibana dashboard used to query the EHRs can be accessed directly in browser via URL: `http://localhost:5601/`. The data can be queried using a number of ElasticSearch indices, e.g. `sample_observations_view`. Usually, each index will correspond to the database view in `db_samples` (`samples-db` PostgreSQL database) from which the data was ingested. However, when entering Kibana dashboard for the first time, an index pattern needs to be configured in the Kibana management panel -- for more information about its creation, please refer to the official [Kibana documentation](https://www.elastic.co/guide/en/kibana/current/tutorial-define-index.html).
 
 In addition, ElasticSearch REST end-point can be accessed via URL `http://localhost:9200/`. It can be used to perform manual queries or to be used by other external services -- for example, one can list the available indices:
 ```bash
@@ -195,6 +200,8 @@ curl 'http://localhost:9200/sample_observations_view'
 ```
 
 For more information about possible documents querying or modification operations, please refer to the official [ElasticSearch documentation](https://www.elastic.co/guide/en/elasticsearch/reference/current/getting-started.html).
+
+As a side note, the name for ElasticSearch node in the Docker Compose has been set as `elasticsearch-1`. The `-1` ending emphasizes that for larger-scale deployments, multiple ElasticSearch nodes can be used -- typically, a minimum of 3.
 
 
 ### PostgreSQL sample database
@@ -415,10 +422,10 @@ The goal here is to denormalize the database schema for CogStack and ElasticSear
 Apart from exposing the fields from the previously defined tables, some extra fields `cog_*` have been added. They are required for compatibility with CogStack data processing engine, but they may be possibly removed or modified in the upcoming version of CogStack. However, in the current implementation, these fields are required to properly configure the CogStack database reader, database row mapper, to properly schedule and partition the data of the running CogStack data processing workers.
 
 These additional fields are:
-* `cog_src_field_name` -- related with processing the text documents (not used in this example),
-* `cog_src_table_name` -- the name of the table containing records to process,
+* **obsolete:** `cog_src_field_name` -- related with processing the text documents (not used in this example),
+* **obsolete:** `cog_src_table_name` -- the name of the table containing records to process,
+* **obsolete:** `cog_pk_field_name` -- the name of the field in the current table/view containing the value of primary key values,
 * `cog_pk` -- primary key value (or any unique) used for partitioning the data into batches (for the moment, needs to be of numeric type),
-* `cog_pk_field_name` -- the name of the field in the current table/view containing the value of primary key values,
 * `cog_update_time` -- the last update/modification time of the record, used for checking for new records and for partitioning.
 
 These fields are later used when [preparing the configuration file for CogStack data processing workflow](#advanced-properties).
@@ -449,7 +456,7 @@ spring.profiles.active = jdbc_in,elasticsearchRest,localPartitioning
 which denotes that only such profiles will be active:
 * `jdbc_in` for JDBC input database connector, 
 * `elasticsearchRest` for using REST API for inserting documents to ElasticSearch,
-* local `partitioning` functionality (for data processing).
+* local `partitioning` functionality (for data processing) -- this property is optional, as `localPartitioning` will be used by default.
 
 
 ### Data source
@@ -467,12 +474,9 @@ In this example we are using a PostgreSQL database which driver is defined by `s
 Next, we need to instruct CogStack workers how to query the records from the data source:
 ```properties
 source.selectClause = SELECT *
-source.sortKey = cog_pk
 source.fromClause = FROM observations_view
+source.sortKey = cog_pk
 
-source.srcTableName = cog_src_table_name
-source.srcColumnFieldName = cog_src_field_name
-source.primaryKeyFieldName = cog_pk_field_name
 source.primaryKeyFieldValue = cog_pk
 source.timeStamp = cog_update_time
 
@@ -498,7 +502,7 @@ In the next step, we can specify some optional (albeit helpful) ElasticSearch in
 elasticsearch.index.name = sample_observations_view
 elasticsearch.excludeFromIndexing = cog_pk,cog_pk_field_name,cog_src_field_name,cog_src_table_name
 ```
-We specify the index name which will be used to store the documents processed by CogStack workers. Additionally, we specify which fields should be excluded from the indexing -- by default, we exclude the binary content, the constant-value fields and the primary key from the `observations_view` (see: [Advanced: preparing a DB schema for CogStack pipeline](#advanced-schema)).
+We specify the index name which will be used to store the documents processed by CogStack workers. Additionally, we specify which fields from the DB view should be excluded from the indexing -- by default, we exclude the binary content, the constant-value fields and the primary key from the `observations_view` (see: [Advanced: preparing a DB schema for CogStack pipeline](#advanced-schema)).
 
 
 ### Jobs and CogStack workers configuration
