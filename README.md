@@ -1,6 +1,11 @@
 # **WELCOME TO Cogstack**
 
-![Cogstack Pipeline](fig/cogstack_pipeline_sm2.png)
+![Cogstack Pipeline](extras/fig/cogstack_pipeline_sm2.png)
+
+## Important update
+
+We are in the process of releasing CogStack in version 1.3, hence some information in this page may be a bit outdated.
+For the most up-to-date documentation with examples please refer to [CogStack Confluence page](https://cogstack.atlassian.net/wiki/spaces/COGDOC/) 
 
 ## Introduction
 
