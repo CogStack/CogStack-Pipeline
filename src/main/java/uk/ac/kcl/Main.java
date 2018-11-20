@@ -15,6 +15,7 @@
  */
 package uk.ac.kcl;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
@@ -35,6 +36,7 @@ import java.util.Properties;
  * @author King's College London, Richard Jackson <richgjackson@gmail.com>
  */
 public class Main {
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) {
         File folder = new File(args[0]);
@@ -43,13 +45,24 @@ public class Main {
         for (File listOfFile : listOfFiles) {
             if (listOfFile.isFile()) {
                 if (listOfFile.getName().endsWith(".properties")) {
-                    System.out.println("Properties sile found:" + listOfFile.getName() +
+                    LOG.info("Properties sile found:" + listOfFile.getName() +
                             ". Attempting to launch application context");
                     Properties properties = new Properties();
                     InputStream input;
                     try {
                         input = new FileInputStream(listOfFile);
                         properties.load(input);
+
+                        // check whether any partitioning scheme has been selected
+                        // TODO: move to a module performing input parameters validation
+                        if (properties.containsKey("spring.profiles.active")) {
+                            String activeProfiles = properties.getProperty("spring.profiles.active");
+                            if (!activeProfiles.contains("localPartitioning") && !activeProfiles.contains("remotePartitioning")) {
+                                activeProfiles += ",localPartitioning";
+                                properties.replace("spring.profiles.active", activeProfiles);
+                                LOG.info("No partitioning scheme specified in the active profiles. Using 'localPartitioning' by default");
+                            }
+                        }
 
                         // TODO: need a proper way to validate input properties specified by user
                         if(properties.getProperty("globalSocketTimeout")!=null){
@@ -66,7 +79,11 @@ public class Main {
                         setUpApplicationContext(environment, properties);
 
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        StringWriter sw = new StringWriter();
+                        e.printStackTrace(new PrintWriter(sw));
+                        String stackTrace = sw.toString();
+                        LOG.error("Exception: " + e.getMessage());
+                        LOG.error("StackTrace: " + stackTrace);
                     }
                 }
             }
