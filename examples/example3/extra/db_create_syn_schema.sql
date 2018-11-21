@@ -48,7 +48,7 @@ REASONDESCRIPTION text_type
 
 create table observations (
 CID serial primary key,								-- for CogStack compatibility
-DCT timestamp default current_timestamp,			-- (*)
+CREATED timestamp default current_timestamp,		-- (*)
 DATE date not null, 
 PATIENT key_type references patients,
 ENCOUNTER key_type references encounters,
@@ -61,7 +61,7 @@ TYPE varchar(64) not null
 
 create table procedures (
 CID serial primary key,								-- for CogStack compatibility
-DCT timestamp default current_timestamp,			-- (*)
+CREATED timestamp default current_timestamp,		-- (*)
 DATE date not null,
 PATIENT key_type references patients,
 ENCOUNTER key_type references encounters,
@@ -74,7 +74,7 @@ REASONDESCRIPTION text_type
 
 create table medications (
 CID serial primary key,								-- for CogStack compatibility
-DCT timestamp default current_timestamp,			-- (*)
+CREATED timestamp default current_timestamp,		-- (*)
 START date not null,
 STOP date,
 PATIENT key_type references patients,
@@ -90,7 +90,7 @@ REASONDESCRIPTION text_type
 
 create table immunizations (
 CID serial primary key,								-- for CogStack compatibility
-DCT timestamp default current_timestamp,			-- (*)
+CREATED timestamp default current_timestamp,		-- (*)
 DATE date not null,
 PATIENT key_type references patients,
 ENCOUNTER key_type references encounters,
@@ -101,7 +101,7 @@ COST numeric not null
 
 create table imaging_studies (
 CID serial,-- primary key,							-- TODO: check if ID field will be sufficient
-DCT timestamp default current_timestamp,			-- (*)
+CREATED timestamp default current_timestamp,		-- (*)
 ID key_type primary key,
 DATE date not null,
 PATIENT key_type references patients,
@@ -116,7 +116,7 @@ SOP_DESCRIPTION varchar(64) not null
 
 create table careplans (
 CID serial,-- primary key,							-- TODO: check if ID field will be sufficient
-DCT timestamp default current_timestamp,			-- (*)
+CREATED timestamp default current_timestamp,		-- (*)
 ID key_type primary key,
 START date not null,
 STOP date,
@@ -130,7 +130,7 @@ REASONDESCRIPTION text_type --not null, 			-- not matching with the specs
 
 create table allergies (
 CID serial primary key,								-- for CogStack compatibility
-DCT timestamp default current_timestamp,			-- (*)
+CREATED timestamp default current_timestamp,		-- (*)
 START date not null,
 STOP date,
 PATIENT key_type references patients,
@@ -141,7 +141,7 @@ DESCRIPTION text_type not null
 
 create table conditions (
 CID serial primary key,								-- for CogStack compatibility
-DCT timestamp default current_timestamp,			-- (*)
+CREATED timestamp default current_timestamp,		-- (*)
 START date not null,
 STOP date,
 PATIENT key_type references patients,
@@ -216,12 +216,8 @@ begin
 		select 
 			patient_encounters_view.*, 
 			%I.*,
-
-			\'src_field_name\'::text as cog_src_field_name,
-			''%I''::text as cog_src_table_name,
 			%I.CID as cog_pk,
-			\'cog_pk\'::text as cog_pk_field_name,
-			%I.DCT as cog_update_time
+			%I.CREATED as cog_update_time
 		from 
 			patient_encounters_view 
 		join 
@@ -230,7 +226,7 @@ begin
 			%I.PATIENT = patient_encounters_view.patient_id and 
 			%I.ENCOUNTER = patient_encounters_view.encounter_id 
 		', 
-		view_name, table_name, view_name, table_name, table_name, table_name, table_name, table_name, table_name);
+		view_name, table_name, table_name, table_name, table_name, table_name, table_name, table_name);
 end
 $func$ language plpgsql;
 
