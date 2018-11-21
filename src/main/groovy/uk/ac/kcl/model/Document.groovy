@@ -11,13 +11,21 @@ import java.sql.Timestamp
 class Document {
 
     //generic fields
-    String databaseName
-    String databaseSchema
+    // deprecated
+    // TODO: remove in future
+    //String databaseName
+    //String databaseSchema
+
+    // used when processing documents from metadata tables within docman profile
     String srcTableName
     String srcColumnFieldName
     String primaryKeyFieldName
+
+    // universal fields
     String primaryKeyFieldValue
     Timestamp timeStamp
+
+    // auxiliary members
     HashSet<RuntimeException> exceptions = new HashSet<>()
     Gson gson = new GsonBuilder().create();
 
@@ -36,8 +44,13 @@ class Document {
     //for es
     HashMap<String,Object> associativeArray = new HashMap<String,Object>();
 
-    public String getDocName(){
-        return srcTableName+"_"+srcColumnFieldName+"_"+primaryKeyFieldValue
+    String getDocName(){
+        String name = ""
+        if (srcTableName != null && srcTableName.length() > 0)
+            name += srcTableName + "_"
+        if (srcColumnFieldName != null && srcColumnFieldName.length() > 0)
+            name += srcColumnFieldName + "_"
+        return name + primaryKeyFieldValue
     }
 
 }
