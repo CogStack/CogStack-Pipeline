@@ -45,7 +45,7 @@ REASONDESCRIPTION text_type
 
 create table observations (
 CID serial primary key,							-- for CogStack compatibility
-DCT timestamp default current_timestamp,		-- (*)
+CREATED timestamp default current_timestamp,	-- (*)
 DATE date not null, 
 PATIENT key_type references patients,
 ENCOUNTER key_type references encounters,
@@ -95,7 +95,7 @@ create view observations_view as
 		enc.REASONDESCRIPTION as encounter_reason_desc,
 
 		obs.CID as observation_id,
-		obs.DCT as observation_dct,
+		obs.CREATED as observation_timestamp,
 		obs.DATE as observation_date,
 		obs.CODE as observation_code,
 		obs.DESCRIPTION as observation_desc,
