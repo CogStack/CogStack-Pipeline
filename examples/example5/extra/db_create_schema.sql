@@ -60,7 +60,7 @@ DOCUMENTID integer											-- MTSamples document content
 
 create table observations (
 CID serial primary key,										-- for CogStack compatibility
-DCT timestamp default current_timestamp,					-- (*)
+CREATED timestamp default current_timestamp,				-- (*)
 DATE date not null, 
 PATIENT uuid references patients,
 ENCOUNTER uuid references encounters,
@@ -77,25 +77,19 @@ TYPE varchar(64) not null
 
 Create view for CogStack
 
-*/
+--/
 create view reports_binary_view as 
 	select 
 		CID,
 		SAMPLEID,
 		TYPEID,
-		DCT,
+		CREATED,
 		FILENAME,
-
-		-- for CogStack compatibility -- meta-data
-		'BINARYDOC'::text as cog_src_field_name,			-- (*)
-		'reports_binary_view'::text as cog_src_table_name,	-- (*)
-		CID as cog_pk,										-- (*)
-		'cog_pk'::text as cog_pk_field_name,				-- (*)
-		DCT as cog_update_time,								-- (*)
-		BINARYDOC as cog_binary_doc							-- (*)
+		BINARYDOC
 	from 
 		medical_reports 
 	;
+*/
 
 create view reports_processed_view as
 	select 
@@ -139,6 +133,8 @@ create view observations_view as
 		enc.REASONCODE as encounter_reason_code,
 		enc.REASONDESCRIPTION as encounter_reason_desc,
 
+		obs.CID as observation_id,
+		obs.CREATED as observation_timestamp,
 		obs.DATE as observation_date,
 		obs.CODE as observation_code,
 		obs.DESCRIPTION as observation_desc,
@@ -149,18 +145,18 @@ create view observations_view as
 		doc_bin.CID as document_id,
 		doc_bin.SAMPLEID as document_sample_id,
 		doc_bin.TYPEID as document_type_id,
-		doc_bin.DCT as document_dct,
+		doc_bin.DCT as document_timestamp,
 		doc_bin.FILENAME as document_filename,
 
 		doc_proc.OUTPUT::json ->> 'X-PDFPREPROC-OCR-APPLIED' as document_ocr_status,
-		doc_proc.OUTPUT::json ->> 'tika_output' as document_tika_output,
+		doc_proc.OUTPUT::json ->> 'tika_output' as document_tika_output
 
 		-- for CogStack compatibility
-		'document_tika_output'::text as cog_src_field_name,     -- (a)
-		'observations_view'::text as cog_src_table_name,  		-- (b)
-		obs.CID as cog_pk,                                		-- (c)
-		'cog_pk'::text as cog_pk_field_name,              		-- (d)
-		obs.DCT as cog_update_time                       		-- (e)
+		--'document_tika_output'::text as cog_src_field_name,     -- (a)
+		--'observations_view'::text as cog_src_table_name,  		-- (b)
+		--obs.CID as cog_pk,                                		-- (c)
+		--'cog_pk'::text as cog_pk_field_name,              		-- (d)
+		--obs.DCT as cog_update_time                       		-- (e)
 	from 
 		patients p, 
 		encounters enc,
