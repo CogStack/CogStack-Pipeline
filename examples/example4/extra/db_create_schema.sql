@@ -45,7 +45,7 @@ BINARYDOCUMENT bytea								-- MTSamples document content
 
 create table observations (
 CID serial primary key,								-- for CogStack compatibility
-DCT timestamp default current_timestamp,			-- (*)
+CREATED timestamp default current_timestamp,		-- (*)
 DATE date not null, 
 PATIENT uuid references patients,
 ENCOUNTER uuid references encounters,
@@ -93,21 +93,16 @@ create view observations_view as
 		enc.COST as encounter_cost,
 		enc.REASONCODE as encounter_reason_code,
 		enc.REASONDESCRIPTION as encounter_reason_desc,
+		enc.BINARYDOCUMENT as encounter_binary_doc,
 
+		obs.CID as observation_id,
+		obs.CREATED as observation_timestamp,
 		obs.DATE as observation_date,
 		obs.CODE as observation_code,
 		obs.DESCRIPTION as observation_desc,
 		obs.VALUE as observation_value,
 		obs.UNITS as observation_units,
-		obs.TYPE as observation_type,
-
-		-- for CogStack compatibility
-		'src_field_name'::text as cog_src_field_name,     -- (a)
-		'observations_view'::text as cog_src_table_name,  -- (b)
-		obs.CID as cog_pk,                                -- (c)
-		'cog_pk'::text as cog_pk_field_name,              -- (d)
-		obs.DCT as cog_update_time,                       -- (e)
-		enc.BINARYDOCUMENT as cog_binary_doc              -- (f)
+		obs.TYPE as observation_type
 	from 
 		patients p, 
 		encounters enc,
