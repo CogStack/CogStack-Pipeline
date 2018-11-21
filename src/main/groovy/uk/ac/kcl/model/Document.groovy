@@ -11,6 +11,8 @@ import java.sql.Timestamp
 class Document {
 
     //generic fields
+    // deprecated
+    // TODO: remove in future
     //String databaseName
     //String databaseSchema
 
