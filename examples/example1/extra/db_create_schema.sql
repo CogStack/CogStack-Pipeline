@@ -66,7 +66,7 @@ create view observations_view as
 	 select
 		p.ID as patient_id, 
 		p.BIRTHDATE as patient_birth_date,
-		p.DEATHDATE as death_date,
+		p.DEATHDATE as patient_death_date,
 		p.SSN as patient_SSN,
 		p.DRIVERS as patient_drivers,
 		p.PASSPORT as patient_passport,
@@ -94,19 +94,14 @@ create view observations_view as
 		enc.REASONCODE as encounter_reason_code,
 		enc.REASONDESCRIPTION as encounter_reason_desc,
 
+		obs.CID as observation_id,
+		obs.DCT as observation_dct,
 		obs.DATE as observation_date,
 		obs.CODE as observation_code,
 		obs.DESCRIPTION as observation_desc,
 		obs.VALUE as observation_value,
 		obs.UNITS as observation_units,
-		obs.TYPE as observation_type,
-
-		-- for CogStack compatibility
-		'src_field_name'::text as cog_src_field_name,     -- (a)
-		'observations_view'::text as cog_src_table_name,  -- (b)
-		obs.CID as cog_pk,                                -- (c)
-		'cog_pk'::text as cog_pk_field_name,              -- (d)
-		obs.DCT as cog_update_time                 -- (e)
+		obs.TYPE as observation_type
 	from 
 		patients p, 
 		encounters enc,
