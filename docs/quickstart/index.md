@@ -242,27 +242,27 @@ fab43860-c3be-4808-b7b4-00423c02816b,1962-06-21,2011-03-10,999-67-8307,S99958025
 
 The `patients` table definition in PostgreSQL according to the [specification](https://github.com/synthetichealth/synthea/wiki/CSV-File-Data-Dictionary): 
 ```sql
-create table patients (
-  ID uuid primary key,
-  BIRTHDATE date, 
-  DEATHDATE date, 
-  SSN varchar(64), 
-  DRIVERS varchar(64),
-  PASSPORT varchar(64),
-  PREFIX varchar(8),
-  FIRST varchar(64),
-  LAST varchar(64),
-  SUFFIX varchar(8),
-  MAIDEN varchar(64),
-  MARITAL char(1),
-  RACE varchar(64), 
-  ETHNICITY varchar(64),
-  GENDER char(1),
-  BIRTHPLACE varchar(64),
-  ADDRESS varchar(64),
-  CITY varchar(64),
-  STATE varchar(64),
-  ZIP varchar(64)
+CREATE TABLE patients (
+  id UUID PRIMARY KEY,
+  birthdate DATE NOT NULL, 
+  deathdate DATE, 
+  ssn VARCHAR(64) NOT NULL, 
+  drivers VARCHAR(64),
+  passport VARCHAR(64),
+  prefix VARCHAR(8),
+  first VARCHAR(64) NOT NULL,
+  last VARCHAR(64) NOT NULL,
+  suffix VARCHAR(8),
+  maiden VARCHAR(64),
+  marital CHAR(1),
+  race VARCHAR(64) NOT NULL, 
+  ethnicity VARCHAR(64) NOT NULL,
+  gender CHAR(1) NOT NULL,
+  birthplace VARCHAR(64) NOT NULL,
+  address VARCHAR(64) NOT NULL,
+  city VARCHAR(64) NOT NULL,
+  state VARCHAR(64) NOT NULL,
+  zip VARCHAR(64)
 ) ;
 ```
 
@@ -280,20 +280,20 @@ f25a828f-ae79-4dd0-b6eb-bca26138421b,1969-09-13T14:02Z,1969-09-13T14:34Z,fab4386
 
 with the corresponding `encounters` table definition:
 ```sql
-create table encounters (
-  ID uuid primary key,
-  START timestamp,
-  STOP timestamp,
-  PATIENT uuid references patients,
-  CODE varchar(64),
-  DESCRIPTION text,
-  COST real,
-  REASONCODE varchar(64),
-  REASONDESCRIPTION text,
-  DOCUMENT text -- (*)
+CREATE TABLE encounters (
+  id UUID PRIMARY KEY NOT NULL,
+  start TIMESTAMP NOT NULL,
+  stop TIMESTAMP,
+  patient UUID REFERENCES patients,
+  code VARCHAR(64) NOT NULL,
+  description VARCHAR(256) NOT NULL,
+  cost REAL NOT NULL,
+  reasoncode VARCHAR(64),
+  reasondescription VARCHAR(256),
+  document TEXT --(*)
 ) ;
 ```
-Here, with `--(*)` has been marked an additional `DOCUMENT` field. This extra field will be used to store a document from [MTSamples dataset](#samples-mt). 
+Here, with `--(*)` has been marked an additional `document` field. This extra field will be used to store a document from [MTSamples dataset](#samples-mt). 
 
 Just to clarify, [Synthea-based](#samples-syn) and [MTSamples](#samples-mt) are two unrelated datasets. Here, we are extending the synthetic dataset with the clinical documents from the MTSamples to create a combined one, to be able to perform more advanced queries.
 
@@ -340,93 +340,85 @@ DATE,PATIENT,ENCOUNTER,CODE,DESCRIPTION,VALUE,UNITS,TYPE
 
 and the corresponding table definition:
 ```sql
-  create table observations (
-  CID serial primary key,                   -- (*)
-  DCT timestamp default current_timestamp,  -- (*)
-  DATE date, 
-  PATIENT uuid references patients,
-  ENCOUNTER uuid references encounters,
-  CODE varchar(64),
-  DESCRIPTION text,
-  VALUE varchar(64),
-  UNITS varchar(64),
-  TYPE varchar(64),
+CREATE TABLE observations (
+  cid SERIAL PRIMARY KEY,                      --(*)
+  created TIMESTAMP DEFAULT CURRENT_TIMESTAMP, --(*)
+  date DATE NOT NULL, 
+  patient UUID REFERENCES patients,
+  encounter UUID REFERENCES encounters,
+  code VARCHAR(64) NOT NULL,
+  description VARCHAR(256) NOT NULL,
+  value VARCHAR(64) NOT NULL,
+  units VARCHAR(64),
+  type VARCHAR(64) NOT NULL
 ) ;
+
 ```
 
-Here, with `--(*)` have been marked additional fields with auto-generated values. These are: `CID` -- an automatically generated primary key and `DCT` -- a document creation timestamp. They will be later used by CogStack pipeline for data partitioning when processing the records. The `patient` and `encouters` tables have their primary keys (`ID` field) already defined (of `uuid` type) and are included in the input CSV files.
+Here, with `--(*)` have been marked two additional fields with auto-generated values. These are: `cid` -- an automatically generated primary key and `created` -- when the record was created. They will be later used by CogStack pipeline for data partitioning when processing the records. The `patient` and `encounters` tables have their primary keys (`ID` field) already defined (of `UUID` type) and are included in the input CSV files.
 
 
 ## Database schema -- views
 
 Next, we define a `observations_view` that will be used by CogStack data processing engine to ingest the records from input database:
 ```sql
-create view observations_view as
-   select
-    p.ID as patient_id, 
-    p.BIRTHDATE as patient_birth_date,
-    p.DEATHDATE as death_date,
-    p.SSN as patient_SSN,
-    p.DRIVERS as patient_drivers,
-    p.PASSPORT as patient_passport,
-    p.PREFIX as patient_prefix,
-    p.FIRST as patient_first_name,
-    p.LAST as patient_last_name,
-    p.SUFFIX as patient_suffix,
-    p.MAIDEN as patient_maiden,
-    p.MARITAL as patient_marital,
-    p.RACE as patient_race,
-    p.ETHNICITY as patient_ethnicity,
-    p.GENDER as patient_gender,
-    p.BIRTHPLACE as patient_birthplace,
-    p.ADDRESS as patient_addr,
-    p.CITY as patient_city,
-    p.STATE as patient_state,
-    p.ZIP as patient_zip,
+CREATE VIEW observations_view AS
+   SELECT
+    p.id AS patient_id, 
+    p.birthdate AS patient_birth_date,
+    p.deathdate AS patient_death_date,
+    p.ssn AS patient_ssn,
+    p.drivers AS patient_drivers,
+    p.passport AS patient_passport,
+    p.prefix AS patient_prefix,
+    p.first AS patient_first_name,
+    p.last AS patient_last_name,
+    p.suffix AS patient_suffix,
+    p.maiden AS patient_maiden,
+    p.marital AS patient_marital,
+    p.race AS patient_race,
+    p.ethnicity AS patient_ethnicity,
+    p.gender AS patient_gender,
+    p.birthplace AS patient_birthplace,
+    p.address AS patient_addr,
+    p.city AS patient_city,
+    p.state AS patient_state,
+    p.zip AS patient_zip,
+    
+    enc.id AS encounter_id,
+    enc.start AS encounter_start,
+    enc.stop AS encounter_stop,
+    enc.code AS encounter_code,
+    enc.description AS encounter_desc,
+    enc.cost AS encounter_cost,
+    enc.reasoncode AS encounter_reason_code,
+    enc.reasondescription AS encounter_reason_desc,
+    enc.document AS encounter_document,
 
-    enc.ID as encounter_id,
-    enc.START as encounter_start,
-    enc.STOP as encounter_stop,
-    enc.CODE as encounter_code,
-    enc.DESCRIPTION as encounter_desc,
-    enc.COST as encounter_cost,
-    enc.REASONCODE as encounter_reason_code,
-    enc.REASONDESCRIPTION as encounter_reason_desc,
-    enc.DOCUMENT as encounter_document,
+    obs.cid AS observation_id,            --(*)
+    obs.created AS observation_timestamp, --(*)
 
-    obs.DATE as observation_date,
-    obs.CODE as observation_code,
-    obs.DESCRIPTION as observation_desc,
-    obs.VALUE as observation_value,
-    obs.UNITS as observation_units,
-    obs.TYPE as observation_type,
-
-    -- for CogStack compatibility
-    'src_field_name'::text as cog_src_field_name,     -- (a)
-    'observations_view'::text as cog_src_table_name,  -- (b)
-    obs.CID as cog_pk,                                -- (c)
-    'cog_pk'::text as cog_pk_field_name,              -- (d)
-    obs.DCT as cog_update_time                        -- (e)
-  from 
+    obs.date AS observation_date,
+    obs.code AS observation_code,
+    obs.description AS observation_desc,
+    obs.value AS observation_value,
+    obs.units AS observation_units,
+    obs.type AS observation_type
+  FROM 
     patients p, 
     encounters enc,
     observations obs
-  where 
-    enc.PATIENT = p.ID and
-    obs.PATIENT = p.ID and 
-    obs.ENCOUNTER = enc.ID
+  WHERE 
+    enc.patient = p.id AND 
+    obs.patient = p.id AND 
+    obs.encounter = enc.id
   ;
 ```
 The goal here is to denormalize the database schema for CogStack and ElasticSearch data ingestion, as the `observations` table is referencing both the `patient` and `encounters` tables by their primary key. In the current implementation, CogStack pipeline engine cannot yet perform dynamic joins over the relational data from specific database tables.
 
-Apart from exposing the fields from the previously defined tables, some extra fields `cog_*` have been added. They are required for compatibility with CogStack data processing engine, but they may be possibly removed or modified in the upcoming version of CogStack. However, in the current implementation, these fields are required to properly configure the CogStack database reader, database row mapper, to properly schedule and partition the data of the running CogStack data processing workers.
-
-These additional fields are:
-* **obsolete:** `cog_src_field_name` -- related with processing the text documents (not used in this example),
-* **obsolete:** `cog_src_table_name` -- the name of the table containing records to process,
-* **obsolete:** `cog_pk_field_name` -- the name of the field in the current table/view containing the value of primary key values,
-* `cog_pk` -- primary key value (or any unique) used for partitioning the data into batches (for the moment, needs to be of numeric type),
-* `cog_update_time` -- the last update/modification time of the record, used for checking for new records and for partitioning.
+Some of the crucial fields required for configuring CogStack Pipeline engine with Document data model have been marked with `--(*)` -- these are:
+- `observation_id` -- the unique identifier of the observation record (typically, the primary key),
+- `observation_timestamp` -- the record creation or last update time.
 
 These fields are later used when [preparing the configuration file for CogStack data processing workflow](#advanced-properties).
 
@@ -475,10 +467,10 @@ Next, we need to instruct CogStack workers how to query the records from the dat
 ```properties
 source.selectClause = SELECT *
 source.fromClause = FROM observations_view
-source.sortKey = cog_pk
+source.sortKey = observations_id
 
-source.primaryKeyFieldValue = cog_pk
-source.timeStamp = cog_update_time
+source.primaryKeyFieldValue = observations_id
+source.timeStamp = observations_timestamp
 
 source.dbmsToJavaSqlTimestampType = TIMESTAMP
 ```
@@ -500,7 +492,7 @@ As a side note, security and ssl encryption can be enabled for communication wit
 In the next step, we can specify some optional (albeit helpful) ElasticSearch indexing parameters:
 ```properties
 elasticsearch.index.name = sample_observations_view
-elasticsearch.excludeFromIndexing = cog_pk,cog_pk_field_name,cog_src_field_name,cog_src_table_name
+elasticsearch.excludeFromIndexing = observations_id
 ```
 We specify the index name which will be used to store the documents processed by CogStack workers. Additionally, we specify which fields from the DB view should be excluded from the indexing -- by default, we exclude the binary content, the constant-value fields and the primary key from the `observations_view` (see: [Advanced: preparing a DB schema for CogStack pipeline](#advanced-schema)).
 
@@ -535,10 +527,10 @@ Another set of useful parameters are related with controlling the job execution 
 partitioner.partitionType = PKTimeStamp
 
 partitioner.tableToPartition = observations_view
-partitioner.pkColumnName = cog_pk
-partitioner.timeStampColumnName = cog_update_time
+partitioner.pkColumnName = observations_id
+partitioner.timeStampColumnName = observations_timestamp
 ```
-In the current implementation, CogStack engine can only partition the data using the records' primary key (`cog_pk` field, containing unique values) and records' update time (`cog_update_time` field) as defined in `observations_view`. This is specified by `PKTimeStamp` partitioning method type (default value).
+In the current implementation, CogStack engine can only partition the data using the records' primary key (`observations_id` field, containing unique values) and records' update time (`observations_timestamp` field) as defined in `observations_view`. This is specified by `PKTimeStamp` partitioning method type (default value).
 
 
 Apart from data partitioning, it once can also set up the scheduler. Although it is disabled by default (`scheduler.useScheduling=false`), it can be easily configured. In this example we do not use scheduler, since we ingest EHRs from the data source only once. However, in case when the data is being generated in a continuous way, scheduler should be enabled to periodically run CogStack jobs to process the new EHRs.

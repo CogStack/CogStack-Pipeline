@@ -5,110 +5,110 @@ Uses schema specified by:
     https://github.com/synthetichealth/synthea/wiki/CSV-File-Data-Dictionary
 
 */
-
-create table patients (
-ID uuid primary key,
-BIRTHDATE date not null, 
-DEATHDATE date, 
-SSN varchar(64) not null, 
-DRIVERS varchar(64),
-PASSPORT varchar(64),
-PREFIX varchar(8),
-FIRST varchar(64) not null,
-LAST varchar(64) not null,
-SUFFIX varchar(8),
-MAIDEN varchar(64),
-MARITAL char(1),
-RACE varchar(64) not null, 
-ETHNICITY varchar(64) not null,
-GENDER char(1) not null,
-BIRTHPLACE varchar(64) not null,
-ADDRESS varchar(64) not null,
-CITY varchar(64) not null,
-STATE varchar(64) not null,
-ZIP varchar(64)
+CREATE TABLE patients (
+	id UUID PRIMARY KEY,
+	birthdate DATE NOT NULL, 
+	deathdate DATE, 
+	ssn VARCHAR(64) NOT NULL, 
+	drivers VARCHAR(64),
+	passport VARCHAR(64),
+	prefix VARCHAR(8),
+	first VARCHAR(64) NOT NULL,
+	last VARCHAR(64) NOT NULL,
+	suffix VARCHAR(8),
+	maiden VARCHAR(64),
+	marital CHAR(1),
+	race VARCHAR(64) NOT NULL, 
+	ethnicity VARCHAR(64) NOT NULL,
+	gender CHAR(1) NOT NULL,
+	birthplace VARCHAR(64) NOT NULL,
+	address VARCHAR(64) NOT NULL,
+	city VARCHAR(64) NOT NULL,
+	state VARCHAR(64) NOT NULL,
+	zip VARCHAR(64)
 ) ;
 
-create table encounters (
-CID serial,											-- for CogStack compatibility
-ID uuid primary key not null,
-START timestamp not null,
-STOP timestamp,
-PATIENT uuid references patients,
-CODE varchar(64) not null,
-DESCRIPTION varchar(256) not null,
-COST real not null,
-REASONCODE varchar(64),
-REASONDESCRIPTION varchar(256),
-DOCUMENT text default 'none'						-- MTSamples document content
+CREATE TABLE encounters (
+	cid SERIAL,											-- extra field used for generating sample data
+	id UUID PRIMARY KEY NOT NULL,
+	start TIMESTAMP NOT NULL,
+	stop TIMESTAMP,
+	patient UUID REFERENCES patients,
+	code VARCHAR(64) NOT NULL,
+	description VARCHAR(256) NOT NULL,
+	cost REAL NOT NULL,
+	reasoncode VARCHAR(64),
+	reasondescription VARCHAR(256),
+	document TEXT DEFAULT 'none'						-- MTSamples document content
 ) ;
 
-create table observations (
-CID serial primary key,								-- for CogStack compatibility
-CREATED timestamp default current_timestamp,		-- (*)
-DATE date not null, 
-PATIENT uuid references patients,
-ENCOUNTER uuid references encounters,
-CODE varchar(64) not null,
-DESCRIPTION varchar(256) not null,
-VALUE varchar(64) not null,
-UNITS varchar(64),
-TYPE varchar(64) not null
+CREATE TABLE observations (								-- needed for CogStack Document data model:
+	cid SERIAL PRIMARY KEY,								-- > primary key
+	created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,		-- > document timestamp
+	date DATE NOT NULL, 
+	patient UUID REFERENCES patients,
+	encounter UUID REFERENCES encounters,
+	code VARCHAR(64) NOT NULL,
+	description VARCHAR(256) NOT NULL,
+	value VARCHAR(64) NOT NULL,
+	units VARCHAR(64),
+	type VARCHAR(64) NOT NULL
 ) ;
 
 
 /*
 
-Create view for CogStack
+Create view for CogStack Pipeline ingestion
 
 */
-create view observations_view as
-	 select
-		p.ID as patient_id, 
-		p.BIRTHDATE as patient_birth_date,
-		p.DEATHDATE as patient_death_date,
-		p.SSN as patient_SSN,
-		p.DRIVERS as patient_drivers,
-		p.PASSPORT as patient_passport,
-		p.PREFIX as patient_prefix,
-		p.FIRST as patient_first_name,
-		p.LAST as patient_last_name,
-		p.SUFFIX as patient_suffix,
-		p.MAIDEN as patient_maiden,
-		p.MARITAL as patient_marital,
-		p.RACE as patient_race,
-		p.ETHNICITY as patient_ethnicity,
-		p.GENDER as patient_gender,
-		p.BIRTHPLACE as patient_birthplace,
-		p.ADDRESS as patient_addr,
-		p.CITY as patient_city,
-		p.STATE as patient_state,
-		p.ZIP as patient_zip,
+CREATE VIEW observations_view AS
+	 SELECT
+		p.id AS patient_id, 
+		p.birthdate AS patient_birth_date,
+		p.deathdate AS patient_death_date,
+		p.ssn AS patient_ssn,
+		p.drivers AS patient_drivers,
+		p.passport AS patient_passport,
+		p.prefix AS patient_prefix,
+		p.first AS patient_first_name,
+		p.last AS patient_last_name,
+		p.suffix AS patient_suffix,
+		p.maiden AS patient_maiden,
+		p.marital AS patient_marital,
+		p.race AS patient_race,
+		p.ethnicity AS patient_ethnicity,
+		p.gender AS patient_gender,
+		p.birthplace AS patient_birthplace,
+		p.address AS patient_addr,
+		p.city AS patient_city,
+		p.state AS patient_state,
+		p.zip AS patient_zip,
 		
-		enc.ID as encounter_id,
-		enc.START as encounter_start,
-		enc.STOP as encounter_stop,
-		enc.CODE as encounter_code,
-		enc.DESCRIPTION as encounter_desc,
-		enc.COST as encounter_cost,
-		enc.REASONCODE as encounter_reason_code,
-		enc.REASONDESCRIPTION as encounter_reason_desc,
-		enc.DOCUMENT as encounter_document,
+		enc.id AS encounter_id,
+		enc.start AS encounter_start,
+		enc.stop AS encounter_stop,
+		enc.code AS encounter_code,
+		enc.description AS encounter_desc,
+		enc.cost AS encounter_cost,
+		enc.reasoncode AS encounter_reason_code,
+		enc.reasondescription AS encounter_reason_desc,
+		enc.document AS encounter_document,
 
-		obs.CID as observation_id,
-		obs.CREATED as observation_timestamp,
-		obs.DATE as observation_date,
-		obs.CODE as observation_code,
-		obs.DESCRIPTION as observation_desc,
-		obs.VALUE as observation_value,
-		obs.UNITS as observation_units,
-		obs.TYPE as observation_type
-	from 
+		obs.cid AS observation_id,
+		obs.created AS observation_timestamp,
+
+		obs.date AS observation_date,
+		obs.code AS observation_code,
+		obs.description AS observation_desc,
+		obs.value AS observation_value,
+		obs.units AS observation_units,
+		obs.type AS observation_type
+	FROM 
 		patients p, 
 		encounters enc,
 		observations obs
-	where 
-		enc.PATIENT = p.ID and
-		obs.PATIENT = p.ID and 
-    	obs.ENCOUNTER = enc.ID
+	WHERE 
+		enc.patient = p.id AND 
+		obs.patient = p.id AND 
+		obs.encounter = enc.id
 	;
