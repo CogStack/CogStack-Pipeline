@@ -56,7 +56,7 @@ parse_sql_insert_query () {
 	doc=$( cat $1 | awk 'BEGIN { RS="----"; } /^-/ { print RS $0; }' | sed -e "s/-----//" | sed -e "s/'/\\\'/g")
 
 	echo "INSERT INTO \
-			samples(SAMPLE_ID, TYPE, TYPE_ID, NAME, DESCRIPTION, DOCUMENT) \
+			mtsamples(SAMPLE_ID, TYPE, TYPE_ID, NAME, DESCRIPTION, DOCUMENT) \
 			VALUES($s_id, E'$type', $type_id, E'$name', E'$desc', E'$doc');"
 }
 

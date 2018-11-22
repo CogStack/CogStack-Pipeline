@@ -1,14 +1,14 @@
 /* 
-	creates schema of the DB for CogStack
+	Creates schema of the DB for CogStack
 */
 
-create table samples (
-CID serial primary key, 								-- for CogStack compatibility
-SAMPLE_ID integer not null,
-TYPE varchar(256) not null,
-TYPE_ID integer not null,
-NAME varchar(256) not null,
-DESCRIPTION text not null,
-DOCUMENT text not null,
-DCT timestamp default current_timestamp					-- (*)
+CREATE TABLE mtsamples (
+	cid SERIAL PRIMARY KEY, 								-- for CogStack Document data model
+	sample_id INTEGER NOT NULL,
+	type VARCHAR(256) NOT NULL,
+	type_id INTEGER NOT NULL,
+	name VARCHAR(256) NOT NULL,
+	description TEXT NOT NULL,
+	document TEXT NOT NULL,
+	dct TIMESTAMP DEFAULT CURRENT_TIMESTAMP					-- (*)
 ) ;
