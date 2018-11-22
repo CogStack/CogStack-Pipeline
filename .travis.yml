@@ -17,7 +17,7 @@ addons:
   apt:
     sources:
     # tesseract-ocr >= 4.0 is not available in the standard Xenial / Trusty distro
-    - ppa:alex-p/tesseract-ocr
+    - sourceline: 'ppa:alex-p/tesseract-ocr'
     packages:
       - tesseract-ocr
       - libtesseract-dev
