@@ -14,10 +14,10 @@ env:
   OMP_THREAD_LIMIT: 1
 
 addons:
-  sources:
+  apt:
+    sources:
     # tesseract-ocr >= 4.0 is not available in the standard Xenial / Trusty distro
     - ppa:alex-p/tesseract-ocr
-  apt:
     packages:
       - tesseract-ocr
       - libtesseract-dev
