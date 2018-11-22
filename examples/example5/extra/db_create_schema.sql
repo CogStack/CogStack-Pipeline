@@ -150,13 +150,6 @@ create view observations_view as
 
 		doc_proc.OUTPUT::json ->> 'X-PDFPREPROC-OCR-APPLIED' as document_ocr_status,
 		doc_proc.OUTPUT::json ->> 'tika_output' as document_tika_output
-
-		-- for CogStack compatibility
-		--'document_tika_output'::text as cog_src_field_name,     -- (a)
-		--'observations_view'::text as cog_src_table_name,  		-- (b)
-		--obs.CID as cog_pk,                                		-- (c)
-		--'cog_pk'::text as cog_pk_field_name,              		-- (d)
-		--obs.DCT as cog_update_time                       		-- (e)
 	from 
 		patients p, 
 		encounters enc,
