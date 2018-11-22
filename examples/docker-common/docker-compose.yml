@@ -39,7 +39,7 @@ services:
       - cogstack-job-repo
       - samples-db
       - elasticsearch-1
-    command: ./run_pipeline.sh /cogstack/cogstack-*.jar /cogstack/job_config
+    command: /cogstack/run_pipeline.sh /cogstack/cogstack-*.jar /cogstack/job_config
 
   cogstack-job-repo:
     image: postgres:11.1-alpine
