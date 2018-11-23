@@ -10,7 +10,8 @@ FROM openjdk:11-jdk-slim AS java-builder
 
 RUN apt-get update && \
 #	apt-get dist-upgrade -y && \
-	apt-get install -y tesseract-ocr && \
+#	apt-get install -y tesseract-ocr && \
+	apt-get install -y tesseract-ocr=4.0.0-1+b1 tesseract-ocr-eng=1:4.00~git30-7274cfa-1 tesseract-ocr-osd=1:4.00~git30-7274cfa-1 && \
 ###	apt-get install -y tesseract-ocr-osd=3.04.00-1 tesseract-ocr-eng=3.04.00-1 tesseract-ocr=3.04.01-5 && \
 	apt-get install -y imagemagick --fix-missing && \
 	apt-get clean autoclean && \
@@ -31,7 +32,8 @@ FROM openjdk:11-jre-slim AS java-runner
 
 RUN apt-get update && \
 #	apt-get dist-upgrade -y && \
-	apt-get install -y tesseract-ocr && \
+#	apt-get install -y tesseract-ocr && \
+	apt-get install -y tesseract-ocr=4.0.0-1+b1 tesseract-ocr-eng=1:4.00~git30-7274cfa-1 tesseract-ocr-osd=1:4.00~git30-7274cfa-1 && \
 ###	apt-get install -y tesseract-ocr-osd=3.04.00-1 tesseract-ocr-eng=3.04.00-1 tesseract-ocr=3.04.01-5 && \
 	apt-get install -y imagemagick --fix-missing && \
 	apt-get clean autoclean && \
