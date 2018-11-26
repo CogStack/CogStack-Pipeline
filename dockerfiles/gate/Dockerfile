@@ -20,4 +20,4 @@ RUN curl -L 'https://downloads.sourceforge.net/project/gate/gate/8.4.1/gate-8.4.
 ENV GATE_HOME=/gate/home
 
 # switch to CogStack main directory
-WORKDIR /cogstack/
+WORKDIR /cogstack
