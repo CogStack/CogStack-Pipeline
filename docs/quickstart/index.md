@@ -355,7 +355,7 @@ CREATE TABLE observations (
 
 ```
 
-Here, with `--(*)` have been marked two additional fields with auto-generated values. These are: `cid` -- an automatically generated primary key and `created` -- when the record was created. They will be later used by CogStack pipeline for data partitioning when processing the records. The `patient` and `encounters` tables have their primary keys (`ID` field) already defined (of `UUID` type) and are included in the input CSV files.
+Here, with `--(*)` have been marked two additional fields with auto-generated values. These are: `cid` field -- an automatically generated primary key and `created` field -- when the record was created. They will be later used by CogStack pipeline for data partitioning when processing the records. The `patient` and `encounters` tables have their primary keys (`ID` field) already defined (of `UUID` type) and are included in the input CSV files.
 
 
 ## Database schema -- views
@@ -448,19 +448,21 @@ spring.profiles.active = jdbc_in,elasticsearchRest,localPartitioning
 which denotes that only such profiles will be active:
 * `jdbc_in` for JDBC input database connector, 
 * `elasticsearchRest` for using REST API for inserting documents to ElasticSearch,
-* local `partitioning` functionality (for data processing) -- this property is optional, as `localPartitioning` will be used by default.
+* local `partitioning` functionality (for data processing).
+
+As a side note, specifying `localPartitioning` is optional, as, when not defined, `localPartitioning` will be used by default. We keep it here for clarity, as one of the obligatory properties to specify are the partitioner configuration.
 
 
 ### Data source
 
 The parameters for specifying the data source are defined as follows:
 ```properties
-source.JdbcPath = jdbc:postgresql://pgsamples:5432/db_samples
+source.JdbcPath = jdbc:postgresql://samples-db:5432/db_samples
 source.Driver = org.postgresql.Driver
 source.username = test
 source.password = test
 ```
-In this example we are using a PostgreSQL database which driver is defined by `source.Driver` parameter. The PostgreSQL database service is available in the CogStack ecosystem as `pgsamples`, has exposed port `5432` and the sample database name is `db_samples` -- all these details need to be included in the `source.JdbcPath` parameter field. The information about the data source host and port directly corresponds to the `pgsamples` microservice configuration specified in the Docker Compose file (`examples/example2/docker/docker-compose.yml`) as mentioned in the [Running CogStack](#running-cogstack) part.
+In this example we are using a PostgreSQL database which driver is defined by `source.Driver` parameter. The PostgreSQL database service is available in the CogStack ecosystem as `samples-db`, has exposed port `5432` and the sample database name is `db_samples` -- all these details need to be included in the `source.JdbcPath` parameter field. The information about the data source host and port directly corresponds to the `samples-db` microservice configuration specified in the Docker Compose files (see: `examples/docker-base/docker-compose.yml` and `examples/example2/docker/docker-compose.override.yml`) as mentioned in the [Running CogStack](#running-cogstack) part.
 
 
 Next, we need to instruct CogStack workers how to query the records from the data source:
@@ -481,7 +483,7 @@ This is where the previously defined `observations_view` with additional CogStac
 
 Next, we need to define the data sink -- in our example, and by default, ElasticSearch is being used:
 ```properties
-elasticsearch.cluster.host = elasticsearch
+elasticsearch.cluster.host = elasticsearch-1
 elasticsearch.cluster.port = 9200
 ```
 Similarly, as when defining the sample database source, we need to provide the ElasticSearch host and port configuration according to the microservices definition in the corresponding Docker Compose file.
@@ -499,9 +501,9 @@ We specify the index name which will be used to store the documents processed by
 
 ### Jobs and CogStack workers configuration
 
-CogStack engine in order to coordinate the workers needs to keep the information about the current jobs in an additional PostgreSQL database -- `postgres`. Hence, similarly as when defining the source database, this database needs to specified:
+CogStack engine in order to coordinate the workers needs to keep the information about the current jobs in an additional PostgreSQL database -- `cogstack-job-repo`. Hence, similarly as when defining the source database, this database needs to specified:
 ```properties
-jobRepository.JdbcPath = jdbc:postgresql://postgres:5432/cogstack
+jobRepository.JdbcPath = jdbc:postgresql://cogstack-job-repo:5432/cogstack
 jobRepository.Driver = org.postgresql.Driver
 jobRepository.username = cogstack
 jobRepository.password = mysecretpassword
@@ -530,7 +532,7 @@ partitioner.tableToPartition = observations_view
 partitioner.pkColumnName = observations_id
 partitioner.timeStampColumnName = observations_timestamp
 ```
-In the current implementation, CogStack engine can only partition the data using the records' primary key (`observations_id` field, containing unique values) and records' update time (`observations_timestamp` field) as defined in `observations_view`. This is specified by `PKTimeStamp` partitioning method type (default value).
+In the current implementation, CogStack engine can only partition the data using the records' primary key (`observations_id` field, containing unique values) and records' update time (`observations_timestamp` field) as defined in `observations_view`. This is specified by `PKTimeStamp` partitioning method type (the default value).
 
 
 Apart from data partitioning, it once can also set up the scheduler. Although it is disabled by default (`scheduler.useScheduling=false`), it can be easily configured. In this example we do not use scheduler, since we ingest EHRs from the data source only once. However, in case when the data is being generated in a continuous way, scheduler should be enabled to periodically run CogStack jobs to process the new EHRs.

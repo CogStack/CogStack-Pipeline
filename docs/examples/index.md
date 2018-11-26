@@ -442,7 +442,10 @@ As a result, a temporary directory `__deploy/` will be created containing all th
 
 ## Docker-based deployment
 
-Next, we can proceed to deploy CogStack ecosystem using Docker Compose. It will configure and start microservices based on the provided Compose file: `examples/example*/docker/docker-compose.yml`. Moreover, the PostgreSQL database container comes with pre-initialized database dump ready to be loaded directly into. In order to run CogStack, type in the `examples/example*/__deploy/` directory:
+Next, we can proceed to deploy CogStack ecosystem using Docker Compose. It will configure and start microservices based on the Docker Compose files:
+- the common services base configuration file:`examples/docker-common/docker-compose.yml`,
+- the example-specific services configuration file: `examples/example*/docker/docker-compose.override.yml`. 
+Moreover, the PostgreSQL database container comes with pre-initialized database dump ready to be loaded directly into. In order to run CogStack, type in the `examples/example*/__deploy/` directory:
 ```bash
 docker-compose up
 ```
@@ -740,7 +743,7 @@ Next, we need to define the data sink -- in our example, and by default, Elastic
 elasticsearch.cluster.host = elasticsearch-1
 elasticsearch.cluster.port = 9200
 ```
-Similarly, as when defining the sample database source, we need to provide the ElasticSearch host and port configuration according to the microservices definition in the corresponding Docker Compose file (see `examples/example1/docker/docker-compose.yml`).
+Similarly, as when defining the sample database source, we need to provide the ElasticSearch host and port configuration according to the microservices definition in the corresponding Docker Compose file (see: `examples/docker-common/docker-compose.yml` and `examples/example1/docker/docker-compose.override.yml`).
 
 
 In the next step, we specify the ElasticSearch indexing parameters (optional):
