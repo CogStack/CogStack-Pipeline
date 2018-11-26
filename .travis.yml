@@ -1,6 +1,9 @@
+dist: xenial
+
 language: java
 jdk:
   - openjdk11
+
 sudo: required
 
 services:
@@ -8,9 +11,13 @@ services:
 
 env:
   DOCKER_COMPOSE_VERSION: 1.14.0
+  OMP_THREAD_LIMIT: 1
 
 addons:
   apt:
+    sources:
+    # tesseract-ocr >= 4.0 is not available in the standard Xenial / Trusty distro
+    - sourceline: 'ppa:alex-p/tesseract-ocr'
     packages:
       - tesseract-ocr
       - libtesseract-dev

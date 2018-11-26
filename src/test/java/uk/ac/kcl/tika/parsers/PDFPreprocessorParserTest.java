@@ -105,7 +105,6 @@ public class PDFPreprocessorParserTest {
         //assertEquals(PDFPreprocessorParser.class, defaultParser.getParsers(parseContext).get(pdf).getClass());
     }
     
-    @Ignore
     @Test
     public void testParseRequiringOCR() throws Exception {
         System.out.println("parse");
