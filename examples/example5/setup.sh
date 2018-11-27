@@ -21,7 +21,7 @@ mkdir $DEPLOY_DIR
 
 # used services
 #
-services=(postgres
+services=(pgjobrepo
 	pgsamples
 	elasticsearch
 	kibana)
@@ -69,7 +69,7 @@ for dt in ${doc_types[@]}; do
 	mkdir "${dp}/$COGSTACK_OUT_DIR"
 
 	cp -r cogstack/* "${dp}/$COGSTACK_OUT_DIR/"
-	#cp cogstack/test2.sh "${dp}/$COGSTACK_OUT_DIR/"
+	cp cogstack/run_pipeline.sh "${dp}/$COGSTACK_OUT_DIR/"
 
 	# copy docker files
 	#

@@ -8,146 +8,146 @@ Uses schema specified by:
 
 -- postgres-specific syntax; for mysql use 'create type ...'
 --create domain key_type as char(36) not null;
-create domain key_type as uuid not null;
-create domain text_type as varchar(256); 
+CREATE DOMAIN KEY_TYPE AS UUID NOT NULL;
+CREATE DOMAIN TEXT_TYPE AS VARCHAR(256); 
 
-create table patients (
-ID key_type primary key,
-BIRTHDATE date not null, 
-DEATHDATE date, 
-SSN varchar(64) not null, 
-DRIVERS varchar(64),
-PASSPORT varchar(64),
-PREFIX varchar(8),
-FIRST varchar(64) not null,
-LAST varchar(64) not null,
-SUFFIX varchar(8),
-MAIDEN varchar(64),
-MARITAL char(1),
-RACE varchar(64) not null, 
-ETHNICITY varchar(64) not null,
-GENDER char(1) not null,
-BIRTHPLACE varchar(64) not null,
-ADDRESS varchar(64) not null,
-CITY varchar(64) not null,
-STATE varchar(64) not null,
-ZIP varchar(64)--, -- not null 						-- not matching with the specs
+CREATE TABLE patients (
+	id KEY_TYPE PRIMARY KEY,
+	birthdate DATE NOT NULL, 
+	deathdate DATE, 
+	ssn VARCHAR(64) NOT NULL, 
+	drivers VARCHAR(64),
+	passport VARCHAR(64),
+	prefix VARCHAR(8),
+	first VARCHAR(64) NOT NULL,
+	last VARCHAR(64) NOT NULL,
+	suffix VARCHAR(8),
+	maiden VARCHAR(64),
+	marital CHAR(1),
+	race VARCHAR(64) NOT NULL, 
+	ethnicity VARCHAR(64) NOT NULL,
+	gender CHAR(1) NOT NULL,
+	birthplace VARCHAR(64) NOT NULL,
+	address VARCHAR(64) NOT NULL,
+	city VARCHAR(64) NOT NULL,
+	state VARCHAR(64) NOT NULL,
+	zip VARCHAR(64) -- NOT NULL 						-- not matching with the specs
 ) ;
 
-create table encounters (
-ID key_type primary key not null,
-START timestamp not null,
-STOP timestamp,
-PATIENT key_type references patients,
-CODE varchar(64) not null,
-DESCRIPTION text_type not null,
-COST real not null,
-REASONCODE varchar(64),
-REASONDESCRIPTION text_type
+CREATE TABLE encounters (
+	id KEY_TYPE PRIMARY KEY NOT NULL,
+	start TIMESTAMP NOT NULL,
+	stop TIMESTAMP,
+	patient KEY_TYPE REFERENCES patients,
+	code VARCHAR(64) NOT NULL,
+	description TEXT_TYPE NOT NULL,
+	cost REAL NOT NULL,
+	reasoncode VARCHAR(64),
+	reasondescription TEXT_TYPE
 ) ;
 
-create table observations (
-CID serial primary key,								-- for CogStack compatibility
-DCT timestamp default current_timestamp,			-- (*)
-DATE date not null, 
-PATIENT key_type references patients,
-ENCOUNTER key_type references encounters,
-CODE varchar(64) not null,
-DESCRIPTION text_type not null,
-VALUE varchar(64) not null,
-UNITS varchar(64),
-TYPE varchar(64) not null
+CREATE TABLE observations (
+	cid SERIAL PRIMARY KEY,								-- for CogStack compatibility
+	created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,		-- (*)
+	date DATE NOT NULL, 
+	patient KEY_TYPE REFERENCES patients,
+	encounter KEY_TYPE REFERENCES encounters,
+	code VARCHAR(64) NOT NULL,
+	description TEXT_TYPE NOT NULL,
+	value VARCHAR(64) NOT NULL,
+	units VARCHAR(64),
+	type VARCHAR(64) NOT NULL
 ) ;
 
-create table procedures (
-CID serial primary key,								-- for CogStack compatibility
-DCT timestamp default current_timestamp,			-- (*)
-DATE date not null,
-PATIENT key_type references patients,
-ENCOUNTER key_type references encounters,
-CODE varchar(64) not null,
-DESCRIPTION	text_type not null,
-COST real not null,
-REASONCODE varchar(64),
-REASONDESCRIPTION text_type
+CREATE TABLE procedures (
+	cid SERIAL PRIMARY KEY,								-- for CogStack compatibility
+	created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,		-- (*)
+	date DATE NOT NULL,
+	patient KEY_TYPE REFERENCES patients,
+	encounter KEY_TYPE REFERENCES encounters,
+	code VARCHAR(64) NOT NULL,
+	description	TEXT_TYPE NOT NULL,
+	cost REAL NOT NULL,
+	reasoncode VARCHAR(64),
+	reasondescription TEXT_TYPE
 ) ;
 
-create table medications (
-CID serial primary key,								-- for CogStack compatibility
-DCT timestamp default current_timestamp,			-- (*)
-START date not null,
-STOP date,
-PATIENT key_type references patients,
-ENCOUNTER key_type references encounters,
-CODE varchar(64) not null,
-DESCRIPTION text_type not null,
-COST numeric not null,
-DISPENSES numeric not null,
-TOTALCOST numeric not null,
-REASONCODE varchar(64),
-REASONDESCRIPTION text_type
+CREATE TABLE medications (
+	cid SERIAL PRIMARY KEY,								-- for CogStack compatibility
+	created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,		-- (*)
+	start DATE NOT NULL,
+	stop DATE,
+	patient KEY_TYPE REFERENCES patients,
+	encounter KEY_TYPE REFERENCES encounters,
+	code VARCHAR(64) NOT NULL,
+	description TEXT_TYPE NOT NULL,
+	cost NUMERIC NOT NULL,
+	dispenses NUMERIC NOT NULL,
+	totalcost NUMERIC NOT NULL,
+	reasoncode VARCHAR(64),
+	reasondescription TEXT_TYPE
 ) ;
 
-create table immunizations (
-CID serial primary key,								-- for CogStack compatibility
-DCT timestamp default current_timestamp,			-- (*)
-DATE date not null,
-PATIENT key_type references patients,
-ENCOUNTER key_type references encounters,
-CODE varchar(64) not null,
-DESCRIPTION text_type not null,
-COST numeric not null
+CREATE TABLE immunizations (
+	cid SERIAL PRIMARY KEY,								-- for CogStack compatibility
+	created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,		-- (*)
+	date DATE NOT NULL,
+	patient KEY_TYPE REFERENCES patients,
+	encounter KEY_TYPE REFERENCES encounters,
+	code VARCHAR(64) NOT NULL,
+	description TEXT_TYPE NOT NULL,
+	cost NUMERIC NOT NULL
 ) ;
 
-create table imaging_studies (
-CID serial,-- primary key,							-- TODO: check if ID field will be sufficient
-DCT timestamp default current_timestamp,			-- (*)
-ID key_type primary key,
-DATE date not null,
-PATIENT key_type references patients,
-ENCOUNTER key_type references encounters,
-BODYSITE_CODE varchar(64) not null,
-BODYSITE_DESCRIPTION varchar(64) not null,
-MODALITY_CODE varchar(64) not null,
-MODALITY_DESCRIPTION varchar(64) not null,
-SOP_CODE varchar(64) not null,
-SOP_DESCRIPTION varchar(64) not null
+CREATE TABLE imaging_studies (
+	cid SERIAL,-- PRIMARY KEY,							-- TODO: CHECK IF ID FIELD WILL BE SUFFICIENT
+	created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,		-- (*)
+	id KEY_TYPE PRIMARY KEY,
+	date DATE NOT NULL,
+	patient KEY_TYPE REFERENCES patients,
+	encounter KEY_TYPE REFERENCES encounters,
+	bodysite_code VARCHAR(64) NOT NULL,
+	bodysite_description VARCHAR(64) NOT NULL,
+	modality_code VARCHAR(64) NOT NULL,
+	modality_description VARCHAR(64) NOT NULL,
+	sop_code VARCHAR(64) NOT NULL,
+	sop_description VARCHAR(64) NOT NULL
 ) ;
 
-create table careplans (
-CID serial,-- primary key,							-- TODO: check if ID field will be sufficient
-DCT timestamp default current_timestamp,			-- (*)
-ID key_type primary key,
-START date not null,
-STOP date,
-PATIENT key_type references patients,
-ENCOUNTER key_type references encounters,
-CODE varchar(64) not null,
-DESCRIPTION text_type not null,
-REASONCODE varchar(64), --not null, 				-- not matching with the specs
-REASONDESCRIPTION text_type --not null, 			-- not matching with the specs
+CREATE TABLE careplans (
+	cid SERIAL,-- PRIMARY KEY,							-- TODO: CHECK IF ID FIELD WILL BE SUFFICIENT
+	created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,		-- (*)
+	id KEY_TYPE PRIMARY KEY,
+	start DATE NOT NULL,
+	stop DATE,
+	patient KEY_TYPE REFERENCES patients,
+	encounter KEY_TYPE REFERENCES encounters,
+	code VARCHAR(64) NOT NULL,
+	description TEXT_TYPE NOT NULL,
+	reasoncode VARCHAR(64), -- NOT NULL, 				-- not matching with the specs
+	reasondescription TEXT_TYPE -- NOT NULL, 			-- not matching with the specs
 ) ;
 
-create table allergies (
-CID serial primary key,								-- for CogStack compatibility
-DCT timestamp default current_timestamp,			-- (*)
-START date not null,
-STOP date,
-PATIENT key_type references patients,
-ENCOUNTER key_type references encounters,
-CODE varchar(64) not null,
-DESCRIPTION text_type not null
+CREATE TABLE allergies (
+	cid SERIAL PRIMARY KEY,								-- for CogStack compatibility
+	created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,		-- (*)
+	start DATE NOT NULL,
+	stop DATE,
+	patient KEY_TYPE REFERENCES patients,
+	encounter KEY_TYPE REFERENCES encounters,
+	code VARCHAR(64) NOT NULL,
+	description TEXT_TYPE NOT NULL
 ) ;
 
-create table conditions (
-CID serial primary key,								-- for CogStack compatibility
-DCT timestamp default current_timestamp,			-- (*)
-START date not null,
-STOP date,
-PATIENT key_type references patients,
-ENCOUNTER key_type references encounters,
-CODE varchar(64) not null,
-DESCRIPTION text_type not null
+CREATE TABLE conditions (
+	cid SERIAL PRIMARY KEY,								-- for CogStack compatibility
+	created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,		-- (*)
+	start DATE NOT NULL,
+	stop DATE,
+	patient KEY_TYPE REFERENCES patients,
+	encounter KEY_TYPE REFERENCES encounters,
+	code VARCHAR(64) NOT NULL,
+	description TEXT_TYPE NOT NULL
 ) ;
 
 
@@ -160,43 +160,44 @@ Create views for CogStack
 
 /* Main patient-encounters view
 */
-create view patient_encounters_view as
-	 select
-		p.ID as patient_id, 
-		p.BIRTHDATE as patient_birth_date,
-		p.DEATHDATE as death_date,
-		p.SSN as patient_SSN,
-		p.DRIVERS as patient_drivers,
-		p.PASSPORT as patient_passport,
-		p.PREFIX as patient_prefix,
-		p.FIRST as patient_first_name,
-		p.LAST as patient_last_name,
-		p.SUFFIX as patient_suffix,
-		p.MAIDEN as patient_maiden,
-		p.MARITAL as patient_marital,
-		p.RACE as patient_race,
-		p.ETHNICITY as patient_ethnicity,
-		p.GENDER as patient_gender,
-		p.BIRTHPLACE as patient_birthplace,
-		p.ADDRESS as patient_addr,
-		p.CITY as patient_city,
-		p.STATE as patient_state,
-		p.ZIP as patient_zip,
+CREATE VIEW patient_encounters_view AS
+	 SELECT
+		p.id AS patient_id, 
+		p.birthdate AS patient_birth_date,
+		p.deathdate AS death_date,
+		p.ssn AS patient_ssn,
+		p.drivers AS patient_drivers,
+		p.passport AS patient_passport,
+		p.prefix AS patient_prefix,
+		p.first AS patient_first_name,
+		p.last AS patient_last_name,
+		p.suffix AS patient_suffix,
+		p.maiden AS patient_maiden,
+		p.marital AS patient_marital,
+		p.race AS patient_race,
+		p.ethnicity AS patient_ethnicity,
+		p.gender AS patient_gender,
+		p.birthplace AS patient_birthplace,
+		p.address AS patient_addr,
+		p.city AS patient_city,
+		p.state AS patient_state,
+		p.zip AS patient_zip,
 		
-		enc.ID as encounter_id,
-		enc.START as encounter_start,
-		enc.STOP as encounter_stop,
-		enc.CODE as encounter_code,
-		enc.DESCRIPTION as encounter_desc,
-		enc.COST as encounter_cost,
-		enc.REASONCODE as encounter_reason_code,
-		enc.REASONDESCRIPTION as encounter_reason_desc
-	from 
+		enc.id AS encounter_id,
+		enc.start AS encounter_start,
+		enc.stop AS encounter_stop,
+		enc.code AS encounter_code,
+		enc.description AS encounter_desc,
+		enc.cost AS encounter_cost,
+		enc.reasoncode AS encounter_reason_code,
+		enc.reasondescription AS encounter_reason_desc
+	FROM 
 		patients p, 
 		encounters enc
-	where 
-		enc.PATIENT = p.ID
+	WHERE 
+		enc.patient = p.id
 	;
+
 
 
 /* Auxiliary views created as joins with patients and encounters
@@ -205,43 +206,39 @@ create view patient_encounters_view as
 
 /* Function to create views joined with patients_encounters view
 */
-create or replace function create_paenc_view(table_name varchar(32)) returns void 
-	as $func$
-declare
+CREATE OR REPLACE FUNCTION create_paenc_view(table_name varchar(32)) RETURNS VOID 
+	AS $func$
+DECLARE
 	view_name varchar(64);
-begin
+BEGIN
 	view_name = table_name || '_view';
-	execute format(E'
-		create or replace view %I as 
-		select 
+	EXECUTE FORMAT(E'
+		CREATE OR REPLACE VIEW %I AS 
+		SELECT 
 			patient_encounters_view.*, 
 			%I.*,
-
-			\'src_field_name\'::text as cog_src_field_name,
-			''%I''::text as cog_src_table_name,
-			%I.CID as cog_pk,
-			\'cog_pk\'::text as cog_pk_field_name,
-			%I.DCT as cog_update_time
-		from 
+			%I.cid AS cog_pk,
+			%I.created as cog_timestamp
+		FROM 
 			patient_encounters_view 
-		join 
+		JOIN 
 			%I
 		on 
-			%I.PATIENT = patient_encounters_view.patient_id and 
-			%I.ENCOUNTER = patient_encounters_view.encounter_id 
+			%I.patient = patient_encounters_view.patient_id AND 
+			%I.encounter = patient_encounters_view.encounter_id 
 		', 
-		view_name, table_name, view_name, table_name, table_name, table_name, table_name, table_name, table_name);
-end
-$func$ language plpgsql;
+		view_name, table_name, table_name, table_name, table_name, table_name, table_name, table_name);
+END
+$func$ LANGUAGE PLPGSQL;
 
 
 /* Create the rest of views
 */
-select create_paenc_view('observations');
-select create_paenc_view('procedures');
-select create_paenc_view('medications');
-select create_paenc_view('immunizations');
-select create_paenc_view('imaging_studies');
-select create_paenc_view('careplans');
-select create_paenc_view('allergies');
-select create_paenc_view('conditions');
+SELECT create_paenc_view('observations');
+SELECT create_paenc_view('procedures');
+SELECT create_paenc_view('medications');
+SELECT create_paenc_view('immunizations');
+SELECT create_paenc_view('imaging_studies');
+SELECT create_paenc_view('careplans');
+SELECT create_paenc_view('allergies');
+SELECT create_paenc_view('conditions');

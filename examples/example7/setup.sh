@@ -34,7 +34,7 @@ cp $DB_DUMP_FILE $DB_OUT_DIR/
 
 # used services
 #
-services=(postgres
+services=(pgjobrepo
 	pgsamples
 	elasticsearch
 	kibana

@@ -6,171 +6,147 @@ Uses schema specified by:
 
 */
 
-create table patients (
-ID uuid primary key,
-BIRTHDATE date not null, 
-DEATHDATE date, 
-SSN varchar(64) not null, 
-DRIVERS varchar(64),
-PASSPORT varchar(64),
-PREFIX varchar(8),
-FIRST varchar(64) not null,
-LAST varchar(64) not null,
-SUFFIX varchar(8),
-MAIDEN varchar(64),
-MARITAL char(1),
-RACE varchar(64) not null, 
-ETHNICITY varchar(64) not null,
-GENDER char(1) not null,
-BIRTHPLACE varchar(64) not null,
-ADDRESS varchar(64) not null,
-CITY varchar(64) not null,
-STATE varchar(64) not null,
-ZIP varchar(64)
+CREATE TABLE patients (
+	id UUID PRIMARY KEY,
+	birthdate DATE NOT NULL, 
+	deathdate DATE, 
+	ssn VARCHAR(64) NOT NULL, 
+	drivers VARCHAR(64),
+	passport VARCHAR(64),
+	prefix VARCHAR(8),
+	first VARCHAR(64) NOT NULL,
+	last VARCHAR(64) NOT NULL,
+	suffix VARCHAR(8),
+	maiden VARCHAR(64),
+	marital CHAR(1),
+	race VARCHAR(64) NOT NULL, 
+	ethnicity VARCHAR(64) NOT NULL,
+	gender CHAR(1) NOT NULL,
+	birthplace VARCHAR(64) NOT NULL,
+	address VARCHAR(64) NOT NULL,
+	city VARCHAR(64) NOT NULL,
+	state VARCHAR(64) NOT NULL,
+	zip VARCHAR(64)
 ) ;
 
-create table medical_reports (
-CID integer primary key,
-SAMPLEID integer not null,
-TYPEID integer not null,
-DCT timestamp not null,
-FILENAME varchar(256) not null,
-BINARYDOC bytea not null
+CREATE TABLE medical_reports (
+	cid INTEGER PRIMARY KEY,
+	sampleid INTEGER NOT NULL,
+	typeid INTEGER NOT NULL,
+	dct TIMESTAMP NOT NULL,
+	filename VARCHAR(256) NOT NULL,
+	binarydoc BYTEA NOT NULL
 ) ;
 
-create table medical_reports_processed (
-CID integer references medical_reports,
-DCT timestamp not null,
-OUTPUT text
+CREATE TABLE medical_reports_processed (
+	cid INTEGER REFERENCES medical_reports,
+	dct TIMESTAMP NOT NULL,
+	output TEXT
 ) ;
 
-create table encounters (
-CID serial not null,										-- for CogStack compatibility
-ID uuid primary key,
-START timestamp not null,
-STOP timestamp,
-PATIENT uuid references patients,
-CODE varchar(64) not null,
-DESCRIPTION varchar(256) not null,
-COST real not null,
-REASONCODE varchar(64),
-REASONDESCRIPTION varchar(256),
-DOCUMENTID integer											-- MTSamples document content
+CREATE TABLE encounters (
+	cid SERIAL NOT NULL,										-- for CogStack compatibility
+	id UUID PRIMARY KEY,
+	start TIMESTAMP NOT NULL,
+	stop TIMESTAMP,
+	patient UUID REFERENCES patients,
+	code VARCHAR(64) NOT NULL,
+	description VARCHAR(256) NOT NULL,
+	cost REAL NOT NULL,
+	reasoncode VARCHAR(64),
+	reasondescription VARCHAR(256),
+	documentid INTEGER											-- MTSamples document content
 ) ;
 
-create table observations (
-CID serial primary key,										-- for CogStack compatibility
-DCT timestamp default current_timestamp,					-- (*)
-DATE date not null, 
-PATIENT uuid references patients,
-ENCOUNTER uuid references encounters,
-CODE varchar(64) not null,
-DESCRIPTION varchar(256) not null,
-VALUE varchar(64) not null,
-UNITS varchar(64),
-TYPE varchar(64) not null
+CREATE TABLE observations (
+	cid SERIAL PRIMARY KEY,										-- for CogStack compatibility
+	created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,				-- (*)
+	date DATE NOT NULL, 
+	patient UUID REFERENCES patients,
+	encounter UUID REFERENCES encounters,
+	code VARCHAR(64) NOT NULL,
+	description VARCHAR(256) NOT NULL,
+	value VARCHAR(64) NOT NULL,
+	units VARCHAR(64),
+	type VARCHAR(64) NOT NULL
 ) ;
 
 
 
 /*
 
-Create view for CogStack
+  Create views for CogStack
 
 */
-create view reports_binary_view as 
-	select 
-		CID,
-		SAMPLEID,
-		TYPEID,
-		DCT,
-		FILENAME,
-
-		-- for CogStack compatibility -- meta-data
-		'BINARYDOC'::text as cog_src_field_name,			-- (*)
-		'reports_binary_view'::text as cog_src_table_name,	-- (*)
-		CID as cog_pk,										-- (*)
-		'cog_pk'::text as cog_pk_field_name,				-- (*)
-		DCT as cog_update_time,								-- (*)
-		BINARYDOC as cog_binary_doc							-- (*)
-	from 
-		medical_reports 
-	;
-
-create view reports_processed_view as
-	select 
-		CID,
-		DCT,
-		OUTPUT::json ->> 'X-PDFPREPROC-OCR-APPLIED' as OCR_STATUS,
-		OUTPUT::json ->> 'tika_output' as TIKA_OUTPUT
-	from
+CREATE VIEW reports_processed_view AS
+	SELECT 
+		cid,
+		dct,
+		output::JSON ->> 'X-PDFPREPROC-OCR-APPLIED' AS ocr_status,
+		output::JSON ->> 'tika_output' AS tika_output
+	FROM
 		medical_reports_processed
 	;
 
-create view observations_view as
-	 select
-		p.ID as patient_id, 
-		p.BIRTHDATE as patient_birth_date,
-		p.DEATHDATE as death_date,
-		p.SSN as patient_SSN,
-		p.DRIVERS as patient_drivers,
-		p.PASSPORT as patient_passport,
-		p.PREFIX as patient_prefix,
-		p.FIRST as patient_first_name,
-		p.LAST as patient_last_name,
-		p.SUFFIX as patient_suffix,
-		p.MAIDEN as patient_maiden,
-		p.MARITAL as patient_marital,
-		p.RACE as patient_race,
-		p.ETHNICITY as patient_ethnicity,
-		p.GENDER as patient_gender,
-		p.BIRTHPLACE as patient_birthplace,
-		p.ADDRESS as patient_addr,
-		p.CITY as patient_city,
-		p.STATE as patient_state,
-		p.ZIP as patient_zip,
+CREATE VIEW observations_view AS
+	 SELECT
+		p.id AS patient_id, 
+		p.birthdate AS patient_birth_date,
+		p.deathdate AS death_date,
+		p.ssn AS patient_ssn,
+		p.drivers AS patient_drivers,
+		p.passport AS patient_passport,
+		p.prefix AS patient_prefix,
+		p.first AS patient_first_name,
+		p.last AS patient_last_name,
+		p.suffix AS patient_suffix,
+		p.maiden AS patient_maiden,
+		p.marital AS patient_marital,
+		p.race AS patient_race,
+		p.ethnicity AS patient_ethnicity,
+		p.gender AS patient_gender,
+		p.birthplace AS patient_birthplace,
+		p.address AS patient_addr,
+		p.city AS patient_city,
+		p.state AS patient_state,
+		p.zip AS patient_zip,
 		
-		enc.ID as encounter_id,
-		enc.START as encounter_start,
-		enc.STOP as encounter_stop,
-		enc.CODE as encounter_code,
-		enc.DESCRIPTION as encounter_desc,
-		enc.COST as encounter_cost,
-		enc.REASONCODE as encounter_reason_code,
-		enc.REASONDESCRIPTION as encounter_reason_desc,
+		enc.id AS encounter_id,
+		enc.start AS encounter_start,
+		enc.stop AS encounter_stop,
+		enc.code AS encounter_code,
+		enc.description AS encounter_desc,
+		enc.cost AS encounter_cost,
+		enc.reasoncode AS encounter_reason_code,
+		enc.reasondescription AS encounter_reason_desc,
 
-		obs.DATE as observation_date,
-		obs.CODE as observation_code,
-		obs.DESCRIPTION as observation_desc,
-		obs.VALUE as observation_value,
-		obs.UNITS as observation_units,
-		obs.TYPE as observation_type,
+		obs.cid AS observation_id,
+		obs.created AS observation_timestamp,
+		obs.date AS observation_date,
+		obs.code AS observation_code,
+		obs.description AS observation_desc,
+		obs.value AS observation_value,
+		obs.units AS observation_units,
+		obs.type AS observation_type,
 
-		doc_bin.CID as document_id,
-		doc_bin.SAMPLEID as document_sample_id,
-		doc_bin.TYPEID as document_type_id,
-		doc_bin.DCT as document_dct,
-		doc_bin.FILENAME as document_filename,
+		doc_bin.cid AS document_id,
+		doc_bin.sampleid AS document_sample_id,
+		doc_bin.typeid AS document_type_id,
+		doc_bin.dct AS document_timestamp,
+		doc_bin.filename AS document_filename,
 
-		doc_proc.OUTPUT::json ->> 'X-PDFPREPROC-OCR-APPLIED' as document_ocr_status,
-		doc_proc.OUTPUT::json ->> 'tika_output' as document_tika_output,
-
-		-- for CogStack compatibility
-		'document_tika_output'::text as cog_src_field_name,     -- (a)
-		'observations_view'::text as cog_src_table_name,  		-- (b)
-		obs.CID as cog_pk,                                		-- (c)
-		'cog_pk'::text as cog_pk_field_name,              		-- (d)
-		obs.DCT as cog_update_time                       		-- (e)
-	from 
+		doc_proc.output::JSON ->> 'X-PDFPREPROC-OCR-APPLIED' AS document_ocr_status,
+		doc_proc.output::JSON ->> 'tika_output' AS document_tika_output
+	FROM 
 		patients p, 
 		encounters enc,
 		observations obs,
 		medical_reports doc_bin,
 		medical_reports_processed doc_proc
-	where 
-		enc.PATIENT = p.ID and
-		obs.PATIENT = p.ID and 
-    	obs.ENCOUNTER = enc.ID and
-    	enc.DOCUMENTID = doc_bin.CID and
-    	doc_proc.CID = doc_bin.CID
+	WHERE 
+		enc.patient = p.id AND
+		obs.patient = p.id AND 
+		obs.encounter = enc.id AND
+		enc.documentid = doc_bin.cid AND
+		doc_proc.cid = doc_bin.cid
 	;
