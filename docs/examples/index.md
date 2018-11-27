@@ -80,8 +80,9 @@ Each of the examples is organized in a way that it can be deployed and run indep
 │   │       └── nginx.conf
 │   ├── pgsamples
 │   │   └── init_db.sh
-│   └── postgres
-│       └── create_repo.sh
+│   ├── pgjobrepo
+│   │   └── create_repo.sh
+│   └── docker.compose.yml   
 │
 ├── example1
 │   ├── cogstack
@@ -89,7 +90,7 @@ Each of the examples is organized in a way that it can be deployed and run indep
 │   ├── db_dump
 │   │   └── db_samples.sql.gz
 │   ├── docker
-│   │   └── docker-compose.yml
+│   │   └── docker-compose.override.yml
 │   ├── extra
 │   │   ├── db_create_schema.sql
 │   │   └── prepare_db.sh
@@ -101,7 +102,7 @@ Each of the examples is organized in a way that it can be deployed and run indep
 │   ├── db_dump
 │   │   └── db_samples.sql.gz
 │   ├── docker
-│   │   └── docker-compose.yml
+│   │   └── docker-compose.override.yml
 │   ├── extra
 │   │   ├── db_create_schema.sql
 │   │   └── prepare_db.sh
@@ -116,7 +117,7 @@ Each of the examples is organized in a way that it can be deployed and run indep
 │   │   ├── db_samples-mt.sql.gz
 │   │   └── db_samples-syn.sql.gz
 │   ├── docker
-│   │   └── docker-compose.yml
+│   │   └── docker-compose.override.yml
 │   ├── extra
 │   │   ├── db_create_mt_schema.sql
 │   │   ├── db_create_syn_schema.sql
@@ -134,7 +135,7 @@ Each of the examples is organized in a way that it can be deployed and run indep
 │   │   ├── db_samples-pdf-img-small.sql.gz
 │   │   └── db_samples-pdf-text-small.sql.gz
 │   ├── docker
-│   │   └── docker-compose.yml
+│   │   └── docker-compose.override.yml
 │   ├── extra
 │   │   ├── db_create_schema.sql
 │   │   ├── prepare_db.sh
@@ -155,7 +156,7 @@ Each of the examples is organized in a way that it can be deployed and run indep
 │   │   ├── db_samples-pdf-img-small.sql.gz
 │   │   └── db_samples-pdf-text-small.sql.gz
 │   ├── docker
-│   │   └── docker-compose.yml
+│   │   └── docker-compose.override.yml
 │   ├── extra
 │   │   ├── db_create_schema.sql
 │   │   ├── prepare_db.sh
@@ -168,7 +169,7 @@ Each of the examples is organized in a way that it can be deployed and run indep
 │   ├── db_dump
 │   │   └── db_samples.sql.gz
 │   ├── docker
-│   │   └── docker-compose.yml
+│   │   └── docker-compose.override.yml
 │   └── setup.sh
 │
 ├── example7
@@ -177,7 +178,7 @@ Each of the examples is organized in a way that it can be deployed and run indep
 │   ├── db_dump
 │   │   └── db_samples.sql.gz
 │   ├── docker
-│   │   └── docker-compose.yml
+│   │   └── docker-compose.override.yml
 │   └── setup.sh
 │
 ├── example8
@@ -186,7 +187,7 @@ Each of the examples is organized in a way that it can be deployed and run indep
 │   ├── db_dump
 │   │   └── db_samples.sql.gz
 │   ├── docker
-│   │   └── docker-compose.yml
+│   │   └── docker-compose.override.yml
 │   ├── gate
 │   │   └── app
 │   │       ├── active.lst
@@ -203,7 +204,7 @@ Each of the examples is organized in a way that it can be deployed and run indep
 │   ├── db_dump
 │   │   └── db_samples.sql.gz
 │   ├── docker
-│   │   └── docker-compose.yml
+│   │   └── docker-compose.override.yml
 │   ├── gate
 │   │   └── app
 │   │       ├── active.lst
@@ -228,11 +229,12 @@ Each of the examples is organized in a way that it can be deployed and run indep
 ## Common and reusable components
 
 The directory `docker-common` contains some common components and microservice configuration files that are used within all the examples (see [Running CogStack](#running-cogstack)). These components include:
-* PostgreSQL databases,
-* ElasticSearch node,
-* Kibana webservice dashboard,
-* nginx reverse proxy service,
-* Fluentd logging driver.
+* PostgreSQL databases: `pgsamples` and `pgjobrepo` directories,
+* ElasticSearch node: `elasticsearch` directory,
+* Kibana webservice dashboard: `kibana` directory,
+* nginx reverse proxy service: `nginx` directory,
+* Fluentd logging driver: `fluentd` directory,
+* Common microservices Docker Compose base configuration file used across examples: `docker-compose.yml`.
 
 
 
@@ -284,15 +286,15 @@ CogStack ecosystem consists of multiple inter-connected microservices running to
 
 In the provided examples, the CogStack ecosystem is usually composed of the following microservices:
 * `*samples` -- PostgreSQL database(s) loaded with a sample dataset under `db_samples` name,
-* `cogengine` -- CogStack pipeline -- the data processing engine,
-* `postgres` -- PostgreSQL database for storing information about CogStack jobs and status,
-* `elasticsearch` -- ElasticSearch node(s) for storing and querying the processed EHR data,
+* `cogstack-pipeline` -- CogStack pipeline -- the data processing engine,
+* `cogstack-job-repo` -- PostgreSQL database for storing information about CogStack jobs and status,
+* `elasticsearch-1` -- ElasticSearch node(s) for storing and querying the processed EHR data,
 * `kibana` -- Kibana data visualization tool for querying the data from ElasticSearch.
 
-The Docker Compose file with configuration of these microservices can be found in each of the examples `docker` subdirectory: `examples/example*/docker/docker-compose.yml`.
+The common Docker Compose base configuration file for these microservices which is shared among all the examples can be found in `examples/docker-common/docker-compose.yml`. The microservices configuration specific to each example can be found in `docker` subdirectory: `examples/example*/docker/docker-compose.override.yml` of each example.
 
 
-## CogStack engine configuration
+## CogStack Pipeline configuration
 
 There are multiple configurable parameters available to tailor the CogStack data processing pipeline to the specific data processing needs and available resources. Here we will cover only the most important parameters related with selecting the data processing components, configuring the input source, the output sink and data processing workflow for a given example.
 
@@ -322,7 +324,8 @@ CogStack configuration file uses Spring profiles, which enable different compone
 * `pdfGeneration`, `thumbnailGeneration` -- PDF thumbnail generation service (*not covered by the examples*),
 * `dBLineFixer` -- records modification process (*not covered by the examples*),
 * `pdfbox` -- documents processing sugin PDFBox (*not covered by the examples*),
-* `metadata` -- document metadata generation (*not covered by the examples*).
+* `metadata` -- document metadata generation (*not covered by the examples*),
+* `docman` -- mixed (both DB and filesystem) document processing (*not covered by the examples*).
 
 
 ### Item readers
@@ -439,7 +442,10 @@ As a result, a temporary directory `__deploy/` will be created containing all th
 
 ## Docker-based deployment
 
-Next, we can proceed to deploy CogStack ecosystem using Docker Compose. It will configure and start microservices based on the provided Compose file: `examples/example*/docker/docker-compose.yml`. Moreover, the PostgreSQL database container comes with pre-initialized database dump ready to be loaded directly into. In order to run CogStack, type in the `examples/example*/__deploy/` directory:
+Next, we can proceed to deploy CogStack ecosystem using Docker Compose. It will configure and start microservices based on the Docker Compose files:
+- the common services base configuration file:`examples/docker-common/docker-compose.yml`,
+- the example-specific services configuration file: `examples/example*/docker/docker-compose.override.yml`. 
+Moreover, the PostgreSQL database container comes with pre-initialized database dump ready to be loaded directly into. In order to run CogStack, type in the `examples/example*/__deploy/` directory:
 ```bash
 docker-compose up
 ```
@@ -459,7 +465,7 @@ Assuming that everything is working fine, we should be able to connect to the ru
 
 ### Kibana and ElasticSearch
 
-Kibana dashboard used to query the EHRs can be accessed directly in browser via URL: `http://localhost:5601/`. The data can be queried using a number of ElasticSearch indices, e.g. `sample_observations_view`. Usually, each index will correspond to the database view in `db_samples` (`pgsamples` PostgreSQL database) from which the data was ingested. However, when entering Kibana dashboard for the first time, an index pattern needs to be configured in the Kibana management panel -- for more information about its creation, please refer to the official [Kibana documentation](https://www.elastic.co/guide/en/kibana/current/tutorial-define-index.html).
+Kibana dashboard used to query the EHRs can be accessed directly in browser via URL: `http://localhost:5601/`. The data can be queried using a number of ElasticSearch indices, e.g. `sample_observations_view`. Usually, each index will correspond to the database view in `db_samples` (`samples-db` PostgreSQL database) from which the data was ingested. However, when entering Kibana dashboard for the first time, an index pattern needs to be configured in the Kibana management panel -- for more information about its creation, please refer to the official [Kibana documentation](https://www.elastic.co/guide/en/kibana/current/tutorial-define-index.html).
 
 In addition, ElasticSearch REST end-point can be accessed via URL `http://localhost:9200/`. It can be used to perform manual queries or to be used by other external services -- for example, one can list the available indices:
 ```bash
@@ -478,6 +484,8 @@ Moreover, the access PostgreSQL database with the input sample data is exposed d
 ```bash
 psql -U 'test' -W -d 'db_samples' -h localhost -p 5555
 ```
+
+As a side note, the name for ElasticSearch node in the Docker Compose has been set as `elasticsearch-1`. The `-1` ending emphasizes that for larger-scale deployments, multiple ElasticSearch nodes can be used -- typically, minimum of 3.
 
 
 # <a name="examples-general"></a> General information about examples
@@ -507,7 +515,7 @@ As an additional feature, security and ssl encryption can be enabled for communi
 
 ### Partitioner
 
-In the current implementation, CogStack engine can only partition the data using the records' primary key (`cog_pk` field, containing unique values) and records' update time (`cog_update_time` field) as defined in created views. This is specified by `PKTimeStamp` partitioning method types:
+In the current implementation, CogStack Pipeline can only partition the data using the records' primary key (`partitioner.pkColumnName` property, containing unique values) and records' update time (`partitioner.timeStampColumnName` property) as defined in created views. This is specified by `PKTimeStamp` partitioning method types:
 ```properties
 partitioner.partitionType = PKTimeStamp
 ```
@@ -537,27 +545,27 @@ fab43860-c3be-4808-b7b4-00423c02816b,1962-06-21,2011-03-10,999-67-8307,S99958025
 
 The `patients` table definition in PostgreSQL according to the [specification](https://github.com/synthetichealth/synthea/wiki/CSV-File-Data-Dictionary): 
 ```sql
-create table patients (
-  ID uuid primary key,
-  BIRTHDATE date, 
-  DEATHDATE date, 
-  SSN varchar(64), 
-  DRIVERS varchar(64),
-  PASSPORT varchar(64),
-  PREFIX varchar(8),
-  FIRST varchar(64),
-  LAST varchar(64),
-  SUFFIX varchar(8),
-  MAIDEN varchar(64),
-  MARITAL char(1),
-  RACE varchar(64), 
-  ETHNICITY varchar(64),
-  GENDER char(1),
-  BIRTHPLACE varchar(64),
-  ADDRESS varchar(64),
-  CITY varchar(64),
-  STATE varchar(64),
-  ZIP varchar(64)
+CREATE TABLE patients (
+	id UUID PRIMARY KEY,
+	birthdate DATE NOT NULL, 
+	deathdate DATE, 
+	ssn VARCHAR(64) NOT NULL, 
+	drivers VARCHAR(64),
+	passport VARCHAR(64),
+	prefix VARCHAR(8),
+	first VARCHAR(64) NOT NULL,
+	last VARCHAR(64) NOT NULL,
+	suffix VARCHAR(8),
+	maiden VARCHAR(64),
+	marital CHAR(1),
+	race VARCHAR(64) NOT NULL, 
+	ethnicity VARCHAR(64) NOT NULL,
+	gender CHAR(1) NOT NULL,
+	birthplace VARCHAR(64) NOT NULL,
+	address VARCHAR(64) NOT NULL,
+	city VARCHAR(64) NOT NULL,
+	state VARCHAR(64) NOT NULL,
+	zip VARCHAR(64)
 ) ;
 ```
 
@@ -575,16 +583,16 @@ f25a828f-ae79-4dd0-b6eb-bca26138421b,1969-09-13T14:02Z,1969-09-13T14:34Z,fab4386
 
 with the corresponding `encounters` table definition:
 ```sql
-create table encounters (
-  ID uuid primary key,
-  START timestamp,
-  STOP timestamp,
-  PATIENT uuid references patients,
-  CODE varchar(64),
-  DESCRIPTION text,
-  COST real,
-  REASONCODE varchar(64),
-  REASONDESCRIPTION text
+CREATE TABLE encounters (
+	id UUID PRIMARY KEY NOT NULL,
+	start TIMESTAMP NOT NULL,
+	stop TIMESTAMP,
+	patient UUID REFERENCES patients,
+	code VARCHAR(64) NOT NULL,
+	description TEXT_TYPE NOT NULL,
+	cost REAL NOT NULL,
+	reasoncode VARCHAR(64),
+	reasondescription VARCHAR(256)
 ) ;
 ```
 
@@ -602,17 +610,17 @@ DATE,PATIENT,ENCOUNTER,CODE,DESCRIPTION,VALUE,UNITS,TYPE
 
 and the corresponding table definition:
 ```sql
-  create table observations (
-  CID serial primary key,                   -- (*)
-  DCT timestamp default current_timestamp,  -- (*)
-  DATE date, 
-  PATIENT uuid references patients,
-  ENCOUNTER uuid references encounters,
-  CODE varchar(64),
-  DESCRIPTION text,
-  VALUE varchar(64),
-  UNITS varchar(64),
-  TYPE varchar(64),
+CREATE TABLE observations (
+	cid SERIAL PRIMARY KEY,                     -- (*)
+	created TIMESTAMP DEFAULT CURRENT_TIMESTAMP, --(*)
+	date DATE NOT NULL, 
+	patient UUID REFERENCES patients,
+	encounter UUID REFERENCES encounters,
+	code VARCHAR(64) NOT NULL,
+	description TEXT_TYPE NOT NULL,
+	value VARCHAR(64) NOT NULL,
+	units VARCHAR(64),
+	type VARCHAR(64) NOT NULL
 ) ;
 ```
 
@@ -623,71 +631,62 @@ Here, with `-- (*)` have been marked additional fields with auto-generated value
 
 Next, we define a `observations_view` that will be used by CogStack data processing engine to ingest the records from input database:
 ```sql
-create view observations_view as
-   select
-    p.ID as patient_id, 
-    p.BIRTHDATE as patient_birth_date,
-    p.DEATHDATE as death_date,
-    p.SSN as patient_SSN,
-    p.DRIVERS as patient_drivers,
-    p.PASSPORT as patient_passport,
-    p.PREFIX as patient_prefix,
-    p.FIRST as patient_first_name,
-    p.LAST as patient_last_name,
-    p.SUFFIX as patient_suffix,
-    p.MAIDEN as patient_maiden,
-    p.MARITAL as patient_marital,
-    p.RACE as patient_race,
-    p.ETHNICITY as patient_ethnicity,
-    p.GENDER as patient_gender,
-    p.BIRTHPLACE as patient_birthplace,
-    p.ADDRESS as patient_addr,
-    p.CITY as patient_city,
-    p.STATE as patient_state,
-    p.ZIP as patient_zip,
+CREATE VIEW observations_view AS
+	 SELECT
+		p.id AS patient_id, 
+		p.birthdate AS patient_birth_date,
+		p.deathdate AS patient_death_date,
+		p.ssn AS patient_ssn,
+		p.drivers AS patient_drivers,
+		p.passport AS patient_passport,
+		p.prefix AS patient_prefix,
+		p.first AS patient_first_name,
+		p.last AS patient_last_name,
+		p.suffix AS patient_suffix,
+		p.maiden AS patient_maiden,
+		p.marital AS patient_marital,
+		p.race AS patient_race,
+		p.ethnicity AS patient_ethnicity,
+		p.gender AS patient_gender,
+		p.birthplace AS patient_birthplace,
+		p.address AS patient_addr,
+		p.city AS patient_city,
+		p.state AS patient_state,
+		p.zip AS patient_zip,
+		
+		enc.id AS encounter_id,
+		enc.start AS encounter_start,
+		enc.stop AS encounter_stop,
+		enc.code AS encounter_code,
+		enc.description AS encounter_desc,
+		enc.cost AS encounter_cost,
+		enc.reasoncode AS encounter_reason_code,
+		enc.reasondescription AS encounter_reason_desc,
 
-    enc.ID as encounter_id,
-    enc.START as encounter_start,
-    enc.STOP as encounter_stop,
-    enc.CODE as encounter_code,
-    enc.DESCRIPTION as encounter_desc,
-    enc.COST as encounter_cost,
-    enc.REASONCODE as encounter_reason_code,
-    enc.REASONDESCRIPTION as encounter_reason_desc,
+		obs.cid AS observation_id,            --(*)
+		obs.created AS observation_timestamp, --(*)
 
-    obs.DATE as observation_date,
-    obs.CODE as observation_code,
-    obs.DESCRIPTION as observation_desc,
-    obs.VALUE as observation_value,
-    obs.UNITS as observation_units,
-    obs.TYPE as observation_type,
-
-    -- for CogStack compatibility
-    'src_field_name'::text as cog_src_field_name,     -- (a)
-    'observations_view'::text as cog_src_table_name,  -- (b)
-    obs.CID as cog_pk,                                -- (c)
-    'cog_pk'::text as cog_pk_field_name,              -- (d)
-    obs.DCT as cog_update_time                        -- (e)
-  from 
-    patients p, 
-    encounters enc,
-    observations obs
-  where 
-    enc.PATIENT = p.ID and
-    obs.PATIENT = p.ID and 
-    obs.ENCOUNTER = enc.ID
-  ;
+		obs.date AS observation_date,
+		obs.code AS observation_code,
+		obs.description AS observation_desc,
+		obs.value AS observation_value,
+		obs.units AS observation_units,
+		obs.type AS observation_type
+	FROM 
+		patients p, 
+		encounters enc,
+		observations obs
+	WHERE 
+		enc.patient = p.id AND
+		obs.patient = p.id AND 
+		obs.encounter = enc.id
+	;
 ```
 The goal here is to denormalize the database schema for CogStack and ElasticSearch data ingestion, as the `observations` table is referencing both the `patient` and `encounters` tables by their primary key. In the current implementation, CogStack engine cannot yet perform dynamic joins over the relational data from specific database tables.
 
-Apart from exposing the fields from the previously defined tables, some extra fields `cog_*` have been added. They are required for compatibility with CogStack data processing engine, but they may be possibly removed or modified in the upcoming version of CogStack. However, in the current implementation, these fields are required to properly configure the CogStack database reader, and to properly schedule and partition the data of the running CogStack data processing workers.
-
-These additional fields are:
-* `cog_src_field_name` -- related with processing the text documents (not used in this example),
-* `cog_src_table_name` -- the name of the table (or view) containing records to process,
-* `cog_pk` -- primary key value (or any unique) used for partitioning the data into batches (for the moment, needs to be of numeric type),
-* `cog_pk_field_name` -- the name of the field in the current table/view containing the value of primary key values,
-* `cog_update_time` -- the last update/modification time of the record, used for checking for new records and for partitioning.
+Some of the crucial fields required for configuring CogStack Pipeline engine with Document data model have been marked with `--(*)` -- these are:
+- `observation_id` -- the unique identifier of the observation record (typically, the primary key),
+- `observation_timestamp` -- the record creation or last update time.
 
 These fields will be later used when preparing the *properties* configuration file for CogStack data processing workflow.
 
@@ -708,32 +707,29 @@ spring.profiles.active = jdbc_in,elasticsearchRest,localPartitioning
 which denotes that only such profiles will be active:
 * `jdbc_in` for JDBC input database connector, 
 * `elasticsearchRest` for using REST API for inserting documents to ElasticSearch,
-* `localPartitioning` functionality.
+* local `partitioning` functionality (for data processing) -- this property is optional, as `localPartitioning` will be used by default.
 
 
 ### Data source
 
 The parameters for specifying the data source are defined as follows:
 ```properties
-source.JdbcPath = jdbc:postgresql://pgsamples:5432/db_samples
+source.JdbcPath = jdbc:postgresql://samples-db:5432/db_samples
 source.Driver = org.postgresql.Driver
 source.username = test
 source.password = test
 ```
-In this example we are using a PostgreSQL database which driver is defined by `source.Driver` parameter. The PostgreSQL database service is available in the CogStack ecosystem as `pgsamples`, has exposed port `5432` for connections and the sample database name is `db_samples` -- all these details need to be included in the `source.JdbcPath` parameter field.
+In this example we are using a PostgreSQL database which driver is defined by `source.Driver` parameter. The PostgreSQL database service is available in the CogStack ecosystem as `samples-db`, has exposed port `5432` for connections and the sample database name is `db_samples` -- all these details need to be included in the `source.JdbcPath` parameter field.
 
 
 Next, we need to instruct CogStack engine how to query the records from the data source:
 ```properties
 source.selectClause = SELECT *
-source.sortKey = cog_pk
 source.fromClause = FROM observations_view
+source.sortKey = observation_id
 
-source.srcTableName = cog_src_table_name
-source.srcColumnFieldName = cog_src_field_name
-source.primaryKeyFieldName = cog_pk_field_name
-source.primaryKeyFieldValue = cog_pk
-source.timeStamp = cog_update_time
+source.primaryKeyFieldValue = observation_id
+source.timeStamp = observation_timestamp
 
 source.dbmsToJavaSqlTimestampType = TIMESTAMP
 ```
@@ -744,17 +740,16 @@ This is where the previously defined `observations_view` with additional CogStac
 
 Next, we need to define the data sink -- in our example, and by default, ElasticSearch is being used:
 ```properties
-elasticsearch.cluster.name = elasticsearch
-elasticsearch.cluster.host = elasticsearch
+elasticsearch.cluster.host = elasticsearch-1
 elasticsearch.cluster.port = 9200
 ```
-Similarly, as when defining the sample database source, we need to provide the ElasticSearch host and port configuration according to the microservices definition in the corresponding Docker Compose file (see `examples/example1/docker/docker-compose.yml`).
+Similarly, as when defining the sample database source, we need to provide the ElasticSearch host and port configuration according to the microservices definition in the corresponding Docker Compose file (see: `examples/docker-common/docker-compose.yml` and `examples/example1/docker/docker-compose.override.yml`).
 
 
 In the next step, we specify the ElasticSearch indexing parameters (optional):
 ```properties
 elasticsearch.index.name = sample_observations_view
-elasticsearch.excludeFromIndexing = cog_pk,cog_pk_field_name,cog_src_field_name,cog_src_table_name
+elasticsearch.excludeFromIndexing = observation_id
 ```
 We specify the index name which will be used to store the documents processed by CogStack engine. Additionally, we specify which fields should be excluded from the indexing -- by default, we exclude the binary content, the constant-value fields and the primary key from the `observations_view`.
 
@@ -762,9 +757,9 @@ We specify the index name which will be used to store the documents processed by
 
 ### Jobs and CogStack engine configuration
 
-CogStack engine in order to coordinate the workers needs to keep the information about the current jobs in an additional PostgreSQL database -- `postgres`. Hence, similarly as when defining the source database, this database needs to specified:
+CogStack engine in order to coordinate the workers needs to keep the information about the current jobs in an additional PostgreSQL database -- `cogstack-job-repo`. Hence, similarly as when defining the source database, this database needs to specified:
 ```properties
-jobRepository.JdbcPath = jdbc:postgresql://postgres:5432/cogstack
+jobRepository.JdbcPath = jdbc:postgresql://cogstack-job-repo:5432/cogstack
 jobRepository.Driver = org.postgresql.Driver
 jobRepository.username = cogstack
 jobRepository.password = mysecretpassword
@@ -780,8 +775,8 @@ Another set of useful parameters are related with controlling the job execution 
 ```properties
 partitioner.partitionType = PKTimeStamp
 partitioner.tableToPartition = observations_view
-partitioner.pkColumnName = cog_pk
-partitioner.timeStampColumnName = cog_update_time
+partitioner.pkColumnName = observation_id
+partitioner.timeStampColumnName = observation_timestamp
 ```
 
 Apart from data partitioning, although optional, it can be sometimes useful to set up the scheduler -- the following line corresponds to the scheduler configuration:
@@ -793,7 +788,7 @@ In this example we do not use the scheduler, since we ingest EHRs from the data 
 
 ## Deployment information
 
-This example uses the standard stack of microservices as presented in [CogStack ecosystem](#cogstack-ecosystem) with the Docker Compose file `examples/example1/docker/docker-compose.yml`.
+This example uses the standard stack of microservices as presented in [CogStack ecosystem](#cogstack-ecosystem) with the Docker Compose file override in `examples/example1/docker/docker-compose.override.yml`.
 
 It also uses a single CogStack *properties* file (see `examples/example1/cogstack/observations.properties`) and hence runs only one instance of CogStack data processing engine.
 
@@ -818,20 +813,20 @@ The database schema is almost the same as the one defined in [Example 1](#exampl
 The `encouters` table definition:
 
 ```sql
-create table encounters (
-  ID uuid primary key,
-  START timestamp,
-  STOP timestamp,
-  PATIENT uuid references patients,
-  CODE varchar(64),
-  DESCRIPTION text,
-  COST real,
-  REASONCODE varchar(64),
-  REASONDESCRIPTION text,
-  DOCUMENT text -- (*)
+CREATE TABLE encounters (
+	id UUID PRIMARY KEY NOT NULL,
+	start TIMESTAMP NOT NULL,
+	stop TIMESTAMP,
+	patient UUID REFERENCES patients,
+	code VARCHAR(64) NOT NULL,
+	description VARCHAR(256) NOT NULL,
+	cost REAL NOT NULL,
+	reasoncode VARCHAR(64),
+	reasondescription VARCHAR(256),
+	document TEXT --(*)
 ) ;
 ```
-Here, with `-- (*)` has been marked an additional `DOCUMENT` column field. This extra field will be used to store the content of a document from [MTSamples dataset](#samples-mt). 
+Here, with `-- (*)` has been marked an additional `document` column field. This extra field will be used to store the content of a document from [MTSamples dataset](#samples-mt). 
 
 Just to clarify, [Synthea-based](#samples-syn) and [MTSamples](#samples-mt) datasets are two unrelated datasets. Here, we are extending the synthetic dataset with the clinical documents from the MTSamples to create a combined one, to be able to perform a bit more interesting queries.
 
@@ -865,7 +860,7 @@ Keywords: allergy / immunology, allergic rhinitis, allergies, asthma, nasal spra
 
 ### Database views
 
-Analogously, the new `DOCUMENT` column field is included in the `observations_view`, where the view is based on the one defined in [Example 1](#example-1).
+Analogously, the new `document` column field is included in the `observations_view`, where the view is based on the one defined in [Example 1](#example-1).
 
 
 ## Properties file
@@ -875,7 +870,7 @@ The *properties* file used in this example is the same as in [Example 1](#exampl
 
 ## Deployment information
 
-Similarly as in Example 1, this one uses the standard stack of microservices defined in `examples/example2/docker/docker-compose.yml`. 
+Similarly as in Example 1, this one uses the standard stack of microservices overriden in `examples/example2/docker/docker-compose.override.yml`. 
 
 It also uses a single CogStack *properties* file and hence runs only one instance of CogStack data processing engine (see: `examples/example2/cogstack/observations.properties`).
 
@@ -898,34 +893,26 @@ The only new table is the one for representing MTSamples data defined in `exampl
 
 ### Samples table and view
 
-The definition of `samples` table and its corresponding view:
+The definition of `mtsamples` table and its corresponding view:
 
 ```sql
-create table samples (
-  CID serial primary key,                   -- for CogStack compatibility
-  DCT timestamp default current_timestamp,  -- (*)
-  SAMPLE_ID integer not null,
-  TYPE varchar(256) not null,
-  TYPE_ID integer not null,
-  NAME varchar(256) not null,
-  DESCRIPTION text not null,
-  DOCUMENT text not null
+CREATE TABLE mtsamples (
+	cid SERIAL PRIMARY KEY, --(*)
+	sample_id INTEGER NOT NULL,
+	type VARCHAR(256) NOT NULL,
+	type_id INTEGER NOT NULL,
+	name VARCHAR(256) NOT NULL,
+	description TEXT NOT NULL,
+	document TEXT NOT NULL,
+	dct TIMESTAMP DEFAULT CURRENT_TIMESTAMP	-- (*)
 ) ;
-
-create view samples_view as 
-  select 
-    samples.*,
-    'src_field_name'::text as cog_src_field_name,   -- for CogStack compatibility
-    'samples_view'::text as cog_src_table_name,     -- (*)
-    samples.CID as cog_pk,                          -- (*)
-    'cog_pk'::text as cog_pk_field_name,            -- (*)
-    samples.DCT as cog_update_time                  -- (*)
-  from 
-    samples 
-  ;
 ```
 
-In contrast to MTSamples data representation used in [Example 2](#example-2) (where the full content of a document was stored in the `DOCUMENT` field in the `encounters` table), in this example we partially parse the document, hence improving the data representation. 
+In contrast to MTSamples data representation used in [Example 2](#example-2) (where the full content of a document was stored in the `document` field in the `encounters` table), in this example we partially parse the document, hence improving the data representation.
+
+Two additional fields have been added to connect with CogStack Document model:
+- `cid` -- automatically generated unique id,
+- `dct` -- a document creation timestamp.
 
 Please refer to `examples/example3/extra/prepare_synsamples_db.sh` on how the synthetic data is parsed and `examples/example3/extra/prepare_synsamples_db.sh` on how the MTSamples data is parsed.
 
@@ -943,7 +930,7 @@ Apart from that, a separate `mt.properties` file is provided for processing MTSa
 
 ## Deployment information
 
-This example uses the standard stack of microservices (see: [CogStack ecosystem](#cogstack-ecosystem)), but extended with additional database storing input sample data. It uses 2 separate input databases as the data source: `pgmtsamples` and `pgsynsamples` -- see: `examples/example3/docker/docker-compose.yml`.
+This example uses the standard stack of microservices (see: [CogStack ecosystem](#cogstack-ecosystem)), but extended with additional database storing input sample data. It uses 2 separate input databases as the data source: `mtsamples-db` and `samples-db` -- see: `examples/example3/docker/docker-compose.override.yml`.
 
 It also uses multiple CogStack *properties* files, hence multiple instances of CogStack data processing engine are run, one per each *properties* file.
 
@@ -978,50 +965,52 @@ The database schema is based on the one defined in [Example 2](#example-2). Only
 ### Encounters table
 
 ```sql
-create table encounters (
-  ID uuid primary key,
-  START timestamp,
-  STOP timestamp,
-  PATIENT uuid references patients,
-  CODE varchar(64),
-  DESCRIPTION text,
-  COST real,
-  REASONCODE varchar(64),
-  REASONDESCRIPTION text,
-  BINARYDOCUMENT bytea -- (*)
+CREATE TABLE encounters (
+	cid SERIAL,	--(*)
+	id UUID PRIMARY KEY NOT NULL,
+	start TIMESTAMP NOT NULL,
+	stop TIMESTAMP,
+	patient UUID REFERENCES patients,
+	code VARCHAR(64) NOT NULL,
+	description VARCHAR(256) NOT NULL,
+	cost REAL NOT NULL,
+	reasoncode VARCHAR(64),
+	reasondescription VARCHAR(256),
+	binarydocument BYTEA --(*)
 ) ;
 ```
 
-In this example, the document is stored in column `BINARYDOCUMENT` of `bytea` type -- instead of `DOCUMENT` as raw `text` defined in [Example 2](#example-2).
+In this example, the document is stored in column `binarydocument` of `bytea` type -- instead of `document` as raw `TEXT` defined in [Example 2](#example-2).
 
 
 ### Observations view
 
 ```sql
-create view observations_view as
-   select
+CREATE VIEW observations_view AS
+	 SELECT
+		p.id AS patient_id, 
+		
+		-- ... 
 
-    ...
+		enc.binarydocument AS encounter_binary_doc, --(*)
 
-    -- for CogStack compatibility
-    'src_field_name'::text as cog_src_field_name,
-    'observations_view'::text as cog_src_table_name,
-    obs.CID as cog_pk,
-    'cog_pk'::text as cog_pk_field_name,
-    obs.DCT as cog_update_time,
-    enc.BINARYDOCUMENT as cog_binary_doc              -- (*)
-  from 
-    patients p, 
-    encounters enc,
-    observations obs
-  where 
-    enc.PATIENT = p.ID and
-    obs.PATIENT = p.ID and 
-    obs.ENCOUNTER = enc.ID
-  ;
+		obs.cid AS observation_id, --(*)
+		obs.created AS observation_timestamp, --(*)
+
+		-- ...
+
+	FROM 
+		patients p, 
+		encounters enc,
+		observations obs
+	WHERE 
+		enc.patient = p.id AND
+		obs.patient = p.id AND 
+    	obs.encounter = enc.id
+	;
 ```
 
-The additional field added in this view is `cog_binary_doc` which will be used to read the binary document by CogStack engine.
+The important field used in this view is `encounter_binary_doc` which will be used to read the binary document by CogStack engine.
 
 
 ## Properties file
@@ -1033,7 +1022,7 @@ The *properties* file used in this example is based on the one from [Example 2](
 
 The spring profile part has been updated with adding a `tika` profile:
 ```properties
-spring.profiles.active = jdbc_in,elasticsearchRest,localPartitioning,tika
+spring.profiles.active = jdbc_in,elasticsearchRest,tika,localPartitioning
 ```
 
 
@@ -1043,11 +1032,11 @@ A new part covering Tika processing has been added:
 ```properties
 tika.tikaFieldName = tika_output
 tika.binaryContentSource = database
-tika.binaryFieldName = cog_binary_doc
+tika.binaryFieldName = encounter_binary_doc
 ```
 The property `tika.tikaFieldName` denotes the name of the key field `tika_output`. This field will be present in the output JSON file where the value will hold the content of the Tika-parsed document. It is an optional value to specify -- by default `outTikaField` name is used. 
 
-The property `tika.binaryContentSource` defines the source where the documents are stored -- in our case: `database`. Following, the property `tika.binaryFieldName` denotes the name of column that contains binary document data -- in our case that is `cog_binary_doc` field in `observations_view` view. It is an optional property to set, as by default `database` will be used.
+The property `tika.binaryContentSource` defines the source where the documents are stored -- in our case: `database`. Following, the property `tika.binaryFieldName` denotes the name of column that contains binary document data -- in our case that is `encounter_binary_doc` field in `observations_view` view. It is an optional property to set, as by default `database` will be used.
 
 It's important to note that the remaining information about mapping and querying of the source database tables and record fields are covered by `source.*` properties, as explained in [Example 1](#example-1).
 
@@ -1096,22 +1085,22 @@ The database schema is based on the one from [Example 3](#example-3) with some m
 In the `encounters` table a representation of the document data has been altered:
 
 ```sql
-create table encounters (
-  CID serial,
-  ID uuid primary key,
-  START timestamp,
-  STOP timestamp,
-  PATIENT uuid references patients,
-  CODE varchar(64),
-  DESCRIPTION varchar(256),
-  COST real,
-  REASONCODE varchar(64),
-  REASONDESCRIPTION varchar(256),
-  DOCUMENTID integer                      -- (*)
+CREATE TABLE encounters (
+	cid SERIAL NOT NULL,
+	id UUID PRIMARY KEY,
+	start TIMESTAMP NOT NULL,
+	stop TIMESTAMP,
+	patient UUID REFERENCES patients,
+	code VARCHAR(64) NOT NULL,
+	description VARCHAR(256) NOT NULL,
+	cost REAL NOT NULL,
+	reasoncode VARCHAR(64),
+	reasondescription VARCHAR(256),
+	documentid INTEGER --(*)
 ) ;
 ```
 
-In this example, we only store the ID of the document in `DOCUMENTID` field.
+In this example, we only store the ID of the document in `documentid` field.
 
 
 ### Medical reports -- binary documents
@@ -1119,66 +1108,42 @@ In this example, we only store the ID of the document in `DOCUMENTID` field.
 Next, we define `medical_reports` table on a similar basis as `samples` table used in Example 3:
 
 ```sql
-create table medical_reports (
-  CID integer primary key,
-  SAMPLEID integer,
-  TYPEID integer,
-  DCT timestamp,
-  FILENAME varchar(256),
-  BINARYDOC bytea
+CREATE TABLE medical_reports (
+	cid INTEGER PRIMARY KEY, --(*)
+	sampleid INTEGER NOT NULL,
+	typeid INTEGER NOT NULL,
+	dct TIMESTAMP NOT NULL,
+	filename VARCHAR(256) NOT NULL,
+	binarydoc BYTEA NOT NULL --(*)
 ) ;
 ```
-In this example, the document is stored in binary format in `BINARYDOC` field. 
-
-
-Following, we define the `reports_binary_view` view to query the data:
-```sql
-create view reports_binary_view as 
-  select 
-    CID,
-    SAMPLEID,
-    TYPEID,
-    DCT,
-    FILENAME,
-
-    -- for CogStack compatibility -- meta-data
-    'BINARYDOC'::text as cog_src_field_name,            -- (*)
-    'reports_binary_view'::text as cog_src_table_name,  -- (*)
-    CID as cog_pk,                                      -- (*)
-    'cog_pk'::text as cog_pk_field_name,                -- (*)
-    DCT as cog_update_time,                             -- (*)
-    BINARYDOC as cog_binary_doc                         -- (*)
-  from 
-    medical_reports 
-  ;
-```
-Similarly, as in Example 4, the column `cog_binary_doc` will be used to access the binary content of the document. However, here we are only interested in processing the `medical_reports` table, as in Example 3.
-
+In this example, the document is stored in binary format in `binarydoc` field. Similarly, as in Example 4, this column will be used to access the binary content of the document.
 
 
 ### Medical reports -- processed documents
 
 Next, we define `medical_reports_processed` that will be used to store the processed data generated by the fist step of the CogStack pipeline:
 ```sql
-create table medical_reports_processed (
-  CID integer references medical_reports,
-  DCT timestamp,
-  OUTPUT text
+
+CREATE TABLE medical_reports_processed (
+	cid INTEGER REFERENCES medical_reports, --(*)
+	dct TIMESTAMP NOT NULL,
+	output TEXT
 ) ;
 ```
-The field `OUTPUT` will contain the output of Tika documents processor in **JSON** format. It's important to note that `CID` field references the `medical_reports` table so that the document data will remain properly linked.
+The field `output` will contain the output of Tika documents processor in **JSON** format. It's important to note that `cid` field references the `medical_reports` table so that the document data will remain properly linked.
 
 Following, we define an **optional** `reports_processed_view` which can be used to query the processed documents or to check the documents processing status:
 ```sql
-create view reports_processed_view as
-  select 
-    CID,
-    DCT,
-    OUTPUT::json ->> 'X-PDFPREPROC-OCR-APPLIED' as OCR_STATUS,
-    OUTPUT::json ->> 'tika_output' as TIKA_OUTPUT
-  from
-    medical_reports_processed
-  ;
+CREATE VIEW reports_processed_view AS
+	SELECT 
+		cid,
+		dct,
+		output::JSON ->> 'X-PDFPREPROC-OCR-APPLIED' AS ocr_status,
+		output::JSON ->> 'tika_output' AS tika_output
+	FROM
+		medical_reports_processed
+	;
 ```
 As mentioned previously, the output content is stored in **JSON** format, hence we need to access the information by key-value parsing the JSON content. There are more fields available for querying, however, in this simple example we only focus on:
 - `tika_output` -- a field that contains the Tika-parsed document,
@@ -1192,39 +1157,34 @@ This view is **optional**, but can be used for debugging purposes.
 Finally, we define `observations_view` which will be used in the final step to ingest the records data into ElasticSearch:
 
 ```sql
-create view observations_view as
-   select
 
-    ...
 
-    doc_bin.CID as document_id,
-    doc_bin.SAMPLEID as document_sample_id,
-    doc_bin.TYPEID as document_type_id,
-    doc_bin.DCT as document_dct,
-    doc_bin.FILENAME as document_filename,
+CREATE VIEW observations_view AS
+	 SELECT
 
-    doc_proc.OUTPUT::json ->> 'X-PDFPREPROC-OCR-APPLIED' as document_ocr_status,
-    doc_proc.OUTPUT::json ->> 'tika_output' as document_tika_output,
+		-- ...
 
-    -- for CogStack compatibility
-    'document_tika_output'::text as cog_src_field_name,     -- (*)
-    'observations_view'::text as cog_src_table_name,        -- (*)
-    obs.CID as cog_pk,                                      -- (*)
-    'cog_pk'::text as cog_pk_field_name,                    -- (*)
-    obs.DCT as cog_update_time                              -- (*)
-  from 
-    patients p, 
-    encounters enc,
-    observations obs,
-    medical_reports doc_bin,
-    medical_reports_processed doc_proc
-  where 
-    enc.PATIENT = p.ID and
-    obs.PATIENT = p.ID and 
-    obs.ENCOUNTER = enc.ID and
-    enc.DOCUMENTID = doc_bin.CID and
-    doc_proc.CID = doc_bin.CID
-  ;
+		doc_bin.cid AS document_id,
+		doc_bin.sampleid AS document_sample_id,
+		doc_bin.typeid AS document_type_id,
+		doc_bin.dct AS document_timestamp,
+		doc_bin.filename AS document_filename,
+
+		doc_proc.output::JSON ->> 'X-PDFPREPROC-OCR-APPLIED' AS document_ocr_status,
+		doc_proc.output::JSON ->> 'tika_output' AS document_tika_output
+	FROM 
+		patients p, 
+		encounters enc,
+		observations obs,
+		medical_reports doc_bin,
+		medical_reports_processed doc_proc
+	WHERE 
+		enc.patient = p.id AND
+		obs.patient = p.id AND 
+		obs.encounter = enc.id AND
+		enc.documentid = doc_bin.cid AND
+		doc_proc.cid = doc_bin.cid
+	;
 ```
 
 The view allows to query the patient data as in the previous examples. The querying of Tika-parsed document content is defied on a similar basis as in `reports_processed_view`. The view also allows to query for the information included with the original document, but skipping the binary content.
@@ -1242,7 +1202,7 @@ The *properties* files used in this step is based on [Example 4](#example-4) -- 
 
 The spring profiles used in this step are:
 ```properties
-spring.profiles.active = jdbc_in,jdbc_out,localPartitioning,tika
+spring.profiles.active = jdbc_in,jdbc_out,tika,localPartitioning
 ```
 In general, this tells us that the documents will be read from an input database (profile: `jdbc_in`), processed using `tika` with `localPartitioning` scheme and stored in an output database (profile: `jdbc_out`).
 
@@ -1250,12 +1210,12 @@ In general, this tells us that the documents will be read from an input database
 
 The source and target database are specified as follows:
 ```properties
-source.JdbcPath      = jdbc:postgresql://pgsamples:5432/db_samples
+source.JdbcPath      = jdbc:postgresql://samples-db:5432/db_samples
 source.Driver        = org.postgresql.Driver
 source.username      = test
 source.password      = test
 
-target.JdbcPath      = jdbc:postgresql://pgsamples:5432/db_samples
+target.JdbcPath      = jdbc:postgresql://samples-db:5432/db_samples
 target.Driver        = org.postgresql.Driver
 target.username      = test
 target.password      = test
@@ -1263,19 +1223,16 @@ target.password      = test
 
 The data source and target binding for CogStack engine is defined as follows:
 ```properties
-source.srcTableName = cog_src_table_name
-source.srcColumnFieldName = cog_src_field_name
-source.primaryKeyFieldName = cog_pk_field_name
-source.primaryKeyFieldValue = cog_pk
-source.timeStamp = cog_update_time
+source.primaryKeyFieldValue = cid
+source.timeStamp = dct
 
 source.selectClause = SELECT *
-source.sortKey = cog_pk
-source.fromClause = FROM reports_binary_view
+source.fromClause = FROM medical_reports
+source.sortKey = cid
 
 target.Sql = INSERT INTO medical_reports_processed (cid, dct, output) VALUES ( CAST( :primaryKeyFieldValue AS integer ), :timeStamp, :outputData)
 ```
-In this first data processing step we are going to read the data from `reports_binary_view` -- as provided for `source.fromClause`. 
+In this first data processing step we are going to read the data from `medical_reports` -- as provided for `source.fromClause`. 
 
 Moreover, we also need to define the `INSERT` clause for the property `target.Sql` which tells CogStack engine how to write the processed documents into the target database. This is required when using database as a data sink.
 
@@ -1283,14 +1240,24 @@ Moreover, we also need to define the `INSERT` clause for the property `target.Sq
 #### Tika configuration
 
 ```properties
-tika.binaryFieldName = cog_binary_doc
+tika.binaryFieldName = binarydoc
 tika.tikaFieldName = tika_output
 tika.binaryContentSource = database
 ```
 The property `tika.tikaFieldName` denotes the name of the key field `tika_output` in the output JSON file where the value will contain the content of the Tika-parsed document (optional value). See, e.g., the `reports_processed_view` where the content of `tika_output` is accessed and parsed.
 
-The property `tika.binaryFieldName` denotes the name of the column that contains the binary document data -- in our case it is the `cog_binary_doc` field in `reports_binary_view` view.
+The property `tika.binaryFieldName` denotes the name of the column that contains the binary document data -- in our case it is the `binarydoc` field in `reports_binary_view` view.
 
+
+### Partitioner configuration
+
+Since in this example we will be processing records from `medical_reports` table, we need to instruct the partitioner adequately:
+```properties
+partitioner.partitionType = PKTimeStamp
+partitioner.tableToPartition = medical_reports
+partitioner.pkColumnName = cid
+partitioner.timeStampColumnName = dct
+```
 
 
 ### Step 2 -- records ingestion into ElasticSearch
@@ -1324,7 +1291,7 @@ docker-compose up
 Assuming that everything is working fine, we should be able to connect to the running microservices as shown in [Example 2](#example-2). When accessing webservices and when asked for **credentials** the username is *test* with password *test*.
 
 
-This example uses the standard stack of microservices (see: [CogStack ecosystem](#cogstack-ecosystem)), but extended with Nginx reverse proxy service and internal network. For a better control and isolation of the services, in Docker Compose file (`examples/example6/docker/docker-compose.yml`) we defined 2 networks: `esnet` and `public`. The `esnet` network will be used as a internal, private network for the data processing pipeline and services -- the access should be highly restricted. The `public` network will be used as a bridge to connect the services to the outside host. When deployed, Nginx will be running as an additional microservice in the CogStack ecosystem using both `esnet` and `public` networks. It will control the communication between selected running microservices (`elasticsearch` and `kibana`) and the outside world. The only one difference here is the `pgsamples` database service, which for debugging purposes is using both networks and have ports directly exposed and bound to `localhost:5555`. 
+This example uses the standard stack of microservices (see: [CogStack ecosystem](#cogstack-ecosystem)), but extended with Nginx reverse proxy service and internal network. For a better control and isolation of the services, in Docker Compose file (`examples/example6/docker/docker-compose.override.yml`) we defined 2 networks: `esnet` and `public`. The `esnet` network will be used as a internal, private network for the data processing pipeline and services -- the access should be highly restricted. The `public` network will be used as a bridge to connect the services to the outside host. When deployed, Nginx will be running as an additional microservice in the CogStack ecosystem using both `esnet` and `public` networks. It will control the communication between selected running microservices (`elasticsearch-1` and `kibana`) and the outside world. The only one difference here is the `samples-db` database service, which for debugging purposes is using both networks and have ports directly exposed and bound to `localhost:5555`. 
 
 The picture below illustrates such deployment scenario.
 
@@ -1335,7 +1302,7 @@ The picture below illustrates such deployment scenario.
 
 ### Security
 
-As mentioned previously, in this example, Nginx is used only as a reverse proxy service providing a simple security layer used to connect the running microservices inside the private network to the outside world. It implements a simple secure HTTP access to `kibana` and `elasticsearch` services running at `5601` and `9200` ports respectively. Configured with Docker Compose file, all the HTTP traffic coming to the host on the specified ports will be forwarded to the respective microservices running inside private network through Nginx.
+As mentioned previously, in this example, Nginx is used only as a reverse proxy service providing a simple security layer used to connect the running microservices inside the private network to the outside world. It implements a simple secure HTTP access to `kibana` and `elasticsearch-1` services running at `5601` and `9200` ports respectively. Configured with Docker Compose file, all the HTTP traffic coming to the host on the specified ports will be forwarded to the respective microservices running inside private network through Nginx.
 
 
 ### Configuration file
@@ -1390,7 +1357,7 @@ Regarding Docker Compose configuration file, for each microservice used an addit
         tag: cog.java.engine
 ```
 
-`"fluentd"` is used as the logging `driver`. All the messages from the `cogstack` microservice will be forwarded to the fluentd driver using `cog.java.engine` as `tag`. The directory with the output logs from fluentd running container will be mapped to a local path in the deployment directory: `examples/example7/__deploy/__logs`. For the full configuration of running microservices, please refer to `examples/example7/docker/docker-compose.yml`.
+`"fluentd"` is used as the logging `driver`. All the messages from the `cogstack` microservice will be forwarded to the fluentd driver using `cog.java.engine` as `tag`. The directory with the output logs from fluentd running container will be mapped to a local path in the deployment directory: `examples/example7/__deploy/__logs`. For the full configuration of running microservices, please refer to `examples/example7/docker/docker-compose.override.yml`.
 
 
 ## Fluentd
@@ -1522,7 +1489,7 @@ The *properties* file used in this example is based on both [Example 4](#example
 ## TIKA CONFIGURATION
 ##
 #...
-tika.binaryFieldName = cog_binary_doc
+tika.binaryFieldName = encounter_binary_doc
 tika.tikaFieldName = tika_output
 #...
 
@@ -1534,7 +1501,7 @@ gate.gateFieldName = gate
 # ...
 ```
 
-Tika item processor will extract the text from the document initially stored in binary form in `cog_binary_doc` field (property: `tika.binaryFieldName` ; see [Example 4](#example-4) for the DB schema). Then, it will store the extracted text in a `tika_output` field (property: `tika.tikaFieldName`) in the Document model. The GATE application will then read the text from `tika_output` field (property: `gate.fieldsToGate`), process it and store the extracted annotations in `gate` field (property: `gate.gateFieldName`) in the Document model.  At the end of processing of the record, a resulting JSON with all the available fields will be generated and send to ElasticSearch.
+Tika item processor will extract the text from the document initially stored in binary form in `encounter_binary_doc` field (property: `tika.binaryFieldName` ; see [Example 4](#example-4) for the DB schema). Then, it will store the extracted text in a `tika_output` field (property: `tika.tikaFieldName`) in the Document model. The GATE application will then read the text from `tika_output` field (property: `gate.fieldsToGate`), process it and store the extracted annotations in `gate` field (property: `gate.gateFieldName`) in the Document model.  At the end of processing of the record, a resulting JSON with all the available fields will be generated and send to ElasticSearch.
 
 
 ## Deployment information

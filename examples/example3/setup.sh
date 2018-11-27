@@ -39,7 +39,7 @@ mv $DB_OUT_DIR/db_samples-syn.sql.gz $DB_OUT_DIR/db_samples.sql.gz
 
 # copy the relevant configuration data for microservices
 #
-services=(postgres
+services=(pgjobrepo
 	pgsamples
 	elasticsearch
 	kibana)

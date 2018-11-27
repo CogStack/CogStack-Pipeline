@@ -84,8 +84,8 @@ for f in $TMP_DIR/mtsamples-type-*; do
 	# create SQL queries
 	#
 	echo "INSERT INTO \
-			medical_reports(CID, SAMPLEID, TYPEID, DCT, FILENAME, BINARYDOC) \
-			VALUES($pk, $s_id, $type_id, current_timestamp, E'$f', decode(E'$doc64', 'base64'));" >> $SQL_FILE
+			medical_reports(cid, sampleid, typeid, dct, filename, binarydoc) \
+			VALUES($pk, $s_id, $type_id, CURRENT_TIMESTAMP, E'$f', DECODE(E'$doc64', 'base64'));" >> $SQL_FILE
 
 	echo "UPDATE encounters SET documentid = $pk WHERE cid = $i;" >> $SQL_FILE
 

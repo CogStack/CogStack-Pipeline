@@ -73,7 +73,7 @@ i=1
 # HINT: we can multiply the documents count by x2-5
 for f in $TMP_DIR/mtsamples-type-*; do
 	doc64=$( base64 < $f )
-	echo "UPDATE encounters SET binarydocument = decode(E'$doc64', 'base64') WHERE cid = $i;" >> $SQL_FILE
+	echo "UPDATE encounters SET binarydocument = DECODE(E'$doc64', 'base64') WHERE cid = $i;" >> $SQL_FILE
 	let i=i+77
 	if [ "$i" -gt "$NF" ]; then let i=i%NF+1; fi
 done

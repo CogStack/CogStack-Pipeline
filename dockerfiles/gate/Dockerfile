@@ -1,4 +1,4 @@
-FROM cogstacksystems/cogstack-pipeline:dev-latest
+FROM cogstacksystems/cogstack-pipeline:local
 
 RUN apt-get update && \
 	apt-get install -y curl && \
@@ -9,7 +9,6 @@ RUN apt-get update && \
 # GATE directories structure:
 # - core components: /gate/home/
 # - custom user apps: /gate/app/
-RUN mkdir -p /gate/
 WORKDIR /gate/
 
 # for the moment use the older GATE bundle containing all plugins and core components 
