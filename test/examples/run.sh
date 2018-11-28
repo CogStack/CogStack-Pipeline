@@ -73,5 +73,10 @@ pip install -r requirements.txt
 # run tests
 python run_tests.py
 
+if [ "$?" -ne "0" ]; then
+    echo "Error: one or more tests failed"
+    exit 1
+fi
+
 # finish
 deactivate
