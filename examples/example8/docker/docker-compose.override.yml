@@ -19,7 +19,6 @@ services:
   cogstack-pipeline:
     image: cogstacksystems/cogstack-pipeline-gate:dev-latest
     volumes:
-      - ./cogstack:/usr/src/docker-cogstack/cogstack/cogstack_conf:ro
       - ./gate/app:/gate/app
 
 #---------------------------------------------------------------------------#

@@ -25,6 +25,7 @@ addons:
       - libmagickcore-dev
       - libmagickwand-dev
       - libmagic-dev
+      - apache2-utils
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
