@@ -48,7 +48,7 @@ public class BasicConfigWithSchedulingAndConfiguredStartTests {
     public void basicConfigurerdStartPkPartitionWithSchedulingTest() {
         testUtils.insertFreshDataIntoBasicTableAfterDelay(env.getProperty("tblInputDocs"),15000,76,150,false);
         try {
-            Thread.sleep(10000);
+            Thread.sleep(20000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
