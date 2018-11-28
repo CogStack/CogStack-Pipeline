@@ -61,7 +61,7 @@ public class DocmanReaderWithoutSchedulingTests {
     public void docmanReaderTest() {
         jobLauncher.launchJob();
         try {
-            Thread.sleep(10000);
+            Thread.sleep(20000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
