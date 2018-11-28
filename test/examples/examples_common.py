@@ -48,8 +48,8 @@ class TestSingleExample(unittest.TestCase):
 
         # set commands
         self.setup_cmd = 'bash setup.sh'
-        self.docker_cmd_up = 'docker-compose up --detach'
-        self.docker_cmd_down = 'docker-compose down --volumes'
+        self.docker_cmd_up = 'docker-compose up -d'  # --detach
+        self.docker_cmd_down = 'docker-compose down -v'  # --volumes
 
         # set up logger
         log_format = '[%(asctime)s] %(name)s: %(message)s'
