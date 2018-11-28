@@ -44,7 +44,7 @@ public class BasicConfigWithSchedulingSmallInsertTests {
     public void basicTimestampPartitionWithSchedulingTest() {
         testUtils.insertFreshDataIntoBasicTableAfterDelay(env.getProperty("tblInputDocs"),15000,5,8,false);
         try {
-            Thread.sleep(10000);
+            Thread.sleep(20000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
