@@ -183,9 +183,7 @@ class TestExample8(TestSingleExampleDb2Es):
                                            es_index_name='sample_observations_view',
                                            example_path=os.path.join(examples_path, "example8"),
                                            wait_for_sink_ready_s=120,
-                                           uses_image_override=True,
                                            image_build_rel_dir="../../../dockerfiles/gate",
-                                           image_suffix="-gate",
                                            *args, **kwargs)
 
 
@@ -203,7 +201,5 @@ class TestExample9(TestSingleExampleDb2Es):
                                            es_index_name='sample_observations_view',
                                            example_path=os.path.join(examples_path, "example9"),
                                            wait_for_sink_ready_s=180,
-                                           uses_image_override=True,
                                            image_build_rel_dir="../../../dockerfiles/gate",
-                                           image_suffix="-gate",
                                            *args, **kwargs)

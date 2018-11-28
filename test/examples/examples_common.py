@@ -5,6 +5,7 @@ import os
 import logging
 import subprocess
 import time
+import yaml
 
 from connectors import *
 
@@ -18,16 +19,12 @@ class TestSingleExample(unittest.TestCase):
                  sub_case="",
                  use_local_image_build=True,
                  image_build_rel_dir="../../../",
-                 image_suffix="",
-                 uses_image_override=False,
                  *args, **kwargs):
         """
         :param example_path: the absolute patch to the examples main directory
         :param sub_case: the specific sub case to test
         :param use_local_image_build: whether to use a locally build CogStack Pipeline image
         :param image_build_rel_dir: the relative directory where the image Dockerfile is located
-        :param image_suffix: the suffix of the image to be used
-        :param uses_image_override: whether use the modified Docker Compose override file
         :param args: any additional arguments passed on to the parent class
         :param kwargs: any additional arguments passed on to the parent class
         """
@@ -43,8 +40,6 @@ class TestSingleExample(unittest.TestCase):
         if len(self.sub_case) > 0:
             self.deploy_path = os.path.join(self.deploy_path, self.sub_case)
             self.image_build_rel_dir += "../"
-        self.image_suffix = image_suffix
-        self.uses_image_override = uses_image_override
 
         # set commands
         self.setup_cmd = 'bash setup.sh'
@@ -82,37 +77,23 @@ class TestSingleExample(unittest.TestCase):
         res = connector.count(index_name)
         return int(res['count'])
 
-    def replaceImageNameInComposeFile(self):
+    def addBuildContextInComposeFile(self):
         """
-        Replaces the name of the image in the Docker Compose file
-        to be using a local build in the deployment
+        Add the build context key in the Docker Compose file
+        to be using a locally build image
         """
-        # check whether we use standard compose file or override
-        compose_file = "docker-compose.yml"
-        if self.uses_image_override:
-            compose_file = "docker-compose.override.yml"
-        compose_file = os.path.join(self.deploy_path, compose_file)
+        compose_file = os.path.join(self.deploy_path, "docker-compose.override.yml")
+        with open(compose_file, 'r') as c_file:
+            compose_yaml = yaml.safe_load(c_file)
 
-        # set the replace target string
-        to_replace = ['image: cogstacksystems/cogstack-pipeline:latest',
-                      'image: cogstacksystems/cogstack-pipeline:dev-latest',
-                      'image: cogstacksystems/cogstack-pipeline:local']
-        if len(self.image_suffix) > 0:
-            to_replace = [n.replace(':', '%s:' % self.image_suffix) for n in to_replace]
+        # check whether the service key exists and add the build context
+        if 'cogstack-pipeline' not in compose_yaml['services']:
+            compose_yaml['services']['cogstack-pipeline'] = dict()
+        compose_yaml['services']['cogstack-pipeline']['build'] = self.image_build_rel_dir
 
-        # read file to memory
-        with open(compose_file, 'r') as f_in:
-            file_content = f_in.read()
-
-        # replace the image to build string
-        target = 'build: %s' % self.image_build_rel_dir
-        for s in to_replace:
-            if s in file_content:
-                file_content = file_content.replace(s, target)
-
-        # write the file out
-        with open(compose_file, 'w') as f_out:
-            f_out.write(file_content)
+        # save the file in-place
+        with open(compose_file, 'w') as c_file:
+            yaml.dump(compose_yaml, c_file, default_flow_style=False)
 
     def setUp(self):
         """
@@ -133,9 +114,9 @@ class TestSingleExample(unittest.TestCase):
         # replace the image to local build
         if self.use_local_image_build:
             try:
-                self.replaceImageNameInComposeFile()
+                self.addBuildContextInComposeFile()
             except Exception as e:
-                self.log.error("Failed to replace image string to the local build: %s" % e)
+                self.log.error("Failed to add the local build context: %s" % e)
                 self.fail(e.message)
 
         # run docker-compose
@@ -173,7 +154,7 @@ class TestSingleExample(unittest.TestCase):
         self.log.info("Cleaning up ...")
         main_deploy_path = os.path.join(self.example_path, self.deploy_dir)
         try:
-            out = subprocess.check_output(['rm', '-rf', main_deploy_path])
+            out = subprocess.check_output('rm -rf %s' % main_deploy_path, shell=True)
             if len(out) > 0:
                 self.log.debug(out)
         except Exception as e:
