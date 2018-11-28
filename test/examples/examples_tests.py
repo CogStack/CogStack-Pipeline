@@ -182,7 +182,7 @@ class TestExample8(TestSingleExampleDb2Es):
                                            es_conn_conf=DEFAULT_ES_CONFIG,
                                            es_index_name='sample_observations_view',
                                            example_path=os.path.join(examples_path, "example8"),
-                                           wait_for_sink_ready_s=120,
+                                           wait_for_sink_ready_s=180,
                                            image_build_rel_dir="../../../dockerfiles/gate",
                                            *args, **kwargs)
 
