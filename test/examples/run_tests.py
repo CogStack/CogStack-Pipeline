@@ -39,7 +39,8 @@ def run_all(examples_main_path):
                                     examples_path=examples_main_path))
 
     # run the test suite
-    unittest.TextTestRunner().run(suite)
+    result = unittest.TextTestRunner().run(suite)
+    return int(not result.wasSuccessful())
 
 
 if __name__ == '__main__':
@@ -55,5 +56,6 @@ if __name__ == '__main__':
         cur_dir = os.path.dirname(os.path.realpath(__file__))
         examples_path = os.path.normpath(os.path.join(cur_dir, rel_path))
 
-    # run the tests
-    run_all(examples_path)
+    # run the tests and return the result
+    exit_code = run_all(examples_path)
+    exit(exit_code)
