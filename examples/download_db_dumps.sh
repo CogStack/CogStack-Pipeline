@@ -2,7 +2,7 @@
 set -e
 
 AWS_S3_BUCKET_URL="http://cogstack.s3.amazonaws.com"
-DATA_PATH="share/examples/db_dump"
+DATA_PATH="share/examples/db_dump_v2"
 DATA_PATH_URL="$AWS_S3_BUCKET_URL/$DATA_PATH"
 
 # download the db dumps for examples
