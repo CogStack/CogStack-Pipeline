@@ -16,7 +16,7 @@ for i in "$@"; do
         --examples-path=*)
         EXAMPLES_PATH="${i#*=}"
         ;;
-        --download)
+        --download-dumps)
         DOWNLOAD_DUMPS=1
         ;;
         *)
