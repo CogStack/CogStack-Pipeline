@@ -71,7 +71,7 @@ In this tutorial the CogStack ecosystem is composed of the following microservic
 * `elasticsearch-1` -- ElasticSearch search engine (single node) for storing and querying the processed EHR data,
 * `kibana` -- Kibana data visualization tool for querying the data from ElasticSearch.
 
-Since all the examples share the common configuration for the microservices used, the base Doocker Compose file is provided in `examples/docker-common/docker/docker-compose.yml`. The Docker Compose file with configuration of microservices being overriden for this example can be found in `examples/example2/docker/docker-compose.override.yml`. Both configuration files are automatically used by Docker Compose when deploying CogStack, as will be shown later.
+Since all the examples share the common configuration for the microservices used, the base Docker Compose file is provided in `examples/docker-common/docker-compose.yml`. The Docker Compose file with configuration of microservices being overriden for this example can be found in `examples/example2/docker/docker-compose.override.yml`. Both configuration files are automatically used by Docker Compose when deploying CogStack, as will be shown later.
 
 
 
@@ -164,7 +164,7 @@ As a result, a temporary directory `__deploy/` will be created containing all th
 ## Docker-based deployment
 
 Next, we can proceed to deploy CogStack ecosystem using Docker Compose. It will configure and start microservices based on the provided Compose files:
-- common base configuration, copied from `examples/docker-common/docker/docker-compose.yml` ,
+- common base configuration, copied from `examples/docker-common/docker-compose.yml` ,
 - example-specific configuration copied from `examples/example2/docker/docker-compose.override.yml`.
 Moreover, the PostgreSQL database container comes with pre-initialized database dump ready to be loaded directly into. 
 
@@ -462,7 +462,7 @@ source.Driver = org.postgresql.Driver
 source.username = test
 source.password = test
 ```
-In this example we are using a PostgreSQL database which driver is defined by `source.Driver` parameter. The PostgreSQL database service is available in the CogStack ecosystem as `samples-db`, has exposed port `5432` and the sample database name is `db_samples` -- all these details need to be included in the `source.JdbcPath` parameter field. The information about the data source host and port directly corresponds to the `samples-db` microservice configuration specified in the Docker Compose files (see: `examples/docker-base/docker-compose.yml` and `examples/example2/docker/docker-compose.override.yml`) as mentioned in the [Running CogStack](#running-cogstack) part.
+In this example we are using a PostgreSQL database which driver is defined by `source.Driver` parameter. The PostgreSQL database service is available in the CogStack ecosystem as `samples-db`, has exposed port `5432` and the sample database name is `db_samples` -- all these details need to be included in the `source.JdbcPath` parameter field. The information about the data source host and port directly corresponds to the `samples-db` microservice configuration specified in the Docker Compose files (see: `examples/docker-common/docker-compose.yml` and `examples/example2/docker/docker-compose.override.yml`) as mentioned in the [Running CogStack](#running-cogstack) part.
 
 
 Next, we need to instruct CogStack workers how to query the records from the data source:
