@@ -521,7 +521,7 @@ public class TestUtils  {
     public int countOutputDocsInES(){
         try {
             esRestService.init();
-           Response response = esRestService.getRestClient().performRequest(
+            Response response = esRestService.getRestClient().performRequest(
                     "GET",
                     "/"+env.getProperty("elasticsearch.index.name")+"/"
                             +env.getProperty("elasticsearch.type")+"/_count",
@@ -538,6 +538,36 @@ public class TestUtils  {
     }
 
 
+    public void waitForEsReady(long maxTimeoutMs) {
+        final long queryDelayTimeMs = 2000;
+        final long startTimeMs = System.currentTimeMillis();
+        final int minCountWithoutChanges = 3;
+
+        int curCountWithoutChanges = 0;
+        int lastDocCount = 0;
+
+        while (curCountWithoutChanges < minCountWithoutChanges) {
+            int curDocCount = countOutputDocsInES();
+            if (curDocCount > 0) {
+                if (curDocCount == lastDocCount) {
+                    curCountWithoutChanges++;
+                } else {
+                    lastDocCount = curDocCount;
+                    curCountWithoutChanges = 0;
+                }
+            }
+
+            if (System.currentTimeMillis() - startTimeMs > maxTimeoutMs
+                || curCountWithoutChanges >= minCountWithoutChanges)
+                break;
+
+            try {
+                Thread.sleep(queryDelayTimeMs);
+            } catch (InterruptedException e) {
+                throw new RuntimeException("Failed to wait for ES to become ready:", e);
+            }
+        }
+    }
 
 
     public String getStringInEsDoc(String id){
