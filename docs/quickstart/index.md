@@ -71,7 +71,7 @@ In this tutorial the CogStack ecosystem is composed of the following microservic
 * `elasticsearch-1` -- ElasticSearch search engine (single node) for storing and querying the processed EHR data,
 * `kibana` -- Kibana data visualization tool for querying the data from ElasticSearch.
 
-Since all the examples share the common configuration for the microservices used, the base Doocker Compose file is provided in `examples/docker-common/docker-compose.yml`. The Docker Compose file with configuration of microservices being overriden for this example can be found in `examples/example2/docker/docker-compose.override.yml`. Both configuration files are automatically used by Docker Compose when deploying CogStack, as will be shown later.
+Since all the examples share the common configuration for the microservices used, the base Docker Compose file is provided in `examples/docker-common/docker-compose.yml`. The Docker Compose file with configuration of microservices being overriden for this example can be found in `examples/example2/docker/docker-compose.override.yml`. Both configuration files are automatically used by Docker Compose when deploying CogStack, as will be shown later.
 
 
 
