@@ -52,8 +52,8 @@ public class LineFixerWithoutSchedulingTests {
     public void lineFixerTest() {
         jobLauncher.launchJob();
         try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
+            testUtils.waitForEsReady(30000);
+        } catch (RuntimeException e) {
             e.printStackTrace();
         }
 

@@ -53,8 +53,8 @@ public class FullPipelineWithoutSchedulingTests {
     public void fullPipelineTest() {
         jobLauncher.launchJob();
         try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
+            testUtils.waitForEsReady(30000);
+        } catch (RuntimeException e) {
             e.printStackTrace();
         }
         assertEquals(31,testUtils.countOutputDocsInES());

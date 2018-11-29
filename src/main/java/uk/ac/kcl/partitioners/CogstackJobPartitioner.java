@@ -77,7 +77,7 @@ public  class CogstackJobPartitioner implements Partitioner {
     @Value("${partitioner.maxPartitionSize:#{null}}")
     Long maxPartitionSize;
 
-    @Value("${partitioner.partitionType}")
+    @Value("${partitioner.partitionType:PKTimeStamp}")
     String partitionType;
 
     @Value("${partitioner.preFieldsSQL:#{null}}")

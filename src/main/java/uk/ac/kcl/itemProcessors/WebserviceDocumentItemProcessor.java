@@ -46,16 +46,25 @@ public class WebserviceDocumentItemProcessor implements ItemProcessor<Document, 
 
     @Autowired
     private Environment env;
+
+    // mandatory properties
     @Value("${webservice.endPoint}")
     private String endPoint;
-    @Value("${webservice.fieldName}")
+
+    // optional properties with default values
+    @Value("${webservice.fieldName:outWSField}")
     private String fieldName;
-    @Value("${webservice.connectTimeout}")
-    private int connectTimeout;
-    @Value("${webservice.readTimeout}")
-    private int readTimeout;
-    @Value("${webservice.name}")
+    @Value("${webservice.name:defaultWSName}")
     private String webserviceName;
+
+    @Value("${webservice.connectTimeout:10000}")
+    private int connectTimeoutMs;
+    @Value("${webservice.readTimeout:60000}")
+    private int readTimeoutMs;
+    @Value("${webservice.retryTimeout:5000}")
+    private int retryTimeoutMs;
+    @Value("${webservice.retryBackoff:3000}")
+    private int retryBackoffMs;
 
     private RetryTemplate retryTemplate;
     private RestTemplate restTemplate;
@@ -64,13 +73,13 @@ public class WebserviceDocumentItemProcessor implements ItemProcessor<Document, 
     @PostConstruct
     private void init(){
 
-        fieldsToSendToWebservice = Arrays.asList(env.getProperty("webservice.fieldsToSendToWebservice")
+        fieldsToSendToWebservice = Arrays.asList(env.getRequiredProperty("webservice.fieldsToSendToWebservice")
                 .toLowerCase().split(","));
         setFieldName(fieldName);
         this.retryTemplate = getRetryTemplate();
         this.restTemplate = new RestTemplate();
-        ((SimpleClientHttpRequestFactory)restTemplate.getRequestFactory()).setReadTimeout(readTimeout);
-        ((SimpleClientHttpRequestFactory)restTemplate.getRequestFactory()).setConnectTimeout(connectTimeout);
+        ((SimpleClientHttpRequestFactory)restTemplate.getRequestFactory()).setReadTimeout(readTimeoutMs);
+        ((SimpleClientHttpRequestFactory)restTemplate.getRequestFactory()).setConnectTimeout(connectTimeoutMs);
     }
 
     public void setFieldsToSendToWebservice(List<String> fields){
@@ -93,9 +102,9 @@ public class WebserviceDocumentItemProcessor implements ItemProcessor<Document, 
 
     private RetryTemplate getRetryTemplate(){
         TimeoutRetryPolicy retryPolicy = new TimeoutRetryPolicy();
-        retryPolicy.setTimeout(Long.valueOf(env.getProperty("webservice.retryTimeout")));
+        retryPolicy.setTimeout(retryTimeoutMs);
         FixedBackOffPolicy backOffPolicy = new FixedBackOffPolicy();
-        backOffPolicy.setBackOffPeriod(Long.valueOf(env.getProperty("webservice.retryBackoff")));
+        backOffPolicy.setBackOffPeriod(retryBackoffMs);
 
         RetryTemplate template = new RetryTemplate();
         template.setRetryPolicy(retryPolicy);

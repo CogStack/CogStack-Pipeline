@@ -10,15 +10,11 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.TransportAddress;
-import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.XContentFactory;
-import org.elasticsearch.common.xcontent.XContentParser;
-import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.common.xcontent.*;
 //import org.elasticsearch.shield.ShieldPlugin;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.elasticsearch.xpack.client.PreBuiltXPackTransportClient;
 
-import org.elasticsearch.common.xcontent.NamedXContentRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemWriter;
@@ -141,7 +137,9 @@ public class ElasticsearchDocumentWriter implements ItemWriter<Document> {
         for (Document doc : documents) {
             XContentParser parser = null;
             parser = XContentFactory.xContent(XContentType.JSON)
-                    .createParser(NamedXContentRegistry.EMPTY, doc.getOutputData().getBytes());
+                    .createParser(NamedXContentRegistry.EMPTY,
+                            DeprecationHandler.THROW_UNSUPPORTED_OPERATION,
+                            doc.getOutputData().getBytes());
             parser.close();
             XContentBuilder builder = jsonBuilder().copyCurrentStructure(parser);
 

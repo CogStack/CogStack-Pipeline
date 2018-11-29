@@ -15,6 +15,7 @@
  */
 package uk.ac.kcl;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
@@ -35,6 +36,7 @@ import java.util.Properties;
  * @author King's College London, Richard Jackson <richgjackson@gmail.com>
  */
 public class Main {
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) {
         File folder = new File(args[0]);
@@ -43,13 +45,26 @@ public class Main {
         for (File listOfFile : listOfFiles) {
             if (listOfFile.isFile()) {
                 if (listOfFile.getName().endsWith(".properties")) {
-                    System.out.println("Properties sile found:" + listOfFile.getName() +
+                    LOG.info("Properties file found:" + listOfFile.getName() +
                             ". Attempting to launch application context");
                     Properties properties = new Properties();
                     InputStream input;
                     try {
                         input = new FileInputStream(listOfFile);
                         properties.load(input);
+
+                        // check whether any partitioning scheme has been selected
+                        // TODO: move to a module performing input parameters validation
+                        if (properties.containsKey("spring.profiles.active")) {
+                            String activeProfiles = properties.getProperty("spring.profiles.active");
+                            if (!activeProfiles.contains("localPartitioning") && !activeProfiles.contains("remotePartitioning")) {
+                                activeProfiles += ",localPartitioning";
+                                properties.replace("spring.profiles.active", activeProfiles);
+                                LOG.info("No partitioning scheme specified in the active profiles. Using 'localPartitioning' by default");
+                            }
+                        }
+
+                        // TODO: need a proper way to validate input properties specified by user
                         if(properties.getProperty("globalSocketTimeout")!=null){
                             TcpHelper.setSocketTimeout(Integer.valueOf(properties.getProperty("globalSocketTimeout")));
                         }
@@ -60,34 +75,64 @@ public class Main {
                         ConfigurableEnvironment environment = new StandardEnvironment();
                         MutablePropertySources propertySources = environment.getPropertySources();
                         propertySources.addFirst(new MapPropertySource(listOfFile.getName(), map));
-                        @SuppressWarnings("resource")
-                        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
-                        ctx.registerShutdownHook();
-                        ctx.setEnvironment(environment);
-                        String scheduling;
-                        try {
-                            scheduling = properties.getProperty("scheduler.useScheduling");
-                            if (scheduling.equalsIgnoreCase("true")) {
-                                ctx.register(ScheduledJobLauncher.class);
-                                ctx.refresh();
-                            } else if (scheduling.equalsIgnoreCase("false")) {
-                                ctx.register(SingleJobLauncher.class);
-                                ctx.refresh();
-                                SingleJobLauncher launcher = ctx.getBean(SingleJobLauncher.class);
-                                launcher.launchJob();
-                            } else if (scheduling.equalsIgnoreCase("slave")) {
-                                ctx.register(JobConfiguration.class);
-                                ctx.refresh();
-                            }                        else{
-                                throw new RuntimeException("useScheduling not configured. Must be true, false or slave");
-                            }
-                        } catch (NullPointerException ex) {
-                            throw new RuntimeException("useScheduling not configured. Must be true, false or slave");
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
+
+                        setUpApplicationContext(environment, properties);
+
+                    } catch (Exception e) {
+                        StringWriter sw = new StringWriter();
+                        e.printStackTrace(new PrintWriter(sw));
+                        String stackTrace = sw.toString();
+                        LOG.error("Exception: " + e.getMessage());
+                        LOG.error("StackTrace: " + stackTrace);
                     }
                 }
+            }
+        }
+    }
+
+    public static void setUpApplicationContext(ConfigurableEnvironment environment, Properties properties) {
+        @SuppressWarnings("resource")
+        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+        ctx.registerShutdownHook();
+        ctx.setEnvironment(environment);
+
+        // TODO: need a proper way to validate input properties specified by user
+        String executionMode = environment.getProperty("execution.mode", "local").toLowerCase();
+        if (executionMode != "local" && executionMode != "remote")
+            throw new RuntimeException("Invalid execution mode specified. Must be `local` (default) or `remote`.");
+
+        String instanceType = "";
+        if (executionMode == "remote")
+        {
+            if (!environment.containsProperty("execution.instanceType")) {
+                throw new RuntimeException("Instance type in remote execution not specified. Must be `master` or `slave`.");
+            }
+
+            instanceType = environment.getRequiredProperty("execution.instanceType").toLowerCase();
+            if (instanceType != "master" && instanceType != "slave")
+                throw new RuntimeException("Invalid instance type in remote execution mode specified. Must be `master` or `slave`.");
+        }
+
+        boolean useScheduling;
+        try {
+            useScheduling = Boolean.parseBoolean(environment.getProperty("scheduler.useScheduling", "false"));
+        } catch (Exception e) {
+            throw new RuntimeException("Invalid scheduling option specified. Must be `true` or `false` (default).");
+        }
+
+        // set appropriate job configuration
+        if (executionMode == "remote" && instanceType == "slave") {
+            ctx.register(JobConfiguration.class);
+            ctx.refresh();
+        } else { // execution mode local or remote with master
+            if (useScheduling) {
+                ctx.register(ScheduledJobLauncher.class);
+                ctx.refresh();
+            } else {
+                ctx.register(SingleJobLauncher.class);
+                ctx.refresh();
+                SingleJobLauncher launcher = ctx.getBean(SingleJobLauncher.class);
+                launcher.launchJob();
             }
         }
     }
