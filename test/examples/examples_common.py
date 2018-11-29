@@ -241,7 +241,7 @@ class TestSingleExampleDb2Es(TestSingleExample):
     """
     def __init__(self, source_conn_conf, source_table_name, es_conn_conf, es_index_name,
                  wait_for_source_ready_s=10,
-                 wait_for_sink_ready_max_s=300,
+                 wait_for_sink_ready_max_s=600,
                  *args, **kwargs):
         """
         :param source_conn_conf: the source JDBC connector configuration :class:~JdbcConnectorConfig
@@ -290,7 +290,7 @@ class TestSingleExampleDb2Db(TestSingleExample):
     """
     def __init__(self, source_conn_conf, source_table_name, sink_conn_conf, sink_table_name,
                  wait_for_source_ready_s=10,
-                 wait_for_sink_ready_max_s=300,
+                 wait_for_sink_ready_max_s=600,
                  *args, **kwargs):
         """
         :param source_conn_conf: the source JDBC connector configuration :class:~JdbcConnectorConfig
