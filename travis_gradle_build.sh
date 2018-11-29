@@ -30,6 +30,9 @@ PING_LOOP_PID=$!
 ./gradlew -PdockerComposePath="$HOME/bin/docker-compose" acceptTest >> $BUILD_OUTPUT 2>&1
 ./gradlew -PdockerComposePath="$HOME/bin/docker-compose" postgresIntegTest >> $BUILD_OUTPUT 2>&1
 
+# Test examples
+( cd test/examples && bash run.sh --download-dumps >> $BUILD_OUTPUT 2>&1 )
+
 # The build finished without returning an error so dump a tail of the output
 dump_output
 
