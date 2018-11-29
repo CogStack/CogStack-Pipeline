@@ -58,8 +58,8 @@ public class JdbcMapWithoutSchedulingTests {
         jobLauncher.launchJob();
 
         try {
-            Thread.sleep(20000);
-        } catch (InterruptedException e) {
+            testUtils.waitForEsReady(30000);
+        } catch (RuntimeException e) {
             e.printStackTrace();
         }
         Map<String, Object> row = dbmsTestUtils.getRowInOutputTable(1);

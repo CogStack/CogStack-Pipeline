@@ -51,8 +51,8 @@ public class BioyodieWebserviceWithoutSchedulingTests {
     public void bioyodieTest() {
         jobLauncher.launchJob();
         try {
-            Thread.sleep(20000);
-        } catch (InterruptedException e) {
+            testUtils.waitForEsReady(30000);
+        } catch (RuntimeException e) {
             e.printStackTrace();
         }
         assertEquals(75,testUtils.countOutputDocsInES());

@@ -61,8 +61,8 @@ public class DocmanReaderWithoutSchedulingTests {
     public void docmanReaderTest() {
         jobLauncher.launchJob();
         try {
-            Thread.sleep(20000);
-        } catch (InterruptedException e) {
+            testUtils.waitForEsReady(30000);
+        } catch (RuntimeException e) {
             e.printStackTrace();
         }
         assertEquals(2,testUtils.countOutputDocsInES());

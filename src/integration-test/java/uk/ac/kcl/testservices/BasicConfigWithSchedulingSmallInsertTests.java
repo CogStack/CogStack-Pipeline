@@ -44,8 +44,8 @@ public class BasicConfigWithSchedulingSmallInsertTests {
     public void basicTimestampPartitionWithSchedulingTest() {
         testUtils.insertFreshDataIntoBasicTableAfterDelay(env.getProperty("tblInputDocs"),15000,5,8,false);
         try {
-            Thread.sleep(20000);
-        } catch (InterruptedException e) {
+            testUtils.waitForEsReady(30000);
+        } catch (RuntimeException e) {
             e.printStackTrace();
         }
         //note, in this test, we upsert documents, overriding existng ones. hence why there are 75 in the index and 150
