@@ -17,7 +17,7 @@ services:
 # CogStack containers                                                       #
 #---------------------------------------------------------------------------#
   cogstack-pipeline:
-    image: cogstacksystems/cogstack-pipeline-gate:dev-latest
+    image: cogstacksystems/cogstack-pipeline-gate:latest
     volumes:
       - ./gate/app:/gate/app
 
