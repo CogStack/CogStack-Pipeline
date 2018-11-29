@@ -31,18 +31,14 @@ The main directory with resources used in this tutorial is available in the CogS
 The most convenient way to get CogStack bundle is to download it directly from the [official github repository](https://github.com/CogStack/CogStack-Pipeline) either by cloning it using git:
 
 ```bash
-git clone -b dev --single-branch https://github.com/CogStack/CogStack-Pipeline.git
+git clone https://github.com/CogStack/CogStack-Pipeline.git
 ```
 or by downloading it from the repository and decompressing it:
 ```bash
-wget 'https://github.com/CogStack/CogStack-Pipeline/archive/dev.zip'
-unzip dev.zip
+wget 'https://github.com/CogStack/CogStack-Pipeline/archive/master.zip'
+unzip master.zip
 ```
 The content will be decompressed into `CogStack-Pipeline/` directory.
-
-
-[//]: # "<span style='color:red'> NOTE: </span>"
-**Note: For the moment the CogStack bundle is obtained from the `dev` branch -- soon it will be merged into `master` branch with a version tag for a direct download.**
 
 
 
