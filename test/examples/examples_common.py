@@ -52,7 +52,7 @@ class TestSingleExample(unittest.TestCase):
         self.log = logging.getLogger(self.__class__.__name__)
 
     @staticmethod
-    def getRecordsCountFromSourceDb(connector, table_name):
+    def getRecordsCountFromTargetDb(connector, table_name):
         """
         Queries the table for the number of records
         in the database specified by the connector
@@ -76,6 +76,79 @@ class TestSingleExample(unittest.TestCase):
         """
         res = connector.count(index_name)
         return int(res['count'])
+
+    @staticmethod
+    def waitForTargetEsReady(connector, index_name, max_timeout_s=300):
+        """
+        Queries the index for the number of documents until no new arrive
+        :param connector: the ElasticSearch connector :class:~ElasticSearchConnector
+        :param index_name: the name of the index to query
+        :param max_timeout_s: maximum timeout [in s]
+        """
+        start_time_s = time.time()
+        query_delay_s = 3
+
+        # wait for index
+        while True:
+            try:
+                index_exists = connector.indices.exists(index=index_name)
+
+                if index_exists or int(time.time() - start_time_s) > max_timeout_s:
+                    break
+            except Exception as e:
+                logging.warn('Exception while querying index: %s' % e)
+                pass
+
+            time.sleep(query_delay_s)
+
+        min_count_wo_changes = 3
+        cur_count_wo_changes = 0
+        last_records_count = 0
+
+        # wait for documents
+        while cur_count_wo_changes < min_count_wo_changes:
+            recs = TestSingleExample.getRecordsCountFromTargetEs(connector, index_name)
+            if recs > 0:
+                if recs == last_records_count:
+                    cur_count_wo_changes += 1
+                else:
+                    last_records_count = recs
+                    cur_count_wo_changes = 0
+
+            if cur_count_wo_changes > min_count_wo_changes or int(time.time() - start_time_s) > max_timeout_s:
+                break
+
+            time.sleep(query_delay_s)
+
+    @staticmethod
+    def waitForTargetDbReady(connector, table_name, max_timeout_s=300):
+        """
+        Queries the table for the number of records until no new arrive
+        :param connector: the JDBC connector :class:~JdbcConnector
+        :param table_name: the name of the table to query
+        :param max_timeout_s: maximum timeout [in s]
+        """
+        start_time_s = time.time()
+        query_delay_s = 3
+
+        min_count_wo_changes = 3
+        cur_count_wo_changes = 0
+        last_records_count = 0
+
+        # wait for records
+        while cur_count_wo_changes < min_count_wo_changes:
+            recs = TestSingleExample.getRecordsCountFromTargetDb(connector, table_name)
+            if recs > 0:
+                if recs == last_records_count:
+                    cur_count_wo_changes += 1
+                else:
+                    last_records_count = recs
+                    cur_count_wo_changes = 0
+
+            if cur_count_wo_changes > min_count_wo_changes or int(time.time() - start_time_s) > max_timeout_s:
+                break
+
+            time.sleep(query_delay_s)
 
     def addBuildContextInComposeFile(self):
         """
@@ -168,7 +241,7 @@ class TestSingleExampleDb2Es(TestSingleExample):
     """
     def __init__(self, source_conn_conf, source_table_name, es_conn_conf, es_index_name,
                  wait_for_source_ready_s=10,
-                 wait_for_sink_ready_s=60,
+                 wait_for_sink_ready_max_s=300,
                  *args, **kwargs):
         """
         :param source_conn_conf: the source JDBC connector configuration :class:~JdbcConnectorConfig
@@ -187,7 +260,7 @@ class TestSingleExampleDb2Es(TestSingleExample):
         self.es_index_name = es_index_name
 
         self.wait_for_souce_ready_s = wait_for_source_ready_s
-        self.wait_for_sink_ready_s = wait_for_sink_ready_s
+        self.wait_for_sink_ready_max_s = wait_for_sink_ready_max_s
 
     def test_source_sink_mapping(self):
         """"
@@ -202,8 +275,9 @@ class TestSingleExampleDb2Es(TestSingleExample):
 
         # wait here until ES becomes ready
         self.log.info("Waiting for cogstack pipeline to process records ...")
-        time.sleep(self.wait_for_sink_ready_s)
-        recs_in = self.getRecordsCountFromSourceDb(source_conn.connector, self.source_table_name)
+        #time.sleep(self.wait_for_sink_ready_max_s)
+        self.waitForTargetEsReady(es_conn.connector, self.es_index_name, self.wait_for_sink_ready_max_s)
+        recs_in = self.getRecordsCountFromTargetDb(source_conn.connector, self.source_table_name)
         recs_out = self.getRecordsCountFromTargetEs(es_conn.connector, self.es_index_name)
 
         self.assertEqual(recs_in, recs_out, "Records counts differ between source (%s) and sink (%s)." % (recs_in, recs_out))
@@ -216,7 +290,7 @@ class TestSingleExampleDb2Db(TestSingleExample):
     """
     def __init__(self, source_conn_conf, source_table_name, sink_conn_conf, sink_table_name,
                  wait_for_source_ready_s=10,
-                 wait_for_sink_ready_s=60,
+                 wait_for_sink_ready_max_s=300,
                  *args, **kwargs):
         """
         :param source_conn_conf: the source JDBC connector configuration :class:~JdbcConnectorConfig
@@ -235,7 +309,7 @@ class TestSingleExampleDb2Db(TestSingleExample):
         self.sink_table_name = sink_table_name
 
         self.wait_for_souce_ready_s = wait_for_source_ready_s
-        self.wait_for_sink_ready_s = wait_for_sink_ready_s
+        self.wait_for_sink_ready_max_s = wait_for_sink_ready_max_s
 
     def test_source_sink_mapping(self):
         """"
@@ -250,9 +324,9 @@ class TestSingleExampleDb2Db(TestSingleExample):
 
         # wait here until sink becomes ready
         self.log.info("Waiting for cogstack pipeline to process records ...")
-        time.sleep(self.wait_for_sink_ready_s)
+        self.waitForTargetDbReady(sink_conn.connector, self.sink_table_name, self.wait_for_sink_ready_max_s)
 
-        recs_in = self.getRecordsCountFromSourceDb(source_conn.connector, self.source_table_name)
-        recs_out = self.getRecordsCountFromSourceDb(sink_conn.connector, self.sink_table_name)
+        recs_in = self.getRecordsCountFromTargetDb(source_conn.connector, self.source_table_name)
+        recs_out = self.getRecordsCountFromTargetDb(sink_conn.connector, self.sink_table_name)
 
         self.assertEqual(recs_in, recs_out, "Records counts differ between source (%s) and sink (%s)." % (recs_in, recs_out))

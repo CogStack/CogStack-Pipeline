@@ -76,8 +76,9 @@ class TestExample3(TestSingleExampleDb2Es):
         es_conn = ElasticConnector(self.es_conn_conf)
 
         self.log.info("Waiting for cogstack pipeline to process records ...")
-        time.sleep(self.wait_for_sink_ready_s)
-        recs_in = self.getRecordsCountFromSourceDb(source_conn_mt.connector, self.source_table_name_mt)
+        #time.sleep(self.wait_for_sink_ready_s)
+        self.waitForTargetEsReady(es_conn.connector, self.es_index_name, self.wait_for_sink_ready_max_s)
+        recs_in = self.getRecordsCountFromTargetDb(source_conn_mt.connector, self.source_table_name_mt)
         recs_out = self.getRecordsCountFromTargetEs(es_conn.connector, self.es_index_name_mt)
 
         self.assertEqual(recs_out, recs_in,
@@ -97,7 +98,6 @@ class TestExample4(TestSingleExampleDb2Es):
                                            es_index_name='sample_observations_view',
                                            example_path=os.path.join(examples_path, "example4"),
                                            sub_case='docx',
-                                           wait_for_sink_ready_s=120,
                                            *args, **kwargs)
 
 
@@ -114,7 +114,6 @@ class TestExample5s1(TestSingleExampleDb2Db):
                                              sink_table_name='medical_reports_processed',
                                              example_path=os.path.join(examples_path, "example5"),
                                              sub_case='docx',
-                                             wait_for_sink_ready_s=120,
                                              *args, **kwargs)
 
 
@@ -182,7 +181,6 @@ class TestExample8(TestSingleExampleDb2Es):
                                            es_conn_conf=DEFAULT_ES_CONFIG,
                                            es_index_name='sample_observations_view',
                                            example_path=os.path.join(examples_path, "example8"),
-                                           wait_for_sink_ready_s=240,
                                            image_build_rel_dir="../../../dockerfiles/gate",
                                            *args, **kwargs)
 
@@ -200,6 +198,5 @@ class TestExample9(TestSingleExampleDb2Es):
                                            es_conn_conf=DEFAULT_ES_CONFIG,
                                            es_index_name='sample_observations_view',
                                            example_path=os.path.join(examples_path, "example9"),
-                                           wait_for_sink_ready_s=240,
                                            image_build_rel_dir="../../../dockerfiles/gate",
                                            *args, **kwargs)
