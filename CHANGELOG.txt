@@ -1,0 +1,58 @@
+Release 1.3.0
+---------------
+* Major updates, bugfixes, cleanups and refactoring of CogStack Pipeline, including:
+-- updated the build process, incl. automated TravisCI and Docker Hub builds,
+-- updated Java dependencies (incl. Tika + Tesseract OCR),
+-- added support for building and running using Java 11,
+-- stability improvements and bugfixes related with scheduling, ElasticSeach ingestion and unit tests,
+-- refactoring of available job properties and introducing default values,
+-- minor refactoring of the Document model.
+
+* Updates to CogStack Pipeline Docker image and related:
+-- using now `openjdk:11-jre` as a base image,
+-- using 2-stage build for `cogstack-pipeline` image and slimming-down its resulting size,
+-- using the newest Tesseract OCR 4.0 with the `cogstack-pipeline` image,
+-- added new custom images to Docker Hub: `fluentd` and `cogstack-pipeline-gate`
+
+* New documentation and quickstart:
+-- main site: https://cogstack.atlassian.net/wiki/spaces/COGDOC/overview
+-- on GitHub: only quickstart and examples
+
+* Added example deployments, covering:
+-- setting up and running CogStack,
+-- simple ingestion: DB -> ES, DB -> DB,
+-- documents text extraction + OCR,
+-- NLP (using custom GATE application),
+-- security (using nginx),
+-- logging (using fluentd),
+-- multi-step processing (e.g. using a staging DB for OCR).
+
+* Added integration tests for the example deployments
+
+* All changes compatible with 1.2.x versions
+
+
+
+Release 1.2.1 --  17 May 2018
+---------------
+* Minor updates and bugfixes
+
+* Added basic example Docker-based deployments
+
+
+
+Release 1.2.0 -- 20 Mar 2017
+---------------
+* Updates, bugfixes and new features
+
+
+
+Release 1.1.0 -- ???
+---------------
+* Internal release
+
+
+
+Release 1.0.0 -- 15 Aug 2016
+---------------
+* Initial public release
