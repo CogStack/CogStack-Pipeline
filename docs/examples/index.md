@@ -39,21 +39,14 @@ Some parts of this document are also used in [CogStack Quickstart](https://githu
 The most convenient way to get CogStack bundle is to download it directly from the [official github repository](https://github.com/CogStack/CogStack-Pipeline) either by cloning it using git:
 
 ```bash
-git clone -b dev --single-branch https://github.com/CogStack/CogStack-Pipeline.git
+git clone https://github.com/CogStack/CogStack-Pipeline.git
 ```
 or by downloading it from the repository and decompressing it:
 ```bash
-wget 'https://github.com/CogStack/CogStack-Pipeline/archive/dev.zip'
-unzip dev.zip
+wget 'https://github.com/CogStack/CogStack-Pipeline/archive/master.zip'
+unzip master.zip
 ```
 The content will be decompressed into `CogStack-Pipeline/` directory.
-
-
-[//]: # "<span style='color:red'> NOTE: </span>"
-**Note: For the moment the CogStack bundle is obtained from the `dev` branch -- soon it will be merged into `master` branch with a version tag for a direct download.**
-
-[//]: # "<span style='color:red'> NOTE: </span>"
-**Note: For the moment, the CogStack pipeline Docker image used in this example is `cogstacksystems/cogstack-pipeline:dev-latest` However, once the development branch will be merged to `master` the image names will be updated.**
 
 
 
@@ -1331,10 +1324,6 @@ For a detailed list of features, please refer to the official [ElasticSearch X-P
 This example is an extension of [Example 6](#example-6) providing logging mechanism using [Fluentd](https://www.fluentd.org/) log collector and it only focuses on the logging part.
 
 
-[//]: # "<span style='color:red'> NOTE: </span>"
-**Note: For the moment, the Docker images used in this example are: `cogstacksystems/cogstack-pipeline:dev-latest` and `cogstacksystems/fluentd:dev-latest`. These images are build from the `dev` branch. However, once the development branch will be merged to `master` the image names will be updated.**
-
-
 
 ## Deployment information
 
@@ -1347,7 +1336,7 @@ This example uses the stack of microservices used in [Example 6](#example-6), bu
 Regarding Docker Compose configuration file, for each microservice used an additional section has been added regarding logging -- e.g., in case of CogStack pipeline:
 ```yml
   cogstack:
-    image: cogstacksystems/cogstack-pipeline:dev-latest
+    image: cogstacksystems/cogstack-pipeline:latest
     
     ...
     
@@ -1460,9 +1449,6 @@ When running `setup.sh` script, a number of separate directories will be created
 
 Apart from that, this example uses the standard stack of microservices (see: [CogStack ecosystem](#cogstack-ecosystem)) and also uses a single CogStack *properties* file, running only one instance of CogStack data processing engine.
 
-[//]: # "<span style='color:red'> NOTE: </span>"
-**Note: For the moment, the CogStack Docker image used in this example is `cogstacksystems/cogstack-pipeline-gate:dev-latest`. This image are build from the `dev` branch. However, once the development branch will be merged to `master` the image name will be updated.**
-
 
 
 # <a name="example-9"></a> Example 9
@@ -1506,9 +1492,6 @@ Tika item processor will extract the text from the document initially stored in 
 
 ## Deployment information
 
-When running `setup.sh` script, a number of separate directories will be created. Since NLP components for pipelines require additional applications to be installed in the system, CogStack provides another, extended image containing them. In this example, hence `cogstacksystems/cogstack-pipeline-gate:dev-latest` image is being used.
+When running `setup.sh` script, a number of separate directories will be created. Since NLP components for pipelines require additional applications to be installed in the system, CogStack provides another, extended image containing them. In this example, hence `cogstacksystems/cogstack-pipeline-gate:latest` image is being used.
 
 Apart from that, this example uses the standard stack of microservices (see: [CogStack ecosystem](#cogstack-ecosystem)) and also uses a single CogStack *properties* file, running only one instance of CogStack data processing engine.
-
-[//]: # "<span style='color:red'> NOTE: </span>"
-**Note: For the moment, the CogStack Docker image used in this example is `cogstacksystems/cogstack-pipeline-gate:dev-latest`. This image are build from the `dev` branch. However, once the development branch will be merged to `master` the image name will be updated.**
