@@ -48,8 +48,8 @@ public class BasicConfigWithSchedulingAndConfiguredStartTests {
     public void basicConfigurerdStartPkPartitionWithSchedulingTest() {
         testUtils.insertFreshDataIntoBasicTableAfterDelay(env.getProperty("tblInputDocs"),15000,76,150,false);
         try {
-            Thread.sleep(20000);
-        } catch (InterruptedException e) {
+            testUtils.waitForEsReady(30000);
+        } catch (RuntimeException e) {
             e.printStackTrace();
         }
         //note, in this test, we upsert documents, overriding existng ones. hence why ther ate 75 in the index and 150
