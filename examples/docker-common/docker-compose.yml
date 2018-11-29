@@ -1,0 +1,101 @@
+version: '2.0'
+
+#---------------------------------------------------------------------------#
+# Used services                                                             #
+#---------------------------------------------------------------------------#
+services:
+
+#---------------------------------------------------------------------------#
+# Postgres container with sample data                                       #
+#---------------------------------------------------------------------------#
+  samples-db:
+    image: postgres:11.1-alpine
+    volumes:
+      - ./db_dump:/data/:ro
+      - ./common/pgsamples/init_db.sh:/docker-entrypoint-initdb.d/init_db.sh:ro
+      - samples-vol:/var/lib/postgresql/data
+# TODO: fix POSTGRES password management
+#    environment:
+#      - "POSTGRES_PASSWORD=postgresadminpass"
+# samples-db will be usually available at this port
+#    ports:
+      # <host:container> expose the postgres DB to host for debugging purposes
+#      - "5555:5432"
+
+#---------------------------------------------------------------------------#
+# CogStack-Pipeline related containers                                      #
+#---------------------------------------------------------------------------#
+  cogstack-pipeline:
+    image: cogstacksystems/cogstack-pipeline:dev-latest
+    environment:
+      - SERVICES_USED=cogstack-job-repo:5432,samples-db:5432,elasticsearch-1:9200
+      - LOG_LEVEL=info
+      - LOG_FILE_NAME=cogstack_job_log
+      - FILE_LOG_LEVEL=off
+    volumes:
+      - ./cogstack:/cogstack/job_config:ro
+    depends_on:
+      - cogstack-job-repo
+      - samples-db
+      - elasticsearch-1
+    command: /cogstack/run_pipeline.sh /cogstack/cogstack-*.jar /cogstack/job_config
+
+  cogstack-job-repo:
+    image: postgres:11.1-alpine
+    volumes:
+      - ./common/pgjobrepo/create_repo.sh:/docker-entrypoint-initdb.d/create_repo.sh:ro
+      - cogstack-job-vol:/var/lib/postgresql/data
+# TODO: fix POSTGRES password management
+#    environment:
+#      - "POSTGRES_PASSWORD=postgresadminpass"
+    ports:
+      - 5432
+
+#---------------------------------------------------------------------------#
+# Elasticsearch cluster                                                     #
+#---------------------------------------------------------------------------#
+  elasticsearch-1:
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.4.2
+    environment:
+      - cluster.name=docker-cluster
+#      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - ./common/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - elasticsearch-vol-1:/usr/share/elasticsearch/data
+    depends_on:
+      - cogstack-job-repo
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+# elastic will be usually available at this port
+#    ports:
+#      - "9200:9200"
+
+#---------------------------------------------------------------------------#
+# Kibana webapp                                                             #
+#---------------------------------------------------------------------------#
+  kibana:
+    image: docker.elastic.co/kibana/kibana-oss:6.4.2
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch-1:9200
+    volumes:
+      - ./common/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
+    depends_on:
+      - elasticsearch-1
+# kibana will be usually available at this port
+#    ports:
+#      - "5601:5601"
+
+
+#---------------------------------------------------------------------------#
+# Docker named volumes                                                      #
+#---------------------------------------------------------------------------#
+volumes:
+  samples-vol:
+    driver: local
+  cogstack-job-vol:
+    driver: local
+  elasticsearch-vol-1:
+    driver: local

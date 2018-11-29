@@ -54,8 +54,8 @@ public class DeIdentificationWithoutSchedulingTests {
 
         jobLauncher.launchJob();
         try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
+            testUtils.waitForEsReady(30000);
+        } catch (RuntimeException e) {
             e.printStackTrace();
         }
         assertEquals(106,testUtils.countOutputDocsInES());

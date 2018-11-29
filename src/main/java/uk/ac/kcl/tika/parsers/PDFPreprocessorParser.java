@@ -44,6 +44,8 @@ import org.apache.tika.parser.external.ExternalParser;
 import org.apache.tika.parser.ocr.TesseractOCRParser;
 import org.apache.tika.parser.pdf.PDFParser;
 import org.apache.tika.sax.BodyContentHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import uk.ac.kcl.tika.config.ImageMagickConfig;
@@ -62,12 +64,12 @@ public class PDFPreprocessorParser extends AbstractParser {
             new HashSet<MediaType>(Arrays.asList(new MediaType[]{
                     MediaType.application("pdf")
             })));
+    private static final Logger LOG = LoggerFactory.getLogger(PDFPreprocessorParser.class);
 
     @Override
     public Set<MediaType> getSupportedTypes(ParseContext context) {
         // If ImageMagick is installed, offer our supported image types
         ImageMagickConfig imconfig = context.get(ImageMagickConfig.class, DEFAULT_IMAGEMAGICK_CONFIG);
-
         if (hasImageMagick(imconfig)) {
             return SUPPORTED_TYPES;
         }
@@ -126,20 +128,22 @@ public class PDFPreprocessorParser extends AbstractParser {
         pdfParser.parse(stream, body, pdfMetadata, context);
         stream.reset();
         //if there's content - reparse with official handlers/metadata. What else can you do? Also check imagemagick is available
+
         if (body.toString().length() > 100 || !hasImageMagick(config)) {
             pdfParser.parse(stream, handler, metadata, context);
             metadata.set("X-PDFPREPROC-OCR-APPLIED", "NA");
             return;
-        } else {
-            metadata.set("X-PDFPREPROC-ORIGINAL", body.toString());
-            metadata.set("X-PDFPREPROC-OCR-APPLIED", "FAIL");
-            // "FAIL" will be overwritten if it succeeds later
-
-            //add the PDF metadata to the official metadata object
-            Arrays.asList(pdfMetadata.names()).stream().forEach(name -> {
-                metadata.add(name, pdfMetadata.get(name));
-            });
         }
+
+        metadata.set("X-PDFPREPROC-ORIGINAL", body.toString());
+        metadata.set("X-PDFPREPROC-OCR-APPLIED", "FAIL");
+        // "FAIL" will be overwritten if it succeeds later
+
+        //add the PDF metadata to the official metadata object
+        Arrays.asList(pdfMetadata.names()).stream().forEach(name -> {
+            metadata.add(name, pdfMetadata.get(name));
+        });
+
 
         //objects to hold file references for manipulation outside of Java
         File tiffFileOfPDF = null;
@@ -150,9 +154,13 @@ public class PDFPreprocessorParser extends AbstractParser {
             tiffFileOfPDF = File.createTempFile("tempTIFF", ".tiff");
             makeTiffFromPDF(pdfFileFromStream,tiffFileOfPDF, config);
             if (tiffFileOfPDF.exists()) {
+                long tessStartTime = System.currentTimeMillis();
                 TesseractOCRParser tesseract = new TesseractOCRParser();
+
                 tesseract.parse(FileUtils.openInputStream(tiffFileOfPDF), handler, metadata, context);
                 metadata.set("X-PDFPREPROC-OCR-APPLIED", "SUCCESS");
+
+                LOG.debug("Document parsing -- OCR processing time: {} ms", System.currentTimeMillis() - tessStartTime);
             }
         } finally {
             if (tiffFileOfPDF.exists()) {

@@ -31,6 +31,7 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.support.JobRepositoryFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -53,6 +54,24 @@ public class BatchConfigurer extends DefaultBatchConfigurer {
     @Autowired
     Environment env;
 
+    // mandatory properties
+    @Value("${jobRepository.Driver}")
+    private String repoDriver;
+    @Value("${jobRepository.JdbcPath}")
+    private String repoJdbcPath;
+    @Value("${jobRepository.username}")
+    private String repoUserName;
+    @Value("${jobRepository.JdbcPath}")
+    private String repoPassword;
+
+    // optional job repository DB properties with default values
+    @Value("${jobRepository.idleTimeout:30000}")
+    private Long repoIdleTimeoutMs;
+    @Value("${jobRepository.maxLifetime:60000}")
+    private Long repoMaxLifeTimeMs;
+    @Value("${jobRepository.poolSize:10}")
+    private int repoPoolSize;
+
     @Autowired
     @Qualifier("jobRepositoryDataSource")
     DataSource jobRepositoryDataSource;
@@ -61,12 +80,16 @@ public class BatchConfigurer extends DefaultBatchConfigurer {
     @Qualifier("jobRepositoryDataSource")
     public DataSource jobRepositoryDataSource() {
         HikariDataSource mainDatasource = new HikariDataSource();
-        mainDatasource.setDriverClassName(env.getProperty("jobRepository.Driver"));
-        mainDatasource.setJdbcUrl(env.getProperty("jobRepository.JdbcPath"));
-        mainDatasource.setUsername(env.getProperty("jobRepository.username"));
-        mainDatasource.setPassword(env.getProperty("jobRepository.password"));
-        mainDatasource.setIdleTimeout(Long.valueOf(env.getProperty("jobRepository.idleTimeout")));
-        mainDatasource.setMaxLifetime(Long.valueOf(env.getProperty("jobRepository.maxLifetime")));
+        mainDatasource.setDriverClassName(repoDriver);
+        mainDatasource.setJdbcUrl(repoJdbcPath);
+        mainDatasource.setUsername(repoUserName);
+        mainDatasource.setPassword(repoPassword);
+        mainDatasource.setIdleTimeout(repoIdleTimeoutMs);
+        mainDatasource.setMaxLifetime(repoMaxLifeTimeMs);
+
+        if (repoPoolSize > 0) {
+            mainDatasource.setMaximumPoolSize(repoPoolSize);
+        }
         //mainDatasource.setAutoCommit(false);
         return mainDatasource;
     }

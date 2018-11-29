@@ -1,0 +1,62 @@
+dist: xenial
+
+language: java
+jdk:
+  - openjdk11
+
+sudo: required
+
+services:
+  - docker
+
+env:
+  DOCKER_COMPOSE_VERSION: 1.14.0
+  OMP_THREAD_LIMIT: 1
+
+addons:
+  apt:
+    sources:
+    # tesseract-ocr >= 4.0 is not available in the standard Xenial / Trusty distro
+    - sourceline: 'ppa:alex-p/tesseract-ocr'
+    packages:
+      - tesseract-ocr
+      - libtesseract-dev
+      - imagemagick
+      - libmagickcore-dev
+      - libmagickwand-dev
+      - libmagic-dev
+      - apache2-utils
+
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+  - rm -fr $HOME/.gradle/caches/*/scripts/
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+
+before_install:
+  # install Docker Compose
+  - mkdir -p "$HOME/bin";
+  - export PATH="$HOME/bin:$PATH";
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > "$HOME/bin/docker-compose";
+  - chmod +x "$HOME/bin/docker-compose";
+  # install python and pip for testing the examples
+  - sudo apt install python2.7 python-pip
+  - pip install -U pip && pip install virtualenv
+  # fix postgres
+  - echo manual | sudo tee /etc/init/postgresql.override
+  # Stop postgresql. Related to this issue - https://github.com/travis-ci/travis-ci/issues/4842
+  - sudo service postgresql stop
+  # wait for postgresql to shutdown
+  - while sudo lsof -Pi :5432 -sTCP:LISTEN -t; do sleep 1; done
+  # print versions of used applications
+  - docker --version
+  - sudo $HOME/bin/docker-compose --version
+  - tesseract --version
+  - convert --version
+  - ./gradlew downloadDependencies > /dev/null
+
+script:
+  - ./travis_gradle_build.sh

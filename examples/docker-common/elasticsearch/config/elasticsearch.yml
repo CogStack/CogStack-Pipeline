@@ -1,0 +1,41 @@
+#---
+## Default Elasticsearch configuration from elasticsearch-docker.
+## from https://github.com/elastic/elasticsearch-docker/blob/master/build/elasticsearch/elasticsearch.yml
+
+#----------------------
+# single node cluster conf
+#----------------------
+## Use single node discovery in order to disable production mode and avoid bootstrap checks
+## see https://www.elastic.co/guide/en/elasticsearch/reference/current/bootstrap-checks.html
+discovery.type: single-node
+#discovery.type: zen
+
+# minimum_master_nodes need to be explicitly set when bound on a public IP
+# set to 1 to allow single node clusters
+# Details: https://github.com/elastic/elasticsearch/pull/17288
+#discovery.zen.minimum_master_nodes: 1
+
+
+#----------------------
+# multi node cluster conf
+#----------------------
+cluster.name: "cogstack-elastic-cluster"
+network.host: 0.0.0.0
+
+# minimum_master_nodes need to be explicitly set when bound on a public IP
+# set to 1 to allow single node clusters
+# Details: https://github.com/elastic/elasticsearch/pull/17288
+#discovery.zen.minimum_master_nodes: 2
+
+
+#----------------------
+# X-Pack features
+# disabled by default when using '-oss' images
+# need to be disabled manually when using standard images from elastic
+#----------------------
+#xpack.security.enabled: false
+#xpack.graph.enabled: false
+#xpack.ml.enabled: false
+#xpack.monitoring.enabled: false
+#xpack.reporting.enabled: false
+#xpack.watcher.enabled: false

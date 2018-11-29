@@ -20,6 +20,7 @@ import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
+import org.apache.tika.parser.ocr.TesseractOCRConfig;
 import org.apache.tika.sax.BodyContentHandler;
 import org.apache.tika.sax.ToXMLContentHandler;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,7 @@ import org.springframework.stereotype.Service;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import uk.ac.kcl.model.Document;
+import uk.ac.kcl.tika.config.ImageMagickConfig;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -51,14 +53,27 @@ public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemPr
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(TikaDocumentItemProcessor.class);
 
-    @Value("${tika.keepTags}")
-    private boolean keepTags;
-
-    @Value("${tika.tikaFieldName}")
+    // the name of the field in the resulting JSON file that will hold the content of the parsed document
+    @Value("${tika.tikaFieldName:outTikaField}")
     String tikaFieldName;
 
+    // whether shall we parse all the document data into XHTML format
+    @Value("${tika.keepTags:false}")
+    private boolean keepTags;
+
+    @Value("${tika.tesseract.timeout:120}")
+    Integer tesseractTimeout;
+    private TesseractOCRConfig tesseractConfig;
+
+    @Value("${tika.convert.timeout:120}")
+    Integer convertTimeout;
+
+
+    // configuration of Tika module plus individual parsers
+    private TikaConfig tikaConfig;
+    private ImageMagickConfig imgConfig;
     private AutoDetectParser parser;
-    private TikaConfig config;
+
 
     @Autowired
     Environment env;
@@ -67,13 +82,34 @@ public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemPr
     public void init() throws IOException, SAXException, TikaException{
         setFieldName(tikaFieldName);
 
-        config = new TikaConfig(this.getClass().getClassLoader()
+        // load tika configuration
+        tikaConfig = new TikaConfig(this.getClass().getClassLoader()
                                 .getResourceAsStream("tika-config.xml"));
-        parser = new AutoDetectParser(config);
+
+        // load tesseract ocr configuration
+        tesseractConfig = new TesseractOCRConfig();
+        if (tesseractTimeout > 0) {
+            tesseractConfig.setTimeout(tesseractTimeout);
+        }
+
+        // load image magick configuration -- used for tiff conversion
+        imgConfig = new ImageMagickConfig();
+        if (convertTimeout > 0) {
+            imgConfig.setTimeout(convertTimeout);
+        }
+
+        parser = new AutoDetectParser(tikaConfig);
     }
 
     @Override
     public Document process(final Document doc) throws Exception {
+
+        byte[] content = doc.getBinaryContent();
+        if (content == null || content.length == 0) {
+            LOG.debug("Document " + doc.getDocName() + " has no binary content");
+            return doc;
+        }
+
         LOG.debug("starting " + this.getClass().getSimpleName() +" on doc " +doc.getDocName());
         long startTime = System.currentTimeMillis();
         ContentHandler handler;
@@ -85,9 +121,14 @@ public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemPr
 
         Metadata metadata = new Metadata();
         String contentType = "TL_CONTENT_TYPE_UNKNOWN";
-        try (InputStream stream = new ByteArrayInputStream(doc.getBinaryContent())) {
+        try (InputStream stream = new ByteArrayInputStream(content)) {
+            // configure parsing context
             ParseContext context = new ParseContext();
-            context.set(TikaConfig.class, config);
+            context.set(TikaConfig.class, tikaConfig);
+            context.set(TesseractOCRConfig.class, tesseractConfig);
+            context.set(ImageMagickConfig.class, imgConfig);
+
+            // parse the document
             parser.parse(stream, handler, metadata, context);
 
             Set<String> metaKeys = new HashSet<String>(Arrays.asList(
@@ -99,8 +140,14 @@ public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemPr
 
             extractPageCountMetadata(doc, metaKeys, metadata);
 
-            addField(doc, handler.toString());
+            String documentContent = handler.toString();
+            if (documentContent.length() == 0) {
+                LOG.warn("Empty content for document with PK: {}", doc.getPrimaryKeyFieldValue());
+            }
+
+            addField(doc, documentContent);
         } catch (Exception ex) {
+            LOG.warn("Document with PK {} parsing failed: {}", doc.getPrimaryKeyFieldValue(), ex.getMessage());
             addField(doc, ex.getMessage());
         }
         long endTime = System.currentTimeMillis();

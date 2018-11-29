@@ -35,7 +35,12 @@ import java.nio.file.Files;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.List;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.stream.*;
+import java.util.Arrays;
 
 /**
  * Created by rich on 05/03/17.
@@ -47,53 +52,52 @@ public class ESRestService {
 
     private static final Logger LOG = LoggerFactory.getLogger(uk.ac.kcl.service.ESRestService.class);
 
-    @Value("${elasticsearch.index.name:#{null}}")
-    private String indexName;
 
-    @Value("${elasticsearch.type:#{null}}")
+    // mandatory properties
+    //
+    @Value("${elasticsearch.cluster.host}")
+    private String clusterMainHost;
+    @Value("${elasticsearch.cluster.port}")
+    private int clusterMainHostPort;
+
+    // optional properties
+    //
+    // additional ES nodes provided as a list 'address1:port1,address2:port2',...
+    @Value("${elasticsearch.cluster.slaveNodes:#{null}}")
+    private String slaveNodes;
+
+    @Value("${elasticsearch.index.name:default_index")
+    private String indexName;
+    @Value("${elasticsearch.type:doc}")
     private String typeName;
 
-    @Value("${elasticsearch.xpack.enabled:false}")
-    private boolean securityEnabled;
-
-    @Value("${elasticsearch.xpack.security.transport.ssl.enabled:false}")
-    private boolean sslEnabled;
-
-    @Value("${elasticsearch.cluster.name:#{null}}")
+    @Value("${elasticsearch.cluster.name:elasticsearch")
     private String clusterName;
-
-    @Value("${elasticsearch.cluster.host:#{null}}")
-    private String clusterHost;
-
     @Value("${elasticsearch.connect.timeout:5000}")
     private long connTimeout;
-
     @Value("${elasticsearch.response.timeout:60000}")
     private int respTimeout;
-
     @Value("${elasticsearch.retry.timeout:60000}")
     private int retryTimeout;
 
-    @Value("${elasticsearch.cluster.port:#{null}}")
-    private int port;
+    @Value("${elasticsearch.xpack.enabled:false}")
+    private boolean securityEnabled;
+    @Value("${elasticsearch.xpack.security.transport.ssl.enabled:false}")
+    private boolean sslEnabled;
 
     @Value("${elasticsearch.xpack.user:#{null}}")
     private String user;
-
     @Value("${elasticsearch.xpack.password:#{null}}")
     private String userPassword;
-
     @Value("${elasticsearch.xpack.ssl.keystore.path:#{null}}")
     private String sslKeyStorePath;
-
     @Value("${elasticsearch.xpack.ssl.keystore.password:#{null}}")
     private String keyStorePassword;
-
     @Value("${elasticsearch.xpack.ssl.truststore.path:#{null}}")
     private String sslTrustStorePath;
-
     @Value("${elasticsearch.xpack.ssl.truststore.password:#{null}}")
     private String trustStorePassword;
+
 
     @Autowired
     Environment env;
@@ -108,12 +112,18 @@ public class ESRestService {
     @PostConstruct
     public void init() throws IOException, KeyStoreException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException, KeyManagementException {
 
+        List<Map.Entry<String, Integer>> hostsInfo = getParsedHosts();
+
         if (securityEnabled && sslEnabled) {
             credentialsProvider = new BasicCredentialsProvider();
             credentialsProvider.setCredentials(AuthScope.ANY,
                     new UsernamePasswordCredentials(user, userPassword));
 
-            restClient = RestClient.builder(new HttpHost(clusterHost, port, "https"))
+            List<HttpHost> nodes = hostsInfo.stream()
+                    .map(x -> new HttpHost(x.getKey(), x.getValue(), "https"))
+                    .collect(Collectors.toList());
+
+            restClient = RestClient.builder(nodes.toArray(HttpHost[]::new))
                     .setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
                         @Override
                         public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
@@ -136,7 +146,11 @@ public class ESRestService {
             credentialsProvider.setCredentials(AuthScope.ANY,
                     new UsernamePasswordCredentials(user));
 
-            restClient = RestClient.builder(new HttpHost(clusterHost, port))
+            List<HttpHost> nodes = hostsInfo.stream()
+                    .map(x -> new HttpHost(x.getKey(), x.getValue()))
+                    .collect(Collectors.toList());
+
+            restClient = RestClient.builder(nodes.toArray(HttpHost[]::new))
                     .setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
                         @Override
                         public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
@@ -154,7 +168,11 @@ public class ESRestService {
                     })
                     .build();
         } else {
-            restClient = RestClient.builder(new HttpHost(clusterHost, port, "http"))
+            List<HttpHost> nodes = hostsInfo.stream()
+                    .map(x -> new HttpHost(x.getKey(), x.getValue(), "http"))
+                    .collect(Collectors.toList());
+
+            restClient = RestClient.builder(nodes.toArray(HttpHost[]::new))
                     .setRequestConfigCallback(new RestClientBuilder.RequestConfigCallback() {
                         @Override
                         public RequestConfig.Builder customizeRequestConfig(RequestConfig.Builder requestConfigBuilder) {
@@ -167,10 +185,37 @@ public class ESRestService {
         }
     }
 
+    @PreDestroy
     public void destroy() throws IOException {
         LOG.debug("ESRestService.destroy() called");
         restClient.close();
         LOG.debug("restClient.close() completed");
+    }
+
+    private List<Map.Entry<String, Integer>> getParsedHosts() {
+        ArrayList<Map.Entry<String, Integer>> hostsInfo = new ArrayList<>();
+
+        // add the main node
+        hostsInfo.add(new SimpleEntry<>(clusterMainHost, clusterMainHostPort));
+
+        // add the extra nodes if provided
+        try {
+            if (slaveNodes != null && slaveNodes.length() > 0) {
+                String[] hosts = slaveNodes.split(",");
+                for (String h : hosts) {
+                    // get the last index of ':' since the hosts can start with 'xxx://...'
+                    int i = h.lastIndexOf(':');
+                    String host = h.substring(0, i);
+                    String port = h.substring(i+1);
+                    hostsInfo.add(new SimpleEntry<>(host.trim(), Integer.parseInt(port)));
+                }
+            }
+        } catch (Exception e) {
+            LOG.error("Error parsing additional ES nodes");
+            throw e;
+        }
+
+        return hostsInfo;
     }
 
 

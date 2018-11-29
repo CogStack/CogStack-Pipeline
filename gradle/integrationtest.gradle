@@ -1,0 +1,43 @@
+task postgresIntegTest(type: Test, dependsOn: [ 'installSimpleCompose' ]) {
+    // Exclude because requires gate plugins to be downloaded
+    exclude '**/GATEWithoutScheduling.class'
+    // Exclude BioYodie as it requires UMLS resources which are limited by license
+    exclude '**/BioyodieWebserviceWithoutScheduling.class'
+    // Exclude FullPipeline as it uses BioYodie
+    exclude '**/FullPipelineWithoutScheduling.class'
+
+    testClassesDir = new File(sourceSets.integTest.output.classesDir.absolutePath
+            +'/uk/ac/kcl/it/postgres')
+    print testClassesDir.absolutePath
+    classpath = sourceSets.integTest.runtimeClasspath
+    print classpath
+
+    beforeTest { descriptor ->
+        logger.lifecycle("Running test: " + descriptor)
+    }
+
+    // listen to standard out and standard error of the test JVM(s)
+    onOutput { descriptor, event ->
+        logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message)
+    }
+}
+
+task sqlServerIntegTest(type: Test, dependsOn: [ 'installSimpleCompose' ]) {
+    testClassesDir = new File(sourceSets.integTest.output.classesDir.absolutePath
+            +'/uk/ac/kcl/it/sqlserver')
+    print testClassesDir.absolutePath
+    classpath = sourceSets.integTest.runtimeClasspath
+    print classpath
+
+    beforeTest { descriptor ->
+        logger.lifecycle("Running test: " + descriptor)
+    }
+
+    // listen to standard out and standard error of the test JVM(s)
+    onOutput { descriptor, event ->
+        logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message)
+    }
+}
+
+postgresIntegTest.finalizedBy(stopSimpleCompose)
+sqlServerIntegTest.finalizedBy(stopSimpleCompose)

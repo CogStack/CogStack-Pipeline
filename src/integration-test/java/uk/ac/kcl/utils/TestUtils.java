@@ -356,10 +356,13 @@ public class TestUtils  {
     public void insertFreshDataIntoBasicTableAfterDelay(String tablename,long delay,int start,int end, boolean sameDay) {
         try {
             Thread.sleep(delay);
+            esRestService.init();
             System.out.println("********************* INSERTING FRESH DATA*******************");
             insertDataIntoBasicTable(tablename,true,start,end,sameDay);
             Thread.sleep(delay);
         } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -469,20 +472,38 @@ public class TestUtils  {
         setUpESMapping();
     }
     private void setUpESMapping(){
-        HttpEntity entity = new NStringEntity("{" +
+        // mapping is only necessary to set when using nested types
+        if (!env.containsProperty("webservice.name") && !env.containsProperty("gateFieldName"))
+            return;
+
+        String entityString = "{" +
                 "  \"mappings\": {" +
                 "    \""+env.getProperty("elasticsearch.type")+"\": {" +
-                "      \"properties\": {" +
-                "        \""+env.getProperty("webservice.name")+"\": {" +
+                "      \"properties\": {";
+
+        if (env.containsProperty("webservice.name")) {
+            entityString +=
+                "        \"" + env.getProperty("webservice.name") + "\": {" +
                 "          \"type\": \"nested\" " +
-                "        }," +
-                "        \""+env.getProperty("gateFieldName")+"\": {" +
+                "        }";
+            if (env.containsProperty("gateFieldName"))
+                entityString += ",";
+        };
+
+        if (env.containsProperty("gateFieldName")) {
+            entityString +=
+                "        \"" + env.getProperty("gateFieldName") + "\": {" +
                 "          \"type\": \"nested\" " +
-                "        }" +
+                "        }";
+        };
+
+        entityString +=
                 "      }" +
                 "    }" +
                 "  }" +
-                "}", ContentType.APPLICATION_JSON);
+                "}";
+
+        HttpEntity entity = new NStringEntity(entityString, ContentType.APPLICATION_JSON);
 
         try {
             esRestService.getRestClient().performRequest(
@@ -499,7 +520,8 @@ public class TestUtils  {
 
     public int countOutputDocsInES(){
         try {
-           Response response = esRestService.getRestClient().performRequest(
+            esRestService.init();
+            Response response = esRestService.getRestClient().performRequest(
                     "GET",
                     "/"+env.getProperty("elasticsearch.index.name")+"/"
                             +env.getProperty("elasticsearch.type")+"/_count",
@@ -510,10 +532,42 @@ public class TestUtils  {
             return  json.getInt("count");
         } catch (IOException e) {
             throw new RuntimeException("GET request failed:", e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
 
+    public void waitForEsReady(long maxTimeoutMs) {
+        final long queryDelayTimeMs = 2000;
+        final long startTimeMs = System.currentTimeMillis();
+        final int minCountWithoutChanges = 3;
+
+        int curCountWithoutChanges = 0;
+        int lastDocCount = 0;
+
+        while (curCountWithoutChanges < minCountWithoutChanges) {
+            int curDocCount = countOutputDocsInES();
+            if (curDocCount > 0) {
+                if (curDocCount == lastDocCount) {
+                    curCountWithoutChanges++;
+                } else {
+                    lastDocCount = curDocCount;
+                    curCountWithoutChanges = 0;
+                }
+            }
+
+            if (System.currentTimeMillis() - startTimeMs > maxTimeoutMs
+                || curCountWithoutChanges >= minCountWithoutChanges)
+                break;
+
+            try {
+                Thread.sleep(queryDelayTimeMs);
+            } catch (InterruptedException e) {
+                throw new RuntimeException("Failed to wait for ES to become ready:", e);
+            }
+        }
+    }
 
 
     public String getStringInEsDoc(String id){
