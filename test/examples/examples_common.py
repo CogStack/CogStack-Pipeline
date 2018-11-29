@@ -47,7 +47,7 @@ class TestSingleExample(unittest.TestCase):
         self.docker_cmd_down = 'docker-compose down -v'  # --volumes
 
         # set up logger
-        log_format = '[%(asctime)s] %(name)s: %(message)s'
+        log_format = '[%(asctime)s] [%(levelname)s] %(name)s: %(message)s'
         logging.basicConfig(format=log_format, level=logging.INFO)
         self.log = logging.getLogger(self.__class__.__name__)
 
