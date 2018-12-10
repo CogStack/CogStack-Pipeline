@@ -28,17 +28,11 @@ The main directory with resources used in this tutorial is available in the CogS
 
 ## <a name="getting-cogstack"></a> Getting CogStack
 
-The most convenient way to get CogStack bundle is to download it directly from the [official github repository](https://github.com/CogStack/CogStack-Pipeline) either by cloning it using git:
-
+The most convenient way to get CogStack bundle is to download it directly from the [official github repository](https://github.com/CogStack/CogStack-Pipeline) either by cloning the source by using git:
 ```bash
 git clone https://github.com/CogStack/CogStack-Pipeline.git
 ```
-or by downloading it from the repository and decompressing it:
-```bash
-wget 'https://github.com/CogStack/CogStack-Pipeline/archive/master.zip'
-unzip master.zip
-```
-The content will be decompressed into `CogStack-Pipeline/` directory.
+or by downloading the bundle from the repository's [Releases page](https://github.com/CogStack/CogStack-Pipeline/releases) and decompressing it.
 
 
 
@@ -53,7 +47,7 @@ The data processing workflow of CogStack pipeline is based on [Java Spring Batch
 
 
 [//]: # "Content description"
-In this tutorial we only focus on a simple and very common use-case, where CogStack pipeline reads and process structured and free-text EHRs data from a single PostgreSQL database. The result is then stored in ElasticSearch where the data can be easily queried in [Kibana](https://www.elastic.co/products/kibana) dashboard. However, CogStack pipeline data processing engine also supports multiple data sources -- please see **Example 3** which covers such case.
+In this tutorial we only focus on a simple and very common use-case, where CogStack pipeline reads and process structured and free-text EHRs data from a single PostgreSQL database. The result is then stored in ElasticSearch where the data can be easily queried in [Kibana](https://www.elastic.co/products/kibana) dashboard. However, CogStack pipeline data processing engine also supports multiple data sources -- please see [**Example 3**](https://cogstack.atlassian.net/wiki/spaces/COGDOC/) which covers such case.
 
 
 ### A sample CogStack ecosystem
@@ -75,8 +69,8 @@ Since all the examples share the common configuration for the microservices used
 [//]: # "-------------------------------------------------------------------------------------"
 
 The sample dataset used in this tutorial consists of two types of EHR data:
-* Synthetic -- structured, synthetic EHRs, generated using [synthea](https://synthetichealth.github.io/synthea/) application,
-* Medial reports -- unstructured, medical health report documents obtained from [MTsamples](https://www.mtsamples.com).
+* Synthetic - structured, synthetic EHRs, generated using [synthea](https://synthetichealth.github.io/synthea/) application,
+* Medial reports - unstructured, medical health report documents obtained from [MTsamples](https://www.mtsamples.com).
 
 These datasets, although unrelated, are used together to compose a combined dataset.
 
@@ -115,7 +109,7 @@ In order to run CogStack, type in the `examples/example2/__deploy/` directory:
 ```bash
 docker-compose up
 ```
-In the console there will be printed status logs of the currently running microservices. For the moment, however, they may be not very informative (we're working on that).
+In the console there will be printed status logs of the currently running microservices. For the moment, however, they may be not very informative (sorry, we're working on that!).
 
 
 ### Connecting to the microservices
@@ -124,10 +118,10 @@ In the console there will be printed status logs of the currently running micros
 
 The picture below sketches a general idea on how the microservices are running and communicating within a sample CogStack ecosystem used in this tutorial.
 
-![alt text]({{ site.url }}/assets/uservices.png "CogStack data processing workflow")
+![workflow](docs/quickstart/assets/uservices.png "CogStack data processing workflow")
 
 [//]: # "Connecting to ES, Kibana and PostgreSQL"
-Assuming that everything is working fine, we should be able to connect to the running microservices. Selected running services (`elasticsearch-1` and `kibana`) have their port connections forwarded to host `localhost`. When accessing webservices and when asked for **credentials** the username is *test* with password *test*. 
+Assuming that everything is working fine, we should be able to connect to the running microservices. Selected running services (`elasticsearch-1` and `kibana`) have their port connections forwarded to host `localhost`.
 
 #### Kibana and ElasticSearch
 
@@ -154,30 +148,9 @@ Moreover, the access PostgreSQL database with the input sample data is exposed d
 psql -U 'test' -W -d 'db_samples' -h localhost -p 5555
 ```
 
-The information about connecting to the micro-services and resources will become useful in [Advanced: preparing a configuration file for CogStack](#advanced-properties) part.
+
+## Publications
+[CogStack - Experiences Of Deploying Integrated Information Retrieval And Extraction Services In A Large National Health Service Foundation Trust Hospital, *Richard Jackson, Asha Agrawal, Kenneth Lui, Amos Folarin, Honghan Wu, Tudor Groza, Angus Roberts, Genevieve Gorrell, Xingyi Song, Damian Lewsley, Doug Northwood, Clive Stringer, Robert Stewart, Richard Dobson*. BMC medical informatics and decision making 18, no. 1 (2018): 47.](https://dx.doi.org/10.1186%2Fs12911-018-0623-9)
 
 
-
-## History
-
-This project is an update of an earlier KHP-Informatics project called [Cognition](https://github.com/KHP-Informatics/Cognition-DNC) which was refactored by Richard Jackson (https://github.com/RichJackson/cogstack) during his PhD. Although Cognition had an excellent implementation of Levenstein distance for string substitution ([iemre](https://github.com/iemre)!), the architecture of the code suffered some design flaws, such as an overly complex domain model and configuration, and lack of fault tolerance/job stop/start/retry logic. As such, it was somewhat difficult to work with in production, and hard to extend with new features. It was clear that there was the need for a proper batch processing framework. We used Spring Batch and a completely rebuilt codebase, save a couple of classes from the original Cognition project. Cogstack is used at King's College Hospital and the South London and Maudsley Hospital to feed Elasticsearch clusters for business intelligence and research use cases.
-
-Some of the advancements in cogstack:
-
- 1. A simple <String,Object> map, with a few pieces of database metadata for its [domain model](https://github.com/RichJackson/cogstack/blob/master/src/main/groovy/uk/ac/kcl/model/Document.groovy) (essentially mapping a database row to a elasticsearch document, with the ability to embed [nested types](https://www.elastic.co/guide/en/elasticsearch/reference/2.3/nested.html)
- 2. Complete, sensible coverage of stop, start, retry, abandon logic
- 3. A custom socket timeout factory, to manage network failures, which can cause JDBC driver implementations to lock up, when the standard isn't fully implemented. Check out [this blog post](https://social.msdn.microsoft.com/Forums/office/en-US/3373d40a-2a0b-4fe4-b6e8-46f2988debf8/any-plans-to-add-socket-timeout-option-in-jdbc-driver?forum=sqldataaccess) for info.
- 4. The ability to run multiple batch jobs (i.e. process multiple database tables within a single JVM, each having its own Spring container
- 5. Remote partitioning via an ActiveMQ JMS server, for complete scalability
- 6. Built in job scheduler to enable near real time synchronisation with a database
-
-Questions? Want to help? Drop me a message: lucy.o'neill@kcl.ac.uk (020 7848 0924)
-
-
-## Papers
-CogStack - Experiences Of Deploying Integrated Information Retrieval And Extraction Services In A Large National Health Service Foundation Trust Hospital, *Richard Jackson, Asha Agrawal, Kenneth Lui, Amos Folarin, Honghan Wu, Tudor Groza, Angus Roberts, Genevieve Gorrell, Xingyi Song, Damian Lewsley, Doug Northwood, Clive Stringer, Robert Stewart, Richard Dobson* http://biorxiv.org/content/early/2017/04/02/123299
-
-
-
-![Cogstack Pipeline](extras/fig/KCL_boxed_redcmyk_A4-002-3.gif) ![Cogstack Pipeline](extras/fig/logo-nhs.png) ![Cogstack Pipeline](extras/fig/dnmkjemkekmbnegf.png) ![Cogstack Pipeline](extras/fig/chdabdkadmelbenn.png) ![Cogstack Pipeline](extras/fig/cti-banner.jpg) ![Cogstack Pipeline](extras/fig/igimnobhggalgaln.png) ![Cogstack Pipeline](extras/fig/kmlbdnlfopmabpbk.png) ![Cogstack Pipeline](extras/fig/bojpdbeeffipbedm.png)
-
+![logos](extras/fig/KCL_boxed_redcmyk_A4-002-3.gif) ![logos](extras/fig/logo-nhs.png) ![logos](extras/fig/dnmkjemkekmbnegf.png) ![Cogstack Pipeline](extras/fig/chdabdkadmelbenn.png) ![logos](extras/fig/cti-banner.jpg) ![logos](extras/fig/igimnobhggalgaln.png) ![logos](extras/fig/kmlbdnlfopmabpbk.png) ![logos](extras/fig/bojpdbeeffipbedm.png)
