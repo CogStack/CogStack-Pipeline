@@ -1,0 +1,10 @@
+This project is an update of an earlier KHP-Informatics project called [Cognition](https://github.com/KHP-Informatics/Cognition-DNC) which was refactored by Richard Jackson (https://github.com/RichJackson/cogstack) during his PhD. Although Cognition had an excellent implementation of Levenstein distance for string substitution ([iemre](https://github.com/iemre)!), the architecture of the code suffered some design flaws, such as an overly complex domain model and configuration, and lack of fault tolerance/job stop/start/retry logic. As such, it was somewhat difficult to work with in production, and hard to extend with new features. It was clear that there was the need for a proper batch processing framework. We used Spring Batch and a completely rebuilt codebase, save a couple of classes from the original Cognition project. Cogstack is used at King's College Hospital and the South London and Maudsley Hospital to feed Elasticsearch clusters for business intelligence and research use cases.
+
+Some of the advancements in cogstack:
+
+ 1. A simple <String,Object> map, with a few pieces of database metadata for its [domain model](https://github.com/RichJackson/cogstack/blob/master/src/main/groovy/uk/ac/kcl/model/Document.groovy) (essentially mapping a database row to a elasticsearch document, with the ability to embed [nested types](https://www.elastic.co/guide/en/elasticsearch/reference/2.3/nested.html)
+ 2. Complete, sensible coverage of stop, start, retry, abandon logic
+ 3. A custom socket timeout factory, to manage network failures, which can cause JDBC driver implementations to lock up, when the standard isn't fully implemented. Check out [this blog post](https://social.msdn.microsoft.com/Forums/office/en-US/3373d40a-2a0b-4fe4-b6e8-46f2988debf8/any-plans-to-add-socket-timeout-option-in-jdbc-driver?forum=sqldataaccess) for info.
+ 4. The ability to run multiple batch jobs (i.e. process multiple database tables within a single JVM, each having its own Spring container
+ 5. Remote partitioning via an ActiveMQ JMS server, for complete scalability
+ 6. Built in job scheduler to enable near real time synchronisation with a database
