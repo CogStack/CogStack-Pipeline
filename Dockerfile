@@ -19,9 +19,6 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 
-4.00~git30-7274cfa-1
-
-
 ################################
 #
 # Java runner -- JRE

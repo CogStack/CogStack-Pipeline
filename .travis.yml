@@ -44,7 +44,7 @@ before_install:
   - chmod +x "$HOME/bin/docker-compose";
   # install python and pip for testing the examples
   - sudo apt install python2.7 python-pip
-  - pip install -U pip && pip install virtualenv
+  - pip install --user virtualenv
   # fix postgres
   - echo manual | sudo tee /etc/init/postgresql.override
   # Stop postgresql. Related to this issue - https://github.com/travis-ci/travis-ci/issues/4842
