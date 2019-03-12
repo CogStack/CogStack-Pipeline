@@ -12,9 +12,9 @@ RUN apt-get update && \
 #	apt-get dist-upgrade -y && \
 #	apt-get install -y tesseract-ocr && \
     apt-get update && \
-	apt-get install -y tesseract-ocr=4.0.0-2 tesseract-ocr-eng=1:4.00~git30-7274cfa-1 tesseract-ocr-osd=1:4.00~git30-7274cfa-1 && \
+	apt-get install -y tesseract-ocr=4.00~git2439-c3ed6f03-1~bpo9+1 tesseract-ocr-eng=4.00~git28-f7a4c12-1~bpo9+1 tesseract-ocr-osd=4.00~git28-f7a4c12-1~bpo9+1 && \
 ###	apt-get install -y tesseract-ocr-osd=3.04.00-1 tesseract-ocr-eng=3.04.00-1 tesseract-ocr=3.04.01-5 && \
-	apt-get install -y imagemagick=8:6.9.10.14+dfsg-7 --fix-missing && \
+	apt-get install -y imagemagick=8:6.9.7.4+dfsg-11+deb9u6 --fix-missing && \
 	apt-get clean autoclean && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/*
@@ -34,9 +34,9 @@ RUN apt-get update && \
 #	apt-get dist-upgrade -y && \
 #	apt-get install -y tesseract-ocr && \
     apt-get update && \
-	apt-get install -y tesseract-ocr=4.0.0-2 tesseract-ocr-eng=1:4.00~git30-7274cfa-1 tesseract-ocr-osd=1:4.00~git30-7274cfa-1 && \
+	apt-get install -y tesseract-ocr=4.00~git2439-c3ed6f03-1~bpo9+1 tesseract-ocr-eng=4.00~git28-f7a4c12-1~bpo9+1 tesseract-ocr-osd=4.00~git28-f7a4c12-1~bpo9+1 && \
 ###	apt-get install -y tesseract-ocr-osd=3.04.00-1 tesseract-ocr-eng=3.04.00-1 tesseract-ocr=3.04.01-5 && \
-	apt-get install -y imagemagick=8:6.9.10.14+dfsg-7 --fix-missing && \
+	apt-get install -y imagemagick=8:6.9.7.4+dfsg-11+deb9u6 --fix-missing && \
 	apt-get clean autoclean && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/*
