@@ -85,7 +85,8 @@ for f in $TMP_DIR/mtsamples-type-*; do
 	#
 	echo "INSERT INTO \
 			medical_reports(cid, sampleid, typeid, dct, filename, binarydoc) \
-			VALUES($pk, $s_id, $type_id, CURRENT_TIMESTAMP + RANDOM() * INTERVAL '5 years', E'$f', DECODE(E'$doc64', 'base64'));" >> $SQL_FILE
+			VALUES($pk, $s_id, $type_id, CURRENT_TIMESTAMP + RANDOM(), E'$f', DECODE(E'$doc64', 'base64'));" >> $SQL_FILE
+			# VALUES($pk, $s_id, $type_id, CURRENT_TIMESTAMP + RANDOM() * INTERVAL '5 years', E'$f', DECODE(E'$doc64', 'base64'));" >> $SQL_FILE
 
 	echo "UPDATE encounters SET documentid = $pk WHERE cid = $i;" >> $SQL_FILE
 
