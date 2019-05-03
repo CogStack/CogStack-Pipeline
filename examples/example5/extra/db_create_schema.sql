@@ -60,7 +60,7 @@ CREATE TABLE encounters (
 
 CREATE TABLE observations (
 	cid SERIAL PRIMARY KEY,										-- for CogStack compatibility
-	created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,				-- (*)
+	created TIMESTAMP DEFAULT CURRENT_TIMESTAMP + RANDOM() * INTERVAL '5 years',				-- (*)
 	date DATE NOT NULL, 
 	patient UUID REFERENCES patients,
 	encounter UUID REFERENCES encounters,
