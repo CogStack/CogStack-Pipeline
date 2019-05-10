@@ -83,6 +83,8 @@ WORKDIR /cogstack
 COPY --from=cogstack-builder /devel/build/libs/cogstack-*.jar ./
 COPY --from=cogstack-builder /devel/scripts/*.sh ./
 
+# copy external tools configuration files
+COPY ./extras/ImageMagick/policy.xml /etc/ImageMagick-6/policy.xml
 
 # entry point
 CMD /bin/bash
