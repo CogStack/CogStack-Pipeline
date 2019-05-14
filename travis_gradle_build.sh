@@ -29,6 +29,7 @@ PING_LOOP_PID=$!
 # Build Commands
 ./gradlew -PdockerComposePath="$HOME/bin/docker-compose" acceptTest >> $BUILD_OUTPUT 2>&1
 ./gradlew -PdockerComposePath="$HOME/bin/docker-compose" postgresIntegTest >> $BUILD_OUTPUT 2>&1
+./gradlew -PdockerComposePath="$HOME/bin/docker-compose" sqlServerIntegTest >> $BUILD_OUTPUT 2>&1
 
 # Test examples
 ( cd test/examples && bash run.sh --download-dumps >> $BUILD_OUTPUT 2>&1 )

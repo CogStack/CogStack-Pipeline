@@ -144,7 +144,7 @@ public class ESRestService {
         } else if (securityEnabled) {
             credentialsProvider = new BasicCredentialsProvider();
             credentialsProvider.setCredentials(AuthScope.ANY,
-                    new UsernamePasswordCredentials(user));
+                    new UsernamePasswordCredentials(user, userPassword));
 
             List<HttpHost> nodes = hostsInfo.stream()
                     .map(x -> new HttpHost(x.getKey(), x.getValue()))

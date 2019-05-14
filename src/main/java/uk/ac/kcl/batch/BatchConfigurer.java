@@ -61,7 +61,7 @@ public class BatchConfigurer extends DefaultBatchConfigurer {
     private String repoJdbcPath;
     @Value("${jobRepository.username}")
     private String repoUserName;
-    @Value("${jobRepository.JdbcPath}")
+    @Value("${jobRepository.password}")
     private String repoPassword;
 
     // optional job repository DB properties with default values

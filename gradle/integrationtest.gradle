@@ -23,6 +23,14 @@ task postgresIntegTest(type: Test, dependsOn: [ 'installSimpleCompose' ]) {
 }
 
 task sqlServerIntegTest(type: Test, dependsOn: [ 'installSimpleCompose' ]) {
+    // Exclude because requires gate plugins to be downloaded
+    exclude '**/GATEWithoutScheduling.class'
+    // Exclude BioYodie as it requires UMLS resources which are limited by license
+    exclude '**/BioyodieWebserviceWithoutScheduling.class'
+    // Exclude FullPipeline as it uses BioYodie
+    exclude '**/FullPipelineWithoutScheduling.class'
+    // Exclude Docman as its already deprecated and would need refactor
+    exclude '**/DocmanReaderWithoutScheduling.class'
     testClassesDir = new File(sourceSets.integTest.output.classesDir.absolutePath
             +'/uk/ac/kcl/it/sqlserver')
     print testClassesDir.absolutePath

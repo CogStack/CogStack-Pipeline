@@ -31,6 +31,7 @@ before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
   - rm -fr $HOME/.gradle/caches/*/scripts/
+
 cache:
   directories:
     - $HOME/.gradle/caches/
@@ -44,7 +45,7 @@ before_install:
   - chmod +x "$HOME/bin/docker-compose";
   # install python and pip for testing the examples
   - sudo apt install python2.7 python-pip
-  - pip install -U pip && pip install virtualenv
+  - pip install --user virtualenv
   # fix postgres
   - echo manual | sudo tee /etc/init/postgresql.override
   # Stop postgresql. Related to this issue - https://github.com/travis-ci/travis-ci/issues/4842
