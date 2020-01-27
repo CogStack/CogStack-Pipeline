@@ -116,7 +116,9 @@ public class PDFPreprocessorParser extends AbstractParser {
         PDFParser pdfParser = new PDFParser();
 
         //create temp handlers to investigate object
-        BodyContentHandler body = new BodyContentHandler();
+        //
+        // specifying '-1' as the 'write limit' disables the 100k character limit used by default
+        BodyContentHandler body = new BodyContentHandler(-1);
         Metadata pdfMetadata = new Metadata();
 
         //needed to reset stream

@@ -116,7 +116,8 @@ public class TikaDocumentItemProcessor extends TLItemProcessor implements ItemPr
         if (keepTags) {
             handler = new ToXMLContentHandler();
         } else {
-            handler = new BodyContentHandler();
+            // specifying '-1' as the 'write limit' disables the 100k character limit used by default
+            handler = new BodyContentHandler(-1);
         }
 
         Metadata metadata = new Metadata();
