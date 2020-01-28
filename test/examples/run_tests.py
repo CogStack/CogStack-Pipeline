@@ -23,9 +23,11 @@ def run_all(examples_main_path):
                   TestExample5s1,
                   TestExample5s2,
                   TestExample6,
-                  TestExample7,
-                  TestExample8,
-                  TestExample9]
+                  TestExample7#,
+                  # Ignore examples 8 and 9 that require custom Docker image with GATE NLP
+                  #TestExample8,
+                  #TestExample9
+                  ]
 
     # load all the specified test cases
     test_loader = unittest.TestLoader()
