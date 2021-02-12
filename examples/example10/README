@@ -1,0 +1,46 @@
+EXAMPLE 10 :
+
+COGSTACK-PIPELINE -> ELASTIC SEARCH DOCUMENT INGESTION from DB -> MEDCAT SERVICE -> REINGESTION OF THE ANNOTATIONS from MEDCAT into ES 
+
+Description: We use the pipeline to quickly ingest documents from the database into an elastic search index "sample_observations_view", and, in parallel, we use a separate pipeline service to get documents from ES, send them to Medcat service, retreive the annotated text back and reingest it into a separate index called "sample_observations_view_annotations" in ES.  
+
+
+To get this working please do the following steps:
+
+1. Go to ./data/models/ and execute the download_medmen.sh  (you have to be inside the folder and execute the script !!!) using the command: bash download_medmen.sh
+2. Go to cogstack-pipeline/ and start the docker container using the following command : docker-compose up -d  
+
+Please be patient, this example will take time until it finishes ingesting all the documents.
+
+
+3. If all goes well, navigate to  http://localhost:5601/  and login using the following credentials :  
+    -username: elastic
+    -password: admin
+
+    
+4. Navigate to http://localhost:5601/app/management/kibana/indexPatterns/create
+
+
+Click on create index pattern:
+	- paste   sample_observations_view   into the input field.
+Click on next step
+	- select  observation_timestamp  from the dropdown.
+Click Next
+	- Done, you should have the sample text index ready to view !
+
+
+5. We need to redo the instructions from step 4
+Click on create index pattern:
+	- paste   sample_observations_view_annotations into the input field.
+Click on next step
+	- select  meta.observation_timestamp  from the dropdown.
+Click Next
+	- Done, you should have the sample text index ready to view !
+
+6. All Done ! 
+   You can view how many records you have and how much space your index takes + other stats at http://localhost:5601/app/management/data/index_management/indices
+   
+   To view the records inserted, go to : http://localhost:5601/app/discover  , change the query timeframe to last 15 years and perform a search!
+
+
+The data used in this example is taken from example2...

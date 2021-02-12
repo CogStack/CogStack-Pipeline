@@ -1,0 +1,32 @@
+## Default Kibana configuration from kibana-docker.
+## from https://github.com/elastic/kibana-docker/blob/master/build/kibana/config/kibana.yml
+
+server.name: kibana
+server.host: "0.0.0.0"
+server.port: 5601
+telemetry.optIn: false
+telemetry.enabled: false
+# INFO: ES URL provided as docker parameter
+#elasticsearch.url: https://localhost:9200
+elasticsearch.ssl.verificationMode: none
+
+# WARNING: revise all the lines below before you go into production
+elasticsearch.username: elastic
+elasticsearch.password: admin
+elasticsearch.requestHeadersWhitelist: ["securitytenant","Authorization"]
+
+#opendistro_security.multitenancy.enabled: true
+#opendistro_security.multitenancy.tenants.preferred: ["Private", "Global"]
+#opendistro_security.readonly_mode.roles: ["kibana_read_only"]
+
+# --------
+# X-Pack features
+# disabled by default when using '-oss' images
+# need to be disabled manually when using standard images from elastic
+# --------
+#xpack.security.enabled: true
+#xpack.graph.enabled: false
+#xpack.ml.enabled: false
+#xpack.monitoring.enabled: false
+#xpack.reporting.enabled: false
+#xpack.watcher.enabled: false
