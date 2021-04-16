@@ -1,9 +1,18 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
 # global defines
 #
-SOFFICE_BIN="/Applications/LibreOffice.app/Contents/MacOS/soffice"
+
+SOFFICE_BIN="/usr/bin/soffice"
+
+if [ "$(uname)" == "Darwin" ]; then
+    SOFFICE_BIN="/Applications/LibreOffice.app/Contents/MacOS/soffice"
+elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
+    SOFFICE_BIN="C:/Program Files/LibreOffice/program/soffice.exe"
+elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW64_NT" ]; then
+    SOFFICE_BIN="C:/Program Files/LibreOffice/program/soffice.exe"
+fi
 
 DATA_DIR="./rawdata/"
 SIZE_KIND="small"  # can be 'small' or 'full'
@@ -28,7 +37,7 @@ LOG_FILE=__prepare_docs.log
 
 # check whether the LibreOffice is installed, etc
 #
-if [ ! -e $SOFFICE_BIN ]; then
+if [ ! -e "$SOFFICE_BIN" ]; then
 	echo "Please set the path for LibreOffice soffice binary"
 	exit 1
 fi
@@ -64,7 +73,7 @@ if [ -e $OUT_DOCX_DIR ]; then rm -rf $OUT_DOCX_DIR; fi
 mkdir $OUT_DOCX_DIR
 
 echo "*---> processing documents in bulk using LibreOffice"
-$SOFFICE_BIN --headless --invisible --convert-to docx --outdir $OUT_DOCX_DIR $TMP_DIR/mtsamples-type-*.txt >> $LOG_FILE
+"$SOFFICE_BIN" --headless --invisible --convert-to docx --outdir $OUT_DOCX_DIR $TMP_DIR/mtsamples-type-*.txt >> $LOG_FILE
 
 echo "*---> compressing the documents and storing them as $OUT_MT_DOCX_DATA"
 ( cd $OUT_DOCX_DIR && tar -cJf ../$OUT_MT_DOCX_DATA mtsamples-type-*.docx )
@@ -76,7 +85,7 @@ if [ -e $OUT_PDF_TEXT_DIR ]; then rm -rf $OUT_PDF_TEXT_DIR; fi
 mkdir $OUT_PDF_TEXT_DIR
 
 echo "*---> processing documents in bulk using LibreOffice"
-$SOFFICE_BIN --headless --invisible --convert-to pdf --outdir $OUT_PDF_TEXT_DIR $TMP_DIR/mtsamples-type-*.txt >> $LOG_FILE
+"$SOFFICE_BIN" --headless --invisible --convert-to pdf --outdir $OUT_PDF_TEXT_DIR $TMP_DIR/mtsamples-type-*.txt >> $LOG_FILE
 
 echo "*---> compressing the documents and storing them as $OUT_MT_PDF_DATA"
 ( cd $OUT_PDF_TEXT_DIR && tar -cJf ../$OUT_MT_PDF_TEXT_DATA mtsamples-type-*.pdf )
@@ -88,7 +97,7 @@ if [ -e $OUT_JPG_DIR ]; then rm -rf $OUT_JPG_DIR; fi
 mkdir $OUT_JPG_DIR
 
 echo "*---> processing documents in bulk using LibreOffice"
-$SOFFICE_BIN --headless --invisible --convert-to jpg --outdir $OUT_JPG_DIR $TMP_DIR/mtsamples-type-*.txt >> $LOG_FILE
+"$SOFFICE_BIN" --headless --invisible --convert-to jpg --outdir $OUT_JPG_DIR $TMP_DIR/mtsamples-type-*.txt >> $LOG_FILE
 
 echo "*---> compressing the documents and storing them as $OUT_MT_JPG_DATA"
 ( cd $OUT_JPG_DIR && tar -cJf ../$OUT_MT_JPG_DATA mtsamples-type-*.jpg )
@@ -100,7 +109,7 @@ if [ -e $OUT_PDF_IMG_DIR ]; then rm -rf $OUT_PDF_IMG_DIR; fi
 mkdir $OUT_PDF_IMG_DIR
 
 echo "*---> processing documents in bulk using LibreOffice"
-$SOFFICE_BIN --headless --invisible --convert-to pdf --outdir $OUT_PDF_IMG_DIR $OUT_JPG_DIR/mtsamples-type-*.jpg >> $LOG_FILE
+"$SOFFICE_BIN" --headless --invisible --convert-to pdf --outdir $OUT_PDF_IMG_DIR $OUT_JPG_DIR/mtsamples-type-*.jpg >> $LOG_FILE
 
 echo "*---> compressing the documents and storing them as $OUT_MT_JPG_DATA"
 ( cd $OUT_PDF_IMG_DIR && tar -cJf ../$OUT_MT_PDF_IMG_DATA mtsamples-type-*.pdf )
@@ -113,7 +122,6 @@ rm -rf $TMP_DIR
 rm -rf $OUT_PDF_TEXT_DIR
 rm -rf $OUT_JPG_DIR
 rm -rf $OUT_PDF_JPG_DIR
-
 
 echo "Done."
 
