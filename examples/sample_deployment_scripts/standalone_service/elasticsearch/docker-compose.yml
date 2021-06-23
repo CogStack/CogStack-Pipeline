@@ -1,0 +1,40 @@
+version: "3.5"
+services:
+
+ elasticsearch-1:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
+    #image: amazon/opendistro-for-elasticsearch:1.12.0
+    shm_size : 1024mb
+    restart: always
+    # use this in case of vm.max_map_count errors, the /usr/local/bin/docker-entry.sh is taken from the DockerHub image of elasticsearch
+    entrypoint: "/bin/sh -c 'echo vm.max_map_count=262144 >> /etc/sysctl.conf && /usr/local/bin/docker-entrypoint.sh' "
+    environment:
+      - http_proxy=$HTTP_PROXY
+      - https_proxy=$HTTPS_PROXY
+      - no_proxy=$no_proxy
+      - cluster.name=cogstack-elastic-cluster
+      - ELASTIC_USER=elastic
+      - ELASTIC_PASSWORD=admin
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms2048m -Xmx2048m"
+
+    volumes:
+      - ../../cogstack-pipeline/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - elasticsearch-vol-1:/usr/share/elasticsearch/data
+      # mapping security config
+      # INFO: uncomment below to add SSL keys
+      #- ../security/root-ca.pem:/usr/share/elasticsearch/config/root-ca.pem:ro
+      #- ../security/es-node1.pem:/usr/share/elasticsearch/config/esnode.pem:ro
+      #- ../security/es-node1.key:/usr/share/elasticsearch/config/esnode.key:ro
+      #- ../security/internal_users.yml:/usr/share/elasticsearch/plugins/opendistro_security/securityconfig/internal_users.yml:ro
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    network_mode: host
+    expose:
+      - "9200"
+
+volumes:
+  elasticsearch-vol-1:
+    driver: local

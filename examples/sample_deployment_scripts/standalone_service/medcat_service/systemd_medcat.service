@@ -1,0 +1,16 @@
+[Unit]
+Description=MEDCAT_SERVICE
+After=network.target network-online.target
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=5
+User=root
+Group=root
+WorkingDirectory=/etc/MedCATservice
+ExecStart=/bin/bash /etc/MedCATservice/start-service-prod.sh
+SyslogLevel=debug
+
+[Install]
+WantedBy=multi-user.target

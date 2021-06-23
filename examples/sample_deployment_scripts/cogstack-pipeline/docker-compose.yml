@@ -1,0 +1,255 @@
+version: "3.5"
+services:
+#---------------------------------------------------------------------------#
+# Postgres container with sample data                                       #
+#---------------------------------------------------------------------------#
+  databank-db:
+    image: postgres:13-alpine
+    shm_size: 2048mb
+    restart: always  
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DATABANK_DB=project_data
+    volumes:
+      - ../data/:/data  # mount the folder containing the DB csv files
+      - ./scripts/create_source_and_sink_db.sh:/docker-entrypoint-initdb.d/create_source_and_sink_db.sh:ro
+      - databank-db-vol:/var/lib/postgresql/data
+    ports:
+      - 5433:5432
+    networks:
+      - cognet
+
+#---------------------------------------------------------------------------#
+# CogStack-Pipeline related containers                                      #
+#---------------------------------------------------------------------------#
+  cogstack-pipeline:
+    image: cogstacksystems/cogstack-pipeline:dev-latest
+    #image : cogstacksystems/cogstack-pipeline-gate:latest
+    shm_size : 128mb
+    restart: always  
+    environment:
+      - SERVICES_USED=cogstack-job-repo:5432,databank-db:5432,elasticsearch-1:9200
+      - LOG_LEVEL=info
+      - LOG_FILE_NAME=cogstack_job_log
+      - FILE_LOG_LEVEL=off
+      - COG_PATH=/cogstack # used in run_pipeline.sh to point at the location of cogstack
+      - COG_CONFIG_PATH=/cogstack/cogstack_conf
+    volumes:
+      - ./cogstack/conf:/cogstack/cogstack_conf:ro  # <-- cogstack properties folder
+      - ./cogstack/run_pipeline.sh:/cogstack/run_pipeline.sh:ro
+      - ./gate/app:/gate/app
+    depends_on:
+      - cogstack-job-repo
+      - databank-db
+      - elasticsearch-1
+    # java [parameters] -jar cogstack-*.jar <directory>
+    # The run_pipeline.sh passes the two arguments and starts cogstack with the two arguments .jar file and job conf directory
+    command: /cogstack/run_pipeline.sh /cogstack/cogstack-*.jar /cogstack/cogstack_conf
+    networks:
+      - cognet
+ 
+  cogstack-job-repo:
+    image: postgres:13-alpine 
+    shm_size: 128mb
+    restart: always
+    environment:
+      - POSTGRES_USER=cogstack
+      - POSTGRES_PASSWORD=cogstack
+      - POSTGRES_COGSTACK_DB=cogstack_job_repo
+    volumes:
+      - ./scripts/create_pgsql_job_repo.sh:/docker-entrypoint-initdb.d/create_pgsql_job_repo.sh:ro
+      - cogstack-job-vol:/var/lib/postgresql/data
+    depends_on:
+      - databank-db
+    ports:
+      - 5432:5432
+    networks:
+      - cognet
+
+#---------------------------------------------------------------------------#
+# Elasticsearch cluster                                                     #
+#---------------------------------------------------------------------------#
+  elasticsearch-1:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
+    # image: amazon/opendistro-for-elasticsearch:1.12.0
+    shm_size : 2048mb
+    restart: always
+    # use this in case of vm.max_map_count errors, the /usr/local/bin/docker-entry.sh is taken from the DockerHub image of elasticsearch
+    entrypoint: "/bin/sh -c 'echo vm.max_map_count=262144 >> /etc/sysctl.conf   && /usr/local/bin/docker-entrypoint.sh' "
+    environment:
+      - cluster.name=cogstack-elastic-cluster
+      - ELASTIC_USER=elastic
+      - ELASTIC_PASSWORD=admin
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms2048m -Xmx2048m"
+    volumes:
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - elasticsearch-vol-1:/usr/share/elasticsearch/data
+      # mapping security config
+      # INFO: uncomment below to add SSL keys
+      #- ../security/root-ca.pem:/usr/share/elasticsearch/config/root-ca.pem:ro
+      #- ../security/es-node1.pem:/usr/share/elasticsearch/config/esnode.pem:ro
+      #- ../security/es-node1.key:/usr/share/elasticsearch/config/esnode.key:ro
+      #- ../security/internal_users.yml:/usr/share/elasticsearch/plugins/opendistro_security/securityconfig/internal_users.yml:ro
+      #
+      # INFO: ES configuration mapped via volume
+      #- ../services/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    depends_on:
+      - cogstack-job-repo
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"
+    networks:
+      - esnet
+#---------------------------------------------------------------------------#
+# Medcat Service                                                            #
+#---------------------------------------------------------------------------#
+  medcat-service:
+    container_name: medcat-service
+    image: cogstacksystems/medcat-service
+    restart: always
+    env_file:
+      - ./medcat_service/envs/env_app
+      - ./medcat_service/envs/env_medcat
+    volumes:
+    - ../data/models/medmen/vocab.dat:/cat/models/vocab.dat:ro
+    - ../data/models/medmen/cdb.dat:/cat/models/cdb.dat:ro
+    - ../data/models/medmen/mc_status:/cat/models/mc_status:ro
+    ports:
+    - "5000:5000"
+
+#---------------------------------------------------------------------------#
+# Medcat Trainer                                                            #
+#---------------------------------------------------------------------------#
+  medcat-trainer-ui:
+    container_name: cogstack-medcat-trainer-ui
+    hostname: cogstack-medcat-trainer-ui
+    restart: always
+    image: cogstacksystems/medcat-trainer:latest
+    volumes:
+      - ./medcat_trainer/configs:/home/configs/:ro
+      - medcat-api-media:/home/api/media
+      - medcat-api-static:/home/api/static
+      - medcat-api-db:/home/api/db
+    expose:
+      - "8000"
+    env_file:
+      - ./medcat_trainer/envs/env
+    command: /home/run.sh
+
+  nginx:
+    container_name: medcattrainer_nginx
+    image: cogstacksystems/medcat-trainer-nginx:latest
+    restart: always
+    volumes:
+      - ./medcat_trainer/nginx/sites-enabled:/etc/nginx/sites-enabled/:ro
+      - medcat-api-media:/home/api/media
+      - medcat-api-static:/home/api/static
+    #ports:
+    #  - "${MCTRAINER_PORT:-8001}:8000"
+    #expose:
+    #  - "8001"
+    depends_on:
+      - medcat-trainer-ui
+
+
+#---------------------------------------------------------------------------#
+# Kibana webapp                                                             #
+#---------------------------------------------------------------------------#
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.10.2
+    # image: amazon/opendistro-for-elasticsearch-kibana:1.12.0
+    shm_size : 128mb
+    restart: always
+    environment:
+      SERVER_NAME: kibana.server
+      # edit the url to match your server
+      ELASTICSEARCH_HOSTS: "http://elasticsearch-1:9200" 
+      # INFO: uncomment below to enable SSL keys
+      SERVER_SSL_ENABLED: "false"
+      #SERVER_SSL_KEY: /usr/share/kibana/config/kibana.key
+      #SERVER_SSL_CERTIFICATE: /usr/share/kibana/config/kibana.pem
+    volumes:
+      - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
+      - elasticsearch-vol-1:/usr/share/elasticsearch/data
+      # INFO: uncomment below to add SSL keys
+      #- ../security/root-ca.pem:/usr/share/kibana/config/root-ca.pem:ro
+      #- ../security/kibana.pem:/usr/share/kibana/config/kibana.pem:ro
+      #- ../security/kibana.key:/usr/share/kibana/config/kibana.key:ro     
+    depends_on:
+      - elasticsearch-1
+    ports:
+      - "5601:5601"
+    networks:
+      - esnet
+
+#---------------------------------------------------------------------------#
+# Jupyter-hub  notebook                                                     #
+#---------------------------------------------------------------------------#
+  jupyter-hub:
+    #image: jupyterhub/jupyterhub:master
+    container_name: cogstack-jupyter-hub-datascience-notebook
+    restart: always
+    environment:
+      - http_proxy=$HTTP_PROXY
+      - https_proxy=$HTTPS_PROXY
+      - no_proxy=$no_proxy
+    build:
+      context: ./jupyter-hub/
+      dockerfile: Dockerfile
+      args:
+        http_proxy: $HTTP_PROXY
+        https_proxy: $HTTPS_PROXY
+        no_proxy: $no_proxy
+    volumes:
+      - "./jupyter-hub/notebooks:/home/jovyan/notebooks"
+      - "./jupyter-hub/config/jupyter_notebook_config.py:/home/jovyan/.jupyter/jupyter_notebook_config.py"
+      - "./jupyter-hub/setup_script.sh:/home/jovyan/setup_script.sh"
+      - jupyter_hub_vol: /home
+      # INFO: uncomment below to map security certificates if needed
+      #- "../security/jupyter.pem:/etc/ssl/notebook/jupyter.pem:ro"
+      #- "../security/jupyter.key:/etc/ssl/notebook/jupyter.key:ro"
+      #- "../security/root-ca.pem:/etc/ssl/notebook/root-ca.pem:ro"
+    command: sh -c "bash /home/jovyan/setup_script.sh && jupyterhub -f /home/jovyan/.jupyter/jupyter_notebook_config.py"
+      # --ssl-key my_ssl.key --ssl-cert my_ssl.cert
+      # INFO: uncomment below to use SSL keys (as a part of start-up cmd)
+      #           --keyfile=/etc/ssl/notebook/jupyter.key \
+      #           --certfile=/etc/ssl/notebook/jupyter.pem \
+
+#---------------------------------------------------------------------------#
+# Docker networks.                                                          #
+#---------------------------------------------------------------------------#
+networks:
+  esnet:
+    driver: bridge
+    name : esnet-ext
+  cognet:
+    driver: bridge
+
+#---------------------------------------------------------------------------#
+# Docker named volumes                                                      #
+#---------------------------------------------------------------------------#
+volumes:
+  databank-db-vol:
+    driver: local
+  cogstack-job-vol:
+    driver: local
+  elasticsearch-vol-1:
+    driver: local
+    
+  # MedCAT Trainer
+  medcat-api-media:
+    driver: local
+  medcat-api-static:
+    driver: local
+  medcat-api-db:
+    driver: local
+  
+  # jupyter 
+  jupyter_hub_vol:
+    driver: local
+  

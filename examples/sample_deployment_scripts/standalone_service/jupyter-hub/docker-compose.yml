@@ -1,0 +1,38 @@
+
+version: "3.5"
+services:
+
+ jupyter-hub:
+    #image: jupyterhub/jupyterhub:master
+    container_name: cogstack-jupyter-hub-datascience-notebook
+    restart: always
+    environment:
+      - HTTP_PROXY=$HTTP_PROXY
+      - HTTPS_PROXY=$HTTPS_PROXY
+      - NO_PROXY=$NO_PROXY
+    build:
+      context: ../../cogstack-pipeline/jupyter-hub/
+      dockerfile: Dockerfile
+      args:
+        HTTP_PROXY: $HTTP_PROXY
+        HTTPS_PROXY: $HTTPS_PROXY
+        NO_PROXY: $NO_PROXY
+    volumes:
+      - "../../cogstack-pipeline/jupyter-hub/notebooks:/home/jovyan/notebooks"
+      - "../../cogstack-pipeline/jupyter-hub/config/jupyter_notebook_config.py:/home/jovyan/.jupyter/jupyter_notebook_config.py"
+      - "../../cogstack-pipeline/jupyter-hub/setup_script.sh:/home/jovyan/setup_script.sh"
+      - jupyter_hub_vol: /home
+      # INFO: uncomment below to map security certificates if needed
+      #- "../security/jupyter.pem:/etc/ssl/notebook/jupyter.pem:ro"
+      #- "../security/jupyter.key:/etc/ssl/notebook/jupyter.key:ro"
+      #- "../security/root-ca.pem:/etc/ssl/notebook/root-ca.pem:ro"
+    command: sh -c "bash /home/jovyan/setup_script.sh && jupyterhub -f /home/jovyan/.jupyter/jupyter_notebook_config.py"
+      # --ssl-key my_ssl.key --ssl-cert my_ssl.cert
+      # INFO: uncomment below to use SSL keys (as a part of start-up cmd)
+      #           --keyfile=/etc/ssl/notebook/jupyter.key \
+      #           --certfile=/etc/ssl/notebook/jupyter.pem \
+    network_mode: host
+    
+volumes:
+  jupyter_hub_vol:
+    driver: local

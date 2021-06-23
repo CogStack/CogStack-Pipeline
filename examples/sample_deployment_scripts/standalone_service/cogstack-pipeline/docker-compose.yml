@@ -1,0 +1,77 @@
+version: "3.5"
+services:
+ #---------------------------------------------------------------------------#
+ # Postgres container with sample data                                       #
+ #---------------------------------------------------------------------------#
+ databank-db:
+   image: postgres:13-alpine
+   shm_size: 1024mb
+   restart: always  
+   environment:
+     - http_proxy=$HTTP_PROXY
+     - https_proxy=$HTTPS_PROXY
+     - no_proxy=$no_proxy
+     - POSTGRES_USER=admin
+     - POSTGRES_PASSWORD=admin
+     - POSTGRES_DATABANK_DB=project_data
+   volumes:
+     - ../../data:/data  # mount the folder containing the DB csv files
+     - ../../cogstack-pipeline/scripts/create_source_and_sink_db.sh:/docker-entrypoint-initdb.d/create_source_and_sink_db.sh:ro
+     - databank-db-vol:/var/lib/postgresql/data
+   ports:
+     - 5433:5432
+   #command: -p 5433
+
+
+ #---------------------------------------------------------------------------#
+ # CogStack-Pipeline related containers                                      #
+ #---------------------------------------------------------------------------#
+ cogstack-pipeline:
+    image: cogstacksystems/cogstack-pipeline:dev-latest
+    #image : cogstacksystems/cogstack-pipeline-gate:latest
+    shm_size : 128mb
+    restart: always  
+    environment:
+      - SERVICES_USED=cogstack-job-repo:5432,databank-db:5432
+      - LOG_LEVEL=info
+      - LOG_FILE_NAME=cogstack_job_log
+      - FILE_LOG_LEVEL=off
+      - COG_PATH=/cogstack
+      - COG_CONFIG_PATH=/cogstack/cogstack_conf
+    volumes:
+      - ../../cogstack-pipeline/cogstack/conf:/cogstack/cogstack_conf:ro  # <-- cogstack properties folder
+      - ../../cogstack-pipeline/cogstack/run_pipeline.sh:/cogstack/run_pipeline.sh:ro
+      - ../../cogstack-pipeline/gate/app:/gate/app
+    depends_on:
+      - cogstack-job-repo
+      - databank-db
+    # java [parameters] -jar cogstack-*.jar <directory>
+    # The run_pipeline.sh passes the two arguments and starts cogstack with the two arguments .jar file and job conf directory
+    command: "/cogstack/run_pipeline.sh /cogstack/cogstack-*.jar /cogstack/cogstack_conf"
+    #network_mode: bridge
+
+ cogstack-job-repo:
+    image: postgres:13-alpine 
+    shm_size: 256mb
+    restart: always
+    environment:
+      - POSTGRES_USER=cogstack
+      - POSTGRES_PASSWORD=cogstack
+      - POSTGRES_COGSTACK_DB=cogstack_job_repo
+    volumes:
+      - ../../cogstack-pipeline/scripts/create_pgsql_job_repo.sh:/docker-entrypoint-initdb.d/create_pgsql_job_repo.sh:ro
+      - cogstack-job-vol:/var/lib/postgresql/data
+    depends_on:
+      - databank-db
+    ports:
+      - 5432:5432
+    #command: -p 5432
+
+#---------------------------------------------------------------------------#
+# Docker named volumes                                                      #
+#---------------------------------------------------------------------------#
+volumes:
+  databank-db-vol:
+    driver: local
+  cogstack-job-vol:
+    driver: local

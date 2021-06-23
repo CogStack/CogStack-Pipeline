@@ -1,0 +1,56 @@
+version: "3.4"
+services:
+#---------------------------------------------------------------------------#
+# Medcat Trainer                                                            #
+#---------------------------------------------------------------------------#
+  medcat-trainer-ui:
+    container_name: cogstack-medcat-trainer-ui
+    hostname: medcat-trainer-ui
+    restart: always
+    image: cogstacksystems/medcat-trainer:latest
+    environment:
+      - http_proxy=$HTTP_PROXY
+      - https_proxy=$HTTPS_PROXY
+      - no_proxy=$no_proxy
+    volumes:
+      - ../../cogstack-pipeline/medcat_trainer/configs:/home/configs/:ro
+      - medcat-api-media:/home/api/media
+      - medcat-api-static:/home/api/static
+      - medcat-api-db:/home/api/db
+    expose:
+      - "8000"
+    env_file:
+      - ../../cogstack-pipeline/medcat_trainer/envs/env
+    command: /home/run.sh
+    network_mode: host
+  nginx:
+    container_name: medcattrainer_nginx
+    image: cogstacksystems/medcat-trainer-nginx:latest
+    restart: always
+    environment:
+      - http_proxy=$HTTP_PROXY
+      - https_proxy=$HTTPS_PROXY
+      - no_proxy=$no_proxy
+    volumes:
+      - ./nginx/sites-enabled:/etc/nginx/sites-enabled/:ro
+      - medcat-api-media:/home/api/media
+      - medcat-api-static:/home/api/static
+    #ports:
+    #  - "${MCTRAINER_PORT:-8001}:8000"
+    #expose:
+    #  - "8001"
+    depends_on:
+      - medcat-trainer-ui
+    network_mode: host
+
+#---------------------------------------------------------------------------#
+# Docker named volumes                                                      #
+#---------------------------------------------------------------------------#
+volumes:
+  # MedCAT Trainer
+  medcat-api-media:
+    driver: local
+  medcat-api-static:
+    driver: local
+  medcat-api-db:
+    driver: local

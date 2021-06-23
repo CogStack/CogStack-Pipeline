@@ -1,0 +1,25 @@
+version: "3.5"
+services:
+#---------------------------------------------------------------------------#
+# Medcat Service                                                            #
+#---------------------------------------------------------------------------#
+  medcat-service:
+      container_name: medcat-service
+      restart: always
+      image: cogstacksystems/medcat-service
+      environment:
+        - http_proxy=$HTTP_PROXY
+        - https_proxy=$HTTPS_PROXY
+        - no_proxy=$no_proxy
+      env_file:
+        - ../../cogstack-pipeline/medcat_service/envs/env_app
+        - ../../cogstack-pipeline/medcat_service/envs/env_medcat
+      volumes:
+      - ../../data/models/medmen/vocab.dat:/cat/models/vocab.dat:ro
+      - ../../data/models/medmen/cdb.dat:/cat/models/cdb.dat:ro
+      - ../../data/models/medmen/mc_status:/cat/models/mc_status:ro
+      expose:
+      - "5000"
+      #ports:
+      #- "5000:5000"
+      network_mode: host

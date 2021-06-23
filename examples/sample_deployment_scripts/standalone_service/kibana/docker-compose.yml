@@ -1,0 +1,26 @@
+version: "3.5"
+services:
+
+ kibana:
+    image: docker.elastic.co/kibana/kibana:7.10.2
+    # image: amazon/opendistro-for-elasticsearch-kibana:1.12.0
+    shm_size : 128mb
+    restart: always
+    environment:
+      - http_proxy=$HTTP_PROXY
+      - https_proxy=$HTTPS_PROXY
+      - no_proxy=$no_proxy
+      SERVER_NAME: kibana.server
+      # edit the url to match your server
+      ELASTICSEARCH_HOSTS: "http://127.0.0.1:9200" 
+      # INFO: uncomment below to enable SSL keys
+      SERVER_SSL_ENABLED: "false"
+      #SERVER_SSL_KEY: /usr/share/kibana/config/kibana.key
+      #SERVER_SSL_CERTIFICATE: /usr/share/kibana/config/kibana.pem
+    volumes:
+      - ../../cogstack-pipeline/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
+      # INFO: uncomment below to add SSL keys
+      #- ../../cogstack-pipeline/kibana/security/root-ca.pem:/usr/share/kibana/config/root-ca.pem:ro
+      #- ../../cogstack-pipeline/kibana/security/kibana.pem:/usr/share/kibana/config/kibana.pem:ro
+      #- ../../cogstack-pipeline/kibana/security/kibana.key:/usr/share/kibana/config/kibana.key:ro
+    network_mode: host

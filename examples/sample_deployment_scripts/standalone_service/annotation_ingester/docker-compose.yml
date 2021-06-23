@@ -1,0 +1,16 @@
+version: "3.5"
+services:
+
+ annotation-ingester:
+    image: cogstacksystems/annotations-ingester:latest
+    shm_size : 128mb
+    restart: always
+    environment:
+      - http_proxy=$HTTP_PROXY
+      - https_proxy=$HTTPS_PROXY
+      - no_proxy=$no_proxy
+    volumes:
+      - ../../cogstack-pipeline/annotation_ingester/config/config.yml:/app/config/config.yml:ro
+    network_mode: host
+    command: "/app/run.sh"
+    

@@ -1,0 +1,14 @@
+version: '3.5'
+
+services:
+  tika-service:
+    image: cogstacksystems/tika-service:latest
+    restart: always
+    environment:
+      # limit the number of processing threads used by tesseract OCR,
+      # this should be used with care as processing for smaller documents (i.e < 10mb) is faster when limiting threads as
+      # the thread IPC and management does not interfere when using a single thread
+      - OMP_THREAD_LIMIT=0
+    volumes:
+    - ../../cogstack-pipeline/tika/config/application.yaml:/app/config/application.yaml:ro
+    network_mode: host
