@@ -24,3 +24,4 @@ log/
 # Logs
 cogstack*log*
 
+examples/sample_deployment_scripts/utils/data_processing/anonymistion_hw_clean/anonymised/
