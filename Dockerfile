@@ -9,12 +9,13 @@ FROM openjdk:11-jdk-slim AS java-builder
 ### RUN echo "deb http://ftp.de.debian.org/debian stretch main" >> /etc/apt/sources.list
 
 RUN apt-get update && \
-#	apt-get dist-upgrade -y && \
-#	apt-get install -y tesseract-ocr && \
+	apt-get dist-upgrade -y && \
+	apt-get install -y tesseract-ocr tesseract-ocr-eng tesseract-ocr-osd && \
     apt-get update && \
-	apt-get install -y tesseract-ocr=4.00~git2439-c3ed6f03-1~bpo9+1 tesseract-ocr-eng=4.00~git28-f7a4c12-1~bpo9+1 tesseract-ocr-osd=4.00~git28-f7a4c12-1~bpo9+1 && \
+    apt-get install -y imagemagick --fix-missing && \
+#	apt-get install -y tesseract-ocr=4.00~git2439-c3ed6f03-1~bpo9+1 tesseract-ocr-eng=4.00~git28-f7a4c12-1~bpo9+1 tesseract-ocr-osd=4.00~git28-f7a4c12-1~bpo9+1 && \
 ###	apt-get install -y tesseract-ocr-osd=3.04.00-1 tesseract-ocr-eng=3.04.00-1 tesseract-ocr=3.04.01-5 && \
-	apt-get install -y imagemagick=8:6.9.7.4+dfsg-11+deb9u6 --fix-missing && \
+#	apt-get install -y imagemagick=8:6.9.7.4+dfsg-11+deb9u6 --fix-missing && \
 	apt-get clean autoclean && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/*
@@ -27,16 +28,17 @@ RUN apt-get update && \
 FROM openjdk:11-jre-slim AS java-runner
 
 # tesseract-ocr < 4.0 is only available from the previous Debian Stretch distribution
-# for installing it plese uncomment the following lines with '###''
+# for installing it please uncomment the following lines with '###''
 ### RUN echo "deb http://ftp.de.debian.org/debian stretch main" >> /etc/apt/sources.list
 
 RUN apt-get update && \
-#	apt-get dist-upgrade -y && \
-#	apt-get install -y tesseract-ocr && \
+	apt-get dist-upgrade -y && \
+	apt-get install -y tesseract-ocr tesseract-ocr-eng tesseract-ocr-osd && \
     apt-get update && \
-	apt-get install -y tesseract-ocr=4.00~git2439-c3ed6f03-1~bpo9+1 tesseract-ocr-eng=4.00~git28-f7a4c12-1~bpo9+1 tesseract-ocr-osd=4.00~git28-f7a4c12-1~bpo9+1 && \
+    apt-get install -y imagemagick --fix-missing && \
+#	apt-get install -y tesseract-ocr=4.00~git2439-c3ed6f03-1~bpo9+1 tesseract-ocr-eng=4.00~git28-f7a4c12-1~bpo9+1 tesseract-ocr-osd=4.00~git28-f7a4c12-1~bpo9+1 && \
 ###	apt-get install -y tesseract-ocr-osd=3.04.00-1 tesseract-ocr-eng=3.04.00-1 tesseract-ocr=3.04.01-5 && \
-	apt-get install -y imagemagick=8:6.9.7.4+dfsg-11+deb9u6 --fix-missing && \
+#	apt-get install -y imagemagick=8:6.9.7.4+dfsg-11+deb9u6 --fix-missing && \
 	apt-get clean autoclean && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/*
