@@ -24,4 +24,7 @@ log/
 # Logs
 cogstack*log*
 
+# VScode
+.vscode
+
 examples/sample_deployment_scripts/utils/data_processing/anonymistion_hw_clean/anonymised/
