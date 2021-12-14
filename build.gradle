@@ -51,8 +51,8 @@ dependencies {
 	//logging
 	compile group: 'org.slf4j', name:'slf4j-api', version:'1.7.25'
 	compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
-	compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.15.0'
-	compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.15.0'
+	compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.16.0'
+	compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.16.0'
 
 	// misc
 	compile group: 'joda-time', name: 'joda-time', version: '2.10.1'
