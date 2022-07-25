@@ -7,6 +7,9 @@ CogStack is a lightweight distributed, fault tolerant database processing archit
 
 For the most up-to-date documentation about usage of CogStack, building, running with example deployments please refer to the official [CogStack Confluence page](https://cogstack.atlassian.net/wiki/spaces/COGDOC/).
 
+# Discussion
+
+If you have any questions why not reach out to the community [discourse forum](https://discourse.cogstack.org/).
 
 # Quick Start Guide
 
