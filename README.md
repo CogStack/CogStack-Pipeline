@@ -1,3 +1,7 @@
+# Archived
+
+This project is archived and no longer maintained. [CogStack-Nifi](https://github.com/CogStack/CogStack-NiFi/tree/master/deploy) is the successor to this project and continues to be actively maintained.
+
 # Introduction
 
 CogStack is a lightweight distributed, fault tolerant database processing architecture and ecosystem, intended to make NLP processing and preprocessing easier in resource constrained environments. It comprises of multiple components, where **CogStack Pipeline**, the one covered in this documentation, has been designed to provide a configurable data processing pipelines for working with EHR data. For the moment it mainly uses databases and files as the primary source of EHR data with the possibility of adding custom data connectors soon. It makes use of the [Java Spring Batch](https://spring.io/projects/spring-batch) framework in order to provide a fully configurable data processing pipeline with the goal of generating an annotated JSON files that can be readily indexed into [ElasticSearch](https://www.elastic.co/), stored as files or pushed back to a database.
